@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Assessment structure</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="sf.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>body{margin:0}
+.sf .fchip{position:relative}
+.sf .fmenu{position:absolute;left:0;top:42px;z-index:6;min-width:220px;max-height:320px;overflow-y:auto;background:var(--surface);border:1px solid var(--border);border-radius:10px;box-shadow:var(--shadow-md);padding:6px;display:flex;flex-direction:column}
+.sf .fmenu button{min-height:40px;text-align:left;padding:0 12px;border:0;border-radius:6px;color:var(--text);font:500 14px Inter,system-ui,sans-serif;cursor:pointer}
+.sf[data-device="phone"] .fchip{position:static}
+.sf[data-device="phone"] .fmenu{left:0;right:0;top:calc(100% + 6px)}
+.sf[data-device="phone"] .fmenu button{min-height:44px}
+.sf .rmenu{position:absolute;right:20px;top:54px;z-index:5;min-width:250px;background:var(--surface);border:1px solid var(--border);border-radius:10px;box-shadow:var(--shadow-md);padding:6px;display:flex;flex-direction:column}
+.sf .rmenu button{min-height:40px;text-align:left;padding:0 12px;border:0;border-radius:6px;background:transparent;font:500 14px Inter,system-ui,sans-serif;cursor:pointer}
+.sf .rmenu button:hover,.sf .fmenu button:hover{background:var(--surface-2)}
+.sf[data-device="phone"] .rmenu{right:12px;left:12px;min-width:0}
+.sf[data-device="phone"] .rmenu button{min-height:44px}
+.sf .tabs a{min-height:44px;padding:0 16px;display:inline-flex;align-items:center;border-bottom:3px solid transparent;margin-bottom:-1px;color:var(--muted);font:600 15px Inter,system-ui,sans-serif;text-decoration:none;white-space:nowrap}
+.sf .tabs a[aria-selected="true"]{color:var(--primary);border-bottom-color:var(--primary)}
+.sf .tabs a:hover{color:var(--text)}
+.sf .tabs .count{margin-left:6px}
+.sf[data-device="phone"] .chip{min-height:44px}
+
+.sf .modeseg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px;background:var(--surface-2);border-radius:12px;padding:4px;max-width:720px}
+.sf .modeseg button{min-height:44px;padding:10px 14px;border:0;border-radius:9px;background:transparent;color:var(--muted);font:500 14px Inter,system-ui,sans-serif;cursor:pointer;text-align:left;display:flex;flex-direction:column;gap:2px}
+.sf .modeseg button .t{font-size:15px;font-weight:600;color:var(--text)}
+.sf .modeseg button[aria-checked="true"]{background:var(--surface);box-shadow:var(--shadow-sm);outline:2px solid var(--primary);outline-offset:-2px}
+.sf[data-theme="dark"] .modeseg button[aria-checked="true"]{background:var(--primary-soft)}
+.sf[data-device="phone"] .modeseg{grid-template-columns:1fr}
+.sf .lvl{display:flex;flex-wrap:wrap;gap:8px}
+.sf .ed .tr{align-items:start}
+.sf .ed .input{min-height:40px}
+.sf[data-device="phone"] .ed .input{min-height:44px}
+.sf .ed .acts{display:flex;gap:4px;justify-content:flex-end}
+.sf[data-device="phone"] .ed .acts{justify-content:flex-start}
+.sf .ed .iconbtn[disabled]{opacity:.35;cursor:not-allowed}
+.sf .pcol{border:1px solid var(--border);border-radius:8px;padding:8px 12px;background:var(--surface-2);display:flex;flex-direction:column;align-items:center;min-width:64px;font-size:13px}
+.sf .pcol b{font-size:14px}
+.sf .pcol.c{background:var(--primary-soft);border-color:var(--primary);color:var(--text)}
+.sf .sc{color:var(--warning-ink)}</style>
+</helmet>
+<div class="sf" data-theme="{{theme}}" data-device="{{device}}" style="--school: {{sch.colour}}">
+<div class="app">
+  <aside class="side desk-only" aria-label="School navigation">
+    <div class="brand"><span class="crest" aria-hidden="true">{{sch.code}}</span><span class="col" style="gap: 0"><span style="font-weight: 700; font-size: 15px; line-height: 20px">{{sch.name}}</span><span class="muted" style="font-size: 13px">{{sch.town}}</span></span></div>
+    <nav class="nav" aria-label="Main">
+      <sc-for list="{{nav}}" as="n" hint-placeholder-count="12">
+        <sc-if value="{{n.grp}}" hint-placeholder-val="{{ false }}"><span class="cap grp">{{n.grp}}</span></sc-if>
+        <a href="{{n.href}}" class="{{n.cls}}" aria-current="{{n.cur}}"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{n.d}}"></path></svg><span class="l">{{n.label}}</span><sc-if value="{{n.count}}" hint-placeholder-val="{{ false }}"><span class="{{n.countCls}}">{{n.count}}</span></sc-if></a>
+      </sc-for>
+    </nav>
+    <div class="powered"><img src="/_blob/b5461303d7a8d45a18f7975e283523ab" alt="" style="width: 20px; height: 20px">Powered by SchoolFlow</div>
+  </aside>
+  <div class="main">
+    <header class="top desk-only">
+      <nav class="crumb" aria-label="Breadcrumb"><a href="{{dashHref}}">Dashboard</a> / School / School setup / <b>Assessment</b></nav>
+      <button class="iconbtn" aria-label="Notices, 3 unread"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.bell}}"></path></svg><span class="dot">3</span></button>
+      <button class="btn sm" aria-label="Profile menu" style="border: 0"><span class="crest" aria-hidden="true" style="width: 32px; height: 32px; border-radius: 9999px; font-size: 12px">{{sch.ini}}</span><span class="col" style="gap: 0; align-items: flex-start"><span style="font-size: 14px">{{sch.user}}</span><span class="muted" style="font-size: 12px; font-weight: 500">{{sch.role}}</span></span></button>
+    </header>
+    <header class="phead phone-only">
+      <button class="iconbtn" aria-label="Open menu" onClick="{{openDrawer}}"><svg class="i l" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.menu}}"></path></svg></button>
+      <span class="crest" aria-hidden="true" style="width: 30px; height: 30px; font-size: 10px; border-radius: 8px">{{sch.code}}</span>
+      <span class="ttl">Assessment structure</span>
+      <button class="iconbtn" aria-label="Notices, 3 unread"><svg class="i l" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.bell}}"></path></svg><span class="dot">3</span></button>
+    </header>
+
+    <main class="content">
+      <div class="row" style="align-items: flex-start">
+        <div class="col grow" style="gap: 4px; min-width: 240px"><h1 class="h1 desk-only">Assessment structure</h1><p class="muted" style="font-size: 15px">Set the parts that make up each subject's score, for each level your school uses.</p></div>
+        <span class="badge {{lockCls}}"><svg class="i s" viewBox="0 0 24 24" aria-hidden="true"><path d="{{lockIc}}"></path></svg>{{lockLabel}}</span>
+      </div>
+      <nav class="tabs" role="tablist" aria-label="School setup">
+        <sc-for list="{{setupTabs}}" as="t" hint-placeholder-count="7"><a role="tab" href="{{t.href}}" aria-selected="{{t.sel}}">{{t.label}}</a></sc-for>
+      </nav>
+      <sc-if value="{{isLoading}}" hint-placeholder-val="{{ false }}">
+        <div class="col" aria-busy="true" aria-label="Loading"><div class="row"><div class="skel" style="height: 40px; width: 170px"></div><div class="skel" style="height: 40px; width: 170px"></div></div><div class="card col"><div class="skel" style="height: 56px; max-width: 720px"></div><div class="skel" style="height: 44px"></div><div class="skel" style="height: 44px"></div><div class="skel" style="height: 44px"></div></div></div>
+      </sc-if>
+      <sc-if value="{{isError}}" hint-placeholder-val="{{ false }}">
+        <div class="card state" role="alert"><span class="ic" style="background: var(--danger-soft); color: var(--danger)"><svg class="i l" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.alert}}"></path></svg></span><p class="h3">{{errTitle}}</p><p class="muted">Check your connection and try again.</p><button class="btn primary">Try again</button></div>
+      </sc-if>
+      <sc-if value="{{main}}" hint-placeholder-val="{{ true }}">
+        <div class="col" style="gap: 20px">
+          <sc-if value="{{locked}}" hint-placeholder-val="{{ false }}">
+            <div class="alert a-info" role="note"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.lock}}"></path></svg><span>Scores have been entered for First Term, so this structure is locked. Changes you save will apply from Second Term.</span></div>
+          </sc-if>
+          <div class="tabs" role="tablist" aria-label="Levels">
+            <sc-for list="{{levels}}" as="l" hint-placeholder-count="2"><button role="tab" aria-selected="{{l.sel}}" onClick="{{l.pick}}">{{l.label}}</button></sc-for>
+          </div>
+          <section class="card col" aria-labelledby="amh" style="gap: 10px">
+            <h2 id="amh" class="h3">Assessment mode</h2>
+            <div class="modeseg" role="radiogroup" aria-labelledby="amh">
+              <sc-for list="{{modes}}" as="m" hint-placeholder-count="2"><button role="radio" aria-checked="{{m.sel}}" onClick="{{m.pick}}"><span class="t">{{m.label}}</span><span>{{m.desc}}</span></button></sc-for>
+            </div>
+          </section>
+
+          <sc-if value="{{isSkills}}" hint-placeholder-val="{{ false }}">
+            <section class="card col" style="gap: 10px" aria-label="Skill ratings">
+              <h2 class="h3">{{level}} uses Skill ratings</h2>
+              <p class="muted" style="max-width: 620px">Teachers rate each skill from Excellent to Needs improvement. {{level}} report cards show no scores, totals or positions.</p>
+              <a class="btn" href="{{laHref}}" style="align-self: flex-start">Set up learning areas and skills<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.right}}"></path></svg></a>
+            </section>
+          </sc-if>
+
+          <sc-if value="{{isScores}}" hint-placeholder-val="{{ true }}">
+            <section class="card flush" aria-labelledby="cph">
+              <div class="card-head"><h2 id="cph" class="h3 grow">Components</h2><span class="badge {{totalCls}}"><svg class="i s" viewBox="0 0 24 24" aria-hidden="true"><path d="{{totalIc}}"></path></svg>{{totalMsg}}</span></div>
+              <sc-if value="{{noComps}}" hint-placeholder-val="{{ false }}">
+                <div class="state"><p class="h3">No components yet.</p><p class="muted" style="max-width: 420px">Add parts such as CA1, CA2 and Exam. The max scores must add up to 100.</p></div>
+              </sc-if>
+              <sc-if value="{{hasComps}}" hint-placeholder-val="{{ true }}">
+                <div class="rt ed" style="--cols: 40px minmax(0, 2.2fr) minmax(0, 1fr) minmax(0, 0.8fr) 150px">
+                  <div class="tr th"><span>#</span><span>Name</span><span>Short label</span><span>Max score</span><span style="text-align: right">Order and remove</span></div>
+                  <sc-for list="{{comps}}" as="c" hint-placeholder-count="3">
+                    <div class="tr">
+                      <span class="td first num muted" style="padding-top: 10px; font-weight: 600">{{c.n}}</span>
+                      <label class="td" data-label="Name"><span class="sr">Name of component {{c.n}}</span><input class="input {{c.nameCls}}" type="text" value="{{c.name}}" onChange="{{c.onName}}" placeholder="For example Continuous assessment 1"></label>
+                      <label class="td" data-label="Short label"><span class="sr">Short label of component {{c.n}}</span><input class="input {{c.shortCls}}" type="text" maxlength="8" value="{{c.short}}" onChange="{{c.onShort}}" placeholder="CA1"></label>
+                      <label class="td" data-label="Max score"><span class="sr">Max score of component {{c.n}}</span><input class="input num {{c.maxCls}}" type="text" inputmode="numeric" value="{{c.max}}" onChange="{{c.onMax}}" placeholder="20"></label>
+                      <span class="td acts"><button class="iconbtn" aria-label="Move {{c.label}} up" onClick="{{c.up}}" disabled="{{c.first}}"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.up}}"></path></svg></button><button class="iconbtn" aria-label="Move {{c.label}} down" onClick="{{c.down}}" disabled="{{c.last}}"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.down}}"></path></svg></button><button class="iconbtn" aria-label="Remove {{c.label}}" onClick="{{c.remove}}" style="color: var(--danger)"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.trash}}"></path></svg></button></span>
+                      <sc-if value="{{c.hasErr}}" hint-placeholder-val="{{ false }}"><p class="help err" role="alert" style="grid-column: 2 / -1; margin-top: 6px">{{c.err}}</p></sc-if>
+                    </div>
+                  </sc-for>
+                </div>
+              </sc-if>
+              <div class="row" style="padding: 14px 20px; border-top: 1px solid var(--border)">
+                <button class="btn" onClick="{{addComp}}" disabled="{{atMax}}"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.plus}}"></path></svg>Add component</button>
+                <span class="help">{{countHelp}}</span>
+              </div>
+            </section>
+
+            <section class="card col" aria-labelledby="pvh" style="gap: 12px">
+              <div class="col" style="gap: 2px"><h2 id="pvh" class="h3">Score sheet preview</h2><span class="muted" style="font-size: 14px">This is how the columns will look on {{level}} score sheets.</span></div>
+              <div class="row" style="gap: 8px; align-items: stretch">
+                <div class="pcol" style="align-items: flex-start; min-width: 140px"><b>Student</b><span class="muted">Name and number</span></div>
+                <sc-for list="{{preview}}" as="p" hint-placeholder-count="3"><div class="pcol c"><b>{{p.short}}</b><span class="num">/{{p.max}}</span></div></sc-for>
+                <div class="pcol"><b>Total</b><span class="num {{totalInk}}">/{{total}}</span></div>
+                <div class="pcol"><b>Grade</b><span class="muted">auto</span></div>
+                <div class="pcol"><b>Remark</b><span class="muted">auto</span></div>
+              </div>
+            </section>
+          </sc-if>
+        </div>
+      </sc-if>
+    </main>
+    <sc-if value="{{main}}" hint-placeholder-val="{{ true }}">
+      <div class="actionbar">
+        <span class="row grow" style="gap: 8px; flex-wrap: nowrap; font-size: 14px; font-weight: 500; color: {{barInk}}; min-width: 220px"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{barIc}}"></path></svg><span>{{barMsg}}</span></span>
+        <button class="btn primary" onClick="{{save}}" disabled="{{cantSave}}" style="flex: 1 1 160px; max-width: {{btnMax}}">Save</button>
+      </div>
+    </sc-if>
+  </div>
+</div>
+
+<sc-if value="{{toast}}" hint-placeholder-val="{{ false }}">
+  <div role="status" style="position: {{toastPos}}; left: 50%; bottom: {{toastBottom}}; transform: translateX(-50%); z-index: 40; width: max-content; max-width: 92%; background: var(--text); color: var(--bg); border-radius: 10px; padding: 12px 16px; display: flex; gap: 12px; align-items: center; font-size: 14px; box-shadow: var(--shadow-lg)"><span>{{toast}}</span><button class="iconbtn" aria-label="Dismiss" onClick="{{hideToast}}" style="color: var(--bg); width: 32px; height: 32px"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.close}}"></path></svg></button></div>
+</sc-if>
+
+<sc-if value="{{drawer}}" hint-placeholder-val="{{ false }}">
+  <div class="scrim"><nav class="drawer" aria-label="Menu">
+    <div class="row" style="flex-wrap: nowrap"><div class="brand grow" style="padding: 0"><span class="crest" aria-hidden="true">{{sch.code}}</span><span class="col" style="gap: 0"><span style="font-weight: 700; font-size: 15px">{{sch.name}}</span><span class="muted" style="font-size: 13px">{{sch.user}} · {{sch.role}}</span></span></div><button class="iconbtn" aria-label="Close menu" onClick="{{closeDrawer}}"><svg class="i l" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.close}}"></path></svg></button></div>
+    <div class="nav"><sc-for list="{{nav}}" as="n" hint-placeholder-count="12">
+        <sc-if value="{{n.grp}}" hint-placeholder-val="{{ false }}"><span class="cap grp">{{n.grp}}</span></sc-if>
+        <a href="{{n.href}}" class="{{n.cls}}" aria-current="{{n.cur}}"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{n.d}}"></path></svg><span class="l">{{n.label}}</span><sc-if value="{{n.count}}" hint-placeholder-val="{{ false }}"><span class="{{n.countCls}}">{{n.count}}</span></sc-if></a>
+      </sc-for></div>
+    <div class="powered"><img src="/_blob/b5461303d7a8d45a18f7975e283523ab" alt="" style="width: 20px; height: 20px">Powered by SchoolFlow</div>
+  </nav></div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["Light","Dark"],"default":"Light"},"state":{"editor":"enum","options":["Default","Empty","Loading","Error"],"default":"Default"},"device":{"editor":"enum","options":["Desktop","Phone"],"default":"Desktop"},"school":{"editor":"enum","options":["Greenfield Model College","Bright Stars Academy"],"default":"Greenfield Model College"},"locked":{"editor":"enum","options":["Editable","Locked for this term"],"default":"Editable"},"$preview":{"width":1440,"height":1250}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    const C = (name, short, max) => ({ name, short, max: String(max) });
+    const jss = () => [C('Continuous assessment 1', 'CA1', 20), C('Continuous assessment 2', 'CA2', 20), C('Examination', 'Exam', 60)];
+    this.state = {
+      level: '', toast: '', drawer: false,
+      data: { 'Junior Secondary': { mode: 'Scores', comps: jss() }, 'Senior Secondary': { mode: 'Scores', comps: [C('Continuous assessment 1', 'CA1', 10), C('Continuous assessment 2', 'CA2', 10), C('Examination', 'Exam', 60)] }, 'Nursery': { mode: 'Skill ratings', comps: jss() }, 'Primary': { mode: 'Scores', comps: jss() } },
+      edata: { 'Junior Secondary': { mode: 'Scores', comps: [] }, 'Senior Secondary': { mode: 'Scores', comps: [] }, 'Nursery': { mode: 'Skill ratings', comps: [] }, 'Primary': { mode: 'Scores', comps: [] } }
+    };
+  }
+
+  icons() {
+    return {
+      dash: 'M3 3h7v9H3zM14 3h7v5h-7zM14 12h7v9h-7zM3 16h7v5H3z', approve: 'M9 11l3 3 8-8M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9', send: 'M22 2L11 13M22 2l-7 20-4-9-9-4z',
+      flag: 'M4 22V4M4 4h12l-2 4 2 4H4', tmpl: 'M4 4h16v16H4zM4 9h16M9 9v11', audit: 'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM12 7v5l3 2', student: 'M22 10L12 5 2 10l10 5 10-5zM6 12v5c3 2 9 2 12 0v-5',
+      teacher: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21a8 8 0 0 1 16 0', review: 'M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12zM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z', parent: 'M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8',
+      shield: 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z', setup: 'M3 21h18M5 21V9l7-5 7 5v12M9 21v-6h6v6', bell: 'M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.94 1.94 0 0 0 3.4 0',
+      corr: 'M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z', mail: 'M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zM22 6l-10 7L2 6', bill: 'M4 5h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2zM2 10h20',
+      settings: 'M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1',
+      menu: 'M4 6h16M4 12h16M4 18h16', close: 'M18 6L6 18M6 6l12 12', alert: 'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM12 8v4M12 16h.01',
+      ok: 'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM8 12l3 3 5-6', x: 'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM15 9l-6 6M9 9l6 6', clock: 'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM12 7v5l3 2', lock: 'M5 11h14v10H5zM8 11V7a4 4 0 0 1 8 0v4',
+      home: 'M3 10l9-7 9 7v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z', sheet: 'M3 3h18v18H3zM3 9h18M9 21V9', cls: 'M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8',
+      user: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21a8 8 0 0 1 16 0', search: 'M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM21 21l-4.3-4.3', down: 'M6 9l6 6 6-6', up: 'M18 15l-6-6-6 6',
+      warn: 'M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0zM12 9v4M12 17h.01', pencil: 'M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z', check: 'M5 12l5 5L20 7', minus: 'M5 12h14',
+      more: 'M12 6h.01M12 12h.01M12 18h.01', key: 'M15 7a4 4 0 1 1-3.9 5H3v3h3v3h3v-3h2.1A4 4 0 0 1 15 7z', copy: 'M8 8h12v12H8zM4 16V4h12', print: 'M6 9V3h12v6M6 18H4v-7h16v7h-2M6 14h12v7H6z',
+      userx: 'M15 8a4 4 0 1 1-8 0 4 4 0 0 1 8 0zM3 21a8 8 0 0 1 13-6.2M17 17l4 4M21 17l-4 4', mailI: 'M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zM22 6l-10 7L2 6',
+      plus: 'M12 5v14M5 12h14', trash: 'M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v6M14 11v6', download: 'M12 3v12M7 10l5 5 5-5M5 21h14', info: 'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM12 16v-4M12 8h.01',
+      queue: 'M4 6h16M4 12h16M4 18h10', right: 'M9 18l6-6-6-6', logout: 'M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9'
+    };
+  }
+  school() {
+    return this.props.school === 'Bright Stars Academy'
+      ? { bsa: true, code: 'BSA', name: 'Bright Stars Academy', town: 'Nsukka', colour: '#7a1f2b', user: 'Mrs. Chiamaka Nwafor', ini: 'CN', role: 'Head teacher', email: 'chiamaka.nwafor@brightstars.edu.ng' }
+      : { bsa: false, code: 'GMC', name: 'Greenfield Model College', town: 'Independence Layout, Enugu', colour: '#1e6b45', user: 'Mrs. Ngozi Okeke', ini: 'NO', role: 'Principal', email: 'ngozi.okeke@greenfield.edu.ng' };
+  }
+  pg(n, phone) {
+    const PH = ['DashboardV5', 'PublishV5', 'BillingV5', 'SheetsV5', 'Attention', 'AttentionTeacher', 'AttentionReviewer', 'Assessment', 'Grading', 'SchoolAdmins', 'StudentDetail', 'LearningAreas'];
+    if (this.props && this.props.school === 'Bright Stars Academy') n = {Attention:'AttentionBSA',SchoolAdmins:'SchoolAdminsBSA',Assessment:'AssessmentBSA',Grading:'GradingBSA',TemplateEditorV5:'TemplateEditorBSA','#classes':'ClassPage',AttentionTeacher:'AttentionTeacherBSA',MyClass:'MyClassPrimary',SchoolDetailV5:'SchoolDetailBSA'}[n] || n; /* BSAMAP */
+    return n.startsWith('#') ? n : n + (phone && ['Assessment', 'AssessmentBSA', 'Attention', 'AttentionBSA', 'AttentionReviewer', 'AttentionTeacher', 'AttentionTeacherBSA', 'AuditLog', 'BillingV5', 'BsaMenus', 'ChangePassword', 'ClassPage', 'CreateSchool', 'DashboardV5', 'EmailLog', 'Grading', 'GradingBSA', 'LearningAreas', 'Login', 'Login_Link', 'MyClass', 'MyClassPrimary', 'ParentSkills', 'Payments', 'PlatformSettings', 'PricingV5', 'PublishV5', 'RatingSheet', 'RatingSheetAssistant', 'SchoolAdmins', 'SchoolAdminsBSA', 'SchoolDetailBSA', 'SchoolDetailV5', 'SchoolPaused', 'SchoolsV5', 'ScoreGridSS', 'ScoreGridV5', 'SheetsV5', 'StudentDetail', 'SuperBillingV5', 'TemplateEditorBSA', 'TemplateEditorV5'].includes(n) ? '_Phone' : '') + '.dc.html';
+  }
+  pnav(active, phone, bsa) {
+    const I = this.icons();
+    const items = [[null, 'Dashboard', 'DashboardV5', 'dash'], ['Results', 'Approvals', 'Approvals', 'approve', '4', 'count strong'], [null, 'Publish results', 'PublishV5', 'send'], [null, 'Students needing attention', 'Attention', 'flag'], [null, 'Report templates', 'TemplateEditorV5', 'tmpl'], [null, 'Audit trail', '#audit-trail', 'audit'],
+      ['People', 'Students', 'StudentDetail', 'student'], [null, 'Teachers', '#teachers', 'teacher'], [null, 'Reviewers', '#reviewers', 'review'], [null, 'Parents', '#parents', 'parent'], [null, 'School admins', 'SchoolAdmins', 'shield'],
+      ['School', 'School setup', 'Assessment', 'setup'], [null, 'Notices', '#notices', 'bell'], [null, 'Corrections', 'Corrections', 'corr', '1', 'count'], [null, 'Emails', '#emails', 'mail'], [null, 'Billing', 'BillingV5', 'bill'], [null, 'School settings', '#school-settings', 'settings']];
+    return items.filter((x) => !(bsa && x[1] === 'Corrections')).map(([grp, label, href, ic, count, countCls]) => ({ grp: grp || '', label, href: this.pg(href, phone), d: I[ic], count: count || '', countCls: countCls || '', cls: label === active ? 'on' : '', cur: label === active ? 'page' : 'false' }));
+  }
+  base() {
+    const P = this.props;
+    const theme = String(P.theme || 'Light').toLowerCase(), device = String(P.device || 'Desktop').toLowerCase(), view = String(P.state || 'Default').toLowerCase();
+    const phone = device === 'phone';
+    return { theme, device, view, phone };
+  }
+  common(phone) {
+    const st = this.state;
+    return {
+      toast: st.toast, hideToast: () => this.setState({ toast: '' }), toastPos: phone ? 'absolute' : 'fixed', toastBottom: phone ? '96px' : '88px',
+      drawer: st.drawer, openDrawer: () => this.setState({ drawer: true }), closeDrawer: () => this.setState({ drawer: false })
+    };
+  }
+
+  setupTabs(active, phone, bsa) {
+    const t = [['Sessions and terms', '#sessions-and-terms'], ['Classes', '#classes'], ['Subjects', '#subjects'], ['Departments', '#departments'], ['Grading', 'Grading'], ['Assessment', 'Assessment']];
+    if (bsa) t.push(['Learning areas and skills', 'LearningAreas']);
+    t.push(['Rating traits', '#rating-traits']);
+    return t.map(([label, href]) => ({ label, href: this.pg(href, phone), sel: label === active ? 'true' : 'false' }));
+  }
+
+  renderVals() {
+    const P = this.props, st = this.state, I = this.icons();
+    const { theme, device, view, phone } = this.base();
+    const sch = this.school(), bsa = sch.bsa;
+    const lvNames = bsa ? ['Nursery', 'Primary'] : ['Junior Secondary', 'Senior Secondary'];
+    const level = lvNames.includes(st.level) ? st.level : lvNames[0];
+    const key = view === 'empty' ? 'edata' : 'data';
+    const D = st[key], L = D[level];
+    const setL = (patch) => this.setState({ [key]: { ...D, [level]: { ...L, ...patch } } });
+    const setComps = (comps) => setL({ comps });
+    const locked = P.locked === 'Locked for this term';
+    const comps0 = L.comps;
+    const shorts = comps0.map((c) => c.short.trim().toLowerCase());
+    let total = 0, anyErr = false;
+    const comps = comps0.map((c, i) => {
+      const m = c.max.trim(); const mOk = /^\d+$/.test(m) && +m >= 1 && +m <= 100;
+      if (mOk) total += +m;
+      const errs = [];
+      if (!c.name.trim()) errs.push('Name is missing.');
+      if (!c.short.trim()) errs.push('Short label is missing.');
+      else if (shorts.indexOf(c.short.trim().toLowerCase()) !== i) errs.push('Short labels must be different.');
+      if (!mOk) errs.push('Max score must be a whole number from 1 to 100.');
+      if (errs.length) anyErr = true;
+      const upd = (k) => (e) => setComps(comps0.map((x, j) => (j === i ? { ...x, [k]: e.target.value } : x)));
+      const swap = (a, b) => { const arr = comps0.slice(); [arr[a], arr[b]] = [arr[b], arr[a]]; setComps(arr); };
+      return { ...c, n: i + 1, label: c.short.trim() || 'component ' + (i + 1), nameCls: c.name.trim() ? '' : 'bad', shortCls: errs.some((e) => e.startsWith('Short')) ? 'bad' : '', maxCls: mOk ? '' : 'bad',
+        hasErr: errs.length > 0, err: errs.join(' '), first: i === 0, last: i === comps0.length - 1,
+        onName: upd('name'), onShort: upd('short'), onMax: upd('max'),
+        up: () => { if (i > 0) swap(i, i - 1); }, down: () => { if (i < comps0.length - 1) swap(i, i + 1); },
+        remove: () => setComps(comps0.filter((_, j) => j !== i)) };
+    });
+    const isScores = L.mode === 'Scores';
+    const ok = total === 100 && !anyErr && comps.length > 0;
+    const totalMsg = total === 100 ? 'Total 100' : total < 100 ? 'Total ' + total + '. Add ' + (100 - total) + ' more to reach 100.' : 'Total ' + total + '. Remove ' + (total - 100) + ' to get back to 100.';
+    const addComp = () => {
+      if (comps0.length >= 8) return;
+      const ca = comps0.filter((c) => /^CA\d+$/i.test(c.short.trim())).length + 1;
+      const nc = { name: 'Continuous assessment ' + ca, short: 'CA' + ca, max: '10' };
+      const arr = comps0.slice(); const last = arr.length && /exam/i.test(arr[arr.length - 1].short) ? arr.length - 1 : arr.length;
+      arr.splice(last, 0, nc); setComps(arr);
+    };
+    const main = view === 'default' || view === 'empty';
+    const cantSave = isScores ? !ok : false;
+    let barMsg, barIc, barInk;
+    if (!isScores) { barMsg = level + ' uses Skill ratings. Set up its learning areas and skills.'; barIc = I.info; barInk = 'var(--muted)'; }
+    else if (anyErr) { barMsg = 'Fix the highlighted fields to save.'; barIc = I.alert; barInk = 'var(--danger)'; }
+    else if (total !== 100) { barMsg = totalMsg; barIc = I.warn; barInk = 'var(--warning-ink)'; }
+    else { barMsg = locked ? 'Total 100. Changes you save will apply from Second Term.' : 'Total 100. Ready to save.'; barIc = I.ok; barInk = 'var(--success-ink)'; }
+    return {
+      theme, device, ic: I, sch, nav: this.pnav('School setup', phone, bsa), dashHref: this.pg('DashboardV5', phone),
+      setupTabs: this.setupTabs('Assessment', phone, bsa), errTitle: "We couldn't load the assessment structure.",
+      isLoading: view === 'loading', isError: view === 'error', main, locked,
+      lockCls: locked ? 'b-info' : 'b-neutral', lockIc: locked ? I.lock : I.pencil, lockLabel: locked ? 'Locked for this term' : 'Editable',
+      level, levels: lvNames.map((n) => ({ label: n, sel: n === level ? 'true' : 'false', pick: () => this.setState({ level: n }) })),
+      modes: [['Scores', 'CAs and exams out of 100, with totals, grades and positions'], ['Skill ratings', 'Each skill rated from Excellent to Needs improvement, with no scores']].map(([label, desc]) => ({ label, desc, sel: L.mode === label ? 'true' : 'false', pick: () => setL({ mode: label }) })),
+      isScores, isSkills: !isScores, laHref: this.pg('LearningAreas', phone),
+      comps, noComps: comps.length === 0, hasComps: comps.length > 0, total, totalMsg,
+      totalCls: total === 100 ? 'b-success' : 'b-warning', totalIc: total === 100 ? I.check : I.warn, totalInk: total === 100 ? '' : 'sc',
+      atMax: comps.length >= 8, countHelp: comps.length >= 8 ? 'You can have up to 8 components.' : comps.length + ' of 8 components',
+      addComp, preview: comps0.map((c) => ({ short: c.short.trim() || '?', max: c.max.trim() || '?' })),
+      barMsg, barIc, barInk, cantSave, btnMax: phone ? 'none' : '220px',
+      save: () => { if (!cantSave) this.setState({ toast: 'Assessment structure saved for ' + level + '.' + (locked ? ' It applies from Second Term.' : '') }); },
+      ...this.common(phone)
+    };
+  }
+}
+</script>
+</body>
+</html>

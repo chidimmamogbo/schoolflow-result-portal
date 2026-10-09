@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Publish results</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="sf.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>body{margin:0}
+.sf .ck{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--border);font-size:15px}
+.sf .ck:last-child{border-bottom:0}
+.sf .pc{display:grid;grid-template-columns:minmax(180px,1fr) 70px minmax(0,2.4fr);gap:8px 14px;align-items:start;padding:12px 20px;border-top:1px solid var(--border)}
+.sf[data-device="phone"] .pc{grid-template-columns:1fr auto;padding:14px 16px}
+.sf[data-device="phone"] .pc .cm{grid-column:1 / -1}
+</style>
+</helmet>
+<div class="sf" data-theme="{{theme}}" data-device="{{device}}">
+<div class="app">
+  <aside class="side desk-only" aria-label="School navigation">
+    <div class="brand"><span class="crest" aria-hidden="true">GMC</span><span class="col" style="gap: 0"><span style="font-weight: 700; font-size: 15px; line-height: 20px">Greenfield Model College</span><span class="muted" style="font-size: 13px">Independence Layout, Enugu</span></span></div>
+    <nav class="nav" aria-label="Main">
+      <sc-for list="{{nav}}" as="n" hint-placeholder-count="17">
+        <sc-if value="{{n.grp}}" hint-placeholder-val="{{ false }}"><span class="cap grp">{{n.grp}}</span></sc-if>
+        <a href="{{n.href}}" class="{{n.cls}}" aria-current="{{n.cur}}"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{n.d}}"></path></svg><span class="l">{{n.label}}</span><sc-if value="{{n.count}}" hint-placeholder-val="{{ false }}"><span class="{{n.countCls}}">{{n.count}}</span></sc-if></a>
+      </sc-for>
+    </nav>
+    <div class="powered"><img src="/_blob/b5461303d7a8d45a18f7975e283523ab" alt="" style="width: 20px; height: 20px">Powered by SchoolFlow</div>
+  </aside>
+  <div class="main">
+    <header class="top desk-only">
+      <nav class="crumb" aria-label="Breadcrumb"><a href="DashboardV5.dc.html">Dashboard</a> / Results / <b>Publish</b></nav>
+      <button class="iconbtn" aria-label="Notices, 3 unread"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.bell}}"></path></svg><span class="dot">3</span></button>
+      <button class="btn sm" aria-label="Profile menu" style="border: 0"><span class="crest" aria-hidden="true" style="width: 32px; height: 32px; border-radius: 9999px; font-size: 12px">NO</span><span class="col" style="gap: 0; align-items: flex-start"><span style="font-size: 14px">Mrs. Ngozi Okeke</span><span class="muted" style="font-size: 12px; font-weight: 500">Principal</span></span></button>
+    </header>
+    <header class="phead phone-only">
+      <button class="iconbtn" aria-label="Open menu" onClick="{{openDrawer}}"><svg class="i l" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.menu}}"></path></svg></button>
+      <span class="crest" aria-hidden="true" style="width: 30px; height: 30px; font-size: 10px; border-radius: 8px">GMC</span>
+      <span class="ttl">Publish results</span>
+      <button class="iconbtn" aria-label="Notices, 3 unread"><svg class="i l" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.bell}}"></path></svg><span class="dot">3</span></button>
+    </header>
+
+    <main class="content">
+      <div class="row" style="align-items: flex-end">
+        <div class="col grow" style="gap: 4px; min-width: 260px"><h1 class="h1 desk-only">Publish results</h1><p class="muted" style="font-size: 15px">Publishing makes results final and notifies parents, students and staff.</p></div>
+        <label class="field" style="width: 150px">Class<select class="input"><option>JSS 1A</option></select></label>
+        <label class="field" style="width: 220px">Term<select class="input"><option>First Term 2026/2027</option></select></label>
+      </div>
+
+      <sc-if value="{{isLoading}}" hint-placeholder-val="{{ false }}">
+        <div class="split" aria-busy="true"><div class="wide"><div class="skel" style="height: 220px"></div><div class="skel" style="height: 380px"></div></div><div class="narrow"><div class="skel" style="height: 420px"></div></div></div>
+      </sc-if>
+      <sc-if value="{{isError}}" hint-placeholder-val="{{ false }}">
+        <div class="card state" role="alert"><span class="ic" style="background: var(--danger-soft); color: var(--danger)"><svg class="i l" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.alert}}"></path></svg></span><p class="h3">We couldn't load this class.</p><p class="muted">Check your connection and try again.</p><button class="btn primary">Try again</button></div>
+      </sc-if>
+      <sc-if value="{{isEmpty}}" hint-placeholder-val="{{ false }}">
+        <div class="card state"><span class="ic" style="background: var(--primary-soft); color: var(--primary)"><svg class="i l" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.send}}"></path></svg></span><p class="h3">No results to publish yet.</p><p class="muted" style="max-width: 440px">A class shows here once its subject sheets are approved. Check Approvals for sheets waiting on you.</p><a class="btn" href="Approvals.dc.html">Open approvals</a></div>
+      </sc-if>
+
+      <sc-if value="{{showMain}}" hint-placeholder-val="{{ true }}">
+        <div class="col" style="gap: 20px">
+          <sc-if value="{{published}}" hint-placeholder-val="{{ false }}">
+            <div class="alert a-success" role="status"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.ok}}"></path></svg><span class="grow"><strong>JSS 1A results are published</strong>12 report cards issued as revision 1. 39 notices sent and 26 emails queued. Emails contain a login link only, never scores.</span><span class="col" style="gap: 4px; align-items: flex-end"><a href="ParentHome.dc.html" style="font-weight: 600; white-space: nowrap">See what parents see</a><a href="{{dashHref}}" style="font-weight: 600; white-space: nowrap">Go to dashboard</a></span></div>
+          </sc-if>
+          <div class="split">
+            <div class="wide">
+              <section class="card" aria-labelledby="ready">
+                <div class="row" style="margin-bottom: 4px"><h2 id="ready" class="h3 grow">Checklist</h2><span class="badge {{readyCls}}"><svg class="i s" viewBox="0 0 24 24" aria-hidden="true"><path d="{{readyIc}}"></path></svg>{{readyLabel}}</span></div>
+                <ul style="list-style: none; margin: 0; padding: 0">
+                  <sc-for list="{{checks}}" as="c" hint-placeholder-count="5">
+                    <li class="ck"><span style="color: {{c.ink}}; display: flex; margin-top: 2px"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{c.ic}}"></path></svg></span><span class="col grow" style="gap: 2px"><span>{{c.text}}</span><sc-if value="{{c.hasSub}}" hint-placeholder-val="{{ false }}"><span style="font-size: 14px; font-weight: 500; color: {{c.ink}}">{{c.sub}}</span></sc-if></span><span class="badge sm {{c.bcls}}"><svg class="i s" viewBox="0 0 24 24" aria-hidden="true"><path d="{{c.ic}}"></path></svg>{{c.word}}</span></li>
+                  </sc-for>
+                </ul>
+                <sc-if value="{{ftBlocked}}" hint-placeholder-val="{{ false }}"><div class="row" style="margin-top: 10px; gap: 10px"><button class="btn sm">Remind form teacher</button><span class="muted" style="font-size: 13px">Form teacher: Mrs. Adaeze Nnamdi</span></div></sc-if>
+              </section>
+
+              <section class="card flush" aria-labelledby="pcm">
+                <div class="card-head" style="align-items: flex-start">
+                  <div class="col grow" style="gap: 2px"><h2 id="pcm" class="h3">Principal's comments</h2><span class="muted" style="font-size: 14px">{{pcDone}} of 12 students have a comment. Pick a suggestion or write your own.</span></div>
+                  <span class="badge {{pcCls}}"><svg class="i s" viewBox="0 0 24 24" aria-hidden="true"><path d="{{pcIc}}"></path></svg>{{pcWord}}</span>
+                </div>
+                <div class="row" style="padding: 14px 20px; background: var(--surface-2); gap: 10px; align-items: flex-end">
+                  <label class="field" style="width: 210px">Apply to all with average above<input class="input num" type="text" inputmode="numeric" value="{{thr}}" onChange="{{onThr}}" aria-invalid="{{thrBad}}"></label>
+                  <label class="field grow" style="min-width: 220px">Comment<select class="input" value="{{bulk}}" onChange="{{onBulk}}"><option>An excellent result. Keep it up.</option><option>A good term. Aim higher next term.</option><option>Fair work. More effort is needed in weak subjects.</option><option>Needs serious improvement. Please see the form teacher.</option></select></label>
+                  <button class="btn" onClick="{{applyBulk}}" disabled="{{thrBad}}">Apply to {{bulkN}} students</button>
+                  <p class="help" style="width: 100%">Students who already have a comment keep it.</p>
+                </div>
+                <div>
+                  <sc-for list="{{students}}" as="s" hint-placeholder-count="5">
+                    <div class="pc">
+                      <span class="col" style="gap: 0"><span style="font-weight: 600">{{s.name}}</span><span class="muted num" style="font-size: 13px">{{s.adm}}</span></span>
+                      <span class="col num" style="gap: 0; align-items: flex-end"><span style="font-weight: 700; font-size: 16px">{{s.avg}}</span><span class="muted" style="font-size: 12px">average</span></span>
+                      <span class="col cm" style="gap: 8px">
+                        <textarea class="input {{s.inputCls}}" rows="2" aria-label="Principal's comment for {{s.name}}" placeholder="Write a comment" value="{{s.comment}}" onChange="{{s.onComment}}" disabled="{{locked}}"></textarea>
+                        <sc-if value="{{s.showSugg}}" hint-placeholder-val="{{ false }}"><span class="row" style="gap: 6px"><span class="help">Suggestion:</span><button class="chip" style="min-height: 32px; font-size: 13px" onClick="{{s.useSugg}}">{{s.sugg}}</button></span></sc-if>
+                      </span>
+                    </div>
+                  </sc-for>
+                </div>
+              </section>
+
+              <section class="card" aria-labelledby="who">
+                <h2 id="who" class="h3" style="margin-bottom: 12px">Who will be notified</h2>
+                <div class="grid-auto num" style="grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px">
+                  <div class="tile col" style="gap: 0"><span style="font-size: 26px; font-weight: 700">12</span><span class="muted" style="font-size: 14px">students</span></div>
+                  <div class="tile col" style="gap: 0"><span style="font-size: 26px; font-weight: 700">14</span><span class="muted" style="font-size: 14px">parents and guardians</span></div>
+                  <div class="tile col" style="gap: 0"><span style="font-size: 26px; font-weight: 700">13</span><span class="muted" style="font-size: 14px">teachers and reviewers</span></div>
+                </div>
+                <p class="muted" style="font-size: 14px; margin-top: 12px">Everyone gets a notice on their board. People with an email address also get an email with a login link. Emails never show scores.</p>
+              </section>
+            </div>
+
+            <div class="narrow">
+              <section class="card" aria-labelledby="pv" style="gap: 12px; display: flex; flex-direction: column">
+                <div class="row"><h2 id="pv" class="h3 grow">Preview a report card</h2><select class="input" aria-label="Student" style="width: auto"><option>Chukwuemeka Obi</option><option>Amina Bello</option></select></div>
+                <a href="ReportCard.dc.html" aria-label="Open full report card preview" style="display: block; text-decoration: none; color: #0f172a; background: #ffffff; border: 1px solid #e3e7ee; border-radius: 8px; overflow: hidden">
+                  <div style="background: #1E6B45; color: #ffffff; padding: 14px 16px; display: flex; gap: 10px; align-items: center"><span aria-hidden="true" style="width: 34px; height: 34px; border-radius: 8px; background: #ffffff; color: #1E6B45; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center">GMC</span><span style="display: flex; flex-direction: column"><span style="font-weight: 700; letter-spacing: 0.04em; font-size: 14px">GREENFIELD MODEL COLLEGE</span><span style="font-size: 12px; opacity: 0.9">First Term Report · 2026/2027</span></span></div>
+                  <div style="padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; font-size: 13px">
+                    <div style="display: flex; justify-content: space-between"><span><strong>Chukwuemeka Obi</strong> · JSS 1A</span><span>GMC/2026/014</span></div>
+                    <div style="display: flex; flex-direction: column; gap: 5px"><div style="height: 8px; background: #f1f3f7; border-radius: 3px"></div><div style="height: 8px; background: #f1f3f7; border-radius: 3px; width: 92%"></div><div style="height: 8px; background: #f1f3f7; border-radius: 3px; width: 96%"></div><div style="height: 8px; background: #f1f3f7; border-radius: 3px; width: 88%"></div></div>
+                    <div class="num" style="display: flex; justify-content: space-between; border-top: 2px solid #1E6B45; padding-top: 8px"><span>Average <strong>71.4</strong></span><span>Position <strong>3rd of 12</strong></span></div>
+                    <div style="border-left: 3px solid #1E6B45; padding-left: 8px; color: #334155"><strong style="display: block; font-size: 11px; letter-spacing: 0.04em; color: #1E6B45">PRINCIPAL'S COMMENT</strong>{{previewComment}}</div>
+                  </div>
+                </a>
+                <a href="ReportCard.dc.html" style="font-weight: 600; font-size: 14px">Open full A4 preview</a>
+              </section>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+    </main>
+
+    <sc-if value="{{showBar}}" hint-placeholder-val="{{ true }}">
+      <div class="actionbar">
+        <span class="row grow" style="gap: 8px; flex-wrap: nowrap; font-size: 14px; color: {{barInk}}; font-weight: 500; min-width: 240px"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{barIc}}"></path></svg><span>{{barMsg}}</span></span>
+        <button class="btn primary" onClick="{{ask}}" disabled="{{blocked}}" style="flex: 1 1 240px; max-width: {{btnMax}}">Publish JSS 1A results</button>
+      </div>
+    </sc-if>
+  </div>
+</div>
+
+<sc-if value="{{confirming}}" hint-placeholder-val="{{ false }}">
+  <div class="modal"><div class="dialog" role="dialog" aria-modal="true" aria-labelledby="pubT"><h2 id="pubT" class="h3">Publish JSS 1A results?</h2><p class="muted">Parents and students will be notified and results become final. Any later change needs a correction with a reason.</p><div class="btns"><button class="btn" onClick="{{cancel}}">Cancel</button><button class="btn primary" onClick="{{confirm}}">Publish results</button></div></div></div>
+</sc-if>
+
+<sc-if value="{{toast}}" hint-placeholder-val="{{ false }}">
+  <div role="status" style="position: {{toastPos}}; left: 50%; bottom: 96px; transform: translateX(-50%); z-index: 40; max-width: 92%; background: var(--text); color: var(--bg); border-radius: 10px; padding: 12px 16px; display: flex; gap: 12px; align-items: center; font-size: 14px; box-shadow: var(--shadow-lg)"><span>{{toast}}</span><button class="iconbtn" aria-label="Dismiss" onClick="{{hideToast}}" style="color: var(--bg); width: 32px; height: 32px"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.close}}"></path></svg></button></div>
+</sc-if>
+
+<sc-if value="{{drawer}}" hint-placeholder-val="{{ false }}">
+  <div class="scrim"><nav class="drawer" aria-label="Menu">
+    <div class="row" style="flex-wrap: nowrap"><div class="brand grow" style="padding: 0"><span class="crest" aria-hidden="true">GMC</span><span class="col" style="gap: 0"><span style="font-weight: 700; font-size: 15px">Greenfield Model College</span><span class="muted" style="font-size: 13px">Mrs. Ngozi Okeke · Principal</span></span></div><button class="iconbtn" aria-label="Close menu" onClick="{{closeDrawer}}"><svg class="i l" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.close}}"></path></svg></button></div>
+    <div class="nav"><sc-for list="{{nav}}" as="n" hint-placeholder-count="17"><sc-if value="{{n.grp}}" hint-placeholder-val="{{ false }}"><span class="cap grp">{{n.grp}}</span></sc-if><a href="{{n.href}}" class="{{n.cls}}" aria-current="{{n.cur}}"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{n.d}}"></path></svg><span class="l">{{n.label}}</span><sc-if value="{{n.count}}" hint-placeholder-val="{{ false }}"><span class="{{n.countCls}}">{{n.count}}</span></sc-if></a></sc-for></div>
+  </nav></div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["Light","Dark"],"default":"Light"},"state":{"editor":"enum","options":["Default","Empty","Loading","Error"],"default":"Default"},"device":{"editor":"enum","options":["Desktop","Phone"],"default":"Desktop"},"sections":{"editor":"enum","options":["Form teacher submitted","Form teacher not submitted"],"default":"Form teacher submitted"},"$preview":{"width":1440,"height":1350}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    const S = [['Chukwuemeka Obi', 'GMC/2026/014', 71.4, 'An excellent result. Keep it up.'], ['Amina Bello', 'GMC/2026/002', 76.8, 'An excellent result. Keep it up.'], ['Tobi Adeyemi', 'GMC/2026/003', 58.2, 'A good term. Aim higher next term.'], ['Ifeoma Nwankwo', 'GMC/2026/004', 66.0, 'A good term. Aim higher next term.'], ['Musa Ibrahim', 'GMC/2026/005', 52.4, 'A good term. Aim higher next term.'], ['Zainab Yusuf', 'GMC/2026/006', 79.3, ''], ['Chinedu Okafor', 'GMC/2026/007', 49.7, 'Fair work. More effort is needed in weak subjects.'], ['Blessing Eze', 'GMC/2026/008', 62.1, 'A good term. Aim higher next term.'], ['Daniel Okon', 'GMC/2026/009', 38.5, ''], ['Halima Garba', 'GMC/2026/010', 46.2, ''], ['Kelechi Uche', 'GMC/2026/011', 41.9, 'Needs serious improvement. Please see the form teacher.'], ['Funmilayo Ajayi', 'GMC/2026/012', 70.2, 'An excellent result. Keep it up.']];
+    this.state = { students: S.map(([name, adm, avg, comment]) => ({ name, adm, avg, comment })), thr: '70', bulk: 'An excellent result. Keep it up.', confirming: false, published: false, toast: '', drawer: false };
+  }
+  icons() {
+    return {
+      dash: 'M3 3h7v9H3zM14 3h7v5h-7zM14 12h7v9h-7zM3 16h7v5H3z', approve: 'M9 11l3 3 8-8M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9', send: 'M22 2L11 13M22 2l-7 20-4-9-9-4z',
+      flag: 'M4 22V4M4 4h12l-2 4 2 4H4', tmpl: 'M4 4h16v16H4zM4 9h16M9 9v11', audit: 'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM12 7v5l3 2', student: 'M22 10L12 5 2 10l10 5 10-5zM6 12v5c3 2 9 2 12 0v-5',
+      teacher: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21a8 8 0 0 1 16 0', review: 'M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12zM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z', parent: 'M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8',
+      shield: 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z', setup: 'M3 21h18M5 21V9l7-5 7 5v12M9 21v-6h6v6', bell: 'M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.94 1.94 0 0 0 3.4 0',
+      corr: 'M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z', mail: 'M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zM22 6l-10 7L2 6', bill: 'M4 5h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2zM2 10h20',
+      settings: 'M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1',
+      menu: 'M4 6h16M4 12h16M4 18h16', close: 'M18 6L6 18M6 6l12 12', alert: 'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM12 8v4M12 16h.01',
+      ok: 'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM8 12l3 3 5-6', x: 'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM15 9l-6 6M9 9l6 6', clock: 'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM12 7v5l3 2', lock: 'M5 11h14v10H5zM8 11V7a4 4 0 0 1 8 0v4'
+    };
+  }
+  nav(active, phone) {
+    const I = this.icons();
+    const pg = (n) => (n.startsWith('#') ? n : n + (phone && ['Assessment', 'AssessmentBSA', 'Attention', 'AttentionBSA', 'AttentionReviewer', 'AttentionTeacher', 'AttentionTeacherBSA', 'AuditLog', 'BillingV5', 'BsaMenus', 'ChangePassword', 'ClassPage', 'CreateSchool', 'DashboardV5', 'EmailLog', 'Grading', 'GradingBSA', 'LearningAreas', 'Login', 'Login_Link', 'MyClass', 'MyClassPrimary', 'ParentSkills', 'Payments', 'PlatformSettings', 'PricingV5', 'PublishV5', 'RatingSheet', 'RatingSheetAssistant', 'SchoolAdmins', 'SchoolAdminsBSA', 'SchoolDetailBSA', 'SchoolDetailV5', 'SchoolPaused', 'SchoolsV5', 'ScoreGridSS', 'ScoreGridV5', 'SheetsV5', 'StudentDetail', 'SuperBillingV5', 'TemplateEditorBSA', 'TemplateEditorV5'].includes(n) ? '_Phone' : '') + '.dc.html');
+    const items = [[null, 'Dashboard', 'DashboardV5', 'dash'], ['Results', 'Approvals', 'Approvals', 'approve', '4', 'count strong'], [null, 'Publish results', 'PublishV5', 'send'], [null, 'Students needing attention', 'Attention', 'flag'], [null, 'Report templates', 'TemplateEditorV5', 'tmpl'], [null, 'Audit trail', '#audit-trail', 'audit'],
+      ['People', 'Students', 'StudentDetail', 'student'], [null, 'Teachers', '#teachers', 'teacher'], [null, 'Reviewers', '#reviewers', 'review'], [null, 'Parents', '#parents', 'parent'], [null, 'School admins', 'SchoolAdmins', 'shield'],
+      ['School', 'School setup', 'Assessment', 'setup'], [null, 'Notices', '#notices', 'bell'], [null, 'Corrections', 'Corrections', 'corr', '1', 'count'], [null, 'Emails', '#emails', 'mail'], [null, 'Billing', 'BillingV5', 'bill'], [null, 'School settings', '#school-settings', 'settings']];
+    return items.map(([grp, label, href, ic, count, countCls]) => ({ grp: grp || '', label, href: pg(href), d: I[ic], count: count || '', countCls: countCls || '', cls: label === active ? 'on' : '', cur: label === active ? 'page' : 'false' }));
+  }
+  sugg(a) { return a >= 70 ? 'An excellent result. Keep it up.' : a >= 55 ? 'A good term. Aim higher next term.' : a >= 45 ? 'Fair work. More effort is needed in weak subjects.' : 'Needs serious improvement. Please see the form teacher.'; }
+  renderVals() {
+    const P = this.props, st = this.state, I = this.icons();
+    const theme = String(P.theme || 'Light').toLowerCase(), device = String(P.device || 'Desktop').toLowerCase(), view = String(P.state || 'Default').toLowerCase();
+    const phone = device === 'phone';
+    const ftOk = P.sections !== 'Form teacher not submitted';
+    const pcDone = st.students.filter((s) => s.comment.trim()).length;
+    const pcOk = pcDone === st.students.length;
+    const ok = (text) => ({ text, ic: I.ok, ink: 'var(--success-ink)', word: 'Done', bcls: 'b-success', hasSub: false, sub: '' });
+    const checks = [
+      ok('All 13 subject sheets approved'), ok('No missing or invalid scores'),
+      ftOk ? ok('Form teacher sections submitted') : { text: 'Form teacher sections submitted', ic: I.x, ink: 'var(--danger)', word: 'Not yet', bcls: 'b-danger', hasSub: true, sub: 'Form teacher comments for JSS 1A are not submitted yet.' },
+      pcOk ? ok("Principal's comments added for 12 of 12 students") : { text: "Principal's comments added for " + pcDone + ' of 12 students', ic: I.clock, ink: 'var(--warning-ink)', word: 'To do', bcls: 'b-warning', hasSub: true, sub: 'Add the rest below.' },
+      ok('Report template: Greenfield Junior Secondary, version 3')
+    ];
+    const blocked = !ftOk || !pcOk || st.published;
+    const thrN = Number(st.thr); const thrBad = st.thr.trim() === '' || isNaN(thrN) || thrN < 0 || thrN > 100;
+    const bulkN = thrBad ? 0 : st.students.filter((s) => s.avg > thrN && !s.comment.trim()).length;
+    const students = st.students.map((s, i) => {
+      const sg = this.sugg(s.avg); const empty = !s.comment.trim();
+      return { ...s, avg: s.avg.toFixed(1), sugg: sg, showSugg: empty && !st.published, inputCls: empty ? 'miss' : '',
+        onComment: (e) => this.setState({ students: st.students.map((x, j) => (j === i ? { ...x, comment: e.target.value } : x)) }),
+        useSugg: () => this.setState({ students: st.students.map((x, j) => (j === i ? { ...x, comment: sg } : x)) }) };
+    });
+    const main = view === 'default';
+    let barMsg, barIc, barInk;
+    if (st.published) { barMsg = 'Published 7 Oct 2026. Changes now need a correction with a reason.'; barIc = I.lock; barInk = 'var(--success-ink)'; }
+    else if (!ftOk) { barMsg = 'Form teacher comments for JSS 1A are not submitted yet.'; barIc = I.x; barInk = 'var(--danger)'; }
+    else if (!pcOk) { barMsg = 'Add principal\'s comments for ' + (12 - pcDone) + ' more students to publish.'; barIc = I.clock; barInk = 'var(--warning-ink)'; }
+    else { barMsg = 'You can still correct a result later with a reason. The old version is kept.'; barIc = I.ok; barInk = 'var(--muted)'; }
+    return {
+      theme, device, ic: I, nav: this.nav('Publish results', phone), locked: st.published,
+      isLoading: view === 'loading', isError: view === 'error', isEmpty: view === 'empty', showMain: main, showBar: main,
+      checks, ftBlocked: !ftOk, readyLabel: blocked && !st.published ? 'Not ready' : 'Ready', readyCls: blocked && !st.published ? 'b-warning' : 'b-success', readyIc: blocked && !st.published ? I.clock : I.ok,
+      pcDone, pcWord: pcOk ? 'Done' : 'To do', pcCls: pcOk ? 'b-success' : 'b-warning', pcIc: pcOk ? I.ok : I.clock,
+      thr: st.thr, onThr: (e) => this.setState({ thr: e.target.value }), thrBad, bulk: st.bulk, onBulk: (e) => this.setState({ bulk: e.target.value }), bulkN,
+      applyBulk: () => { if (thrBad) return; this.setState({ students: st.students.map((x) => (x.avg > thrN && !x.comment.trim() ? { ...x, comment: st.bulk } : x)), toast: 'Comment added for ' + bulkN + ' students. Existing comments were kept.' }); },
+      students, previewComment: st.students[0].comment || 'No comment yet.',
+      published: st.published, blocked, barMsg, barIc, barInk, btnMax: phone ? 'none' : '300px', dashHref: phone ? 'DashboardV5_Phone.dc.html' : 'DashboardV5.dc.html',
+      confirming: st.confirming, ask: () => { if (!blocked) this.setState({ confirming: true }); }, cancel: () => this.setState({ confirming: false }), confirm: () => this.setState({ confirming: false, published: true }),
+      toast: st.toast, hideToast: () => this.setState({ toast: '' }), toastPos: phone ? 'absolute' : 'fixed',
+      drawer: st.drawer, openDrawer: () => this.setState({ drawer: true }), closeDrawer: () => this.setState({ drawer: false })
+    };
+  }
+}
+</script>
+</body>
+</html>

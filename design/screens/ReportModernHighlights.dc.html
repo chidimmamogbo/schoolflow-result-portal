@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Report card, highlights on</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.mh{width:794px;height:1123px;box-sizing:border-box;background:#ffffff;font-family:Inter,'Segoe UI',system-ui,sans-serif;color:#0f172a;padding:36px 44px 28px;display:flex;flex-direction:column;gap:12px;font-variant-numeric:tabular-nums}
+.mh > *{flex-shrink:0}
+.mh .lb{display:block;color:#5b6475;font-size:11px}
+.mh .tb{border:1px solid #c9d0db}
+.mh .sg{display:grid;grid-template-columns:minmax(0,2.85fr) repeat(3,minmax(0,.56fr)) minmax(0,.7fr) minmax(0,.66fr) minmax(0,1.05fr) minmax(0,.85fr) minmax(0,.8fr) minmax(0,.8fr) minmax(0,.8fr);align-items:stretch;font-size:12.5px;line-height:16px}
+.mh .sg > span{padding:3px 4px;text-align:center;border-right:1px solid #c9d0db;display:flex;align-items:center;justify-content:center}
+.mh .sg > span:last-child{border-right:0}
+.mh .sg > span:first-child{justify-content:flex-start;text-align:left;padding-left:6px;font-weight:500}
+.mh .hd{background:#14532d;color:#ffffff;font-weight:600;font-size:11px;line-height:13px}
+.mh .hd > span{border-right-color:rgba(255,255,255,.3)}
+.mh .hd > span.x{background:#0f3d22}
+.mh .rw{border-top:1px solid #c9d0db}
+.mh .rw:nth-child(odd){background:#f4f7f5}
+.mh .b{font-weight:700}
+.mh .lo{display:inline-flex;align-items:center;gap:2px;font-weight:800;color:#a61b1b;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:2px}
+.mh .lo svg{width:11px;height:11px;flex-shrink:0}
+.mh .rt{border-collapse:collapse;width:100%;font-size:13px}
+.mh .rt th,.mh .rt td{border:1px solid #c9d0db;padding:4px 8px}
+.mh .rt th{text-align:left;font-weight:500}
+.mh .rt td{text-align:center;width:44px;font-weight:600}
+</style>
+</helmet>
+<div class="mh">
+  <header style="display: flex; align-items: center; gap: 16px; border-bottom: 3px solid #14532d; padding-bottom: 14px">
+    <span aria-hidden="true" style="width: 72px; height: 72px; flex-shrink: 0; border-radius: 14px; background: #14532d; color: #ffffff; font-size: 22px; font-weight: 700; display: flex; align-items: center; justify-content: center">GMC</span>
+    <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px">
+      <span style="font-size: 24px; line-height: 30px; font-weight: 700; letter-spacing: 0.02em; color: #14532d">GREENFIELD MODEL COLLEGE</span>
+      <span style="font-size: 13px; color: #5b6475">Independence Layout, Enugu · [SCHOOL PHONE] · [SCHOOL EMAIL]</span>
+      <span style="font-size: 13px; font-style: italic; color: #14532d">[SCHOOL MOTTO]</span>
+    </div>
+    <div style="text-align: right; display: flex; flex-direction: column; gap: 2px; white-space: nowrap">
+      <span style="font-size: 15px; font-weight: 700">FIRST TERM REPORT</span>
+      <span style="font-size: 13px; color: #5b6475">2026/2027 Session</span>
+    </div>
+  </header>
+
+  <section aria-label="Student details" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px 16px; font-size: 13px; background: #f4f7f5; border-radius: 6px; padding: 12px 14px">
+    <div><span class="lb">NAME</span><strong style="font-size: 15px">{{s.name}}</strong></div>
+    <div><span class="lb">ADMISSION NO.</span><strong>{{s.adm}}</strong></div>
+    <div><span class="lb">CLASS</span><strong>JSS 1A</strong></div>
+    <div><span class="lb">TERM DATES</span><strong>8 Sep to 11 Dec 2026</strong></div>
+    <div><span class="lb">NO. IN CLASS</span><strong>12</strong></div>
+    <div><span class="lb">ATTENDANCE</span><strong>{{s.present}} of 60</strong></div>
+    <div><span class="lb">FORM TEACHER</span><strong>Mr. Tunde Adebayo</strong></div>
+    <div><span class="lb">NEXT TERM BEGINS</span><strong>5 Jan 2027</strong></div>
+  </section>
+
+  <div class="tb" role="table" aria-label="Subject scores">
+    <div class="sg hd" role="row"><span role="columnheader">Subject</span><span role="columnheader">CA1<br>20</span><span role="columnheader">CA2<br>20</span><span role="columnheader">Exam<br>60</span><span role="columnheader">Total<br>100</span><span role="columnheader">Grade</span><span role="columnheader">Remark</span><span role="columnheader">Subject<br>position</span><span role="columnheader">Class<br>average</span><span role="columnheader" class="x">Highest<br>in class</span><span role="columnheader" class="x">Lowest<br>in class</span></div>
+    <sc-for list="{{rows}}" as="r" hint-placeholder-count="13">
+      <div class="sg rw" role="row">
+        <span role="rowheader">{{r.name}}</span><span role="cell">{{r.c1}}</span><span role="cell">{{r.c2}}</span><span role="cell">{{r.ex}}</span>
+        <span role="cell">
+          <sc-if value="{{r.low}}" hint-placeholder-val="{{ false }}"><span class="lo" aria-label="{{r.total}}, below pass mark"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3L22.5 21h-21z"></path></svg>{{r.total}}</span></sc-if>
+          <sc-if value="{{r.ok}}" hint-placeholder-val="{{ true }}"><span class="b">{{r.total}}</span></sc-if>
+        </span>
+        <span role="cell" class="b">{{r.grade}}</span><span role="cell">{{r.remark}}</span><span role="cell">{{r.pos}}</span><span role="cell">{{r.avg}}</span><span role="cell">{{r.hi}}</span><span role="cell">{{r.lo}}</span>
+      </div>
+    </sc-for>
+  </div>
+
+  <section aria-label="Summary" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border: 2px solid #14532d; border-radius: 6px; overflow: hidden; text-align: center">
+    <div style="padding: 8px; border-right: 1px solid #c9d0db"><span class="lb">TOTAL SCORE</span><strong style="font-size: 18px">{{total}}</strong></div>
+    <div style="padding: 8px; border-right: 1px solid #c9d0db"><span class="lb">TOTAL AVERAGE</span><strong style="font-size: 18px">{{avg}}</strong></div>
+    <div style="padding: 8px; border-right: 1px solid #c9d0db; background: #14532d; color: #ffffff"><span class="lb" style="color: #ffffff">OVERALL CLASS POSITION</span><strong style="font-size: 18px">{{s.pos}}</strong></div>
+    <div style="padding: 8px"><span class="lb">NO. IN CLASS</span><strong style="font-size: 18px">12</strong></div>
+  </section>
+
+  <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px">
+    <table class="rt">
+      <thead><tr><th scope="col" colspan="2" style="background: #f4f7f5; font-weight: 700; font-size: 12px">AFFECTIVE DOMAIN (1 to 5)</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">Punctuality</th><td>{{s.a0}}</td></tr>
+        <tr><th scope="row">Neatness</th><td>{{s.a1}}</td></tr>
+        <tr><th scope="row">Politeness</th><td>{{s.a2}}</td></tr>
+        <tr><th scope="row">Attentiveness</th><td>{{s.a3}}</td></tr>
+        <tr><th scope="row">Relationship with others</th><td>{{s.a4}}</td></tr>
+      </tbody>
+    </table>
+    <table class="rt">
+      <thead><tr><th scope="col" colspan="2" style="background: #f4f7f5; font-weight: 700; font-size: 12px">PSYCHOMOTOR DOMAIN (1 to 5)</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">Handwriting</th><td>{{s.p0}}</td></tr>
+        <tr><th scope="row">Sports and games</th><td>{{s.p1}}</td></tr>
+        <tr><th scope="row">Crafts</th><td>{{s.p2}}</td></tr>
+        <tr><th scope="row">Verbal fluency</th><td>{{s.p3}}</td></tr>
+        <tr><th scope="row">Musical skills</th><td>{{s.p4}}</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <section aria-label="Comments" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; font-size: 13px">
+    <div style="display: flex; flex-direction: column; gap: 6px">
+      <span style="font-size: 11px; font-weight: 700; color: #14532d">FORM TEACHER'S COMMENT</span>
+      <p style="margin: 0; line-height: 19px">{{s.ftc}}</p>
+      <div style="margin-top: auto; padding-top: 14px"><div style="border-top: 1px solid #0f172a; padding-top: 4px; display: flex; justify-content: space-between; color: #5b6475; font-size: 11px"><span>Mr. Tunde Adebayo</span><span>Signature</span></div></div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 6px">
+      <span style="font-size: 11px; font-weight: 700; color: #14532d">PRINCIPAL'S COMMENT</span>
+      <p style="margin: 0; line-height: 19px">{{s.pc}}</p>
+      <div style="margin-top: auto; padding-top: 14px"><div style="border-top: 1px solid #0f172a; padding-top: 4px; display: flex; justify-content: space-between; color: #5b6475; font-size: 11px"><span>Mrs. Ngozi Okeke</span><span>Signature and stamp</span></div></div>
+    </div>
+  </section>
+
+  <div style="display: flex; flex-direction: column; gap: 4px; font-size: 11px; color: #5b6475; line-height: 16px">
+    <p style="margin: 0">Grading: A1 75 to 100 Excellent · B2 70 to 74 Very good · B3 65 to 69 Good · C4 60 to 64, C5 55 to 59, C6 50 to 54 Credit · D7 45 to 49, E8 40 to 44 Pass · F9 0 to 39 Fail</p>
+    <p style="margin: 0; display: flex; align-items: center; gap: 6px; color: #0f172a"><span class="lo" style="font-size: 12px"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3L22.5 21h-21z"></path></svg>39</span><span>Below pass mark (40). The score is bold, underlined and marked with a triangle.</span></p>
+  </div>
+
+  <footer style="margin-top: auto; display: flex; align-items: center; gap: 16px; border-top: 1px solid #c9d0db; padding-top: 12px">
+    <div aria-label="QR code placeholder" style="width: 84px; height: 84px; flex-shrink: 0; border: 2px dashed #737c8f; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: #5b6475; text-align: center">QR CODE</div>
+    <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 3px; font-size: 12px">
+      <span><strong>Report ID</strong> {{s.rid}} · <strong>Revision</strong> 1 · <strong>Published</strong> 8 Dec 2026</span>
+      <span>Verify this report: scan the QR code or enter code <strong style="letter-spacing: 0.06em">{{s.code}}</strong> at [VERIFY URL]</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 6px; font-size: 11px; color: #5b6475; white-space: nowrap"><img src="/_blob/b5461303d7a8d45a18f7975e283523ab" alt="" style="width: 18px; height: 18px">Powered by SchoolFlow</div>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"student":{"editor":"enum","options":["Chukwuemeka Obi","Halima Garba"],"default":"Halima Garba"},"$preview":{"width":794,"height":1123}}'>
+class Component extends DCLogic {
+  grade(t) {
+    const b = [[75, 'A1', 'Excellent'], [70, 'B2', 'Very good'], [65, 'B3', 'Good'], [60, 'C4', 'Credit'], [55, 'C5', 'Credit'], [50, 'C6', 'Credit'], [45, 'D7', 'Pass'], [40, 'E8', 'Pass'], [0, 'F9', 'Fail']];
+    for (const x of b) if (t >= x[0]) return x;
+    return b[b.length - 1];
+  }
+  ord(n) { const s = ['th', 'st', 'nd', 'rd'], v = n % 100; return n + (s[(v - 20) % 10] || s[v] || s[0]); }
+  renderVals() {
+    const PASS = 40;
+    // class figures, the same for every student: [subject, class average, highest in class, lowest in class]
+    const cls = [
+      ['English Language', '65.1', 77, 44], ['Mathematics', '64.8', 87, 39], ['Basic Science', '61.7', 72, 35], ['Basic Technology', '60.2', 79, 34],
+      ['Social Studies', '70.3', 84, 39], ['Civic Education', '68.9', 81, 33], ['Igbo Language', '63.5', 84, 42], ['Agricultural Science', '66.0', 74, 42],
+      ['Computer Studies', '69.4', 78, 30], ['Christian Religious Studies', '71.2', 85, 31], ['Business Studies', '62.8', 76, 42],
+      ['Cultural and Creative Arts', '67.5', 83, 47], ['Physical and Health Education', '72.1', 88, 21]
+    ];
+    const S = {
+      'Chukwuemeka Obi': {
+        name: 'Chukwuemeka Obi', adm: 'GMC/2026/014', present: 57, pos: '3rd', rid: 'GMC-2627-T1-JSS1A-014', code: '7KQ4-M2XD',
+        sc: [[15, 14, 45], [16, 15, 47], [14, 13, 42], [13, 12, 40], [16, 15, 49], [15, 14, 47], [12, 12, 38], [14, 13, 44], [14, 14, 44], [15, 15, 47], [13, 13, 40], [14, 13, 43], [14, 13, 41]],
+        sp: [4, 2, 5, 6, 2, 3, 7, 4, 5, 3, 6, 4, 7],
+        aff: [5, 4, 5, 4, 5], psy: [4, 5, 3, 4, 3],
+        ftc: 'Chukwuemeka is attentive and works well with others. More reading at home will lift his English.',
+        pc: 'A good result. Keep it up.'
+      },
+      'Halima Garba': {
+        name: 'Halima Garba', adm: 'GMC/2026/010', present: 54, pos: '11th', rid: 'GMC-2627-T1-JSS1A-010', code: 'P8WN-4TCE',
+        sc: [[11, 10, 30], [9, 8, 22], [8, 7, 20], [10, 11, 30], [11, 10, 31], [11, 11, 31], [9, 9, 24], [12, 11, 31], [9, 8, 23], [8, 9, 23], [10, 10, 28], [12, 11, 32], [9, 9, 23]],
+        sp: [10, 10, 12, 10, 11, 10, 12, 9, 10, 11, 10, 7, 11],
+        aff: [4, 4, 4, 3, 4], psy: [4, 3, 4, 3, 4],
+        ftc: 'Halima is hardworking. She needs extra help in Basic Science.',
+        pc: 'Halima can do better. Extra practice in Mathematics and Basic Science will help.'
+      }
+    };
+    const s = { ...(S[this.props.student] || S['Halima Garba']) };
+    s.aff.forEach((v, i) => { s['a' + i] = v; }); s.psy.forEach((v, i) => { s['p' + i] = v; });
+    let total = 0;
+    const rows = cls.map(([name, avg, hi, lo], i) => {
+      const [c1, c2, ex] = s.sc[i], t = c1 + c2 + ex; total += t;
+      const g = this.grade(t);
+      return { name, c1, c2, ex, total: t, low: t < PASS, ok: t >= PASS, grade: g[1], remark: g[2], pos: this.ord(s.sp[i]), avg, hi, lo };
+    });
+    return { s, rows, total, avg: (total / rows.length).toFixed(1) };
+  }
+}
+</script>
+</body>
+</html>

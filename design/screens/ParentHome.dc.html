@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Parent home</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#6e8bff}a:hover{color:#9db0ff}
+a:focus-visible,button:focus-visible{outline:2px solid #9db0ff;outline-offset:2px}
+.num{font-variant-numeric:tabular-nums}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #0b1220; font-family: Inter, 'Segoe UI', system-ui, sans-serif; color: #e6eaf2; display: flex; flex-direction: column">
+  <header style="height: 64px; flex-shrink: 0; display: flex; align-items: center; gap: 10px; padding: 0 8px 0 16px; background: #111a2c; border-bottom: 1px solid #24314d">
+    <span aria-hidden="true" style="width: 32px; height: 32px; border-radius: 8px; background: #14532d; color: #ffffff; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center">GMC</span>
+    <span style="flex-grow: 1; font-size: 16px; font-weight: 600">Greenfield Model College</span>
+    <a href="#notices" aria-label="Notices, 1 unread" style="position: relative; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 8px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#e6eaf2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg><span style="position: absolute; top: 6px; right: 6px; min-width: 18px; height: 18px; border-radius: 9px; background: #f87171; color: #0b1220; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center">1</span></a>
+  </header>
+
+  <main style="flex-grow: 1; overflow-y: auto; padding: 20px 16px; display: flex; flex-direction: column; gap: 18px">
+    <div style="display: flex; flex-direction: column; gap: 2px">
+      <p style="margin: 0; font-size: 14px; color: #9aa4b8">Good evening</p>
+      <h1 style="margin: 0; font-size: 24px; line-height: 32px; font-weight: 700">Mr. Ikenna Obi</h1>
+    </div>
+
+    <div role="tablist" aria-label="Choose a child" style="display: flex; gap: 10px">
+      <sc-for list="{{wards}}" as="w" hint-placeholder-count="2">
+        <button role="tab" aria-selected="{{w.sel}}" onClick="{{w.pick}}" style="flex: 1 1 0; min-width: 0; display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 12px; border: 2px solid {{w.border}}; background: {{w.bg}}; color: #e6eaf2; cursor: pointer; text-align: left; font-family: inherit">
+          <span aria-hidden="true" style="width: 36px; height: 36px; flex-shrink: 0; border-radius: 9999px; background: {{w.avatarBg}}; color: {{w.avatarInk}}; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center">{{w.initials}}</span>
+          <span style="display: flex; flex-direction: column; min-width: 0"><span style="font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{w.first}}</span><span style="font-size: 12px; color: #9aa4b8">{{w.cls}}</span></span>
+        </button>
+      </sc-for>
+    </div>
+
+    <sc-if value="{{isChuk}}" hint-placeholder-val="{{ true }}">
+      <section aria-labelledby="latest" style="background: #111a2c; border: 1px solid #24314d; border-radius: 12px; padding: 18px 16px; display: flex; flex-direction: column; gap: 14px">
+        <div style="display: flex; align-items: center; gap: 8px">
+          <h2 id="latest" style="margin: 0; flex-grow: 1; font-size: 16px; font-weight: 600">First Term 2026/2027</h2>
+          <span style="display: inline-flex; align-items: center; gap: 4px; height: 26px; padding: 0 10px; border-radius: 9999px; background: #34d399; color: #0b1220; font-size: 12px; font-weight: 700"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8.3-7 10-4-1.7-7-5.5-7-10V6z"></path><path d="M9 12l2 2 4-4"></path></svg>Published</span>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+          <div style="background: #17223a; border-radius: 8px; padding: 12px"><span style="display: block; font-size: 13px; color: #9aa4b8">Average</span><span class="num" style="font-size: 26px; font-weight: 700">71.4</span></div>
+          <div style="background: #17223a; border-radius: 8px; padding: 12px"><span style="display: block; font-size: 13px; color: #9aa4b8">Position</span><span class="num" style="font-size: 26px; font-weight: 700">3rd <span style="font-size: 14px; font-weight: 500; color: #9aa4b8">of 12</span></span></div>
+        </div>
+        <p style="margin: 0; font-size: 14px; color: #9aa4b8">Published 8 Dec 2026 · revision 1 · 13 subjects</p>
+        <a href="ReportView.dc.html" style="height: 48px; display: flex; align-items: center; justify-content: center; gap: 8px; border-radius: 8px; background: #6e8bff; color: #0b1220; font-size: 16px; font-weight: 600; text-decoration: none">View result<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+      </section>
+    </sc-if>
+    <sc-if value="{{isAda}}" hint-placeholder-val="{{ false }}">
+      <section style="background: #111a2c; border: 1px solid #24314d; border-radius: 12px; padding: 18px 16px; display: flex; flex-direction: column; gap: 12px">
+        <div style="display: flex; align-items: center; gap: 8px">
+          <h2 style="margin: 0; flex-grow: 1; font-size: 16px; font-weight: 600">First Term 2026/2027</h2>
+          <span style="display: inline-flex; align-items: center; gap: 4px; height: 26px; padding: 0 10px; border-radius: 9999px; background: #1a2236; color: #9aa4b8; font-size: 12px; font-weight: 600"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>Not published yet</span>
+        </div>
+        <p style="margin: 0; font-size: 15px; line-height: 22px; color: #9aa4b8">Primary 4 results are still being checked. We'll send you a notice the moment they're ready.</p>
+      </section>
+    </sc-if>
+
+    <section aria-labelledby="nt" style="display: flex; flex-direction: column; gap: 10px">
+      <h2 id="nt" style="margin: 0; font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: #9aa4b8">Notices</h2>
+      <a href="ReportView.dc.html" style="text-decoration: none; color: inherit; background: #111a2c; border: 1px solid #24314d; border-radius: 12px; padding: 14px 16px; display: flex; gap: 12px; align-items: flex-start">
+        <span aria-label="Unread" style="width: 8px; height: 8px; border-radius: 9999px; background: #6e8bff; margin-top: 7px; flex-shrink: 0"></span>
+        <span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 600; color: #e6eaf2">First Term results for JSS 1 are now available</span><span style="font-size: 13px; color: #9aa4b8">Automatic notice · 8 Dec 2026, 14:02</span></span>
+      </a>
+      <div style="background: #111a2c; border: 1px solid #24314d; border-radius: 12px; padding: 14px 16px; display: flex; gap: 12px; align-items: flex-start">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9aa4b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; margin-top: 2px"><path d="M12 17v5"></path><path d="M9 10.8V6h6v4.8l2 3.2H7z"></path><path d="M8 3h8"></path></svg>
+        <span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 600">Inter-house sports holds on Friday, 14 November</span><span style="font-size: 13px; color: #9aa4b8">Pinned · from the principal</span></span>
+      </div>
+    </section>
+  </main>
+
+  <nav aria-label="Main" style="height: 72px; flex-shrink: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); background: #111a2c; border-top: 1px solid #24314d">
+    <a href="#home" aria-current="page" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-size: 12px; font-weight: 600; color: #6e8bff; text-decoration: none"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10l9-7 9 7v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"></path></svg>Home</a>
+    <a href="ReportView.dc.html" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-size: 12px; font-weight: 500; color: #9aa4b8; text-decoration: none"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><path d="M14 3v6h6M8 13h8M8 17h5"></path></svg>Results</a>
+    <a href="#notices" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-size: 12px; font-weight: 500; color: #9aa4b8; text-decoration: none"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg>Notices</a>
+    <a href="#profile" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-size: 12px; font-weight: 500; color: #9aa4b8; text-decoration: none"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21a8 8 0 0 1 16 0"></path></svg>Profile</a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { ward: 0 }; }
+  renderVals() {
+    const list = [
+      { first: 'Chukwuemeka', cls: 'JSS 1A', initials: 'CO' },
+      { first: 'Adaeze', cls: 'Primary 4', initials: 'AO' }
+    ];
+    const wards = list.map((w, i) => {
+      const on = this.state.ward === i;
+      return { ...w, sel: on ? 'true' : 'false', border: on ? '#6e8bff' : '#24314d', bg: on ? '#16223f' : '#111a2c', avatarBg: on ? '#6e8bff' : '#17223a', avatarInk: on ? '#0b1220' : '#e6eaf2', pick: () => this.setState({ ward: i }) };
+    });
+    return { wards, isChuk: this.state.ward === 0, isAda: this.state.ward === 1 };
+  }
+}
+</script>
+</body>
+</html>

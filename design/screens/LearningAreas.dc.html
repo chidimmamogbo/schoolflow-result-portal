@@ -1,0 +1,393 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Learning areas and skills</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="sf.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>body{margin:0}
+.sf .stabs{display:flex;gap:2px;border-bottom:1px solid var(--border);overflow-x:auto}
+.sf .stabs a,.sf .stabs button{min-height:44px;display:inline-flex;align-items:center;padding:0 14px;border:0;border-bottom:3px solid transparent;margin-bottom:-1px;background:transparent;color:var(--muted);font:600 14px Inter,system-ui,sans-serif;text-decoration:none;white-space:nowrap;cursor:pointer}
+.sf .stabs a[aria-current="page"],.sf .stabs button[aria-selected="true"]{color:var(--primary);border-bottom-color:var(--primary)}
+.sf .iconbtn.ib{width:36px;height:36px}
+.sf[data-device="phone"] .iconbtn.ib{width:44px;height:44px}
+.sf .iconbtn[disabled]{opacity:.35;cursor:not-allowed;background:transparent}
+.sf .menu{position:absolute;z-index:6;min-width:220px;background:var(--surface);border:1px solid var(--border);border-radius:10px;box-shadow:var(--shadow-md);padding:6px;display:flex;flex-direction:column}
+.sf .menu button{min-height:40px;text-align:left;padding:0 12px;border:0;border-radius:6px;background:transparent;color:var(--text);font:500 14px Inter,system-ui,sans-serif;cursor:pointer;display:flex;align-items:center;gap:8px}
+.sf .menu button[aria-selected="true"]{background:var(--primary-soft);color:var(--primary);font-weight:600}
+.sf[data-device="phone"] .menu button{min-height:44px}
+
+.sf .la{display:grid;grid-template-columns:340px minmax(0,1fr);gap:24px;align-items:start}
+.sf[data-device="phone"] .la{grid-template-columns:minmax(0,1fr);gap:16px}
+.sf .alist{list-style:none;margin:0;padding:6px 0}
+.sf .arow{display:flex;align-items:center;gap:4px;padding:2px 10px 2px 8px;border-left:3px solid transparent}
+.sf .arow.on{background:var(--primary-soft);border-left-color:var(--primary)}
+.sf .apick{flex:1 1 auto;min-width:0;min-height:52px;display:flex;align-items:center;gap:8px;border:0;background:transparent;color:var(--text);text-align:left;padding:6px 8px;border-radius:8px;cursor:pointer;font:inherit}
+.sf .apick .an{font-weight:600;font-size:15px}
+.sf .arow.on .apick .an{color:var(--primary)}
+.sf .ord{display:flex;gap:0;flex-shrink:0}
+.sf .slist{list-style:none;margin:0;padding:0}
+.sf .srow{display:flex;align-items:center;gap:12px;padding:12px 20px;border-top:1px solid var(--border)}
+.sf .srow:first-child{border-top:0}
+.sf[data-device="phone"] .srow{padding:12px 12px 12px 8px;gap:6px;align-items:flex-start;flex-wrap:wrap}
+.sf[data-device="phone"] .srow .acts{width:100%;justify-content:flex-end;border-top:1px dashed var(--border);padding-top:4px}
+.sf .sn{font-weight:600;font-size:15px}
+.sf .nodesc{font-style:italic}
+.sf .cf{padding:14px 20px;border-top:1px solid var(--border);display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.sf[data-device="phone"] .cf{padding:14px 16px}
+.sf .fsel{display:flex;align-items:center;gap:8px;cursor:pointer;text-align:left;font-weight:500}
+.sf[data-device="phone"] .rt .tr .td .input{width:100%;max-width:none}
+</style>
+</helmet>
+<div class="sf" data-theme="{{theme}}" data-device="{{device}}" style="--school: #7a1f2b">
+<div class="app">
+  <aside class="side desk-only " aria-label="School navigation">
+    <div class="brand"><span class="crest" aria-hidden="true">BSA</span><span class="col bt" style="gap: 0"><span style="font-weight: 700; font-size: 15px; line-height: 20px">Bright Stars Academy</span><span class="muted" style="font-size: 13px">Nsukka</span></span></div>
+    <nav class="nav" aria-label="Main">
+      <sc-for list="{{nav}}" as="n" hint-placeholder-count="16">
+        <sc-if value="{{n.grp}}" hint-placeholder-val="{{ false }}"><span class="cap grp">{{n.grp}}</span></sc-if>
+        <a href="{{n.href}}" class="{{n.cls}}" aria-current="{{n.cur}}" title="{{n.label}}"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{n.d}}"></path></svg><span class="l">{{n.label}}</span><sc-if value="{{n.count}}" hint-placeholder-val="{{ false }}"><span class="{{n.countCls}}">{{n.count}}</span></sc-if></a>
+      </sc-for>
+    </nav>
+    <div class="powered"><img src="/_blob/b5461303d7a8d45a18f7975e283523ab" alt="" style="width: 20px; height: 20px"><span class="pw">Powered by SchoolFlow</span></div>
+  </aside>
+  <div class="main">
+    <header class="top desk-only">
+      <nav class="crumb" aria-label="Breadcrumb"><a href="DashboardV5.dc.html">Dashboard</a> / School setup / <b>Learning areas and skills</b></nav>
+      <button class="iconbtn" aria-label="Notices, 2 unread"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.bell}}"></path></svg><span class="dot">2</span></button>
+      <button class="btn sm" aria-label="Profile menu" style="border: 0"><span class="crest" aria-hidden="true" style="width: 32px; height: 32px; border-radius: 9999px; font-size: 12px">CN</span><span class="col" style="gap: 0; align-items: flex-start"><span style="font-size: 14px">Mrs. Chiamaka Nwafor</span><span class="muted" style="font-size: 12px; font-weight: 500">Head teacher</span></span></button>
+    </header>
+    <header class="phead phone-only">
+      <button class="iconbtn" aria-label="Open menu" onClick="{{openDrawer}}"><svg class="i l" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.menu}}"></path></svg></button>
+      <span class="crest" aria-hidden="true" style="width: 30px; height: 30px; font-size: 10px; border-radius: 8px">BSA</span>
+      <span class="ttl">Learning areas and skills</span>
+      <button class="iconbtn" aria-label="Notices, 2 unread"><svg class="i l" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.bell}}"></path></svg><span class="dot">2</span></button>
+    </header>
+
+    <main class="content">
+      <div class="col" style="gap: 4px"><h1 class="h1 desk-only">Learning areas and skills</h1><p class="muted" style="font-size: 15px">Choose what nursery teachers rate each term. Each learning area has its own rating sheet.</p></div>
+      <nav class="stabs" aria-label="School setup"><sc-for list="{{stabs}}" as="t" hint-placeholder-count="8"><a href="{{t.href}}" aria-current="{{t.cur}}">{{t.label}}</a></sc-for></nav>
+      <div class="row" style="gap: 12px">
+        <div class="seg" role="tablist" aria-label="Level"><button role="tab" aria-selected="true">Nursery</button></div>
+        <span class="help grow" style="min-width: 220px">Only levels on Skill ratings show here. Primary uses Scores. <a href="{{assessHref}}">Change in Assessment</a></span>
+      </div>
+
+      <sc-if value="{{isLoading}}" hint-placeholder-val="{{ false }}">
+        <div class="la" aria-busy="true"><div class="card col"><div class="skel" style="height: 22px; width: 50%"></div><div class="skel" style="height: 44px"></div><div class="skel" style="height: 44px"></div><div class="skel" style="height: 44px"></div><div class="skel" style="height: 44px"></div><div class="skel" style="height: 44px"></div></div><div class="card col"><div class="skel" style="height: 28px; width: 40%"></div><div class="skel" style="height: 56px"></div><div class="skel" style="height: 56px"></div><div class="skel" style="height: 44px; width: 30%"></div></div></div>
+        <div class="card col" aria-busy="true"><div class="skel" style="height: 22px; width: 30%"></div><div class="skel" style="height: 44px"></div><div class="skel" style="height: 44px"></div><div class="skel" style="height: 44px"></div></div>
+      </sc-if>
+      <sc-if value="{{isError}}" hint-placeholder-val="{{ false }}">
+        <div class="card state" role="alert"><span class="ic" style="background: var(--danger-soft); color: var(--danger)"><svg class="i l" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.alert}}"></path></svg></span><p class="h3">We couldn't load learning areas and skills.</p><p class="muted">Check your connection and try again.</p><button class="btn primary">Try again</button></div>
+      </sc-if>
+
+      <sc-if value="{{showMain}}" hint-placeholder-val="{{ true }}">
+        <div class="alert a-info"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.info}}"></path></svg><span>Published reports keep the scale and skills they were published with.</span></div>
+      </sc-if>
+
+      <sc-if value="{{noAreas}}" hint-placeholder-val="{{ false }}">
+        <div class="card state"><span class="ic" style="background: var(--primary-soft); color: var(--primary)"><svg class="i l" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.book}}"></path></svg></span><p class="h3">No learning areas yet.</p><p class="muted" style="max-width: 440px">Add the areas nursery teachers rate, like Number work or Phonics. Then add the skills in each one.</p><button class="btn primary" onClick="{{openAddArea}}"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.plus}}"></path></svg>Add learning area</button></div>
+      </sc-if>
+
+      <sc-if value="{{hasAreas}}" hint-placeholder-val="{{ true }}">
+        <div class="la">
+          <section class="card flush" aria-labelledby="lah" style="display: {{listDisp}}; flex-direction: column">
+            <div class="card-head"><h2 id="lah" class="h3 grow">Learning areas</h2><span class="badge sm b-neutral num">{{areaCount}}</span></div>
+            <ul class="alist">
+              <sc-for list="{{areas}}" as="a" hint-placeholder-count="8">
+                <li class="arow {{a.cls}}">
+                  <button class="apick" aria-current="{{a.cur}}" onClick="{{a.pick}}"><span class="col grow" style="gap: 0"><span class="an">{{a.name}}</span><span class="help">{{a.meta}}</span></span><svg class="i phone-only" viewBox="0 0 24 24" aria-hidden="true" style="color: var(--muted)"><path d="{{ic.next}}"></path></svg></button>
+                  <span class="ord"><button class="iconbtn ib" aria-label="Move {{a.name}} up" disabled="{{a.first}}" onClick="{{a.up}}"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.up}}"></path></svg></button><button class="iconbtn ib" aria-label="Move {{a.name}} down" disabled="{{a.last}}" onClick="{{a.down}}"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.down}}"></path></svg></button></span>
+                </li>
+              </sc-for>
+            </ul>
+            <div class="cf"><button class="btn full" onClick="{{openAddArea}}"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.plus}}"></path></svg>Add learning area</button></div>
+          </section>
+
+          <section class="card flush" aria-labelledby="skh" style="display: {{skillsDisp}}; flex-direction: column">
+            <sc-if value="{{phone}}" hint-placeholder-val="{{ false }}"><div style="padding: 8px 8px 0"><button class="btn sm" onClick="{{back}}" style="border: 0; min-height: 44px"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.back}}"></path></svg>Learning areas</button></div></sc-if>
+            <div class="card-head" style="align-items: flex-start">
+              <div class="col grow" style="gap: 6px; min-width: 220px">
+                <span class="cap">Learning area</span>
+                <h2 id="skh" class="h2">{{cur.name}}</h2>
+                <span class="row" style="gap: 6px"><span class="help">Classes:</span><sc-for list="{{cur.classes}}" as="c" hint-placeholder-count="2"><span class="badge sm b-neutral"><svg class="i s" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.users}}"></path></svg>{{c}}</span></sc-for><sc-if value="{{cur.noClasses}}" hint-placeholder-val="{{ false }}"><span class="badge sm b-warning"><svg class="i s" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.warn}}"></path></svg>No classes</span></sc-if></span>
+              </div>
+              <div class="row" style="gap: 8px"><button class="btn sm" onClick="{{openRename}}"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.edit}}"></path></svg>Rename</button><button class="btn sm" onClick="{{openAssign}}"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.users}}"></path></svg>Assign to classes</button></div>
+            </div>
+            <sc-if value="{{hasSkills}}" hint-placeholder-val="{{ true }}">
+              <ol class="slist" aria-label="Skills in {{cur.name}}">
+                <sc-for list="{{skills}}" as="s" hint-placeholder-count="2">
+                  <li class="srow">
+                    <span class="ord"><button class="iconbtn ib" aria-label="Move {{s.name}} up" disabled="{{s.first}}" onClick="{{s.up}}"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.up}}"></path></svg></button><button class="iconbtn ib" aria-label="Move {{s.name}} down" disabled="{{s.last}}" onClick="{{s.down}}"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.down}}"></path></svg></button></span>
+                    <span class="col grow" style="gap: 2px; min-width: 0"><span class="sn">{{s.name}}</span><span class="help {{s.descCls}}">{{s.descText}}</span></span>
+                    <span class="row acts" style="gap: 4px"><button class="btn sm" onClick="{{s.edit}}" aria-label="Edit {{s.name}}"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.edit}}"></path></svg>Edit</button><button class="iconbtn ib" aria-label="Remove {{s.name}}" onClick="{{s.remove}}" style="color: var(--danger)"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.trash}}"></path></svg></button></span>
+                  </li>
+                </sc-for>
+              </ol>
+            </sc-if>
+            <sc-if value="{{noSkills}}" hint-placeholder-val="{{ false }}">
+              <div class="state" style="padding: 32px 20px"><p class="h3">No skills in {{cur.name}} yet.</p><p class="muted" style="max-width: 400px">Add the skills teachers will rate, like "Counts 1 to 20".</p></div>
+            </sc-if>
+            <div class="cf"><button class="btn primary" onClick="{{openAddSkill}}"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.plus}}"></path></svg>Add skill</button><span class="help grow" style="min-width: 200px">Descriptions show on the report card when "Show skill descriptions" is on in the template.</span></div>
+          </section>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{showScale}}" hint-placeholder-val="{{ true }}">
+        <section class="card flush" aria-labelledby="rsh">
+          <div class="card-head"><div class="col grow" style="gap: 2px"><h2 id="rsh" class="h3">Rating scale</h2><span class="help">Teachers pick one point for each skill. List the best point first.</span></div><span class="badge sm b-neutral num">{{scaleCount}} points</span></div>
+          <div class="rt" style="--cols: minmax(0, 1.2fr) 100px minmax(0, 2.2fr) minmax(0, 1.3fr) 44px">
+            <div class="tr th"><span>Word</span><span>Code</span><span>Description</span><span>Shows as</span><span><span class="sr">Remove</span></span></div>
+            <sc-for list="{{points}}" as="p" hint-placeholder-count="5">
+              <div class="tr">
+                <span class="td" data-label="Word"><input class="input {{p.wordCls}}" type="text" aria-label="Word for point {{p.n}}" value="{{p.word}}" onChange="{{p.onWord}}"><sc-if value="{{p.wordErr}}" hint-placeholder-val="{{ false }}"><span class="help err" role="alert">{{p.wordErr}}</span></sc-if></span>
+                <span class="td" data-label="Code"><input class="input code {{p.codeCls}}" type="text" maxlength="3" aria-label="Code for point {{p.n}}" value="{{p.code}}" onChange="{{p.onCode}}"><sc-if value="{{p.codeErr}}" hint-placeholder-val="{{ false }}"><span class="help err" role="alert">{{p.codeErr}}</span></sc-if></span>
+                <span class="td" data-label="Description"><input class="input" type="text" aria-label="Description for point {{p.n}}" value="{{p.desc}}" onChange="{{p.onDesc}}"></span>
+                <span class="td" data-label="Shows as"><span class="badge sm {{p.cls}}"><svg class="i s" viewBox="0 0 24 24" aria-hidden="true"><path d="{{p.ic}}"></path></svg>{{p.shows}}</span></span>
+                <span class="td"><button class="iconbtn ib" aria-label="Remove {{p.label}}" disabled="{{p.noRemove}}" onClick="{{p.remove}}" style="color: var(--danger)"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.trash}}"></path></svg></button></span>
+              </div>
+            </sc-for>
+          </div>
+          <div class="cf"><button class="btn sm" onClick="{{addPoint}}" disabled="{{maxPoints}}"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.plus}}"></path></svg>Add point</button><span class="help">Ratings always show the word or code, so colour is never the only clue.</span></div>
+          <div class="cf" style="align-items: flex-end">
+            <div class="field" style="position: relative; width: 340px; max-width: 100%">
+              <span id="flagL">Flag in Students needing attention at or below</span>
+              <button class="input fsel" aria-haspopup="listbox" aria-expanded="{{flagExp}}" aria-labelledby="flagL" onClick="{{toggleFlag}}"><span class="badge sm {{flagCls}}"><svg class="i s" viewBox="0 0 24 24" aria-hidden="true"><path d="{{flagIc}}"></path></svg>{{flagShows}}</span><span class="grow"></span><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.down}}"></path></svg></button>
+              <sc-if value="{{flagOpen}}" hint-placeholder-val="{{ false }}">
+                <div class="menu" role="listbox" aria-labelledby="flagL" style="left: 0; top: 76px; width: 100%">
+                  <sc-for list="{{flagOpts}}" as="o" hint-placeholder-count="5"><button role="option" aria-selected="{{o.sel}}" onClick="{{o.pick}}"><span class="badge sm {{o.cls}}"><svg class="i s" viewBox="0 0 24 24" aria-hidden="true"><path d="{{o.ic}}"></path></svg>{{o.shows}}</span></button></sc-for>
+                </div>
+              </sc-if>
+            </div>
+            <span class="help grow" style="min-width: 220px; padding-bottom: 12px">{{flagHelp}}</span>
+          </div>
+          <div class="cf" style="justify-content: flex-end; background: var(--surface-2)"><sc-if value="{{scaleBad}}" hint-placeholder-val="{{ false }}"><span class="help err grow" role="alert">Fix the highlighted points to save the scale.</span></sc-if><button class="btn primary" onClick="{{saveScale}}" disabled="{{scaleBad}}">Save rating scale</button></div>
+        </section>
+      </sc-if>
+    </main>
+
+  </div>
+</div>
+
+<sc-if value="{{dlgName}}" hint-placeholder-val="{{ false }}">
+  <div class="modal"><div class="dialog" role="dialog" aria-modal="true" aria-labelledby="dnT">
+    <h2 id="dnT" class="h3">{{nameTitle}}</h2>
+    <label class="field">Name<input class="input {{nameCls}}" type="text" value="{{draft}}" onChange="{{onDraft}}" placeholder="For example, Story time"><sc-if value="{{nameErr}}" hint-placeholder-val="{{ false }}"><span class="help err" role="alert">{{nameErr}}</span></sc-if></label>
+    <sc-if value="{{isAddArea}}" hint-placeholder-val="{{ false }}"><p class="help">It's added to Nursery 1 and Nursery 2. Change this with "Assign to classes".</p></sc-if>
+    <div class="btns"><button class="btn" onClick="{{closeDlg}}">Cancel</button><button class="btn primary" onClick="{{saveName}}" disabled="{{nameBad}}">{{nameCta}}</button></div>
+  </div></div>
+</sc-if>
+
+<sc-if value="{{dlgAssign}}" hint-placeholder-val="{{ false }}">
+  <div class="modal"><div class="dialog" role="dialog" aria-modal="true" aria-labelledby="daT">
+    <div class="col" style="gap: 2px"><h2 id="daT" class="h3">Assign to classes</h2><span class="muted" style="font-size: 14px">{{cur.name}} gets a rating sheet in each class you choose.</span></div>
+    <div class="col" role="group" aria-label="Nursery classes" style="gap: 4px">
+      <sc-for list="{{assignOpts}}" as="o" hint-placeholder-count="2"><button class="check" role="checkbox" aria-checked="{{o.on}}" onClick="{{o.toggle}}" style="min-height: 44px"><span class="bx"><svg class="i s" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.check}}"></path></svg></span>{{o.label}}</button></sc-for>
+    </div>
+    <sc-if value="{{assignNone}}" hint-placeholder-val="{{ false }}"><p class="help err" role="alert">Choose at least one class.</p></sc-if>
+    <div class="btns"><button class="btn" onClick="{{closeDlg}}">Cancel</button><button class="btn primary" onClick="{{saveAssign}}" disabled="{{assignNone}}">Save</button></div>
+  </div></div>
+</sc-if>
+
+<sc-if value="{{dlgSkill}}" hint-placeholder-val="{{ false }}">
+  <div class="modal"><div class="dialog" role="dialog" aria-modal="true" aria-labelledby="dsT">
+    <div class="col" style="gap: 2px"><h2 id="dsT" class="h3">{{skillTitle}}</h2><span class="muted" style="font-size: 14px">{{cur.name}} · Nursery</span></div>
+    <label class="field">Skill<input class="input {{skillCls}}" type="text" maxlength="60" value="{{draft}}" onChange="{{onDraft}}" placeholder="For example, Counts 1 to 20"><sc-if value="{{skillErr}}" hint-placeholder-val="{{ false }}"><span class="help err" role="alert">{{skillErr}}</span></sc-if><span class="help">Keep it short. It shows on the rating sheet and the report card.</span></label>
+    <label class="field">Description (optional)<textarea class="input" rows="3" maxlength="120" value="{{draftDesc}}" onChange="{{onDraftDesc}}" placeholder="For example, Counts objects from 1 to 20 without help."></textarea><span class="help num">{{descLeft}} characters left</span></label>
+    <div class="btns"><button class="btn" onClick="{{closeDlg}}">Cancel</button><button class="btn primary" onClick="{{saveSkill}}" disabled="{{skillBad}}">{{skillCta}}</button></div>
+  </div></div>
+</sc-if>
+
+<sc-if value="{{toast}}" hint-placeholder-val="{{ false }}">
+  <div role="status" style="position: {{toastPos}}; left: 50%; bottom: 24px; transform: translateX(-50%); z-index: 40; width: max-content; max-width: 92%; background: var(--text); color: var(--bg); border-radius: 10px; padding: 12px 16px; display: flex; gap: 12px; align-items: center; font-size: 14px; box-shadow: var(--shadow-lg)"><span>{{toast}}</span><sc-if value="{{canUndo}}" hint-placeholder-val="{{ false }}"><button class="link" onClick="{{undo}}" style="color: var(--bg)">Undo</button></sc-if><button class="iconbtn" aria-label="Dismiss" onClick="{{hideToast}}" style="color: var(--bg); width: 32px; height: 32px"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.close}}"></path></svg></button></div>
+</sc-if>
+
+<sc-if value="{{drawer}}" hint-placeholder-val="{{ false }}">
+  <div class="scrim" onClick="{{scrimClose}}"><nav class="drawer" aria-label="Menu">
+    <div class="row" style="flex-wrap: nowrap"><div class="brand grow" style="padding: 0"><span class="crest" aria-hidden="true">BSA</span><span class="col" style="gap: 0"><span style="font-weight: 700; font-size: 15px">Bright Stars Academy</span><span class="muted" style="font-size: 13px">Mrs. Chiamaka Nwafor · Head teacher</span></span></div><button class="iconbtn" aria-label="Close menu" onClick="{{closeDrawer}}"><svg class="i l" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.close}}"></path></svg></button></div>
+    <div class="nav"><sc-for list="{{nav}}" as="n" hint-placeholder-count="16">
+        <sc-if value="{{n.grp}}" hint-placeholder-val="{{ false }}"><span class="cap grp">{{n.grp}}</span></sc-if>
+        <a href="{{n.href}}" class="{{n.cls}}" aria-current="{{n.cur}}" title="{{n.label}}"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{n.d}}"></path></svg><span class="l">{{n.label}}</span><sc-if value="{{n.count}}" hint-placeholder-val="{{ false }}"><span class="{{n.countCls}}">{{n.count}}</span></sc-if></a>
+      </sc-for></div>
+    <div class="powered"><img src="/_blob/b5461303d7a8d45a18f7975e283523ab" alt="" style="width: 20px; height: 20px">Powered by SchoolFlow</div>
+  </nav></div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["Light","Dark"],"default":"Light"},"state":{"editor":"enum","options":["Default","Empty","Loading","Error"],"default":"Default"},"device":{"editor":"enum","options":["Desktop","Phone"],"default":"Desktop"},"$preview":{"width":1440,"height":1500}}'>
+class Component extends DCLogic {
+
+  constructor(props) {
+    super(props);
+    const A = [
+      ['Number work', [['Counts 1 to 20', 'Counts objects from 1 to 20 without help.'], ['Recognises shapes', 'Names a circle, a square and a triangle.']]],
+      ['Letter work', [['Recognises letters A to Z', ''], ['Writes own name', 'Writes their first name with the right letters.']]],
+      ['Phonics', [['Sounds letters correctly', 'Says the sound each letter makes.']], ['Nursery 2']],
+      ['Rhymes and songs', [['Recites rhymes', 'Recites at least three rhymes from memory.']]],
+      ['Creative arts', [['Colours within lines', '']]],
+      ['Social habits', [['Shares with others', 'Takes turns and shares toys.'], ['Greets politely', '']]],
+      ['Health habits', [['Washes hands', 'Washes hands before eating and after using the toilet.']]],
+      ['Physical development', [['Hops on one foot', 'Hops five times on each foot.']]]
+    ];
+    this.state = {
+      areas: A.map(([name, sk, cls]) => ({ name, skills: sk.map(([n, d]) => ({ name: n, desc: d })), classes: cls || ['Nursery 1', 'Nursery 2'] })),
+      touched: false, sel: 0, drill: false, dlg: null, draft: '', draftDesc: '', edit: -1, assign: [], tried: false,
+      scale: [['Excellent', 'E', 'Does this confidently every time.', 'b-success'], ['Very good', 'VG', 'Does this well most of the time.', 'b-success'], ['Good', 'G', 'Does this with a little help.', 'b-info'], ['Fair', 'F', 'Is starting to do this.', 'b-warning'], ['Needs improvement', 'NI', 'Needs more support and practice.', 'b-danger']].map(([word, code, desc, cls]) => ({ word, code, desc, cls })),
+      flag: 4, flagOpen: false, toast: '', undoAreas: null, drawer: false
+    };
+  }
+
+  icons() {
+    return {
+      dash: 'M3 3h7v9H3zM14 3h7v5h-7zM14 12h7v9h-7zM3 16h7v5H3z', approve: 'M9 11l3 3 8-8M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9', send: 'M22 2L11 13M22 2l-7 20-4-9-9-4z',
+      flag: 'M4 22V4M4 4h12l-2 4 2 4H4', tmpl: 'M4 4h16v16H4zM4 9h16M9 9v11', audit: 'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM12 7v5l3 2', student: 'M22 10L12 5 2 10l10 5 10-5zM6 12v5c3 2 9 2 12 0v-5',
+      teacher: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21a8 8 0 0 1 16 0', review: 'M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12zM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z', parent: 'M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8',
+      shield: 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z', setup: 'M3 21h18M5 21V9l7-5 7 5v12M9 21v-6h6v6', bell: 'M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.94 1.94 0 0 0 3.4 0',
+      mail: 'M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zM22 6l-10 7L2 6', bill: 'M4 5h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2zM2 10h20',
+      settings: 'M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1',
+      menu: 'M4 6h16M4 12h16M4 18h16', close: 'M18 6L6 18M6 6l12 12', alert: 'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM12 8v4M12 16h.01',
+      ok: 'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM8 12l3 3 5-6', info: 'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM12 16v-4M12 8h.01', lock: 'M5 11h14v10H5zM8 11V7a4 4 0 0 1 8 0v4',
+      warn: 'M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0zM12 9v4M12 17h.01',
+      up: 'M18 15l-6-6-6 6', down: 'M6 9l6 6 6-6', next: 'M9 18l6-6-6-6', back: 'M15 18l-6-6 6-6', plus: 'M12 5v14M5 12h14',
+      edit: 'M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z', trash: 'M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v6M14 11v6',
+      check: 'M5 12l5 5L20 7', minus: 'M5 12h14', dotc: 'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z', star: 'M12 3l2.8 5.7 6.2.9-4.5 4.4 1 6.2L12 17.3 6.5 20.2l1-6.2L3 9.6l6.2-.9z',
+      users: 'M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8',
+      book: 'M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5zM4 19.5V21h16', panel: 'M3 3h18v18H3zM9 3v18', filter: 'M3 5h18l-7 8v6l-4 2v-8z'
+    };
+  }
+  pg(n, phone) {
+    const ph = ['LearningAreas', 'ClassPage', 'BsaMenus', 'DashboardV5', 'PublishV5', 'BillingV5', 'Assessment', 'Grading'];
+    return n.startsWith('#') ? n : n + (phone && ['Assessment', 'AssessmentBSA', 'Attention', 'AttentionBSA', 'AttentionReviewer', 'AttentionTeacher', 'AttentionTeacherBSA', 'AuditLog', 'BillingV5', 'BsaMenus', 'ChangePassword', 'ClassPage', 'CreateSchool', 'DashboardV5', 'EmailLog', 'Grading', 'GradingBSA', 'LearningAreas', 'Login', 'Login_Link', 'MyClass', 'MyClassPrimary', 'ParentSkills', 'Payments', 'PlatformSettings', 'PricingV5', 'PublishV5', 'RatingSheet', 'RatingSheetAssistant', 'SchoolAdmins', 'SchoolAdminsBSA', 'SchoolDetailBSA', 'SchoolDetailV5', 'SchoolPaused', 'SchoolsV5', 'ScoreGridSS', 'ScoreGridV5', 'SheetsV5', 'StudentDetail', 'SuperBillingV5', 'TemplateEditorBSA', 'TemplateEditorV5'].includes(n) ? '_Phone' : '') + '.dc.html';
+  }
+  nav(active, phone) {
+    const I = this.icons();
+    const items = [[null, 'Dashboard', 'DashboardV5', 'dash'], ['Results', 'Approvals', 'Approvals', 'approve', '2', 'count strong'], [null, 'Publish results', 'PublishV5', 'send'], [null, 'Students needing attention', 'AttentionBSA', 'flag'], [null, 'Report templates', 'TemplateEditorBSA', 'tmpl'], [null, 'Audit trail', '#audit-trail', 'audit'],
+      ['People', 'Students', 'StudentDetail', 'student'], [null, 'Teachers', '#teachers', 'teacher'], [null, 'Reviewers', '#reviewers', 'review'], [null, 'Parents', '#parents', 'parent'], [null, 'School admins', 'SchoolAdminsBSA', 'shield'],
+      ['School', 'School setup', 'LearningAreas', 'setup'], [null, 'Notices', '#notices', 'bell'], [null, 'Emails', '#emails', 'mail'], [null, 'Billing', 'BillingV5', 'bill'], [null, 'School settings', '#school-settings', 'settings']];
+    return items.map(([grp, label, href, ic, count, countCls]) => ({ grp: grp || '', label, href: this.pg(href, phone), d: I[ic], count: count || '', countCls: countCls || '', cls: label === active ? 'on' : '', cur: label === active ? 'page' : 'false' }));
+  }
+  setupTabs(active, phone) {
+    const t = [['Sessions and terms', '#sessions-and-terms'], ['Classes', 'ClassPage'], ['Subjects', '#subjects'], ['Departments', '#departments'], ['Grading', 'GradingBSA'], ['Assessment', 'AssessmentBSA'], ['Learning areas and skills', 'LearningAreas'], ['Rating traits', '#rating-traits']];
+    return t.map(([label, href]) => ({ label, href: this.pg(href, phone), cur: label === active ? 'page' : 'false' }));
+  }
+  shellVals(active) {
+    const P = this.props, st = this.state;
+    const theme = String(P.theme || 'Light').toLowerCase(), device = String(P.device || 'Desktop').toLowerCase(), view = String(P.state || 'Default').toLowerCase();
+    const phone = device === 'phone';
+    return {
+      theme, device, view, phone, ic: this.icons(), nav: this.nav(active, phone),
+      toast: st.toast || '', canUndo: !!st.undoAreas, hideToast: () => this.setState({ toast: '', undoAreas: null }), toastPos: phone ? 'absolute' : 'fixed',
+      drawer: !!st.drawer, openDrawer: () => this.setState({ drawer: true }), closeDrawer: () => this.setState({ drawer: false }),
+      scrimClose: (e) => { if (e && e.target && e.currentTarget && e.target === e.currentTarget) this.setState({ drawer: false }); }
+    };
+  }
+
+  areasNow() { const v = String(this.props.state || 'Default').toLowerCase(); return v === 'empty' && !this.state.touched ? [] : this.state.areas; }
+  setAreas(areas, toast, extra) { this.setState({ areas, touched: true, toast: toast || '', undoAreas: null, ...(extra || {}) }); }
+  move(arr, i, d) { const a = arr.slice(); const j = i + d; if (j < 0 || j >= a.length) return a; [a[i], a[j]] = [a[j], a[i]]; return a; }
+  renderVals() {
+    const st = this.state, I = this.icons();
+    const sh = this.shellVals('School setup');
+    const { view, phone } = sh;
+    const areas = this.areasNow();
+    const sel = Math.min(st.sel, Math.max(areas.length - 1, 0));
+    const cur = areas[sel] || { name: '', skills: [], classes: [] };
+    const main = view === 'default' || view === 'empty';
+    const hasAreas = main && areas.length > 0;
+    const upd = (fn) => areas.map((a, i) => (i === sel ? fn(a) : a));
+    const toneIc = { 'b-success': I.ok, 'b-info': I.dotc, 'b-warning': I.minus, 'b-danger': I.warn, 'b-neutral': I.dotc };
+    // Rating scale validation
+    const codes = st.scale.map((p) => p.code.trim().toUpperCase());
+    const points = st.scale.map((p, i) => {
+      const w = p.word.trim(), c = codes[i];
+      const wordErr = !w ? 'Word is needed.' : '';
+      const codeErr = !c ? 'Code is needed.' : (codes.indexOf(c) !== i ? 'Code ' + c + ' is already used.' : '');
+      const setP = (patch) => this.setState({ scale: st.scale.map((x, j) => (j === i ? { ...x, ...patch } : x)) });
+      return {
+        n: i + 1, word: p.word, code: p.code, desc: p.desc, label: w || 'point ' + (i + 1),
+        wordErr: st.tried ? wordErr : '', codeErr: st.tried ? codeErr : '', wordCls: st.tried && wordErr ? 'bad' : '', codeCls: st.tried && codeErr ? 'bad' : '', bad: !!(wordErr || codeErr),
+        cls: p.cls, ic: toneIc[p.cls], shows: (w || 'New point') + (c ? ' (' + c + ')' : ''),
+        onWord: (e) => setP({ word: e.target.value }), onCode: (e) => setP({ code: e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '') }), onDesc: (e) => setP({ desc: e.target.value }),
+        noRemove: st.scale.length <= 2,
+        remove: () => { if (st.scale.length <= 2) return; const scale = st.scale.filter((x, j) => j !== i); const flag = st.flag === i ? scale.length - 1 : (st.flag > i ? st.flag - 1 : st.flag); this.setState({ scale, flag: Math.min(flag, scale.length - 1), toast: (w || 'Point') + ' removed from the scale. Save to keep this change.', undoAreas: null }); }
+      };
+    });
+    const scaleBad = points.some((p) => p.bad);
+    const flag = Math.min(st.flag, st.scale.length - 1);
+    const fp = points[flag];
+    const atOrBelow = points.slice(flag).map((p) => p.word.trim() || 'New point');
+    const flagHelp = 'Pupils rated ' + (atOrBelow.length > 1 ? atOrBelow.slice(0, -1).join(', ') + ' or ' + atOrBelow[atOrBelow.length - 1] : atOrBelow[0]) + ' on any skill appear in Students needing attention.';
+    // Dialog state
+    const draft = st.draft.trim();
+    const dupArea = areas.some((a, i) => a.name.toLowerCase() === draft.toLowerCase() && !(st.dlg === 'rename' && i === sel));
+    const dupSkill = cur.skills.some((s, i) => s.name.toLowerCase() === draft.toLowerCase() && i !== st.edit);
+    const nameErr = st.dlg === 'addArea' || st.dlg === 'rename' ? (dupArea ? "There's already a learning area called " + draft + '.' : '') : '';
+    const skillErr = st.dlg === 'skill' && dupSkill ? cur.name + ' already has a skill called ' + draft + '.' : '';
+    const assignNone = st.assign.length === 0;
+    const allClasses = ['Nursery 1', 'Nursery 2'];
+    const skills = cur.skills.map((s, i) => ({
+      name: s.name, descText: s.desc || 'No description', descCls: s.desc ? '' : 'nodesc', first: i === 0, last: i === cur.skills.length - 1,
+      up: () => this.setAreas(upd((a) => ({ ...a, skills: this.move(a.skills, i, -1) }))), down: () => this.setAreas(upd((a) => ({ ...a, skills: this.move(a.skills, i, 1) }))),
+      edit: () => this.setState({ dlg: 'skill', edit: i, draft: s.name, draftDesc: s.desc }),
+      remove: () => this.setState({ areas: upd((a) => ({ ...a, skills: a.skills.filter((x, j) => j !== i) })), touched: true, undoAreas: areas, toast: s.name + ' removed from ' + cur.name + '.' })
+    }));
+    return {
+      ...sh, stabs: this.setupTabs('Learning areas and skills', phone), assessHref: this.pg('AssessmentBSA', phone),
+      isLoading: view === 'loading', isError: view === 'error', showMain: main, showScale: main,
+      noAreas: main && areas.length === 0, hasAreas, areaCount: areas.length,
+      listDisp: phone && st.drill ? 'none' : 'flex', skillsDisp: phone && !st.drill ? 'none' : 'flex',
+      areas: areas.map((a, i) => ({
+        name: a.name, meta: a.skills.length + (a.skills.length === 1 ? ' skill' : ' skills') + ' · ' + (a.classes.length ? a.classes.join(', ') : 'No classes'),
+        cls: i === sel && !phone ? 'on' : '', cur: i === sel ? 'true' : 'false', first: i === 0, last: i === areas.length - 1,
+        pick: () => this.setState({ sel: i, drill: true, flagOpen: false }),
+        up: () => this.setAreas(this.move(areas, i, -1), '', { sel: i === sel ? i - 1 : (i - 1 === sel ? i : sel) }),
+        down: () => this.setAreas(this.move(areas, i, 1), '', { sel: i === sel ? i + 1 : (i + 1 === sel ? i : sel) })
+      })),
+      cur: { name: cur.name, classes: cur.classes, noClasses: cur.classes.length === 0 },
+      skills, hasSkills: cur.skills.length > 0, noSkills: cur.skills.length === 0,
+      back: () => this.setState({ drill: false }),
+      undo: () => this.setState({ areas: st.undoAreas || st.areas, undoAreas: null, toast: 'Skill restored.' }),
+      // Dialogs
+      dlgName: st.dlg === 'addArea' || st.dlg === 'rename', isAddArea: st.dlg === 'addArea', dlgAssign: st.dlg === 'assign', dlgSkill: st.dlg === 'skill',
+      nameTitle: st.dlg === 'rename' ? 'Rename learning area' : 'Add learning area', nameCta: st.dlg === 'rename' ? 'Save' : 'Add learning area',
+      draft: st.draft, onDraft: (e) => this.setState({ draft: e.target.value }), draftDesc: st.draftDesc, onDraftDesc: (e) => this.setState({ draftDesc: e.target.value.slice(0, 120) }), descLeft: 120 - st.draftDesc.length,
+      nameErr, nameCls: nameErr ? 'bad' : '', nameBad: !draft || dupArea,
+      closeDlg: () => this.setState({ dlg: null }),
+      openAddArea: () => this.setState({ dlg: 'addArea', draft: '' }),
+      openRename: () => this.setState({ dlg: 'rename', draft: cur.name }),
+      saveName: () => {
+        if (!draft || dupArea) return;
+        if (st.dlg === 'rename') { this.setAreas(upd((a) => ({ ...a, name: draft })), cur.name + ' is now called ' + draft + '.', { dlg: null }); return; }
+        const next = [...areas, { name: draft, skills: [], classes: allClasses.slice() }];
+        this.setAreas(next, draft + ' added. Now add its skills.', { dlg: null, sel: next.length - 1, drill: true });
+      },
+      openAssign: () => this.setState({ dlg: 'assign', assign: cur.classes.slice() }),
+      assignOpts: allClasses.map((c) => ({ label: c, on: st.assign.includes(c) ? 'true' : 'false', toggle: () => this.setState({ assign: st.assign.includes(c) ? st.assign.filter((x) => x !== c) : allClasses.filter((x) => x === c || st.assign.includes(x)) }) })),
+      assignNone, saveAssign: () => { if (assignNone) return; this.setAreas(upd((a) => ({ ...a, classes: st.assign.slice() })), cur.name + ' is assigned to ' + st.assign.join(' and ') + '.', { dlg: null }); },
+      skillTitle: st.edit >= 0 ? 'Edit skill' : 'Add skill', skillCta: st.edit >= 0 ? 'Save' : 'Add skill', skillErr, skillCls: skillErr ? 'bad' : '', skillBad: !draft || dupSkill,
+      openAddSkill: () => this.setState({ dlg: 'skill', edit: -1, draft: '', draftDesc: '' }),
+      saveSkill: () => {
+        if (!draft || dupSkill) return;
+        const item = { name: draft, desc: st.draftDesc.trim() };
+        if (st.edit >= 0) this.setAreas(upd((a) => ({ ...a, skills: a.skills.map((x, j) => (j === st.edit ? item : x)) })), draft + ' saved.', { dlg: null });
+        else this.setAreas(upd((a) => ({ ...a, skills: [...a.skills, item] })), draft + ' added to ' + cur.name + '.', { dlg: null });
+      },
+      // Rating scale
+      points, scaleCount: points.length, scaleBad: st.tried && scaleBad, maxPoints: st.scale.length >= 7,
+      addPoint: () => this.setState({ scale: [...st.scale, { word: '', code: '', desc: '', cls: 'b-neutral' }], toast: '' }),
+      saveScale: () => { if (scaleBad) { this.setState({ tried: true }); return; } this.setState({ tried: false, toast: 'Rating scale saved. Rating sheets use it from now on.', undoAreas: null }); },
+      flagOpen: st.flagOpen, flagExp: st.flagOpen ? 'true' : 'false', toggleFlag: () => this.setState({ flagOpen: !st.flagOpen }),
+      flagShows: fp.shows, flagCls: fp.cls, flagIc: fp.ic, flagHelp,
+      flagOpts: points.map((p, i) => ({ shows: p.shows, cls: p.cls, ic: p.ic, sel: i === flag ? 'true' : 'false', pick: () => this.setState({ flag: i, flagOpen: false, toast: 'Pupils rated ' + (p.word.trim() || 'this point') + ' or lower will be flagged.', undoAreas: null }) }))
+    };
+  }
+
+}
+</script>
+</body>
+</html>

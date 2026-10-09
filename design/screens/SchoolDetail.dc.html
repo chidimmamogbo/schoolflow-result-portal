@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Greenfield Model College, school detail</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#f7f8fa}
+a{color:#1f4fd8}a:hover{color:#163ca8}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid #1f4fd8;outline-offset:2px}
+.num{font-variant-numeric:tabular-nums}
+</style>
+</helmet>
+<div style="min-height: 100vh; display: flex; flex-wrap: wrap; align-items: stretch; background: #f7f8fa; font-family: Inter, 'Segoe UI', system-ui, sans-serif; color: #0f172a">
+
+  <aside aria-label="Platform navigation" style="flex: 1 1 256px; max-width: 100%; box-sizing: border-box; background: #ffffff; border-right: 1px solid #e3e7ee; padding: 18px 12px; display: flex; flex-direction: column; gap: 22px">
+    <img src="/_blob/182db0c32744c4f6abeb340d16b2ccfb" alt="SchoolFlow Result Portal" style="width: 172px; height: auto; margin-left: 8px">
+    <nav style="display: flex; flex-direction: column; gap: 2px">
+      <a href="SuperDashboard.dc.html" style="height: 40px; display: flex; align-items: center; gap: 10px; padding: 0 12px; border-radius: 8px; color: #0f172a; font-size: 14px; font-weight: 500; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5b6475" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="1"></rect><rect x="14" y="3" width="7" height="5" rx="1"></rect><rect x="14" y="12" width="7" height="9" rx="1"></rect><rect x="3" y="16" width="7" height="5" rx="1"></rect></svg><span style="flex-grow: 1">Dashboard</span></a>
+      <a href="Schools.dc.html" aria-current="page" style="height: 40px; display: flex; align-items: center; gap: 10px; padding: 0 12px; border-radius: 8px; background: #eaf0ff; color: #1f4fd8; font-size: 14px; font-weight: 600; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18M5 21V9l7-5 7 5v12M9 21v-6h6v6"></path></svg><span style="flex-grow: 1">Schools</span></a>
+      <a href="Pricing.dc.html" style="height: 40px; display: flex; align-items: center; gap: 10px; padding: 0 12px; border-radius: 8px; color: #0f172a; font-size: 14px; font-weight: 500; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5b6475" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.6 13.4l-7.2 7.2a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"></path><circle cx="7.5" cy="7.5" r="1.5"></circle></svg><span style="flex-grow: 1">Pricing</span></a>
+      <span style="padding: 14px 12px 6px; font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: #5b6475">Billing</span>
+      <a href="SuperBilling.dc.html" style="height: 40px; display: flex; align-items: center; gap: 10px; padding: 0 12px; border-radius: 8px; color: #0f172a; font-size: 14px; font-weight: 500; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5b6475" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><path d="M14 3v6h6M8 13h8M8 17h5"></path></svg><span style="flex-grow: 1">Invoices</span></a>
+      <a href="#payments" style="height: 40px; display: flex; align-items: center; gap: 10px; padding: 0 12px; border-radius: 8px; color: #0f172a; font-size: 14px; font-weight: 500; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5b6475" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"></rect><path d="M2 10h20"></path></svg><span style="flex-grow: 1">Payments</span></a>
+      <span style="padding: 14px 12px 6px; font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: #5b6475">Platform</span>
+      <a href="#notices" style="height: 40px; display: flex; align-items: center; gap: 10px; padding: 0 12px; border-radius: 8px; color: #0f172a; font-size: 14px; font-weight: 500; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5b6475" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l18-5v12L3 14z"></path><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"></path></svg><span style="flex-grow: 1">Notices</span></a>
+      <a href="#settings" style="height: 40px; display: flex; align-items: center; gap: 10px; padding: 0 12px; border-radius: 8px; color: #0f172a; font-size: 14px; font-weight: 500; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5b6475" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"></path></svg><span style="flex-grow: 1">Settings</span></a>
+    </nav>
+  </aside>
+
+  <div style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column">
+    <header style="min-height: 64px; box-sizing: border-box; display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding: 10px 32px; background: #ffffff; border-bottom: 1px solid #e3e7ee">
+      <nav aria-label="Breadcrumb" style="flex-grow: 1; font-size: 14px; color: #5b6475"><a href="SuperDashboard.dc.html" style="color: #5b6475">Platform</a> <span aria-hidden="true">/</span> <a href="Schools.dc.html" style="color: #5b6475">Schools</a> <span aria-hidden="true">/</span> <span style="color: #0f172a; font-weight: 600">Greenfield Model College</span></nav>
+      <button aria-label="Profile menu" style="height: 40px; border: 0; background: transparent; border-radius: 8px; display: flex; align-items: center; gap: 10px; padding: 0 6px; cursor: pointer; font-family: inherit"><span aria-hidden="true" style="width: 32px; height: 32px; border-radius: 9999px; background: #0f172a; color: #ffffff; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center">SA</span><span style="display: flex; flex-direction: column; align-items: flex-start"><span style="font-size: 14px; font-weight: 600; color: #0f172a">Platform admin</span><span style="font-size: 12px; color: #5b6475">Super admin</span></span></button>
+    </header>
+
+    <main style="padding: 28px 32px 40px; display: flex; flex-direction: column; gap: 20px; max-width: 1280px; box-sizing: border-box; width: 100%">
+      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 16px">
+        <span aria-hidden="true" style="width: 56px; height: 56px; border-radius: 12px; background: #14532d; color: #ffffff; font-size: 17px; font-weight: 700; display: flex; align-items: center; justify-content: center">GMC</span>
+        <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px">
+          <h1 style="margin: 0; font-size: 30px; line-height: 38px; font-weight: 700; letter-spacing: -0.01em">Greenfield Model College</h1>
+          <span style="font-size: 15px; color: #5b6475">Independence Layout, Enugu · school code GMC · joined 1 Sep 2026</span>
+        </div>
+        <span style="display: inline-flex; align-items: center; gap: 4px; height: 28px; padding: 0 12px; border-radius: 9999px; background: {{subBadge.bg}}; color: {{subBadge.ink}}; font-size: 13px; font-weight: 600">{{subBadge.label}}</span>
+      </div>
+
+      <div role="tablist" aria-label="School sections" style="display: flex; flex-wrap: wrap; gap: 4px; border-bottom: 1px solid #e3e7ee">
+        <sc-for list="{{tabs}}" as="t" hint-placeholder-count="5">
+          <button role="tab" aria-selected="{{t.sel}}" onClick="{{t.pick}}" style="height: 44px; padding: 0 16px; border: 0; border-bottom: 3px solid {{t.line}}; margin-bottom: -1px; background: transparent; color: {{t.ink}}; font: 600 15px Inter, system-ui, sans-serif; cursor: pointer">{{t.label}}</button>
+        </sc-for>
+      </div>
+
+      <sc-if value="{{isOverview}}" hint-placeholder-val="{{ true }}">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px">
+          <div style="background: #ffffff; border: 1px solid #e3e7ee; border-radius: 12px; padding: 18px 20px"><span style="display: block; font-size: 14px; color: #5b6475">Billable students</span><span class="num" style="font-size: 28px; font-weight: 700">642</span></div>
+          <div style="background: #ffffff; border: 1px solid #e3e7ee; border-radius: 12px; padding: 18px 20px"><span style="display: block; font-size: 14px; color: #5b6475">Staff accounts</span><span class="num" style="font-size: 28px; font-weight: 700">41</span></div>
+          <div style="background: #ffffff; border: 1px solid #e3e7ee; border-radius: 12px; padding: 18px 20px"><span style="display: block; font-size: 14px; color: #5b6475">Reports published this term</span><span class="num" style="font-size: 28px; font-weight: 700">12</span></div>
+          <div style="background: #ffffff; border: 1px solid #e3e7ee; border-radius: 12px; padding: 18px 20px"><span style="display: block; font-size: 14px; color: #5b6475">Plan</span><span style="font-size: 28px; font-weight: 700">Standard</span></div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{isFeatures}}" hint-placeholder-val="{{ false }}">
+        <section aria-label="Features" style="background: #ffffff; border: 1px solid #e3e7ee; border-radius: 12px; padding: 8px 24px">
+          <sc-for list="{{features}}" as="f" hint-placeholder-count="6">
+            <div style="display: flex; align-items: center; gap: 16px; padding: 14px 0; border-bottom: 1px solid #e3e7ee">
+              <span style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 600">{{f.label}}</span><span style="font-size: 14px; color: #5b6475">{{f.hint}}</span></span>
+              <span style="font-size: 13px; font-weight: 600; color: {{f.stateInk}}; width: 28px">{{f.state}}</span>
+              <button role="switch" aria-checked="{{f.checked}}" aria-label="{{f.label}}" onClick="{{f.toggle}}" style="width: 44px; height: 26px; flex-shrink: 0; border: 0; border-radius: 9999px; background: {{f.track}}; position: relative; cursor: pointer; padding: 0"><span style="position: absolute; top: 3px; left: {{f.knob}}; width: 20px; height: 20px; border-radius: 9999px; background: #ffffff; box-shadow: 0 1px 2px rgba(15,23,42,0.2)"></span></button>
+            </div>
+          </sc-for>
+          <p style="margin: 0; padding: 14px 0; font-size: 14px; color: #5b6475">Turning a feature off hides it for this school straight away. Its data is kept.</p>
+        </section>
+      </sc-if>
+
+      <sc-if value="{{isPrincipal}}" hint-placeholder-val="{{ false }}">
+        <section aria-label="Principal account" style="background: #ffffff; border: 1px solid #e3e7ee; border-radius: 12px; padding: 24px; display: flex; flex-direction: column; gap: 18px; max-width: 720px">
+          <div style="display: flex; align-items: center; gap: 14px">
+            <span aria-hidden="true" style="width: 48px; height: 48px; border-radius: 9999px; background: #eaf0ff; color: #1f4fd8; font-size: 16px; font-weight: 700; display: flex; align-items: center; justify-content: center">NO</span>
+            <div style="flex-grow: 1; display: flex; flex-direction: column"><span style="font-size: 17px; font-weight: 600">Mrs. Ngozi Okeke</span><span style="font-size: 14px; color: #5b6475">ngozi.okeke@greenfield.edu.ng · school admin</span></div>
+            <span style="display: inline-flex; align-items: center; height: 26px; padding: 0 10px; border-radius: 9999px; background: {{pBadge.bg}}; color: {{pBadge.ink}}; font-size: 13px; font-weight: 600">{{pBadge.label}}</span>
+          </div>
+          <p style="margin: 0; font-size: 14px; color: #5b6475">Activated 1 Sep 2026 · last signed in today, 08:12</p>
+          <sc-if value="{{resent}}" hint-placeholder-val="{{ false }}"><p role="status" style="margin: 0; font-size: 14px; color: #047857">A new activation link was sent. The old one no longer works.</p></sc-if>
+          <div style="display: flex; flex-wrap: wrap; gap: 10px">
+            <button onClick="{{resend}}" style="height: 44px; padding: 0 18px; border: 1px solid #737c8f; border-radius: 8px; background: #ffffff; color: #0f172a; font: 600 15px Inter, system-ui, sans-serif; cursor: pointer">Resend activation link</button>
+            <button onClick="{{toggleActive}}" style="height: 44px; padding: 0 18px; border: 1px solid {{deactBorder}}; border-radius: 8px; background: #ffffff; color: {{deactInk}}; font: 600 15px Inter, system-ui, sans-serif; cursor: pointer">{{deactLabel}}</button>
+          </div>
+        </section>
+      </sc-if>
+
+      <sc-if value="{{isSubscription}}" hint-placeholder-val="{{ false }}">
+        <section aria-label="Subscription" style="background: #ffffff; border: 1px solid #e3e7ee; border-radius: 12px; padding: 8px 24px 24px; display: flex; flex-direction: column; gap: 0; max-width: 820px">
+          <div style="display: flex; align-items: center; gap: 16px; padding: 16px 0; border-bottom: 1px solid #e3e7ee">
+            <span style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 600">Billing</span><span style="font-size: 14px; color: #5b6475">Off means a free pilot: no invoices or payment prompts.</span></span>
+            <button role="switch" aria-checked="{{billingChecked}}" aria-label="Billing" onClick="{{toggleBilling}}" style="width: 44px; height: 26px; border: 0; border-radius: 9999px; background: {{billingTrack}}; position: relative; cursor: pointer; padding: 0"><span style="position: absolute; top: 3px; left: {{billingKnob}}; width: 20px; height: 20px; border-radius: 9999px; background: #ffffff; box-shadow: 0 1px 2px rgba(15,23,42,0.2)"></span></button>
+          </div>
+          <div style="display: flex; align-items: center; gap: 16px; padding: 16px 0; border-bottom: 1px solid #e3e7ee">
+            <span style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 600">Grace period</span><span style="font-size: 14px; color: #5b6475">Days after the due date before the school shows as overdue.</span></span>
+            <label style="display: flex; align-items: center; gap: 8px; font-size: 14px; color: #5b6475"><input type="text" inputmode="numeric" value="14" aria-label="Grace period in days" style="width: 64px; height: 40px; box-sizing: border-box; border: 1px solid #737c8f; border-radius: 8px; text-align: center; font: 600 15px Inter, system-ui, sans-serif; color: #0f172a">days</label>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 16px; padding: 16px 0 0">
+            <span style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 600">Access</span><span style="font-size: 14px; color: #5b6475">Suspending blocks sign-in for the school. It never deletes data.</span></span>
+            <button onClick="{{toggleSuspend}}" style="height: 44px; padding: 0 18px; border: 1px solid {{suspBorder}}; border-radius: 8px; background: #ffffff; color: {{suspInk}}; font: 600 15px Inter, system-ui, sans-serif; cursor: pointer">{{suspLabel}}</button>
+          </div>
+        </section>
+      </sc-if>
+
+      <sc-if value="{{isInvoices}}" hint-placeholder-val="{{ false }}">
+        <section aria-label="Invoices" style="background: #ffffff; border: 1px solid #e3e7ee; border-radius: 12px; overflow: hidden">
+          <div style="overflow-x: auto">
+            <table class="num" style="width: 100%; border-collapse: collapse; font-size: 14px; min-width: 760px">
+              <thead><tr style="background: #f1f3f7; text-align: left; color: #5b6475"><th scope="col" style="padding: 12px 20px; font-weight: 600">Invoice</th><th scope="col" style="padding: 12px; font-weight: 600">Term</th><th scope="col" style="padding: 12px; font-weight: 600">Students × rate</th><th scope="col" style="padding: 12px; font-weight: 600">Amount</th><th scope="col" style="padding: 12px; font-weight: 600">Status</th><th scope="col" style="padding: 12px 20px; font-weight: 600">Pricing version</th></tr></thead>
+              <tbody>
+                <tr style="border-top: 1px solid #e3e7ee"><th scope="row" style="padding: 13px 20px; text-align: left; font-weight: 600">INV-GMC-2627-T1</th><td style="padding: 13px 12px">First Term 2026/2027</td><td style="padding: 13px 12px">619 × ₦500</td><td style="padding: 13px 12px; font-weight: 600">₦309,500</td><td style="padding: 13px 12px"><span style="display: inline-flex; height: 24px; align-items: center; padding: 0 10px; border-radius: 9999px; background: #e6f8f1; color: #047857; font-size: 12px; font-weight: 600">Paid 2 Sep 2026</span></td><td style="padding: 13px 20px">v3</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p style="margin: 0; padding: 14px 20px; font-size: 14px; color: #5b6475; border-top: 1px solid #e3e7ee">Second Term invoices haven't been generated yet. <a href="SuperBilling.dc.html" style="font-weight: 600">Go to billing</a></p>
+        </section>
+      </sc-if>
+    </main>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1000}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { tab: 'features', billing: true, suspended: false, pActive: true, resent: false,
+      feats: { results: true, report_cards: true, parent_portal: true, correction_queue: true, notice_board: true, email_notifications: true } };
+  }
+  sw(on) { return { checked: on ? 'true' : 'false', track: on ? '#1f4fd8' : '#737c8f', knob: on ? '21px' : '3px' }; }
+  renderVals() {
+    const st = this.state;
+    const list = [['overview', 'Overview'], ['features', 'Features'], ['principal', 'Principal account'], ['subscription', 'Subscription'], ['invoices', 'Invoices']];
+    const tabs = list.map(([id, label]) => ({ label, sel: st.tab === id ? 'true' : 'false', line: st.tab === id ? '#1f4fd8' : 'transparent', ink: st.tab === id ? '#1f4fd8' : '#5b6475', pick: () => this.setState({ tab: id }) }));
+    const meta = [
+      ['results', 'Results', 'Score entry, review, approval and publishing'],
+      ['report_cards', 'Report cards', 'Branded PDF report cards and the template editor'],
+      ['parent_portal', 'Parent portal', 'Parents and students see published results'],
+      ['correction_queue', 'Correction queue', 'Parents can report a problem with a result'],
+      ['notice_board', 'Notice board', 'School notices for every role'],
+      ['email_notifications', 'Email notifications', 'Activation, results and receipt emails']
+    ];
+    const features = meta.map(([key, label, hint]) => {
+      const on = st.feats[key];
+      return { label, hint, ...this.sw(on), state: on ? 'On' : 'Off', stateInk: on ? '#047857' : '#5b6475', toggle: () => this.setState({ feats: { ...st.feats, [key]: !on } }) };
+    });
+    let subBadge = { label: 'Active subscription', bg: '#e6f8f1', ink: '#047857' };
+    if (!st.billing) subBadge = { label: 'Free pilot', bg: '#eaf1fe', ink: '#2563eb' };
+    if (st.suspended) subBadge = { label: 'Suspended', bg: '#fdecec', ink: '#c81e1e' };
+    const b = this.sw(st.billing);
+    return {
+      tabs, features, subBadge,
+      isOverview: st.tab === 'overview', isFeatures: st.tab === 'features', isPrincipal: st.tab === 'principal', isSubscription: st.tab === 'subscription', isInvoices: st.tab === 'invoices',
+      pBadge: st.pActive ? { label: 'Active', bg: '#e6f8f1', ink: '#047857' } : { label: 'Deactivated', bg: '#eef1f5', ink: '#5b6475' },
+      resent: st.resent,
+      resend: () => this.setState({ resent: true }),
+      deactLabel: st.pActive ? 'Deactivate account' : 'Reactivate account',
+      deactInk: st.pActive ? '#c81e1e' : '#0f172a', deactBorder: st.pActive ? '#c81e1e' : '#737c8f',
+      toggleActive: () => this.setState({ pActive: !st.pActive }),
+      billingChecked: b.checked, billingTrack: b.track, billingKnob: b.knob,
+      toggleBilling: () => this.setState({ billing: !st.billing }),
+      suspLabel: st.suspended ? 'Reactivate school' : 'Suspend school',
+      suspInk: st.suspended ? '#0f172a' : '#c81e1e', suspBorder: st.suspended ? '#737c8f' : '#c81e1e',
+      toggleSuspend: () => this.setState({ suspended: !st.suspended })
+    };
+  }
+}
+</script>
+</body>
+</html>

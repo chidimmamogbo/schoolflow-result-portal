@@ -1,0 +1,990 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Report templates</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="sf.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Merriweather:wght@400;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>body{margin:0}
+.sf .gone{display:none !important}
+.sf .ed{display:grid;grid-template-columns:270px minmax(0,1fr) 350px;gap:20px;align-items:start}
+.sf .ed .lc,.sf .ed .rc{display:flex;flex-direction:column;gap:20px;min-width:0}
+.sf .ed .mc{position:sticky;top:16px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.sf[data-device="phone"] .ed{display:flex;flex-direction:column;gap:16px}
+.sf[data-device="phone"] .ed .lc,.sf[data-device="phone"] .ed .rc{display:contents}
+.sf[data-device="phone"] .ed .mc{position:static}
+.sf[data-device="phone"] .p-style{order:1}
+.sf[data-device="phone"] .p-blk{order:2}
+.sf[data-device="phone"] .p-sec{order:3}
+.sf .ptabs{flex-shrink:0;padding:10px 16px;background:var(--surface);border-bottom:1px solid var(--border)}
+.sf .ptabs .seg{display:grid;width:100%}
+.sf .ptabs .seg button{min-height:44px}
+.sf .tgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;padding:16px 20px 20px}
+.sf[data-device="phone"] .tgrid{grid-template-columns:minmax(0,1fr);padding:14px 16px 16px}
+.sf .tgrp{display:flex;flex-direction:column;gap:8px;min-width:0}
+.sf .tcard{display:flex;flex-direction:column;gap:6px;text-align:left;width:100%;padding:12px 14px;border:2px solid var(--border);border-radius:10px;background:var(--surface);color:var(--text);font:inherit;cursor:pointer;min-height:44px}
+.sf .tcard:hover{border-color:var(--border-strong)}
+.sf .tcard[aria-current="true"]{border-color:var(--primary);background:var(--primary-soft)}
+.sf .tnone{border:2px dashed var(--border-strong);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:10px;align-items:flex-start;background:var(--surface-2)}
+.sf .blk{display:flex;align-items:center;gap:2px;padding:3px 6px 3px 3px;border-radius:8px;border:1px solid transparent;margin-bottom:2px}
+.sf .blk.on{background:var(--primary-soft);border-color:var(--primary)}
+.sf .blk .bl{flex:1;min-width:0;min-height:40px;border:0;background:transparent;text-align:left;padding:0 6px;font:500 14px Inter,system-ui,sans-serif;color:var(--text);display:flex;align-items:center;gap:8px;cursor:pointer}
+.sf .blk .bl.off{color:var(--muted)}
+.sf .blk .bl span{line-height:18px;padding:4px 0}
+.sf .mv{width:30px;height:30px;flex-shrink:0;border:0;background:transparent;border-radius:6px;color:var(--text);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.sf .mv:hover{background:var(--surface-2)}
+.sf .mv[disabled]{opacity:.3;cursor:default}
+.sf[data-device="phone"] .mv{width:44px;height:44px}
+.sf[data-device="phone"] .blk .bl{min-height:44px}
+.sf .lockw{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;color:var(--muted);white-space:nowrap}
+.sf .sec{border-top:1px solid var(--border)}
+.sf .sec:first-child{border-top:0}
+.sf .sech{width:100%;min-height:52px;display:flex;align-items:center;gap:10px;padding:0 16px;border:0;background:transparent;color:var(--text);font:600 15px Inter,system-ui,sans-serif;cursor:pointer;text-align:left}
+.sf .sech:hover{background:var(--surface-2)}
+.sf .sech .chev{transition:transform .15s;color:var(--muted)}
+.sf .sech[aria-expanded="true"] .chev{transform:rotate(90deg)}
+.sf .secb{padding:2px 16px 16px;display:flex;flex-direction:column}
+.sf .it{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
+.sf .it:last-child{border-bottom:0}
+.sf .it .t{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;font-size:14px;font-weight:600}
+.sf .it.stack{flex-direction:column;align-items:stretch;gap:8px}
+.sf .it .seg{display:grid;width:100%}
+.sf .it .seg button{min-height:36px;padding:0 8px;font-size:13px}
+.sf[data-device="phone"] .it .seg button{min-height:44px}
+.sf .upl{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--surface-2);border-radius:8px;padding:8px 10px;font-size:13px}
+.sf .stg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.sf .stc{display:flex;flex-direction:column;gap:8px;align-items:flex-start;text-align:left;padding:10px;border:2px solid var(--border);border-radius:10px;background:var(--surface);color:var(--text);font:inherit;cursor:pointer;min-width:0}
+.sf .stc[aria-checked="true"]{border-color:var(--primary);background:var(--primary-soft)}
+.sf .stc .sn{font-size:14px;font-weight:600;display:flex;align-items:center;gap:6px}
+.sf .stc .sd2{font-size:12px;line-height:16px;color:var(--muted)}
+.sf .thm{width:100%;height:78px;background:#ffffff;border:1px solid #c9d0db;border-radius:4px;padding:6px 8px;display:flex;flex-direction:column;gap:3px}
+.sf .thm i{display:block;border-radius:1px}
+.sf .thm .t1{height:12px;border-bottom:2px solid var(--ac);display:flex;gap:3px;align-items:center;margin-bottom:2px}
+.sf .thm .t1 b{width:8px;height:8px;border-radius:2px;background:var(--ac)}
+.sf .thm .t1 u{height:3px;width:40%;background:var(--ac);text-decoration:none}
+.sf .thm .t2{height:5px;background:var(--ac)}
+.sf .thm .t3{height:4px;background:#e3e7ee}
+.sf .thm .t3:nth-of-type(even){background:var(--tint)}
+.sf .thm.classic .t1{border-bottom:3px double #0f172a}
+.sf .thm.classic .t1 b{border-radius:9999px;background:transparent;border:1.5px solid var(--ac)}
+.sf .thm.classic .t1 u{background:#0f172a}
+.sf .thm.classic .t2{background:#ffffff;border:1px solid #0f172a}
+.sf .thm.classic .t3{background:#ffffff;border-bottom:1px solid #0f172a;border-radius:0}
+.sf .thm.compact{gap:2px}
+.sf .thm.compact .t1{height:9px}
+.sf .thm.compact .t2{height:3px}
+.sf .thm.compact .t3{height:2px}
+.sf .thm.early .t1{height:14px;border:0;background:var(--tint);border-radius:5px;padding:0 3px}
+.sf .thm.early .t1 b{border-radius:9999px}
+.sf .thm.early .t2{height:6px;background:var(--tint2);border-radius:4px}
+.sf .thm.early .t3{height:5px;border-radius:3px}
+.sf .pvframe{background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:12px;display:flex;justify-content:center;overflow:hidden}
+.sf .vh{display:flex;justify-content:space-between;gap:8px;font-size:13px}
+.sf .flabel{font-size:14px;font-weight:600}
+.sf .sw-dot{width:18px;height:18px;border-radius:5px;display:inline-block;border:1px solid var(--border);vertical-align:middle}
+/* A4 print preview: always light */
+.a4{position:relative;background:#ffffff;color:#0f172a;box-shadow:0 4px 12px rgba(15,23,42,0.12);display:flex;flex-direction:column;gap:1.05em;line-height:1.4;overflow:hidden;font-variant-numeric:tabular-nums;--ln:#c9d0db;box-sizing:border-box;text-align:left}
+.a4 *{box-sizing:border-box}
+.a4 p{margin:0}
+.a4 .wm{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:13em;font-weight:800;color:var(--ac);opacity:0.07;pointer-events:none;letter-spacing:0.04em;z-index:0}
+.a4 > *{position:relative;z-index:1}
+.a4[data-b="boxed"]::before{content:"";position:absolute;inset:12px;border:2px solid var(--ac);border-radius:4px;pointer-events:none}
+.a4 .hd{display:flex;align-items:center;gap:1.2em;border-bottom:3px solid var(--ac);padding-bottom:1em}
+.a4 .crs{font-size:1.6em;width:3.4em;height:3.4em;border-radius:0.6em;background:var(--ac);color:var(--on-ac);font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.a4 .crs span{font-size:0.62em}
+.a4 .inf{flex:1;min-width:0;display:flex;flex-direction:column;gap:0.15em}
+.a4 .nm{font-size:1.8em;line-height:1.2;font-weight:700;letter-spacing:0.02em;color:var(--ac);text-transform:uppercase}
+.a4 .sub{color:#5b6475}
+.a4 .mot{font-style:italic;color:var(--ac)}
+.a4 .tt{display:flex;flex-direction:column;text-align:right;gap:0.1em;flex-shrink:0}
+.a4 .tt b{font-size:1.15em;text-transform:uppercase;letter-spacing:0.02em}
+.a4 .tt span{color:#5b6475}
+.a4 .hd.lp-centre{flex-direction:column;text-align:center;gap:0.6em}
+.a4 .hd.lp-centre .inf{align-items:center}
+.a4 .hd.lp-centre .tt{text-align:center}
+.a4 .hd.lp-right .crs{order:3}
+.a4 .sdw{display:flex;gap:1em;align-items:stretch}
+.a4 .ph{width:5.6em;min-height:6.6em;border:1.5px dashed #737c8f;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:0.8em;font-weight:600;color:#5b6475;flex-shrink:0}
+.a4 .sd{flex:1;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0.6em 1.2em;background:var(--tint);border-radius:6px;padding:0.9em 1.1em}
+.a4 .k{display:block;font-size:0.82em;color:#5b6475;text-transform:uppercase;letter-spacing:0.02em}
+.a4 .tb{border-top:1px solid var(--ln);border-left:1px solid var(--ln)}
+.a4 .r{display:grid}
+.a4 .c{padding:0.3em 0.45em;text-align:center;min-width:0;border-right:1px solid var(--ln);border-bottom:1px solid var(--ln)}
+.a4 .r.h{background:var(--ac);color:var(--on-ac)}
+.a4 .r.h .c{font-weight:600;font-size:0.92em;line-height:1.2}
+.a4 .c small{display:block;font-weight:500;font-size:0.85em;opacity:0.85}
+.a4 .r.alt{background:var(--tint)}
+.a4 .c.s{text-align:left;font-weight:500}
+.a4 .c.s small{font-weight:400;color:#5b6475;opacity:1}
+.a4 .c.b{font-weight:700}
+.a4 .c.lo{color:#c81e1e;font-weight:700;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:2px}
+.a4 .r.area .c{text-align:left;font-weight:700;background:var(--tint2);color:#0f172a}
+.a4 .r.com .c{text-align:left;font-style:italic;color:#334155}
+.a4 .smy{display:grid;border:2px solid var(--ac);border-radius:6px;overflow:hidden;text-align:center}
+.a4 .smy .sc{padding:0.6em;border-right:1px solid var(--ln)}
+.a4 .smy .sc:last-child{border-right:0}
+.a4 .smy strong{font-size:1.4em}
+.a4 .smy .sc.hi{background:var(--ac);color:var(--on-ac)}
+.a4 .smy .sc.hi .k{color:var(--on-ac)}
+.a4 .dm{display:flex;gap:1.2em;align-items:flex-start}
+.a4 .dm .dt{flex:1 1 0;min-width:0}
+.a4 .dm.stack{flex-direction:column;align-items:stretch;gap:0.8em}
+.a4 .dt{border:1px solid var(--ln);font-size:0.95em}
+.a4 .dh{display:block;background:var(--tint);font-weight:700;font-size:0.9em;padding:0.35em 0.6em}
+.a4 .dt .tr{display:flex;justify-content:space-between;gap:0.6em;padding:0.25em 0.6em;border-top:1px solid var(--ln)}
+.a4 .dm.stack .rows{display:grid;grid-template-columns:repeat(5,minmax(0,1fr))}
+.a4 .dm.stack .tr{flex-direction:column;align-items:center;text-align:center;border-left:1px solid var(--ln)}
+.a4 .dm.stack .tr:first-child{border-left:0}
+.a4 .atd{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0.8em}
+.a4 .atd .sc{border:1px solid var(--ln);border-radius:6px;padding:0.5em 0.7em;display:flex;justify-content:space-between;align-items:center;gap:0.5em;background:var(--tint)}
+.a4 .atd strong{font-size:1.2em}
+.a4 .cm{display:grid;gap:1.2em}
+.a4 .ck{display:block;font-size:0.85em;font-weight:700;color:var(--ac);letter-spacing:0.02em}
+.a4 .cmi p{line-height:1.45;margin-top:0.3em}
+.a4 .cn{display:block;margin-top:0.4em;color:#5b6475;font-size:0.88em}
+.a4 .sgs{display:grid;gap:1.6em;align-items:end}
+.a4 .sg{display:flex;flex-direction:column;gap:0.3em;min-width:0}
+.a4 .sga{height:3.6em;display:flex;align-items:flex-end;justify-content:center}
+.a4 .sgl{border-top:1px solid #0f172a;padding-top:0.3em;font-size:0.85em;color:#5b6475}
+.a4 .stamp{width:5.2em;height:5.2em;border-radius:9999px;border:2px solid var(--ac);color:var(--ac);font-size:0.7em;font-weight:700;display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.1;transform:rotate(-8deg)}
+.a4 .ph2{border:1.5px dashed #737c8f;color:#5b6475;font-size:0.75em;padding:0.3em 0.5em;border-radius:4px;font-weight:600}
+.a4 .gk{font-size:0.85em;color:#5b6475;line-height:1.4}
+.a4 .rk{border:1px solid var(--ln);border-radius:6px;padding:0.6em 0.8em;background:var(--tint)}
+.a4 .rkl{display:flex;flex-wrap:wrap;gap:0.3em 1.4em;margin-top:0.3em}
+.a4 .rkl b{margin-right:0.3em}
+.a4 .ftr{margin-top:auto;display:flex;align-items:center;gap:1.2em;border-top:1px solid var(--ln);padding-top:0.9em;font-size:0.92em}
+.a4 .qr{width:6.5em;height:6.5em;flex-shrink:0;border:2px dashed #737c8f;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:0.85em;font-weight:600;color:#5b6475;text-align:center}
+.a4 .fi{flex:1;min-width:0;display:flex;flex-direction:column;gap:0.2em}
+.a4 .pw{display:flex;align-items:center;gap:0.4em;font-size:0.85em;color:#5b6475;white-space:nowrap}
+.a4 .pw img{width:1.4em;height:1.4em}
+.a4 .ftr.qr-right .qr{order:3}
+.a4 .note{font-style:italic}
+/* Classic */
+.a4[data-style="classic"]{--ln:#0f172a}
+.a4[data-style="classic"] .hd{border-bottom:4px double #0f172a}
+.a4[data-style="classic"] .crs{border-radius:9999px;background:transparent;border:0.12em solid var(--ac);color:var(--ac)}
+.a4[data-style="classic"] .nm{color:#0f172a;letter-spacing:0.04em}
+.a4[data-style="classic"] .mot{color:#0f172a}
+.a4[data-style="classic"] .sd{background:transparent;border:1px solid #0f172a;border-radius:0}
+.a4[data-style="classic"] .r.h{background:#ffffff;color:#0f172a}
+.a4[data-style="classic"] .r.h .c{font-weight:700}
+.a4[data-style="classic"] .r.alt{background:#f1f3f7}
+.a4[data-style="classic"] .smy{border:1px solid #0f172a;border-radius:0}
+.a4[data-style="classic"] .smy .sc.hi{background:transparent;color:#0f172a}
+.a4[data-style="classic"] .smy .sc.hi .k{color:#5b6475}
+.a4[data-style="classic"] .ck{color:#0f172a}
+.a4[data-style="classic"] .dh{background:transparent}
+.a4[data-style="classic"] .atd .sc,.a4[data-style="classic"] .rk{border-radius:0;background:transparent}
+/* Compact */
+.a4[data-style="compact"]{gap:0.6em}
+.a4[data-style="compact"] .hd{padding-bottom:0.6em}
+.a4[data-style="compact"] .crs{font-size:1.2em;width:2.8em;height:2.8em}
+.a4[data-style="compact"] .nm{font-size:1.5em}
+.a4[data-style="compact"] .c{padding:0.12em 0.35em}
+.a4[data-style="compact"] .sd{padding:0.5em 0.8em;gap:0.3em 1em}
+.a4[data-style="compact"] .smy .sc{padding:0.35em}
+.a4[data-style="compact"] .smy strong{font-size:1.2em}
+.a4[data-style="compact"] .dt .tr{padding:0.1em 0.5em}
+/* Early Years */
+.a4[data-style="early"]{--ln:#e2e8f0}
+.a4[data-style="early"] .hd{border-bottom:0;background:var(--tint);border-radius:1.2em;padding:1em 1.2em}
+.a4[data-style="early"] .crs{border-radius:9999px}
+.a4[data-style="early"] .sd{border-radius:1em}
+.a4[data-style="early"] .tb{border-radius:0.9em;overflow:hidden}
+.a4[data-style="early"] .r.h{background:var(--tint2);color:#0f172a}
+.a4[data-style="early"] .r.h .c{font-weight:700}
+.a4[data-style="early"] .smy{border-radius:1em}
+.a4[data-style="early"] .dt,.a4[data-style="early"] .rk,.a4[data-style="early"] .atd .sc,.a4[data-style="early"] .qr{border-radius:0.9em}
+.a4[data-style="early"] .ph{border-radius:1em}
+/* Borders: None wins over style lines */
+.a4[data-b="none"][data-style]{--ln:transparent}
+.a4[data-b="none"][data-style] .smy{border-color:transparent;background:var(--tint)}
+.a4[data-b="boxed"] .tb{outline:1.5px solid #0f172a}
+.a4[data-b="boxed"] .sd{border:1px solid var(--ac)}
+</style>
+</helmet>
+<div class="sf" data-theme="{{theme}}" data-device="{{device}}" style="--school: {{S.colour}}">
+<div class="app">
+  <aside class="side desk-only" aria-label="School navigation">
+    <div class="brand"><span class="crest" aria-hidden="true">{{S.code}}</span><span class="col" style="gap: 0"><span style="font-weight: 700; font-size: 15px; line-height: 20px">{{S.name}}</span><span class="muted" style="font-size: 13px">{{S.town}}</span></span></div>
+    <nav class="nav" aria-label="Main">
+      <sc-for list="{{nav}}" as="n" hint-placeholder-count="17">
+        <sc-if value="{{n.grp}}" hint-placeholder-val="{{ false }}"><span class="cap grp">{{n.grp}}</span></sc-if>
+        <a href="{{n.href}}" class="{{n.cls}}" aria-current="{{n.cur}}"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{n.d}}"></path></svg><span class="l">{{n.label}}</span><sc-if value="{{n.count}}" hint-placeholder-val="{{ false }}"><span class="{{n.countCls}}">{{n.count}}</span></sc-if></a>
+      </sc-for>
+    </nav>
+    <div class="powered"><img src="/_blob/b5461303d7a8d45a18f7975e283523ab" alt="" style="width: 20px; height: 20px">Powered by SchoolFlow</div>
+  </aside>
+  <div class="main">
+    <header class="top desk-only">
+      <nav class="crumb" aria-label="Breadcrumb"><a href="DashboardV5.dc.html">Dashboard</a> / Results / <b>Report templates</b></nav>
+      <button class="iconbtn" aria-label="Notices, 3 unread"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.bell}}"></path></svg><span class="dot">3</span></button>
+      <button class="btn sm" aria-label="Profile menu" style="border: 0"><span class="crest" aria-hidden="true" style="width: 32px; height: 32px; border-radius: 9999px; font-size: 12px">{{S.ini}}</span><span class="col" style="gap: 0; align-items: flex-start"><span style="font-size: 14px">{{S.person}}</span><span class="muted" style="font-size: 12px; font-weight: 500">{{S.role}}</span></span></button>
+    </header>
+
+    <sc-if value="{{phList}}" hint-placeholder-val="{{ true }}">
+      <header class="phead phone-only">
+        <button class="iconbtn" aria-label="Open menu" onClick="{{openDrawer}}"><svg class="i l" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.menu}}"></path></svg></button>
+        <span class="crest" aria-hidden="true" style="width: 30px; height: 30px; font-size: 10px; border-radius: 8px">{{S.code}}</span>
+        <span class="ttl">Report templates</span>
+        <button class="iconbtn" aria-label="Notices, 3 unread"><svg class="i l" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.bell}}"></path></svg><span class="dot">3</span></button>
+      </header>
+    </sc-if>
+    <sc-if value="{{phEdit}}" hint-placeholder-val="{{ false }}">
+      <header class="phead phone-only">
+        <button class="iconbtn" aria-label="Back to report templates" onClick="{{backToList}}"><svg class="i l" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.back}}"></path></svg></button>
+        <span class="ttl">{{t.name}}</span>
+        <sc-if value="{{dirty}}" hint-placeholder-val="{{ false }}"><span class="badge sm b-warning" style="margin-right: 8px"><svg class="i s" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.pencil}}"></path></svg>Unsaved</span></sc-if>
+      </header>
+      <div class="ptabs phone-only">
+        <div class="seg" role="tablist" aria-label="Editor view">
+          <button role="tab" aria-selected="{{pTabPreview}}" onClick="{{showPreview}}">Preview</button>
+          <button role="tab" aria-selected="{{pTabSettings}}" onClick="{{showSettings}}">Settings</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <main class="content" style="max-width: none">
+      <div class="row desk-only" style="align-items: flex-end">
+        <div class="col grow" style="gap: 4px; min-width: 300px">
+          <span class="cap">Report templates</span>
+          <h1 class="h1">{{pageTitle}}</h1>
+          <sc-if value="{{showMeta}}" hint-placeholder-val="{{ true }}">
+            <div class="row" style="gap: 8px">
+              <span class="muted" style="font-size: 15px">{{t.level}} · {{kindLabel}} · In use by {{t.inUse}}</span>
+              <span class="badge sm {{verCls}}"><svg class="i s" viewBox="0 0 24 24" aria-hidden="true"><path d="{{verIc}}"></path></svg>{{verLabel}}</span>
+              <sc-if value="{{dirty}}" hint-placeholder-val="{{ false }}"><span class="badge sm b-warning"><svg class="i s" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.pencil}}"></path></svg>Unsaved changes</span></sc-if>
+            </div>
+          </sc-if>
+        </div>
+      </div>
+      <sc-if value="{{phListIntro}}" hint-placeholder-val="{{ false }}">
+        <p class="muted phone-only" style="font-size: 15px">Each level has its own template. Pick one to change its style and blocks.</p>
+      </sc-if>
+
+      <sc-if value="{{isLoading}}" hint-placeholder-val="{{ false }}">
+        <div class="col" aria-busy="true" style="gap: 20px">
+          <div class="skel" style="height: 150px"></div>
+          <div class="ed desk-only"><div class="lc"><div class="skel" style="height: 460px"></div></div><div class="mc"><div class="skel" style="height: 640px"></div></div><div class="rc"><div class="skel" style="height: 300px"></div><div class="skel" style="height: 420px"></div></div></div>
+          <div class="col phone-only" style="gap: 12px"><div class="skel" style="height: 90px"></div><div class="skel" style="height: 90px"></div></div>
+          <span class="sr">Loading report templates</span>
+        </div>
+      </sc-if>
+      <sc-if value="{{isError}}" hint-placeholder-val="{{ false }}">
+        <div class="card state" role="alert"><span class="ic" style="background: var(--danger-soft); color: var(--danger)"><svg class="i l" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.alert}}"></path></svg></span><p class="h3">We couldn't load your report templates.</p><p class="muted">Check your connection and try again.</p><button class="btn primary" onClick="{{retry}}">Try again</button></div>
+      </sc-if>
+
+      <sc-if value="{{showList}}" hint-placeholder-val="{{ true }}">
+        <section class="card flush {{listCls}}" aria-labelledby="tlh">
+          <div class="card-head"><div class="col grow" style="gap: 2px"><h2 id="tlh" class="h3">Templates by level</h2><span class="muted" style="font-size: 14px">Only levels switched on for your school are shown.</span></div></div>
+          <div class="tgrid">
+            <sc-for list="{{groups}}" as="g" hint-placeholder-count="2">
+              <div class="tgrp">
+                <div class="row" style="gap: 8px"><span class="cap grow">{{g.level}}</span><span class="muted" style="font-size: 12px; font-weight: 600">{{g.kind}}</span></div>
+                <sc-for list="{{g.items}}" as="x" hint-placeholder-count="1">
+                  <button class="tcard" aria-current="{{x.cur}}" onClick="{{x.pick}}">
+                    <span class="row" style="gap: 8px; flex-wrap: nowrap; width: 100%"><svg class="i" viewBox="0 0 24 24" aria-hidden="true" style="color: var(--muted)"><path d="{{ic.tmpl}}"></path></svg><span class="grow" style="font-weight: 600; font-size: 15px">{{x.name}}</span><sc-if value="{{x.dirty}}" hint-placeholder-val="{{ false }}"><span class="badge sm b-warning"><svg class="i s" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.pencil}}"></path></svg>Unsaved</span></sc-if><svg class="i phone-only" viewBox="0 0 24 24" aria-hidden="true" style="color: var(--muted)"><path d="{{ic.chev}}"></path></svg></span>
+                    <span class="row" style="gap: 6px"><span class="badge sm b-neutral"><svg class="i s" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.palette}}"></path></svg>{{x.style}}</span><span class="badge sm {{x.verCls}}"><svg class="i s" viewBox="0 0 24 24" aria-hidden="true"><path d="{{x.verIc}}"></path></svg>{{x.ver}}</span></span>
+                    <span class="muted" style="font-size: 13px">In use by {{x.inUse}}</span>
+                  </button>
+                </sc-for>
+                <sc-if value="{{g.none}}" hint-placeholder-val="{{ false }}">
+                  <div class="tnone"><span style="font-size: 14px; font-weight: 600">No template yet for {{g.level}}.</span><span class="help">{{g.hint}}</span><button class="btn sm primary" onClick="{{g.create}}"><svg class="i s" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.plus}}"></path></svg>Create template</button></div>
+                </sc-if>
+              </div>
+            </sc-for>
+          </div>
+        </section>
+      </sc-if>
+
+      <sc-if value="{{showNoTpl}}" hint-placeholder-val="{{ false }}">
+        <div class="card state {{noTplCls}}"><span class="ic" style="background: var(--primary-soft); color: var(--primary)"><svg class="i l" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.tmpl}}"></path></svg></span><p class="h3">No report templates yet.</p><p class="muted" style="max-width: 460px">Create a template for each level. You can then choose a style, the blocks parents see and the school colour.</p><button class="btn primary" onClick="{{createFirst}}"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.plus}}"></path></svg>Create template</button></div>
+      </sc-if>
+
+      <sc-if value="{{showEditor}}" hint-placeholder-val="{{ true }}">
+        <div class="ed {{edCls}}">
+          <div class="lc">
+            <section class="card flush p-blk {{setCls}}" aria-labelledby="blkH">
+              <div style="padding: 14px 16px; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 2px"><h2 id="blkH" class="h3" style="font-size: 16px">Blocks</h2><span class="muted" style="font-size: 13px">Show, hide and reorder. Pick a block to open its settings.</span></div>
+              <ul style="list-style: none; margin: 0; padding: 6px">
+                <sc-for list="{{blocks}}" as="b" hint-placeholder-count="9">
+                  <li class="blk {{b.rowCls}}">
+                    <button class="bl {{b.labelCls}}" onClick="{{b.select}}" aria-pressed="{{b.focusAttr}}"><svg class="i s" viewBox="0 0 24 24" aria-hidden="true" style="color: var(--muted)"><path d="{{ic.grip}}"></path></svg><span>{{b.label}}</span></button>
+                    <sc-if value="{{b.movable}}" hint-placeholder-val="{{ true }}">
+                      <button class="mv" onClick="{{b.up}}" aria-label="Move {{b.label}} up" disabled="{{b.first}}"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.up}}"></path></svg></button>
+                      <button class="mv" onClick="{{b.down}}" aria-label="Move {{b.label}} down" disabled="{{b.last}}"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.down}}"></path></svg></button>
+                      <button class="switch" role="switch" aria-checked="{{b.onAttr}}" aria-label="Show {{b.label}}" onClick="{{b.toggle}}" style="margin-left: 4px"></button>
+                    </sc-if>
+                    <sc-if value="{{b.locked}}" hint-placeholder-val="{{ false }}"><span class="lockw" style="padding-right: 4px"><svg class="i s" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.lock}}"></path></svg>Always shown</span></sc-if>
+                  </li>
+                </sc-for>
+              </ul>
+            </section>
+            <section class="card desk-only" aria-labelledby="vhH" style="display: flex; flex-direction: column; gap: 8px; padding: 16px">
+              <h2 id="vhH" style="font-size: 14px; font-weight: 600">Version history</h2>
+              <sc-for list="{{hist}}" as="v" hint-placeholder-count="3">
+                <div class="vh"><span><strong style="font-weight: 600">Version {{v.n}}</strong> · {{v.note}}</span><span class="muted" style="white-space: nowrap">{{v.when}}</span></div>
+              </sc-for>
+              <sc-if value="{{noHist}}" hint-placeholder-val="{{ false }}"><span class="help">Not saved yet. Your first save becomes version 1.</span></sc-if>
+              <span class="help">Published reports keep the version they were issued with.</span>
+            </section>
+          </div>
+
+          <section class="mc {{pvCls}}" aria-label="Live A4 preview">
+            <div class="row" style="gap: 8px; justify-content: space-between">
+              <span class="muted" style="font-size: 13px">Live preview · {{pv.paper}} · print is always light</span>
+              <sc-if value="{{hasSamples}}" hint-placeholder-val="{{ false }}">
+                <div class="seg" role="radiogroup" aria-label="Sample student" style="padding: 3px">
+                  <sc-for list="{{samples}}" as="s" hint-placeholder-count="2"><button role="radio" aria-checked="{{s.sel}}" onClick="{{s.pick}}" style="min-height: 32px; padding: 0 10px; font-size: 13px">{{s.label}}</button></sc-for>
+                </div>
+              </sc-if>
+              <sc-if value="{{oneSample}}" hint-placeholder-val="{{ true }}"><span class="muted" style="font-size: 13px">Sample: {{pv.d.name}}</span></sc-if>
+            </div>
+            <div class="pvframe">
+              <div class="a4" data-style="{{pv.style}}" data-b="{{pv.borders}}" role="img" aria-label="Report card preview for {{pv.d.name}}" style="zoom: {{pv.zoom}}; width: {{pv.w}}px; min-height: {{pv.h}}px; padding: {{pv.pad}}; font-family: {{pv.font}}; font-size: {{pv.fs}}px; --ac: {{pv.ac}}; --on-ac: {{pv.onAc}}; --tint: {{pv.tint}}; --tint2: {{pv.tint2}}">
+                <sc-if value="{{pv.wm}}" hint-placeholder-val="{{ false }}"><span class="wm" aria-hidden="true">{{S.code}}</span></sc-if>
+                <sc-for list="{{pv.blocks}}" as="b" hint-placeholder-count="8">
+                  <sc-if value="{{b.isHeader}}" hint-placeholder-val="{{ false }}">
+                    <div class="hd lp-{{pv.logoPos}}">
+                      <sc-if value="{{pv.logo}}" hint-placeholder-val="{{ true }}"><span class="crs"><span>{{S.code}}</span></span></sc-if>
+                      <div class="inf">
+                        <span class="nm">{{S.name}}</span>
+                        <sc-if value="{{pv.address}}" hint-placeholder-val="{{ true }}"><span class="sub">{{S.address}}</span></sc-if>
+                        <sc-if value="{{pv.contact}}" hint-placeholder-val="{{ true }}"><span class="sub">{{S.contact}}</span></sc-if>
+                        <sc-if value="{{pv.motto}}" hint-placeholder-val="{{ true }}"><span class="mot">[SCHOOL MOTTO]</span></sc-if>
+                      </div>
+                      <div class="tt"><b>{{pv.title}}</b><sc-if value="{{pv.session}}" hint-placeholder-val="{{ true }}"><span>First Term · 2026/2027 Session</span></sc-if></div>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{b.isStudent}}" hint-placeholder-val="{{ false }}">
+                    <div class="sdw">
+                      <sc-if value="{{pv.photo}}" hint-placeholder-val="{{ false }}"><div class="ph">PHOTO</div></sc-if>
+                      <div class="sd"><sc-for list="{{pv.sd}}" as="f" hint-placeholder-count="5"><div><span class="k">{{f.k}}</span><strong>{{f.v}}</strong></div></sc-for></div>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{b.isSubjects}}" hint-placeholder-val="{{ false }}">
+                    <div class="tb" role="table" aria-label="Subjects">
+                      <div class="r h" role="row" style="grid-template-columns: {{pv.gc}}"><sc-for list="{{pv.head}}" as="h" hint-placeholder-count="9"><span class="c" role="columnheader" style="text-align: {{h.al}}">{{h.v}}<sc-if value="{{h.sub}}" hint-placeholder-val="{{ false }}"><small>{{h.sub}}</small></sc-if></span></sc-for></div>
+                      <sc-for list="{{pv.rows}}" as="r" hint-placeholder-count="13">
+                        <div class="r {{r.cls}}" role="row" style="grid-template-columns: {{pv.gc}}"><sc-for list="{{r.cells}}" as="c" hint-placeholder-count="9"><span class="c {{c.cls}}" role="cell">{{c.v}}</span></sc-for></div>
+                      </sc-for>
+                    </div>
+                    <sc-if value="{{pv.belowNote}}" hint-placeholder-val="{{ false }}"><p class="gk">Totals underlined in red are below the pass mark (40).</p></sc-if>
+                  </sc-if>
+                  <sc-if value="{{b.isSkills}}" hint-placeholder-val="{{ false }}">
+                    <div class="tb" role="table" aria-label="Skills">
+                      <div class="r h" role="row" style="grid-template-columns: minmax(0, 3fr) minmax(0, 1.4fr)"><span class="c" role="columnheader" style="text-align: left">SKILL</span><span class="c" role="columnheader">RATING</span></div>
+                      <sc-for list="{{pv.skRows}}" as="r" hint-placeholder-count="12">
+                        <sc-if value="{{r.isArea}}" hint-placeholder-val="{{ false }}"><div class="r area" role="row" style="grid-template-columns: minmax(0, 1fr)"><span class="c" role="cell">{{r.v}}</span></div></sc-if>
+                        <sc-if value="{{r.isSkill}}" hint-placeholder-val="{{ true }}"><div class="r {{r.cls}}" role="row" style="grid-template-columns: minmax(0, 3fr) minmax(0, 1.4fr)"><span class="c s" role="cell">{{r.v}}<sc-if value="{{r.hasDesc}}" hint-placeholder-val="{{ false }}"><small>{{r.desc}}</small></sc-if></span><span class="c b" role="cell">{{r.rating}}</span></div></sc-if>
+                        <sc-if value="{{r.isCom}}" hint-placeholder-val="{{ false }}"><div class="r com" role="row" style="grid-template-columns: minmax(0, 1fr)"><span class="c" role="cell">{{r.v}}</span></div></sc-if>
+                      </sc-for>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{b.isRatingKey}}" hint-placeholder-val="{{ false }}">
+                    <div class="rk"><span class="ck">RATING KEY</span><div class="rkl"><sc-for list="{{pv.rkey}}" as="x" hint-placeholder-count="5"><span><b>{{x.code}}</b> {{x.word}}</span></sc-for></div></div>
+                  </sc-if>
+                  <sc-if value="{{b.isSummary}}" hint-placeholder-val="{{ false }}">
+                    <div class="smy" style="grid-template-columns: repeat({{pv.sumN}}, minmax(0, 1fr))"><sc-for list="{{pv.sum}}" as="s" hint-placeholder-count="4"><div class="sc {{s.cls}}"><span class="k">{{s.k}}</span><strong>{{s.v}}</strong></div></sc-for></div>
+                  </sc-if>
+                  <sc-if value="{{b.isGkey}}" hint-placeholder-val="{{ false }}"><p class="gk">{{pv.d.gk}}</p></sc-if>
+                  <sc-if value="{{b.isDomains}}" hint-placeholder-val="{{ false }}">
+                    <div class="col" style="gap: 0.5em; display: flex; flex-direction: column">
+                      <div class="dm {{pv.dmCls}}">
+                        <sc-if value="{{pv.aff}}" hint-placeholder-val="{{ true }}"><div class="dt"><span class="dh">AFFECTIVE DOMAIN (1 to 5)</span><div class="rows"><sc-for list="{{pv.d.aff}}" as="x" hint-placeholder-count="5"><div class="tr"><span>{{x.k}}</span><b>{{x.v}}</b></div></sc-for></div></div></sc-if>
+                        <sc-if value="{{pv.psy}}" hint-placeholder-val="{{ true }}"><div class="dt"><span class="dh">PSYCHOMOTOR DOMAIN (1 to 5)</span><div class="rows"><sc-for list="{{pv.d.psy}}" as="x" hint-placeholder-count="5"><div class="tr"><span>{{x.k}}</span><b>{{x.v}}</b></div></sc-for></div></div></sc-if>
+                      </div>
+                      <sc-if value="{{pv.dkey}}" hint-placeholder-val="{{ true }}"><p class="gk">Rating key: 5 Excellent · 4 Very good · 3 Good · 2 Fair · 1 Poor</p></sc-if>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{b.isAttendance}}" hint-placeholder-val="{{ false }}">
+                    <div class="atd" style="grid-template-columns: repeat({{pv.attN}}, minmax(0, 1fr))"><sc-for list="{{pv.att}}" as="a" hint-placeholder-count="3"><div class="sc"><span class="k">{{a.k}}</span><strong>{{a.v}}</strong></div></sc-for></div>
+                  </sc-if>
+                  <sc-if value="{{b.isComments}}" hint-placeholder-val="{{ false }}">
+                    <div class="cm" style="grid-template-columns: repeat({{pv.cmN}}, minmax(0, 1fr))"><sc-for list="{{pv.cms}}" as="c" hint-placeholder-count="2"><div class="cmi"><span class="ck">{{c.k}}</span><p>{{c.v}}</p><sc-if value="{{pv.names}}" hint-placeholder-val="{{ true }}"><span class="cn">{{c.name}}</span></sc-if></div></sc-for></div>
+                  </sc-if>
+                  <sc-if value="{{b.isSignatures}}" hint-placeholder-val="{{ false }}">
+                    <div class="sgs" style="grid-template-columns: repeat({{pv.sgN}}, minmax(0, 1fr))">
+                      <sc-for list="{{pv.sgs}}" as="s" hint-placeholder-count="2">
+                        <div class="sg">
+                          <div class="sga">
+                            <sc-if value="{{s.isSig}}" hint-placeholder-val="{{ false }}"><svg viewBox="0 0 120 36" width="110" height="34" aria-hidden="true"><path d="M4 26c10-18 16-20 18-8s6 10 12-2 10-10 12 2 8 8 16-6 10-8 14 4 12 6 40-8" fill="none" stroke="#1d3a6e" stroke-width="2.4" stroke-linecap="round"></path></svg></sc-if>
+                            <sc-if value="{{s.isSigMissing}}" hint-placeholder-val="{{ false }}"><span class="ph2">[SIGNATURE IMAGE]</span></sc-if>
+                            <sc-if value="{{s.isStamp}}" hint-placeholder-val="{{ false }}"><span class="stamp">{{S.code}}<br>OFFICIAL</span></sc-if>
+                            <sc-if value="{{s.isStampMissing}}" hint-placeholder-val="{{ false }}"><span class="ph2">[SCHOOL STAMP]</span></sc-if>
+                          </div>
+                          <span class="sgl">{{s.k}}</span>
+                        </div>
+                      </sc-for>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{b.isFooter}}" hint-placeholder-val="{{ false }}">
+                    <div class="ftr {{pv.qrCls}}">
+                      <div class="qr">QR CODE</div>
+                      <div class="fi">
+                        <span><b>Report ID</b> {{pv.d.rid}} · <b>Revision</b> 1 · <b>Published</b> 8 Dec 2026</span>
+                        <span>Verify this report: scan the QR code or enter code <b>{{pv.d.code}}</b> at [VERIFY URL]</span>
+                        <sc-if value="{{pv.next}}" hint-placeholder-val="{{ true }}"><span><b>Next term begins</b> 5 Jan 2027</span></sc-if>
+                        <sc-if value="{{pv.fcontact}}" hint-placeholder-val="{{ true }}"><span>{{S.contactLine}}</span></sc-if>
+                        <sc-if value="{{pv.hasNote}}" hint-placeholder-val="{{ false }}"><span class="note">{{pv.note}}</span></sc-if>
+                        <sc-if value="{{pv.gkFoot}}" hint-placeholder-val="{{ false }}"><span class="gk">{{pv.d.gk}}</span></sc-if>
+                      </div>
+                      <div class="pw"><img src="/_blob/b5461303d7a8d45a18f7975e283523ab" alt="">Powered by SchoolFlow</div>
+                    </div>
+                  </sc-if>
+                </sc-for>
+              </div>
+            </div>
+          </section>
+
+          <div class="rc">
+            <section class="card p-style {{setCls}}" aria-labelledby="stH" style="display: flex; flex-direction: column; gap: 12px; padding: 16px">
+              <div class="col" style="gap: 2px"><h2 id="stH" class="h3" style="font-size: 16px">Style</h2><span class="help">Picking a style also sets its usual font. You can change the font in Template settings.</span></div>
+              <div class="stg" role="radiogroup" aria-labelledby="stH" style="--ac: {{pv.ac}}; --tint: {{pv.tint}}; --tint2: {{pv.tint2}}">
+                <sc-for list="{{styles}}" as="s" hint-placeholder-count="4">
+                  <button class="stc" role="radio" aria-checked="{{s.sel}}" onClick="{{s.pick}}">
+                    <span class="thm {{s.key}}" aria-hidden="true"><span class="t1"><b></b><u></u></span><i class="t2"></i><i class="t3"></i><i class="t3"></i><i class="t3"></i><i class="t3"></i><i class="t3"></i></span>
+                    <span class="sn">{{s.name}}<sc-if value="{{s.isSel}}" hint-placeholder-val="{{ false }}"><svg class="i s" viewBox="0 0 24 24" aria-hidden="true" style="color: var(--primary)"><path d="{{ic.ok}}"></path></svg></sc-if></span>
+                    <span class="sd2">{{s.desc}}</span>
+                  </button>
+                </sc-for>
+              </div>
+            </section>
+
+            <section class="card flush p-sec {{setCls}}" aria-labelledby="seH">
+              <div style="padding: 14px 16px; border-bottom: 1px solid var(--border)"><h2 id="seH" class="h3" style="font-size: 16px">Settings</h2></div>
+              <div>
+                <sc-for list="{{sections}}" as="sec" hint-placeholder-count="9">
+                  <div class="sec">
+                    <button class="sech" aria-expanded="{{sec.exp}}" onClick="{{sec.toggle}}"><svg class="i chev" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.chev}}"></path></svg><span class="grow">{{sec.label}}</span>
+                      <sc-if value="{{sec.hidden}}" hint-placeholder-val="{{ false }}"><span class="badge sm b-neutral"><svg class="i s" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.eyeoff}}"></path></svg>Hidden</span></sc-if>
+                      <sc-if value="{{sec.locked}}" hint-placeholder-val="{{ false }}"><span class="badge sm b-neutral"><svg class="i s" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.lock}}"></path></svg>Always shown</span></sc-if>
+                    </button>
+                    <sc-if value="{{sec.open}}" hint-placeholder-val="{{ false }}">
+                      <div class="secb">
+                        <sc-if value="{{sec.hidden}}" hint-placeholder-val="{{ false }}"><div class="alert a-info" style="margin: 6px 0 4px; padding: 10px 12px"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.eyeoff}}"></path></svg><span class="grow">This block is hidden on the report.</span><button class="link" onClick="{{sec.show}}">Show block</button></div></sc-if>
+                        <sc-if value="{{sec.empty}}" hint-placeholder-val="{{ false }}"><p class="help" style="padding: 8px 0">This block uses the rating scale from Learning areas and skills. It has no extra settings.</p></sc-if>
+                        <sc-for list="{{sec.items}}" as="o" hint-placeholder-count="5">
+                          <sc-if value="{{o.isSw}}" hint-placeholder-val="{{ true }}">
+                            <div class="it"><span class="t">{{o.label}}<sc-if value="{{o.hasHint}}" hint-placeholder-val="{{ false }}"><span class="help">{{o.hint}}</span></sc-if></span><button class="switch" role="switch" aria-checked="{{o.checked}}" aria-label="{{o.label}}" onClick="{{o.toggle}}"></button></div>
+                          </sc-if>
+                          <sc-if value="{{o.isSeg}}" hint-placeholder-val="{{ false }}">
+                            <div class="it stack"><span class="t">{{o.label}}</span><div class="seg" role="radiogroup" aria-label="{{o.label}}"><sc-for list="{{o.opts}}" as="p" hint-placeholder-count="3"><button role="radio" aria-checked="{{p.sel}}" onClick="{{p.pick}}">{{p.v}}</button></sc-for></div></div>
+                          </sc-if>
+                          <sc-if value="{{o.isText}}" hint-placeholder-val="{{ false }}">
+                            <div class="it stack"><label class="field">{{o.label}}<input class="input" type="text" value="{{o.val}}" placeholder="{{o.ph}}" onChange="{{o.onText}}"><sc-if value="{{o.hasHint}}" hint-placeholder-val="{{ false }}"><span class="help">{{o.hint}}</span></sc-if></label></div>
+                          </sc-if>
+                          <sc-if value="{{o.isUpload}}" hint-placeholder-val="{{ false }}">
+                            <div class="it stack">
+                              <div class="row" style="gap: 12px; flex-wrap: nowrap"><span class="t">{{o.label}}</span><button class="switch" role="switch" aria-checked="{{o.checked}}" aria-label="{{o.label}}" onClick="{{o.toggle}}"></button></div>
+                              <sc-if value="{{o.on}}" hint-placeholder-val="{{ false }}">
+                                <div class="upl">
+                                  <sc-if value="{{o.hasFile}}" hint-placeholder-val="{{ false }}"><svg class="i" viewBox="0 0 24 24" aria-hidden="true" style="color: var(--success-ink)"><path d="{{ic.image}}"></path></svg><span class="grow" style="font-weight: 600">{{o.file}}</span><button class="btn sm" onClick="{{o.upload}}">Replace</button><button class="link" onClick="{{o.remove}}">Remove</button></sc-if>
+                                  <sc-if value="{{o.noFile}}" hint-placeholder-val="{{ true }}"><span class="grow help">PNG or JPG, up to 1 MB. A clear background prints best.</span><button class="btn sm" onClick="{{o.upload}}"><svg class="i s" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.upload}}"></path></svg>Upload image</button></sc-if>
+                                </div>
+                              </sc-if>
+                            </div>
+                          </sc-if>
+                          <sc-if value="{{o.isLock}}" hint-placeholder-val="{{ false }}">
+                            <div class="it"><svg class="i" viewBox="0 0 24 24" aria-hidden="true" style="color: var(--muted)"><path d="{{ic.lock}}"></path></svg><span class="t">{{o.label}}</span><span class="badge sm b-neutral"><svg class="i s" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.lock}}"></path></svg>Always shown</span></div>
+                          </sc-if>
+                        </sc-for>
+                      </div>
+                    </sc-if>
+                  </div>
+                </sc-for>
+
+                <div class="sec">
+                  <button class="sech" aria-expanded="{{tsec.exp}}" onClick="{{tsec.toggle}}"><svg class="i chev" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.chev}}"></path></svg><span class="grow">Template settings</span></button>
+                  <sc-if value="{{tsec.open}}" hint-placeholder-val="{{ false }}">
+                    <div class="secb" style="gap: 14px; padding-top: 6px">
+                      <label class="field">Head's title<select class="input" value="{{tp.head}}" onChange="{{on.head}}"><option>Head teacher</option><option>Principal</option><option>Head of school</option><option>Proprietor</option><option>Director</option><option>Custom</option></select><span class="help">Used on the comment and signature labels, for example "{{headComment}}".</span></label>
+                      <sc-if value="{{customHead}}" hint-placeholder-val="{{ false }}"><label class="field">Custom title<input class="input" type="text" value="{{tp.custom}}" placeholder="For example, Rector" onChange="{{on.custom}}"></label></sc-if>
+                      <div class="col" style="gap: 6px"><span class="flabel">Paper size</span><div class="seg" role="radiogroup" aria-label="Paper size" style="display: grid"><sc-for list="{{tpo.paper}}" as="p" hint-placeholder-count="2"><button role="radio" aria-checked="{{p.sel}}" onClick="{{p.pick}}">{{p.v}}</button></sc-for></div></div>
+                      <label class="field">Font<select class="input" value="{{tp.font}}" onChange="{{on.font}}"><option>Inter</option><option>Merriweather</option><option>Nunito</option></select></label>
+                      <div class="col" style="gap: 6px"><span class="flabel">Text size</span><div class="seg" role="radiogroup" aria-label="Text size" style="display: grid"><sc-for list="{{tpo.size}}" as="p" hint-placeholder-count="3"><button role="radio" aria-checked="{{p.sel}}" onClick="{{p.pick}}">{{p.v}}</button></sc-for></div></div>
+                      <div class="col" style="gap: 8px">
+                        <span class="flabel" id="acH">Accent colour</span>
+                        <div class="col" role="radiogroup" aria-labelledby="acH" style="gap: 8px">
+                          <button class="radio" role="radio" aria-checked="{{acSchool}}" onClick="{{on.acSchool}}"><span class="o"></span><span class="col grow" style="gap: 2px"><span style="font-weight: 600; font-size: 15px">School colour</span><span class="help"><span class="sw-dot" style="background: {{S.colour}}"></span> {{S.colourUp}}</span></span></button>
+                          <button class="radio" role="radio" aria-checked="{{acCustom}}" onClick="{{on.acCustom}}"><span class="o"></span><span class="col grow" style="gap: 2px"><span style="font-weight: 600; font-size: 15px">Custom colour</span><span class="help">Pick any colour for this template.</span></span></button>
+                        </div>
+                        <sc-if value="{{acCustom}}" hint-placeholder-val="{{ false }}">
+                          <div class="col" style="gap: 10px">
+                            <button aria-label="Saturation and brightness. Click to pick." onClick="{{pickSV}}" style="position: relative; width: 100%; height: 150px; border: 1px solid var(--border); border-radius: 10px; cursor: crosshair; padding: 0; background: linear-gradient(to top, #000000, rgba(0,0,0,0)), linear-gradient(to right, #ffffff, {{hueColour}})">
+                              <span aria-hidden="true" style="position: absolute; left: {{svX}}; top: {{svY}}; width: 18px; height: 18px; margin: -9px 0 0 -9px; border-radius: 9999px; border: 3px solid #ffffff; box-shadow: 0 0 0 1px rgba(0,0,0,0.4); background: {{pv.ac}}"></span>
+                            </button>
+                            <label class="field">Hue<input type="range" min="0" max="360" value="{{hue}}" onChange="{{on.hue}}" style="width: 100%; height: 14px; border-radius: 9999px; appearance: none; -webkit-appearance: none; background: linear-gradient(to right, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000)"></label>
+                            <div class="row" style="gap: 10px; flex-wrap: nowrap">
+                              <span aria-hidden="true" style="width: 44px; height: 44px; flex-shrink: 0; border-radius: 8px; border: 1px solid var(--border); background: {{pv.ac}}"></span>
+                              <label class="field grow">Hex<input class="input num" type="text" maxlength="7" value="{{hexText}}" onChange="{{on.hex}}" style="text-transform: uppercase"></label>
+                            </div>
+                            <div class="col" style="gap: 6px"><span class="help">Recent colours</span>
+                              <div class="row" style="gap: 8px"><sc-for list="{{recent}}" as="r" hint-placeholder-count="5"><button aria-label="Use {{r.hex}}" onClick="{{r.pick}}" style="width: 32px; height: 32px; border-radius: 8px; border: 2px solid {{r.ring}}; background: {{r.hex}}; cursor: pointer; padding: 0"></button></sc-for></div>
+                            </div>
+                            <sc-if value="{{lowContrast}}" hint-placeholder-val="{{ false }}"><div class="alert a-warning" role="status"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.warn}}"></path></svg><span>White text on this colour may be hard to read. We'll use dark text on coloured parts of the report.</span></div></sc-if>
+                          </div>
+                        </sc-if>
+                      </div>
+                      <div class="col" style="gap: 6px"><span class="flabel">Borders</span><div class="seg" role="radiogroup" aria-label="Borders" style="display: grid"><sc-for list="{{tpo.borders}}" as="p" hint-placeholder-count="3"><button role="radio" aria-checked="{{p.sel}}" onClick="{{p.pick}}">{{p.v}}</button></sc-for></div></div>
+                      <div class="swrow" style="padding: 4px 0; border: 0"><span class="col grow" style="gap: 2px"><span class="flabel">Logo watermark</span><span class="help">A faint crest behind the report.</span></span><button class="switch" role="switch" aria-checked="{{wmAttr}}" aria-label="Logo watermark" onClick="{{on.wm}}"></button></div>
+                      <sc-if value="{{isScore}}" hint-placeholder-val="{{ true }}"><label class="field">Grading key<select class="input" value="{{tp.gkey}}" onChange="{{on.gkey}}"><option>Off</option><option>Below summary</option><option>In footer</option></select></label></sc-if>
+                      <div class="col" style="gap: 6px"><span class="flabel">Margins</span><div class="seg" role="radiogroup" aria-label="Margins" style="display: grid"><sc-for list="{{tpo.margins}}" as="p" hint-placeholder-count="2"><button role="radio" aria-checked="{{p.sel}}" onClick="{{p.pick}}">{{p.v}}</button></sc-for></div></div>
+                    </div>
+                  </sc-if>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </sc-if>
+    </main>
+
+    <sc-if value="{{showBar}}" hint-placeholder-val="{{ true }}">
+      <div class="actionbar">
+        <span class="row grow" style="gap: 8px; flex-wrap: nowrap; font-size: 14px; color: {{barInk}}; font-weight: 500; min-width: 220px"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{barIc}}"></path></svg><span><strong style="font-weight: 600">{{barTitle}}</strong> <span class="muted">Published reports keep the version they were issued with.</span></span></span>
+        <sc-if value="{{dirtyDesk}}" hint-placeholder-val="{{ false }}"><button class="btn desk-only" onClick="{{discard}}">Discard changes</button></sc-if>
+        <button class="btn primary" onClick="{{askSave}}" disabled="{{saveOff}}" style="flex: 1 1 200px; max-width: {{btnMax}}">{{saveLabel}}</button>
+      </div>
+    </sc-if>
+  </div>
+</div>
+
+<sc-if value="{{confirm}}" hint-placeholder-val="{{ false }}">
+  <div class="modal"><div class="dialog" role="dialog" aria-modal="true" aria-labelledby="svT"><h2 id="svT" class="h3">{{saveLabel}}?</h2><p class="muted">{{confirmText}}</p><p class="muted">Published reports keep the version they were issued with.</p><div class="btns"><button class="btn" onClick="{{cancelSave}}">Cancel</button><button class="btn primary" onClick="{{doSave}}">{{saveLabel}}</button></div></div></div>
+</sc-if>
+
+<sc-if value="{{toast}}" hint-placeholder-val="{{ false }}">
+  <div role="status" style="position: {{toastPos}}; left: 50%; bottom: 96px; transform: translateX(-50%); z-index: 40; width: max-content; max-width: 92%; background: var(--text); color: var(--bg); border-radius: 10px; padding: 12px 16px; display: flex; gap: 12px; align-items: center; font-size: 14px; box-shadow: var(--shadow-lg)"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.ok}}"></path></svg><span>{{toast}}</span><button class="iconbtn" aria-label="Dismiss" onClick="{{hideToast}}" style="color: var(--bg); width: 32px; height: 32px"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.close}}"></path></svg></button></div>
+</sc-if>
+
+<sc-if value="{{drawer}}" hint-placeholder-val="{{ false }}">
+  <div class="scrim"><nav class="drawer" aria-label="Menu">
+    <div class="row" style="flex-wrap: nowrap"><div class="brand grow" style="padding: 0"><span class="crest" aria-hidden="true">{{S.code}}</span><span class="col" style="gap: 0"><span style="font-weight: 700; font-size: 15px">{{S.name}}</span><span class="muted" style="font-size: 13px">{{S.person}} · {{S.role}}</span></span></div><button class="iconbtn" aria-label="Close menu" onClick="{{closeDrawer}}"><svg class="i l" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.close}}"></path></svg></button></div>
+    <div class="nav"><sc-for list="{{nav}}" as="n" hint-placeholder-count="17"><sc-if value="{{n.grp}}" hint-placeholder-val="{{ false }}"><span class="cap grp">{{n.grp}}</span></sc-if><a href="{{n.href}}" class="{{n.cls}}" aria-current="{{n.cur}}"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{n.d}}"></path></svg><span class="l">{{n.label}}</span><sc-if value="{{n.count}}" hint-placeholder-val="{{ false }}"><span class="{{n.countCls}}">{{n.count}}</span></sc-if></a></sc-for></div>
+  </nav></div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["Light","Dark"],"default":"Light"},"state":{"editor":"enum","options":["Default","Empty","Loading","Error"],"default":"Default"},"device":{"editor":"enum","options":["Desktop","Phone"],"default":"Desktop"},"school":{"editor":"enum","options":["Greenfield Model College","Bright Stars Academy"],"default":"Greenfield Model College"},"$preview":{"width":1440,"height":1500}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    const tpls = {};
+    this.tdefs().forEach((d) => { tpls[d.id] = this.mk(d, false); });
+    this.state = { tpls, newTpls: {}, sel: {}, open: {}, focus: '', mView: 'list', pTab: 'preview', confirm: false, toast: '', drawer: false, sample: 'co', retry: false, hue: null, hexDraft: null };
+  }
+  schools() {
+    return {
+      gmc: { key: 'gmc', code: 'GMC', name: 'Greenfield Model College', town: 'Independence Layout, Enugu', colour: '#1e6b45', person: 'Mrs. Ngozi Okeke', role: 'Principal', ini: 'NO', address: '14 Chime Avenue, Independence Layout, Enugu', contact: '0803 000 1122 · info@greenfield.edu.ng', contactLine: 'Greenfield Model College · 14 Chime Avenue, Independence Layout, Enugu · 0803 000 1122 · info@greenfield.edu.ng', levels: ['Junior Secondary', 'Senior Secondary'] },
+      bsa: { key: 'bsa', code: 'BSA', name: 'Bright Stars Academy', town: 'Nsukka', colour: '#7a1f2b', person: 'Mrs. Chiamaka Nwafor', role: 'Head teacher', ini: 'CN', address: '3 University Road, Nsukka, Enugu State', contact: '[SCHOOL PHONE] · [SCHOOL EMAIL]', contactLine: 'Bright Stars Academy · 3 University Road, Nsukka · [SCHOOL PHONE] · [SCHOOL EMAIL]', levels: ['Nursery', 'Primary'] }
+    };
+  }
+  tdefs() {
+    return [
+      { id: 'gjs', school: 'gmc', level: 'Junior Secondary', kind: 'score', name: 'Greenfield Junior Secondary', version: 3, inUse: 'JSS 1, JSS 2, JSS 3', cols: ['CA1', 'CA2', 'Exam'], max: [20, 20, 60], style: 'Modern', head: 'Principal', hist: [['3', 'Added QR footer', '1 Sep 2026'], ['2', 'Subject position column', '28 Aug 2026'], ['1', 'First version', '25 Aug 2026']] },
+      { id: 'gss', school: 'gmc', level: 'Senior Secondary', kind: 'score', name: 'Greenfield Senior Secondary', version: 2, inUse: 'SS 1, SS 2, SS 3', cols: ['CA1', 'CA2', 'CA3', 'Project', 'Exam'], max: [10, 10, 10, 10, 60], style: 'Classic', head: 'Principal', hist: [['2', 'Classic style', '2 Sep 2026'], ['1', 'First version', '25 Aug 2026']] },
+      { id: 'bsn', school: 'bsa', level: 'Nursery', kind: 'skills', name: 'Bright Stars Nursery', version: 1, inUse: 'Nursery 1, Nursery 2', cols: [], max: [], style: 'Early Years', head: 'Head teacher', hist: [['1', 'First version', '4 Sep 2026']] },
+      { id: 'bsp', school: 'bsa', level: 'Primary', kind: 'score', name: 'Bright Stars Primary', version: 1, inUse: 'Primary 1 to Primary 6', cols: ['CA1', 'CA2', 'Exam'], max: [20, 20, 60], style: 'Modern', head: 'Head teacher', hist: [['1', 'First version', '4 Sep 2026']] }
+    ];
+  }
+  fontOf(style) { return { Modern: 'Inter', Classic: 'Merriweather', Compact: 'Inter', 'Early Years': 'Nunito' }[style] || 'Inter'; }
+  mk(d, fresh) {
+    const cfg = this.defCfg(d);
+    const t = { ...d, cfg, base: JSON.stringify(cfg) };
+    if (fresh) { t.version = 0; t.hist = []; t.inUse = 'Not in use yet'; t.base = ''; }
+    return t;
+  }
+  defCfg(t) {
+    const skills = t.kind === 'skills';
+    const order = skills ? [['header', 1], ['pupil', 1], ['skills', 1], ['ratingkey', 1], ['attendance', 1], ['comments', 1], ['signatures', 1], ['footer', 1]]
+      : [['header', 1], ['student', 1], ['subjects', 1], ['summary', 1], ['domains', 1], ['attendance', 0], ['comments', 1], ['signatures', 1], ['footer', 1]];
+    const subjects = {};
+    t.cols.forEach((c) => { subjects['col:' + c] = true; });
+    Object.assign(subjects, { breakdown: true, total: true, grade: true, remark: true, pos: true, avg: true, high: false, low: false, init: false, below: false, shade: true });
+    return {
+      style: t.style, blocks: order.map(([id, on]) => ({ id, on: !!on })),
+      header: { logo: true, logoPos: 'Left', motto: true, address: true, contact: true, title: 'Student Report Card', session: true },
+      student: { photo: false, adm: true, gender: true, age: false, dob: false, cls: true, house: false, ft: true },
+      subjects,
+      summary: { total: true, average: true, position: true, num: true, classAvg: false, nSub: false, promo: false },
+      domains: { aff: true, psy: true, key: true, layout: 'Side by side' },
+      attendance: { opened: true, present: true, absent: true },
+      comments: { ft: true, ct: true, head: true, names: true },
+      signatures: { ftLine: true, headImg: false, stamp: false, date: true, headFile: '', stampFile: '' },
+      footer: { qr: 'Right', next: true, contact: true, note: '' },
+      pupil: { photo: false, age: true, cls: true },
+      skills: { group: true, desc: false, areaCom: true, display: 'Words' },
+      tpl: { head: t.head, custom: '', paper: 'A4', font: this.fontOf(t.style), size: 'Medium', accent: 'school', colour: '', borders: 'Lines', watermark: false, gkey: 'Below summary', margins: 'Normal' }
+    };
+  }
+  icons() {
+    return {
+      dash: 'M3 3h7v9H3zM14 3h7v5h-7zM14 12h7v9h-7zM3 16h7v5H3z', approve: 'M9 11l3 3 8-8M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9', send: 'M22 2L11 13M22 2l-7 20-4-9-9-4z',
+      flag: 'M4 22V4M4 4h12l-2 4 2 4H4', tmpl: 'M4 4h16v16H4zM4 9h16M9 9v11', audit: 'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM12 7v5l3 2', student: 'M22 10L12 5 2 10l10 5 10-5zM6 12v5c3 2 9 2 12 0v-5',
+      teacher: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21a8 8 0 0 1 16 0', review: 'M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12zM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z', parent: 'M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8',
+      shield: 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z', setup: 'M3 21h18M5 21V9l7-5 7 5v12M9 21v-6h6v6', bell: 'M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.94 1.94 0 0 0 3.4 0',
+      corr: 'M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z', mail: 'M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zM22 6l-10 7L2 6', bill: 'M4 5h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2zM2 10h20',
+      settings: 'M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1',
+      menu: 'M4 6h16M4 12h16M4 18h16', close: 'M18 6L6 18M6 6l12 12', alert: 'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM12 8v4M12 16h.01',
+      ok: 'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM8 12l3 3 5-6', lock: 'M5 11h14v10H5zM8 11V7a4 4 0 0 1 8 0v4', back: 'M15 18l-6-6 6-6', chev: 'M9 6l6 6-6 6',
+      up: 'M18 15l-6-6-6 6', down: 'M6 9l6 6 6-6', grip: 'M9 6h.01M15 6h.01M9 12h.01M15 12h.01M9 18h.01M15 18h.01', pencil: 'M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z',
+      eyeoff: 'M3 3l18 18M10.6 10.6a2 2 0 0 0 2.8 2.8M9.9 5.1A10 10 0 0 1 12 5c6.5 0 10 7 10 7a17 17 0 0 1-3.2 4.2M6.6 6.6A17 17 0 0 0 2 12s3.5 7 10 7a9.7 9.7 0 0 0 5.4-1.6',
+      upload: 'M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12', image: 'M3 3h18v18H3zM8.5 10a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zM21 15l-5-5L5 21', plus: 'M12 5v14M5 12h14',
+      warn: 'M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0zM12 9v4M12 17h.01', palette: 'M12 22a10 10 0 1 1 10-10c0 3-2.5 4-4.5 4H16a2 2 0 0 0-1.5 3.3A2 2 0 0 1 12 22zM7.5 11h.01M11 7h.01M16 8.5h.01',
+      draft: 'M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6'
+    };
+  }
+  pg(n, phone) {
+    const ph = ['DashboardV5', 'PublishV5', 'BillingV5', 'TemplateEditorV5', 'LearningAreas'];
+    if (this.props && this.props.school === 'Bright Stars Academy') n = {Attention:'AttentionBSA',SchoolAdmins:'SchoolAdminsBSA',Assessment:'AssessmentBSA',Grading:'GradingBSA',TemplateEditorV5:'TemplateEditorBSA','#classes':'ClassPage',AttentionTeacher:'AttentionTeacherBSA',MyClass:'MyClassPrimary',SchoolDetailV5:'SchoolDetailBSA'}[n] || n; /* BSAMAP */
+    return n.startsWith('#') ? n : n + (phone && ['Assessment', 'AssessmentBSA', 'Attention', 'AttentionBSA', 'AttentionReviewer', 'AttentionTeacher', 'AttentionTeacherBSA', 'AuditLog', 'BillingV5', 'BsaMenus', 'ChangePassword', 'ClassPage', 'CreateSchool', 'DashboardV5', 'EmailLog', 'Grading', 'GradingBSA', 'LearningAreas', 'Login', 'Login_Link', 'MyClass', 'MyClassPrimary', 'ParentSkills', 'Payments', 'PlatformSettings', 'PricingV5', 'PublishV5', 'RatingSheet', 'RatingSheetAssistant', 'SchoolAdmins', 'SchoolAdminsBSA', 'SchoolDetailBSA', 'SchoolDetailV5', 'SchoolPaused', 'SchoolsV5', 'ScoreGridSS', 'ScoreGridV5', 'SheetsV5', 'StudentDetail', 'SuperBillingV5', 'TemplateEditorBSA', 'TemplateEditorV5'].includes(n) ? '_Phone' : '') + '.dc.html';
+  }
+  nav(sk, phone) {
+    const I = this.icons();
+    const gmc = sk === 'gmc';
+    const items = [[null, 'Dashboard', 'DashboardV5', 'dash'], ['Results', 'Approvals', 'Approvals', 'approve', gmc ? '4' : '2', 'count strong'], [null, 'Publish results', 'PublishV5', 'send'], [null, 'Students needing attention', 'Attention', 'flag'], [null, 'Report templates', 'TemplateEditorV5', 'tmpl'], [null, 'Audit trail', '#audit-trail', 'audit'],
+      ['People', 'Students', 'StudentDetail', 'student'], [null, 'Teachers', '#teachers', 'teacher'], [null, 'Reviewers', '#reviewers', 'review'], [null, 'Parents', '#parents', 'parent'], [null, 'School admins', 'SchoolAdmins', 'shield'],
+      ['School', 'School setup', gmc ? 'Assessment' : 'LearningAreas', 'setup'], [null, 'Notices', '#notices', 'bell']];
+    if (gmc) items.push([null, 'Corrections', 'Corrections', 'corr', '1', 'count']);
+    items.push([null, 'Emails', '#emails', 'mail'], [null, 'Billing', 'BillingV5', 'bill'], [null, 'School settings', '#school-settings', 'settings']);
+    return items.map(([grp, label, href, ic, count, countCls]) => ({ grp: grp || '', label, href: this.pg(href, phone), d: I[ic], count: count || '', countCls: countCls || '', cls: label === 'Report templates' ? 'on' : '', cur: label === 'Report templates' ? 'page' : 'false' }));
+  }
+  hexToRgb(h) { const m = /^#?([0-9a-f]{6})$/i.exec(h || ''); if (!m) return null; const n = parseInt(m[1], 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; }
+  rgbToHex(r, g, b) { return '#' + [r, g, b].map((v) => Math.round(v).toString(16).padStart(2, '0')).join(''); }
+  rgbToHsv(r, g, b) { r /= 255; g /= 255; b /= 255; const mx = Math.max(r, g, b), mn = Math.min(r, g, b), d = mx - mn; let h = 0; if (d) { if (mx === r) h = ((g - b) / d) % 6; else if (mx === g) h = (b - r) / d + 2; else h = (r - g) / d + 4; h *= 60; if (h < 0) h += 360; } return [h, mx ? d / mx : 0, mx]; }
+  hsvToHex(h, s, v) { const c = v * s, x = c * (1 - Math.abs(((h / 60) % 2) - 1)), m = v - c; let r = 0, g = 0, b = 0; if (h < 60) [r, g, b] = [c, x, 0]; else if (h < 120) [r, g, b] = [x, c, 0]; else if (h < 180) [r, g, b] = [0, c, x]; else if (h < 240) [r, g, b] = [0, x, c]; else if (h < 300) [r, g, b] = [x, 0, c]; else [r, g, b] = [c, 0, x]; return this.rgbToHex((r + m) * 255, (g + m) * 255, (b + m) * 255); }
+  lum(hex) { const c = this.hexToRgb(hex) || [0, 0, 0]; const f = (v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }; return 0.2126 * f(c[0]) + 0.7152 * f(c[1]) + 0.0722 * f(c[2]); }
+  mix(hex, w) { const c = this.hexToRgb(hex) || [31, 79, 216]; return this.rgbToHex(c[0] + (255 - c[0]) * w, c[1] + (255 - c[1]) * w, c[2] + (255 - c[2]) * w); }
+  ord(n) { const s = ['th', 'st', 'nd', 'rd'], v = n % 100; return n + (s[(v - 20) % 10] || s[v] || s[0]); }
+  gradeGMC(t) { return t >= 75 ? ['A1', 'Excellent'] : t >= 70 ? ['B2', 'Very good'] : t >= 65 ? ['B3', 'Good'] : t >= 60 ? ['C4', 'Credit'] : t >= 55 ? ['C5', 'Credit'] : t >= 50 ? ['C6', 'Credit'] : t >= 45 ? ['D7', 'Pass'] : t >= 40 ? ['E8', 'Pass'] : ['F9', 'Fail']; }
+  gradePri(t) { return t >= 70 ? ['A', 'Excellent'] : t >= 60 ? ['B', 'Very good'] : t >= 50 ? ['C', 'Good'] : t >= 45 ? ['D', 'Fair'] : t >= 40 ? ['E', 'Pass'] : ['F', 'Fail']; }
+  sample(t, key) {
+    const GK = 'Grading: A1 75 to 100 Excellent · B2 70 to 74 Very good · B3 65 to 69 Good · C4 60 to 64, C5 55 to 59, C6 50 to 54 Credit · D7 45 to 49, E8 40 to 44 Pass · F9 0 to 39 Fail';
+    const affG = [['Punctuality', 5], ['Neatness', 4], ['Politeness', 5], ['Attentiveness', 4], ['Relationship with others', 5]].map(([k, v]) => ({ k, v }));
+    const psyG = [['Handwriting', 4], ['Sports and games', 5], ['Crafts', 3], ['Verbal fluency', 4], ['Musical skills', 3]].map(([k, v]) => ({ k, v }));
+    const derive = (names, totals, ncols, gfn, ini) => names.map((s, i) => {
+      const tt = totals[i]; let comps;
+      if (ncols === 3) { const a = Math.round(tt * 0.2), b = Math.round(tt * 0.19); comps = [a, b, tt - a - b]; }
+      else { const a = Math.min(10, Math.round(tt / 10)); comps = [a, a, a, a, tt - 4 * a]; }
+      const [g, rm] = gfn(tt);
+      return { s, comps, t: tt, g, rm, p: this.ord(((i * 5) % 11) + 1), a: (tt - 7 + (i % 5) * 1.3).toFixed(1), hi: Math.min(98, tt + 11 + (i % 6)), lo: Math.max(21, tt - 31 - (i % 5)), ini: Array.isArray(ini) ? ini[i] : ini };
+    });
+    if (t.kind === 'skills') {
+      const W = { E: 'Excellent', VG: 'Very good', G: 'Good', F: 'Fair', NI: 'Needs improvement' };
+      const areas = [
+        ['Number work', [['Counts 1 to 20', 'VG', 'Counts objects from 1 to 20 without help.'], ['Recognises shapes', 'E', 'Names a circle, square and triangle.']], 'Counts confidently and enjoys sorting shapes.'],
+        ['Letter work', [['Recognises letters A to Z', 'G', 'Says the name of each capital letter.'], ['Writes own name', 'VG', 'Writes her first name clearly.']], ''],
+        ['Phonics', [['Sounds letters correctly', 'G', 'Gives the sound for each letter.']], 'Keep practising letter sounds at home.'],
+        ['Rhymes and songs', [['Recites rhymes', 'E', 'Recites a rhyme from memory.']], 'Loves to sing for the class.'],
+        ['Creative arts', [['Colours within lines', 'VG', 'Colours a picture neatly.']], ''],
+        ['Social habits', [['Shares with others', 'E', 'Takes turns and shares toys.'], ['Greets politely', 'E', 'Greets teachers and friends.']], ''],
+        ['Health habits', [['Washes hands', 'VG', 'Washes hands before eating.']], ''],
+        ['Physical development', [['Hops on one foot', 'G', 'Hops five times on one foot.']], '']
+      ];
+      return { name: 'Chidera Okeke', cls: 'Nursery 2', age: '4 years', areas, W, att: [60, 58, 2], ctCom: 'Chidera is cheerful and eager to learn. She counts confidently and enjoys rhymes.', ctName: 'Mrs. Amaka Udeh', headCom: 'A lovely start to Nursery 2. Well done, Chidera.', headName: 'Mrs. Chiamaka Nwafor', rid: 'BSA-2627-T1-NUR2-001', code: '9TC2-H5LB', gk: '' };
+    }
+    if (t.id === 'gjs') {
+      const names = ['English Language', 'Mathematics', 'Basic Science', 'Basic Technology', 'Social Studies', 'Civic Education', 'Igbo Language', 'Agricultural Science', 'Computer Studies', 'Christian Religious Studies', 'Business Studies', 'Cultural and Creative Arts', 'Physical and Health Education'];
+      const avgs = ['65.1', '64.8', '61.7', '60.2', '70.3', '68.9', '63.5', '66.0', '69.4', '71.2', '62.8', '67.5', '72.1'];
+      const hi = [86, 91, 84, 80, 88, 85, 79, 83, 87, 89, 81, 84, 86], lo = [41, 32, 35, 38, 44, 40, 36, 39, 42, 45, 37, 40, 41];
+      const ini = ['GE', 'TA', 'EN', 'OU', 'AK', 'CI', 'UE', 'BM', 'FA', 'PN', 'KJ', 'RA', 'SD'];
+      if (key === 'hg') {
+        const tot = [48, 39, 35, 44, 55, 52, 50, 46, 45, 53, 42, 50, 42];
+        const pos = [10, 11, 12, 9, 8, 9, 7, 10, 11, 9, 11, 8, 11];
+        const rows = derive(names, tot, 3, (x) => this.gradeGMC(x), ini).map((r, i) => ({ ...r, p: this.ord(pos[i]), a: avgs[i], hi: hi[i], lo: lo[i] }));
+        return { name: 'Halima Garba', adm: 'GMC/2026/010', gender: 'Female', cls: 'JSS 1A', ft: 'Mr. Tunde Adebayo', rows, total: 601, avg: '46.2', pos: '11th', n: 12, classAvg: '58.6', att: [60, 55, 5], ftCom: 'Halima is polite and tries hard. She needs more practice in Mathematics and Basic Science.', headCom: 'Fair work. More effort is needed in weak subjects.', headName: 'Mrs. Ngozi Okeke', rid: 'GMC-2627-T1-JSS1A-010', code: '3PH8-W6RT', gk: GK, aff: affG, psy: psyG };
+      }
+      const raw = [[15, 14, 45, 74, 'B2', 'Very good', '4th'], [16, 15, 47, 78, 'A1', 'Excellent', '2nd'], [14, 13, 42, 69, 'B3', 'Good', '5th'], [13, 12, 40, 65, 'B3', 'Good', '6th'], [16, 15, 49, 80, 'A1', 'Excellent', '2nd'], [15, 14, 47, 76, 'A1', 'Excellent', '3rd'], [12, 12, 38, 62, 'C4', 'Credit', '7th'], [14, 13, 44, 71, 'B2', 'Very good', '4th'], [14, 14, 44, 72, 'B2', 'Very good', '5th'], [15, 15, 47, 77, 'A1', 'Excellent', '3rd'], [13, 13, 40, 66, 'B3', 'Good', '6th'], [14, 13, 43, 70, 'B2', 'Very good', '4th'], [14, 13, 41, 68, 'B3', 'Good', '7th']];
+      const rows = raw.map((r, i) => ({ s: names[i], comps: [r[0], r[1], r[2]], t: r[3], g: r[4], rm: r[5], p: r[6], a: avgs[i], hi: hi[i], lo: lo[i], ini: ini[i] }));
+      return { name: 'Chukwuemeka Obi', adm: 'GMC/2026/014', gender: 'Male', cls: 'JSS 1A', ft: 'Mr. Tunde Adebayo', rows, total: 928, avg: '71.4', pos: '3rd', n: 12, classAvg: '58.6', att: [60, 57, 3], ftCom: 'A focused and respectful student. Keep it up in Mathematics.', headCom: 'A good result. Keep it up.', headName: 'Mrs. Ngozi Okeke', rid: 'GMC-2627-T1-JSS1A-014', code: '7KQ4-M2XD', gk: GK, aff: affG, psy: psyG };
+    }
+    if (t.id === 'gss') {
+      const names = ['English Language', 'Mathematics', 'Civic Education', 'Physics', 'Chemistry', 'Biology', 'Economics', 'Geography', 'Agricultural Science', 'Computer Studies'];
+      const tot = [68, 74, 77, 62, 58, 65, 71, 60, 69, 73];
+      const rows = derive(names, tot, 5, (x) => this.gradeGMC(x), ['GE', 'IO', 'CI', 'AU', 'NE', 'EN', 'ZM', 'HB', 'BM', 'FA']);
+      const total = tot.reduce((a, b) => a + b, 0);
+      return { name: '[SAMPLE STUDENT]', adm: '[ADMISSION NO.]', gender: '[GENDER]', cls: 'SS 1A', ft: '[FORM TEACHER]', rows, total, avg: (total / tot.length).toFixed(1), pos: '5th', n: 12, classAvg: '60.4', att: [60, 58, 2], ftCom: 'A steady term. More practice in Chemistry will help.', headCom: 'A good result. Keep it up.', headName: 'Mrs. Ngozi Okeke', rid: 'GMC-2627-T1-SS1A-001', code: '5MV9-R2KD', gk: GK, aff: affG, psy: psyG };
+    }
+    const names = ['English Studies', 'Mathematics', 'Basic Science and Technology', 'Social Studies', 'Civic Education', 'Igbo Language', 'Cultural and Creative Arts', 'Physical and Health Education', 'Christian Religious Studies', 'Computer Studies'];
+    const tot = [72, 65, 70, 68, 74, 58, 80, 76, 71, 63];
+    const rows = derive(names, tot, 3, (x) => this.gradePri(x), 'IC');
+    const total = tot.reduce((a, b) => a + b, 0);
+    const affB = [['Punctuality', 5], ['Neatness', 4], ['Politeness', 5]].map(([k, v]) => ({ k, v }));
+    const psyB = [['Handwriting', 4], ['Sports', 3]].map(([k, v]) => ({ k, v }));
+    return { name: 'Kamsi Okafor', adm: 'BSA/2026/021', gender: '[GENDER]', cls: 'Primary 4A', ft: 'Mrs. Ifeoma Chukwu', rows, total, avg: (total / tot.length).toFixed(1), pos: '2nd', n: 12, classAvg: '62.3', att: [60, 58, 2], ftCom: 'Kamsi works hard and helps others. Keep reading every day.', headCom: 'A very good result. Keep it up.', headName: 'Mrs. Chiamaka Nwafor', rid: 'BSA-2627-T1-PRI4A-001', code: '4BW7-N8QE', gk: 'Grading: A 70 to 100 Excellent · B 60 to 69 Very good · C 50 to 59 Good · D 45 to 49 Fair · E 40 to 44 Pass · F 0 to 39 Fail', aff: affB, psy: psyB };
+  }
+  labels() {
+    return { header: 'School header', student: 'Student details', subjects: 'Subject table', summary: 'Summary: total, average, position', domains: 'Affective and psychomotor', attendance: 'Attendance', comments: 'Comments', signatures: 'Signatures', footer: 'Footer, QR and report ID', pupil: 'Pupil details', skills: 'Skills table', ratingkey: 'Rating key' };
+  }
+  meta(id, t, H) {
+    const sk = t.kind === 'skills';
+    const M = {
+      header: [['logo', 'Logo', 'sw'], ['logoPos', 'Logo position', 'seg', ['Left', 'Centre', 'Right']], ['motto', 'School motto', 'sw'], ['address', 'Address', 'sw'], ['contact', 'Phone and email', 'sw'], ['title', 'Report title', 'text', null, '', 'Student Report Card'], ['session', 'Session and term line', 'sw']],
+      student: [['photo', 'Photo', 'sw'], ['adm', 'Admission number', 'sw'], ['gender', 'Gender', 'sw'], ['age', 'Age', 'sw'], ['dob', 'Date of birth', 'sw'], ['cls', 'Class and arm', 'sw'], ['house', 'House', 'sw'], ['ft', "Form teacher's name", 'sw']],
+      subjects: t.cols.map((c, i) => ['col:' + c, c, 'sw', null, 'Out of ' + t.max[i]]).concat([['breakdown', 'CA and exam breakdown', 'sw', null, 'Turn off to show only the total.'], ['total', 'Total', 'sw'], ['grade', 'Grade', 'sw'], ['remark', 'Remark', 'sw'], ['pos', 'Position in each subject', 'sw'], ['avg', 'Class average per subject', 'sw'], ['high', 'Highest in class', 'sw'], ['low', 'Lowest in class', 'sw'], ['init', "Subject teacher's initials", 'sw'], ['below', 'Highlight scores below pass mark', 'sw', null, 'Totals below 40 print in red and underlined.'], ['shade', 'Row shading', 'sw']]),
+      summary: [['total', 'Total score', 'sw'], ['average', 'Total average', 'sw'], ['position', 'Overall class position (optional)', 'sw', null, 'When off, the summary shows No. in class instead.'], ['num', 'Number in class', 'sw'], ['classAvg', 'Class average', 'sw'], ['nSub', 'Number of subjects', 'sw'], ['promo', 'Promotion result', 'sw', null, 'Mainly for the Third Term report.']],
+      domains: [['aff', 'Affective', 'sw'], ['psy', 'Psychomotor', 'sw'], ['key', 'Rating key', 'sw'], ['layout', 'Layout', 'seg', ['Side by side', 'Stacked']]],
+      attendance: [['opened', 'Times school opened', 'sw'], ['present', 'Times present', 'sw'], ['absent', 'Times absent', 'sw']],
+      comments: sk ? [['ct', "Class teacher's comment", 'sw'], ['head', H + "'s comment", 'sw']] : [['ft', "Form teacher's comment", 'sw'], ['head', H + "'s comment", 'sw'], ['names', 'Show names', 'sw']],
+      signatures: [['ftLine', sk ? 'Class teacher signature line' : 'Form teacher signature line', 'sw'], ['headImg', H + ' signature image', 'upload', null, '', '', 'headFile', 'signature.png'], ['stamp', 'School stamp image', 'upload', null, '', '', 'stampFile', 'school-stamp.png'], ['date', 'Date line', 'sw']],
+      footer: [['qr', 'QR position', 'seg', ['Left', 'Right']], ['next', 'Next term begins', 'sw'], ['contact', 'School contact line', 'sw'], ['note', 'Custom footer note', 'text', null, 'Prints at the bottom of every report.', 'For example, School fees are due by 5 January.'], ['l1', 'Report ID', 'lock'], ['l2', 'Revision', 'lock'], ['l3', 'Publication date', 'lock'], ['l4', 'QR code', 'lock']],
+      pupil: [['photo', 'Photo', 'sw'], ['age', 'Age', 'sw'], ['cls', 'Class', 'sw']],
+      skills: [['group', 'Group by area', 'sw'], ['desc', 'Show skill descriptions', 'sw'], ['areaCom', 'Show area comments', 'sw'], ['display', 'Rating display', 'seg', ['Words', 'Codes', 'Words and codes']]],
+      ratingkey: []
+    };
+    return M[id] || [];
+  }
+  edit(pk, id, fn) {
+    const pool = { ...this.state[pk] };
+    const tt = { ...pool[id], cfg: JSON.parse(JSON.stringify(pool[id].cfg)) };
+    fn(tt.cfg, tt);
+    pool[id] = tt;
+    this.setState({ [pk]: pool });
+  }
+  renderVals() {
+    const P = this.props, st = this.state, I = this.icons();
+    const theme = String(P.theme || 'Light').toLowerCase(), device = String(P.device || 'Desktop').toLowerCase();
+    let view = String(P.state || 'Default').toLowerCase();
+    if (view === 'error' && st.retry) view = 'default';
+    const phone = device === 'phone';
+    const sk = P.school === 'Bright Stars Academy' ? 'bsa' : 'gmc';
+    const SS = this.schools()[sk];
+    const S = { ...SS, colourUp: SS.colour.toUpperCase() };
+    const empty = view === 'empty';
+    const pk = empty ? 'newTpls' : 'tpls';
+    const selKey = sk + (empty ? '-e' : '');
+    const pool = st[pk];
+    const list = Object.values(pool).filter((x) => x.school === sk);
+    const defs = this.tdefs().filter((d) => d.school === sk);
+    let t = pool[st.sel[selKey]] && pool[st.sel[selKey]].school === sk ? pool[st.sel[selKey]] : list[0];
+    const hasT = !!t;
+    if (!t) t = this.mk(defs[0], true);
+    const c = t.cfg;
+    const dirty = hasT && JSON.stringify(c) !== t.base;
+    const isDirty = (x) => JSON.stringify(x.cfg) !== x.base;
+    const create = (lv) => {
+      const d = defs.find((x) => x.level === lv);
+      const nt = this.mk(d, true);
+      this.setState({ newTpls: { ...this.state.newTpls, [d.id]: nt }, sel: { ...this.state.sel, [sk + '-e']: d.id }, mView: 'edit', pTab: 'settings' });
+    };
+    const kindOf = (lv) => (lv === 'Nursery' ? 'Skills report card' : 'Score report card');
+    const verOf = (x) => (x.version > 0 ? { ver: 'Version ' + x.version, verCls: 'b-success', verIc: I.ok } : { ver: 'Not saved yet', verCls: 'b-neutral', verIc: I.draft });
+    const groups = SS.levels.map((lv) => {
+      const items = list.filter((x) => x.level === lv).map((x) => ({ name: x.name, style: x.cfg.style, inUse: x.inUse, ...verOf(x), dirty: isDirty(x) && x.version > 0, cur: hasT && x.id === t.id && !phone ? 'true' : 'false', pick: () => this.setState({ sel: { ...this.state.sel, [selKey]: x.id }, mView: 'edit', focus: '' }) }));
+      return { level: lv, kind: kindOf(lv), items, none: items.length === 0, hint: lv === 'Nursery' ? 'Nursery uses Skill ratings, so this will be a Skills report card in the Early Years style.' : 'Start from the Modern style. You can change everything later.', create: () => create(lv) };
+    });
+    const H = c.tpl.head === 'Custom' ? (c.tpl.custom.trim() || 'Head') : c.tpl.head;
+    const L = this.labels();
+    const E = (fn) => this.edit(pk, t.id, fn);
+    const skills = t.kind === 'skills';
+    const movableN = c.blocks.length - 1;
+    const openKey = (id) => t.id + ':' + id;
+    const isOpen = (id) => (st.open[openKey(id)] !== undefined ? st.open[openKey(id)] : id === (skills ? 'skills' : 'subjects'));
+    const blocks = c.blocks.map((b, i) => {
+      const locked = b.id === 'footer';
+      const foc = st.focus === b.id;
+      return {
+        id: b.id, label: L[b.id], locked, movable: !locked, first: i === 0, last: i >= movableN - 1,
+        onAttr: b.on ? 'true' : 'false', labelCls: b.on || locked ? '' : 'off', rowCls: foc ? 'on' : '', focusAttr: foc ? 'true' : 'false',
+        select: () => this.setState({ focus: b.id, open: { ...this.state.open, [openKey(b.id)]: true } }),
+        up: () => E((cf) => { if (i > 0) { const a = cf.blocks; [a[i - 1], a[i]] = [a[i], a[i - 1]]; } }),
+        down: () => E((cf) => { if (i < movableN - 1) { const a = cf.blocks; [a[i + 1], a[i]] = [a[i], a[i + 1]]; } }),
+        toggle: () => E((cf) => { cf.blocks[i].on = !cf.blocks[i].on; })
+      };
+    });
+    const sections = c.blocks.map((b, i) => {
+      const locked = b.id === 'footer';
+      const o = c[b.id] || {};
+      const items = this.meta(b.id, t, H).map(([key, label, type, opts, hint, ph, fileKey, fileName]) => {
+        const val = o[key];
+        const it = { label, hint: hint || '', hasHint: !!hint, isSw: type === 'sw', isSeg: type === 'seg', isText: type === 'text', isUpload: type === 'upload', isLock: type === 'lock', checked: val ? 'true' : 'false', on: !!val, val: val || '', ph: ph || '' };
+        it.toggle = () => E((cf) => { cf[b.id][key] = !cf[b.id][key]; });
+        if (type === 'seg') it.opts = opts.map((v) => ({ v, sel: val === v ? 'true' : 'false', pick: () => E((cf) => { cf[b.id][key] = v; }) }));
+        if (type === 'text') it.onText = (e) => { const v = e && e.target ? e.target.value : ''; E((cf) => { cf[b.id][key] = v; }); };
+        if (type === 'upload') { it.file = o[fileKey] || ''; it.hasFile = !!o[fileKey]; it.noFile = !o[fileKey]; it.upload = () => E((cf) => { cf[b.id][fileKey] = fileName; }); it.remove = () => E((cf) => { cf[b.id][fileKey] = ''; }); }
+        return it;
+      });
+      return { label: L[b.id], open: isOpen(b.id), exp: isOpen(b.id) ? 'true' : 'false', hidden: !b.on && !locked, locked, empty: items.length === 0, items,
+        toggle: () => this.setState({ open: { ...this.state.open, [openKey(b.id)]: !isOpen(b.id) }, focus: b.id }),
+        show: () => E((cf) => { cf.blocks[i].on = true; }) };
+    });
+    const tOpen = st.open[openKey('tpl')] === true;
+    const tsec = { open: tOpen, exp: tOpen ? 'true' : 'false', toggle: () => this.setState({ open: { ...this.state.open, [openKey('tpl')]: !tOpen } }) };
+    const tp = c.tpl;
+    const segOpts = (key, opts) => opts.map((v) => ({ v, sel: tp[key] === v ? 'true' : 'false', pick: () => E((cf) => { cf.tpl[key] = v; }) }));
+    const tpo = { paper: segOpts('paper', ['A4', 'Letter']), size: segOpts('size', ['Small', 'Medium', 'Large']), borders: segOpts('borders', ['None', 'Lines', 'Boxed']), margins: segOpts('margins', ['Narrow', 'Normal']) };
+    const styleKey = { Modern: 'modern', Classic: 'classic', Compact: 'compact', 'Early Years': 'early' };
+    const styleDesc = { Modern: 'Default. Clean layout with a school-colour table header.', Classic: 'Traditional ruled boxes and a serif font.', Compact: 'Tighter rows and smaller type so 15 or more subjects fit on one A4 page.', 'Early Years': 'Larger type, rounded shapes and soft school colours. Default for Skills report cards.' };
+    const styles = ['Modern', 'Classic', 'Compact', 'Early Years'].map((n) => ({ name: n, key: styleKey[n], desc: styleDesc[n], sel: c.style === n ? 'true' : 'false', isSel: c.style === n, pick: () => E((cf) => { cf.style = n; cf.tpl.font = this.fontOf(n); }) }));
+    // Accent colour
+    const ac = tp.accent === 'custom' && this.hexToRgb(tp.colour) ? tp.colour.toLowerCase() : SS.colour;
+    const rgb = this.hexToRgb(ac);
+    const [h0, s0, v0] = this.rgbToHsv(rgb[0], rgb[1], rgb[2]);
+    const hue = st.hue === null ? h0 : st.hue;
+    const low = 1.05 / (this.lum(ac) + 0.05) < 4.5;
+    const setColour = (hex) => E((cf) => { cf.tpl.accent = 'custom'; cf.tpl.colour = hex; });
+    const recent = ['#1e6b45', '#7a1f2b', '#1d3a6e', '#1f4fd8', '#f2c94c'].map((hex) => ({ hex, ring: hex === ac ? 'var(--text)' : 'var(--border)', pick: () => { this.setState({ hue: null, hexDraft: null }); setColour(hex); } }));
+    const on = {
+      head: (e) => { const v = e && e.target ? e.target.value : 'Principal'; E((cf) => { cf.tpl.head = v; }); },
+      custom: (e) => { const v = e && e.target ? e.target.value : ''; E((cf) => { cf.tpl.custom = v; }); },
+      font: (e) => { const v = e && e.target ? e.target.value : 'Inter'; E((cf) => { cf.tpl.font = v; }); },
+      gkey: (e) => { const v = e && e.target ? e.target.value : 'Off'; E((cf) => { cf.tpl.gkey = v; }); },
+      wm: () => E((cf) => { cf.tpl.watermark = !cf.tpl.watermark; }),
+      acSchool: () => E((cf) => { cf.tpl.accent = 'school'; }),
+      acCustom: () => E((cf) => { cf.tpl.accent = 'custom'; if (!cf.tpl.colour) cf.tpl.colour = SS.colour; }),
+      hex: (e) => { let v = (e && e.target ? e.target.value : '').trim(); if (!v.startsWith('#')) v = '#' + v; if (/^#[0-9a-fA-F]{6}$/.test(v)) { this.setState({ hue: null, hexDraft: null }); setColour(v.toLowerCase()); } else this.setState({ hexDraft: v }); },
+      hue: (e) => { const h = Number(e && e.target ? e.target.value : 0); this.setState({ hue: h }); setColour(this.hsvToHex(h % 360, s0 || 0.7, v0 || 0.5)); }
+    };
+    // Preview
+    const d = this.sample(t, st.sample);
+    const st2 = styleKey[c.style] || 'modern';
+    const classic = st2 === 'classic';
+    const paper = tp.paper === 'Letter' ? [816, 1056] : [794, 1123];
+    const baseFs = { modern: 13, classic: 13, compact: 11, early: 15 }[st2];
+    const fs = Math.round(baseFs * ({ Small: 0.9, Medium: 1, Large: 1.12 }[tp.size] || 1) * 10) / 10;
+    const fonts = { Inter: "Inter, 'Segoe UI', system-ui, sans-serif", Merriweather: 'Merriweather, Georgia, serif', Nunito: "Nunito, 'Segoe UI', system-ui, sans-serif" };
+    const pad = tp.margins === 'Narrow' ? '26px 28px 22px' : '40px 44px 32px';
+    const hc = c.header, sd0 = c.student, so = c.subjects, sm = c.summary, dm = c.domains, at = c.attendance, cm = c.comments, sg = c.signatures, ft = c.footer;
+    let sd = [];
+    if (skills) {
+      sd = [{ k: 'NAME', v: d.name }];
+      if (c.pupil.cls) sd.push({ k: 'CLASS', v: d.cls });
+      if (c.pupil.age) sd.push({ k: 'AGE', v: d.age });
+    } else {
+      sd = [{ k: 'NAME', v: d.name }];
+      if (sd0.adm) sd.push({ k: 'ADMISSION NO.', v: d.adm });
+      if (sd0.gender) sd.push({ k: 'GENDER', v: d.gender });
+      if (sd0.age) sd.push({ k: 'AGE', v: '[AGE]' });
+      if (sd0.dob) sd.push({ k: 'DATE OF BIRTH', v: '[DATE OF BIRTH]' });
+      if (sd0.cls) sd.push({ k: 'CLASS', v: d.cls });
+      if (sd0.house) sd.push({ k: 'HOUSE', v: '[HOUSE]' });
+      if (sd0.ft) sd.push({ k: 'FORM TEACHER', v: d.ft });
+    }
+    // Subject table
+    const cols = [{ v: 'Subject', sub: '', al: 'left', w: '2.6fr', get: (r) => r.s, cls: 's' }];
+    if (!skills) {
+      if (so.breakdown) t.cols.forEach((cn, j) => { if (so['col:' + cn]) cols.push({ v: cn, sub: String(t.max[j]), al: 'center', w: '0.62fr', get: (r) => String(r.comps[j]), cls: '' }); });
+      if (so.total) cols.push({ v: 'Total', sub: '100', al: 'center', w: '0.7fr', get: (r) => String(r.t), cls: 'b', tot: true });
+      if (so.grade) cols.push({ v: 'Grade', sub: '', al: 'center', w: '0.65fr', get: (r) => r.g, cls: 'b' });
+      if (so.remark) cols.push({ v: 'Remark', sub: '', al: 'center', w: '1.1fr', get: (r) => r.rm, cls: '' });
+      if (so.pos) cols.push({ v: 'Subject', sub: 'position', al: 'center', w: '0.8fr', get: (r) => r.p, cls: '' });
+      if (so.avg) cols.push({ v: 'Class', sub: 'average', al: 'center', w: '0.8fr', get: (r) => r.a, cls: '' });
+      if (so.high) cols.push({ v: 'Highest', sub: 'in class', al: 'center', w: '0.75fr', get: (r) => String(r.hi), cls: '' });
+      if (so.low) cols.push({ v: 'Lowest', sub: 'in class', al: 'center', w: '0.75fr', get: (r) => String(r.lo), cls: '' });
+      if (so.init) cols.push({ v: 'Teacher', sub: 'initials', al: 'center', w: '0.7fr', get: (r) => r.ini, cls: '' });
+    }
+    const gc = cols.map((x) => 'minmax(0, ' + x.w + ')').join(' ');
+    const head = cols.map((x) => ({ v: x.v, sub: x.sub, al: x.al }));
+    const anyLow = !skills && so.below && so.total && d.rows.some((r) => r.t < 40);
+    const rows = skills ? [] : d.rows.map((r, i) => ({ cls: so.shade && i % 2 === 1 ? 'alt' : '', cells: cols.map((x) => ({ v: x.get(r), cls: x.cls + (x.tot && so.below && r.t < 40 ? ' lo' : '') })) }));
+    // Summary
+    const sum = [];
+    if (!skills) {
+      if (sm.total) sum.push({ k: 'TOTAL SCORE', v: String(d.total), cls: '' });
+      if (sm.average) sum.push({ k: 'TOTAL AVERAGE', v: d.avg, cls: '' });
+      if (sm.position) sum.push({ k: classic ? 'CLASS POSITION' : 'OVERALL CLASS POSITION', v: d.pos, cls: 'hi' });
+      if (sm.num || !sm.position) sum.push({ k: 'NO. IN CLASS', v: String(d.n), cls: '' });
+      if (sm.classAvg) sum.push({ k: 'CLASS AVERAGE', v: d.classAvg, cls: '' });
+      if (sm.nSub) sum.push({ k: 'NO. OF SUBJECTS', v: String(d.rows.length), cls: '' });
+      if (sm.promo) sum.push({ k: 'PROMOTION RESULT', v: '[PROMOTION RESULT]', cls: '' });
+    }
+    // Skills rows
+    const skRows = [];
+    if (skills) {
+      const disp = (code) => (c.skills.display === 'Codes' ? code : c.skills.display === 'Words and codes' ? d.W[code] + ' (' + code + ')' : d.W[code]);
+      let n = 0;
+      d.areas.forEach(([area, list2, com]) => {
+        if (c.skills.group) skRows.push({ isArea: true, isSkill: false, isCom: false, v: area });
+        list2.forEach(([s, code, desc]) => { skRows.push({ isArea: false, isSkill: true, isCom: false, v: s, rating: disp(code), desc, hasDesc: c.skills.desc, cls: n % 2 === 1 ? 'alt' : '' }); n++; });
+        if (c.skills.group && c.skills.areaCom && com) skRows.push({ isArea: false, isSkill: false, isCom: true, v: com });
+      });
+    }
+    const rkey = [['E', 'Excellent'], ['VG', 'Very good'], ['G', 'Good'], ['F', 'Fair'], ['NI', 'Needs improvement']].map(([code, word]) => ({ code, word }));
+    const att = [];
+    if (at.opened) att.push({ k: 'TIMES SCHOOL OPENED', v: String(d.att[0]) });
+    if (at.present) att.push({ k: 'TIMES PRESENT', v: String(d.att[1]) });
+    if (at.absent) att.push({ k: 'TIMES ABSENT', v: String(d.att[2]) });
+    const HU = (H + "'s comment").toUpperCase();
+    const cms = [];
+    if (skills) { if (cm.ct) cms.push({ k: "CLASS TEACHER'S COMMENT", v: d.ctCom, name: d.ctName }); if (cm.head) cms.push({ k: HU, v: d.headCom, name: d.headName }); }
+    else { if (cm.ft) cms.push({ k: "FORM TEACHER'S COMMENT", v: d.ftCom, name: d.ft }); if (cm.head) cms.push({ k: HU, v: d.headCom, name: d.headName }); }
+    const sgs = [];
+    const sgBase = { isSig: false, isSigMissing: false, isStamp: false, isStampMissing: false };
+    if (sg.ftLine) sgs.push({ ...sgBase, k: skills ? "Class teacher's signature" : "Form teacher's signature" });
+    if (sg.headImg) sgs.push({ ...sgBase, k: H + "'s signature", isSig: !!sg.headFile, isSigMissing: !sg.headFile });
+    if (sg.stamp) sgs.push({ ...sgBase, k: 'School stamp', isStamp: !!sg.stampFile, isStampMissing: !sg.stampFile });
+    if (sg.date) sgs.push({ ...sgBase, k: 'Date' });
+    const gkBelow = !skills && tp.gkey === 'Below summary';
+    const pvBlocks = [];
+    const visible = c.blocks.filter((b) => b.on || b.id === 'footer');
+    visible.forEach((b) => {
+      const f = { isHeader: b.id === 'header', isStudent: b.id === 'student' || b.id === 'pupil', isSubjects: b.id === 'subjects', isSkills: b.id === 'skills', isRatingKey: b.id === 'ratingkey', isSummary: b.id === 'summary' && sum.length > 0, isGkey: false, isDomains: b.id === 'domains' && (dm.aff || dm.psy || dm.key), isAttendance: b.id === 'attendance' && att.length > 0, isComments: b.id === 'comments' && cms.length > 0, isSignatures: b.id === 'signatures' && sgs.length > 0, isFooter: b.id === 'footer' };
+      pvBlocks.push(f);
+      const sumVisible = visible.some((x) => x.id === 'summary');
+      if (gkBelow && (b.id === 'summary' || (b.id === 'subjects' && !sumVisible))) pvBlocks.push({ isGkey: true });
+    });
+    const avail = phone ? 334 : 436;
+    const pv = {
+      d, style: st2, borders: tp.borders.toLowerCase(), paper: tp.paper, zoom: String(Math.round((avail / paper[0]) * 1000) / 1000), w: paper[0], h: paper[1], pad, font: fonts[tp.font] || fonts.Inter, fs,
+      ac, onAc: low ? '#0f172a' : '#ffffff', tint: this.mix(ac, 0.92), tint2: this.mix(ac, 0.8),
+      wm: tp.watermark, logo: hc.logo, logoPos: hc.logoPos.toLowerCase(), motto: hc.motto, address: hc.address, contact: hc.contact, title: hc.title, session: hc.session,
+      photo: skills ? c.pupil.photo : sd0.photo, sd, gc, head, rows, belowNote: anyLow, skRows, rkey,
+      sum, sumN: String(Math.max(1, sum.length)), aff: dm.aff, psy: dm.psy, dkey: dm.key, dmCls: dm.layout === 'Stacked' ? 'stack' : 'sbs',
+      att, attN: String(Math.max(1, att.length)), cms, cmN: String(Math.max(1, cms.length)), names: skills ? true : cm.names,
+      sgs, sgN: String(Math.max(1, sgs.length)), qrCls: ft.qr === 'Left' ? 'qr-left' : 'qr-right', next: ft.next, fcontact: ft.contact, note: ft.note, hasNote: !!ft.note.trim(), gkFoot: !skills && tp.gkey === 'In footer',
+      blocks: pvBlocks
+    };
+    const hasSamples = t.id === 'gjs';
+    const samples = [['co', 'Chukwuemeka Obi'], ['hg', 'Halima Garba']].map(([k, label]) => ({ label, sel: (st.sample === k) ? 'true' : 'false', pick: () => this.setState({ sample: k }) }));
+    // Views
+    const main = view === 'default' || empty;
+    const showEditor = main && hasT;
+    const phListView = phone && (st.mView === 'list' || !hasT);
+    const phEditView = phone && !phListView;
+    const n = t.version + 1;
+    const saveLabel = 'Save as version ' + n;
+    const ver = verOf(t);
+    const hist = t.hist.map(([vn, note, when]) => ({ n: vn, note, when }));
+    let barTitle, barIc, barInk;
+    if (dirty) { barTitle = t.version > 0 ? 'Unsaved changes.' : 'Not saved yet.'; barIc = I.pencil; barInk = 'var(--warning-ink)'; }
+    else { barTitle = 'All changes saved. Version ' + t.version + ' is in use.'; barIc = I.ok; barInk = 'var(--success-ink)'; }
+    const confirmText = t.version > 0 ? 'New report cards for ' + t.inUse + ' will use version ' + n + '.' : 'New report cards for ' + t.level + ' will use version 1.';
+    const doSave = () => {
+      const cur = this.state[pk][t.id];
+      const def = defs.find((x) => x.id === t.id);
+      const nt = { ...cur, version: cur.version + 1, base: JSON.stringify(cur.cfg), hist: [[String(cur.version + 1), cur.version === 0 ? 'First version' : cur.cfg.style + ' style, block changes', 'Today'], ...cur.hist], inUse: cur.inUse === 'Not in use yet' ? def.inUse : cur.inUse };
+      this.setState({ [pk]: { ...this.state[pk], [t.id]: nt }, confirm: false, toast: 'Saved as version ' + nt.version + '. Published reports keep the version they were issued with.' });
+    };
+    return {
+      theme, device, ic: I, S, nav: this.nav(sk, phone), t, hasT, kindLabel: kindOf(t.level), pageTitle: hasT && main ? t.name : 'Report templates', showMeta: hasT && main,
+      verLabel: t.version > 0 ? 'Version ' + t.version + ' in use' : 'Not saved yet', verCls: ver.verCls, verIc: ver.verIc, dirty, dirtyDesk: dirty && t.version > 0,
+      isLoading: view === 'loading', isError: view === 'error', retry: () => this.setState({ retry: true }),
+      showList: main, listCls: phEditView ? 'gone' : '', groups,
+      showNoTpl: main && !hasT, noTplCls: phone ? 'gone' : '', createFirst: () => create(SS.levels[0]),
+      showEditor, edCls: phListView ? 'gone' : '', setCls: phone && st.pTab !== 'settings' ? 'gone' : '', pvCls: phone && st.pTab !== 'preview' ? 'gone' : '',
+      phList: !phEditView, phEdit: phEditView, phListIntro: phListView && main, backToList: () => this.setState({ mView: 'list' }),
+      pTabPreview: st.pTab === 'preview' ? 'true' : 'false', pTabSettings: st.pTab === 'settings' ? 'true' : 'false',
+      showPreview: () => this.setState({ pTab: 'preview' }), showSettings: () => this.setState({ pTab: 'settings' }),
+      blocks, sections, tsec, tp, tpo, styles, on, isScore: !skills, customHead: tp.head === 'Custom', headComment: H + "'s comment",
+      acSchool: tp.accent === 'school' ? 'true' : 'false', acCustom: tp.accent === 'custom', wmAttr: tp.watermark ? 'true' : 'false',
+      hue: Math.round(hue), hueColour: this.hsvToHex(hue % 360, 1, 1), svX: Math.round(s0 * 100) + '%', svY: Math.round((1 - v0) * 100) + '%', hexText: st.hexDraft || ac.toUpperCase(), recent, lowContrast: low,
+      pickSV: (e) => { if (!e || !e.currentTarget) return; const r = e.currentTarget.getBoundingClientRect(); const s = Math.min(1, Math.max(0, (e.clientX - r.left) / r.width)); const v = Math.min(1, Math.max(0, 1 - (e.clientY - r.top) / r.height)); this.setState({ hue }); setColour(this.hsvToHex(hue % 360, s, v)); },
+      pv, hasSamples, oneSample: !hasSamples, samples, hist, noHist: hist.length === 0,
+      showBar: showEditor && !phListView, barTitle, barIc, barInk, saveLabel, saveOff: !dirty, btnMax: phone ? 'none' : '260px',
+      askSave: () => { if (dirty) this.setState({ confirm: true }); }, cancelSave: () => this.setState({ confirm: false }), doSave, confirm: st.confirm, confirmText,
+      discard: () => E((cf, tt) => { const b = JSON.parse(tt.base); Object.keys(cf).forEach((k) => { delete cf[k]; }); Object.assign(cf, b); }),
+      toast: st.toast, hideToast: () => this.setState({ toast: '' }), toastPos: phone ? 'absolute' : 'fixed',
+      drawer: st.drawer, openDrawer: () => this.setState({ drawer: true }), closeDrawer: () => this.setState({ drawer: false })
+    };
+  }
+}
+</script>
+</body>
+</html>

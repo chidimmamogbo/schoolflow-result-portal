@@ -1,0 +1,68 @@
+# Files git must never track.
+# Secrets first: these must never reach the public repo.
+
+# Environment files hold secrets (database URLs, API keys).
+# The .example versions list the names only, with no values, so they are kept.
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# Keys and certificates
+*.pem
+*.key
+*.p12
+
+# Vercel CLI link folder (project IDs and pulled env files)
+.vercel/
+
+# Database backups from pg_dump (contain real data once schools onboard)
+backups/
+*.dump
+
+# Local file storage used in development instead of Vercel Blob
+storage/
+uploads/
+
+# ---- Frontend (Node, Bun, Next.js) ----
+node_modules/
+.next/
+out/
+next-env.d.ts
+*.tsbuildinfo
+coverage/
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+
+# ---- Backend (Python, uv) ----
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.hypothesis/
+.coverage
+.coverage.*
+htmlcov/
+dist/
+build/
+*.egg-info/
+
+# ---- Logs ----
+*.log
+npm-debug.log*
+bun-debug.log*
+
+# ---- Editors and operating systems ----
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# ---- Claude Code personal settings (shared settings.json is kept) ----
+.claude/settings.local.json

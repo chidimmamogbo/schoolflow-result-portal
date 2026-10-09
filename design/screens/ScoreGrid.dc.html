@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Score entry, Mathematics JSS 1A</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#1f4fd8}a:hover{color:#163ca8}
+input:focus-visible,a:focus-visible,button:focus-visible{outline:2px solid #1f4fd8;outline-offset:2px}
+input[type=text]{font-variant-numeric:tabular-nums}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #f7f8fa; font-family: Inter, 'Segoe UI', system-ui, sans-serif; color: #0f172a; display: flex; flex-direction: column">
+  <header style="flex-shrink: 0; background: #ffffff; border-bottom: 1px solid #e3e7ee; padding: 8px 12px 12px; display: flex; flex-direction: column; gap: 8px">
+    <div style="display: flex; align-items: center; gap: 4px">
+      <a href="TeacherSheets.dc.html" aria-label="Back to my score sheets" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 8px; color: #0f172a"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"></path></svg></a>
+      <div style="flex-grow: 1; display: flex; flex-direction: column">
+        <h1 style="margin: 0; font-size: 18px; line-height: 24px; font-weight: 700">Mathematics · JSS 1A</h1>
+        <span style="font-size: 13px; color: #5b6475">First Term 2026/2027</span>
+      </div>
+      <sc-if value="{{draft}}" hint-placeholder-val="{{ true }}">
+        <span style="display: inline-flex; align-items: center; gap: 4px; height: 26px; padding: 0 10px; border-radius: 9999px; background: #eef1f5; color: #5b6475; font-size: 13px; font-weight: 600"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"></path></svg>Draft</span>
+      </sc-if>
+      <sc-if value="{{submitted}}" hint-placeholder-val="{{ false }}">
+        <span style="display: inline-flex; align-items: center; gap: 4px; height: 26px; padding: 0 10px; border-radius: 9999px; background: #eaf1fe; color: #2563eb; font-size: 13px; font-weight: 600"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2L11 13"></path><path d="M22 2l-7 20-4-9-9-4z"></path></svg>Submitted</span>
+      </sc-if>
+    </div>
+    <div style="display: flex; gap: 8px; padding-left: 4px">
+      <span style="height: 28px; padding: 0 10px; border-radius: 9999px; background: #f1f3f7; font-size: 13px; font-weight: 500; display: inline-flex; align-items: center">CA1 /20</span>
+      <span style="height: 28px; padding: 0 10px; border-radius: 9999px; background: #f1f3f7; font-size: 13px; font-weight: 500; display: inline-flex; align-items: center">CA2 /20</span>
+      <span style="height: 28px; padding: 0 10px; border-radius: 9999px; background: #f1f3f7; font-size: 13px; font-weight: 500; display: inline-flex; align-items: center">Exam /60</span>
+      <span style="height: 28px; padding: 0 10px; border-radius: 9999px; background: #eaf0ff; color: #1f4fd8; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center">= 100</span>
+    </div>
+  </header>
+
+  <sc-if value="{{submitted}}" hint-placeholder-val="{{ false }}">
+    <div role="status" style="flex-shrink: 0; margin: 12px 16px 0; background: #e6f8f1; border-radius: 12px; padding: 12px 14px; display: flex; gap: 10px; align-items: flex-start; color: #047857">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; margin-top: 1px"><circle cx="12" cy="12" r="9"></circle><path d="M8 12l3 3 5-6"></path></svg>
+      <div style="display: flex; flex-direction: column; gap: 2px; font-size: 14px"><strong style="font-weight: 600">Sheet submitted</strong><span>Mr. Emeka Nwosu will review it. You can't edit it while it is being reviewed.</span></div>
+    </div>
+  </sc-if>
+
+  <main style="flex-grow: 1; overflow-y: auto; padding: 12px 16px 16px; display: flex; flex-direction: column; gap: 10px">
+    <sc-for list="{{rows}}" as="r" hint-placeholder-count="6">
+      <section id="{{r.anchor}}" aria-label="{{r.name}}" style="background: #ffffff; border: 1px solid {{r.cardBorder}}; border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 10px">
+        <div style="display: flex; align-items: center; gap: 10px">
+          <div style="flex-grow: 1; display: flex; flex-direction: column; min-width: 0">
+            <span style="font-size: 16px; font-weight: 600">{{r.name}}</span>
+            <span style="font-size: 13px; color: #5b6475">{{r.adm}}</span>
+          </div>
+          <div style="display: flex; flex-direction: column; align-items: flex-end">
+            <span style="font-size: 18px; font-weight: 700; font-variant-numeric: tabular-nums">{{r.total}}</span>
+            <span style="font-size: 13px; color: #5b6475">{{r.grade}}</span>
+          </div>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+          <label style="display: flex; flex-direction: column; gap: 4px; font-size: 12px; font-weight: 500; color: #5b6475">CA1
+            <input type="text" inputmode="numeric" value="{{r.ca1}}" onChange="{{r.onCa1}}" aria-invalid="{{r.ca1Bad}}" style="height: 48px; box-sizing: border-box; border: 2px solid {{r.ca1Border}}; border-radius: 6px; text-align: center; font: 500 18px Inter, system-ui, sans-serif; color: #0f172a; background: {{r.ca1Bg}}; width: 100%">
+          </label>
+          <label style="display: flex; flex-direction: column; gap: 4px; font-size: 12px; font-weight: 500; color: #5b6475">CA2
+            <input type="text" inputmode="numeric" value="{{r.ca2}}" onChange="{{r.onCa2}}" aria-invalid="{{r.ca2Bad}}" style="height: 48px; box-sizing: border-box; border: 2px solid {{r.ca2Border}}; border-radius: 6px; text-align: center; font: 500 18px Inter, system-ui, sans-serif; color: #0f172a; background: {{r.ca2Bg}}; width: 100%">
+          </label>
+          <label style="display: flex; flex-direction: column; gap: 4px; font-size: 12px; font-weight: 500; color: #5b6475">Exam
+            <input type="text" inputmode="numeric" value="{{r.exam}}" onChange="{{r.onExam}}" aria-invalid="{{r.examBad}}" style="height: 48px; box-sizing: border-box; border: 2px solid {{r.examBorder}}; border-radius: 6px; text-align: center; font: 500 18px Inter, system-ui, sans-serif; color: #0f172a; background: {{r.examBg}}; width: 100%">
+          </label>
+        </div>
+        <sc-if value="{{r.hasMsg}}" hint-placeholder-val="{{ false }}">
+          <p style="margin: 0; display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 500; color: {{r.msgColor}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v4M12 16h.01"></path></svg>{{r.msg}}</p>
+        </sc-if>
+      </section>
+    </sc-for>
+  </main>
+
+  <div style="flex-shrink: 0; background: #ffffff; border-top: 1px solid #e3e7ee; box-shadow: 0 -4px 12px rgba(15,23,42,0.06); padding: 10px 16px 16px; display: flex; flex-direction: column; gap: 10px">
+    <sc-if value="{{hasProblems}}" hint-placeholder-val="{{ true }}">
+      <div style="display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500; color: #8a5a10">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8a5a10" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"></path><path d="M12 9v4M12 17h.01"></path></svg>
+        <span style="flex-grow: 1">{{summary}}</span>
+        <a href="#problem" style="font-weight: 600">Show me</a>
+      </div>
+    </sc-if>
+    <sc-if value="{{allGood}}" hint-placeholder-val="{{ false }}">
+      <div style="display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500; color: #047857">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M8 12l3 3 5-6"></path></svg>
+        <span>All 12 students complete. Class average {{avg}}.</span>
+      </div>
+    </sc-if>
+    <sc-if value="{{draft}}" hint-placeholder-val="{{ true }}">
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+        <button onClick="{{saveDraft}}" style="height: 48px; border: 1px solid #737c8f; border-radius: 8px; background: #ffffff; color: #0f172a; font: 600 16px Inter, system-ui, sans-serif; cursor: pointer">{{saveLabel}}</button>
+        <button onClick="{{submit}}" disabled="{{hasProblems}}" style="height: 48px; border: 0; border-radius: 8px; background: {{submitBg}}; color: {{submitInk}}; font: 600 16px Inter, system-ui, sans-serif; cursor: {{submitCursor}}">Submit</button>
+      </div>
+    </sc-if>
+    <sc-if value="{{submitted}}" hint-placeholder-val="{{ false }}">
+      <a href="TeacherSheets.dc.html" style="height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: #1f4fd8; color: #ffffff; font-size: 16px; font-weight: 600; text-decoration: none">Back to my sheets</a>
+    </sc-if>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = {
+      submitted: false,
+      saved: false,
+      rows: [
+        { name: 'Chukwuemeka Obi', adm: 'GMC/2026/014', ca1: '16', ca2: '15', exam: '47' },
+        { name: 'Amina Bello', adm: 'GMC/2026/002', ca1: '18', ca2: '17', exam: '52' },
+        { name: 'Tobi Adeyemi', adm: 'GMC/2026/003', ca1: '12', ca2: '14', exam: '38' },
+        { name: 'Ifeoma Nwankwo', adm: 'GMC/2026/004', ca1: '15', ca2: '16', exam: '44' },
+        { name: 'Musa Ibrahim', adm: 'GMC/2026/005', ca1: '13', ca2: '', exam: '41' },
+        { name: 'Zainab Yusuf', adm: 'GMC/2026/006', ca1: '17', ca2: '16', exam: '72' },
+        { name: 'Chinedu Okafor', adm: 'GMC/2026/007', ca1: '10', ca2: '11', exam: '30' },
+        { name: 'Blessing Eze', adm: 'GMC/2026/008', ca1: '14', ca2: '13', exam: '40' },
+        { name: 'Daniel Okon', adm: 'GMC/2026/009', ca1: '9', ca2: '12', exam: '25' },
+        { name: 'Halima Garba', adm: 'GMC/2026/010', ca1: '19', ca2: '18', exam: '55' },
+        { name: 'Kelechi Uche', adm: 'GMC/2026/011', ca1: '11', ca2: '10', exam: '22' },
+        { name: 'Funmilayo Ajayi', adm: 'GMC/2026/012', ca1: '16', ca2: '17', exam: '49' }
+      ]
+    };
+  }
+  check(v, max) {
+    const s = String(v).trim();
+    if (s === '') return 'missing';
+    if (!/^\d+(\.\d)?$/.test(s) || Number(s) > max) return 'invalid';
+    return 'ok';
+  }
+  grade(t) {
+    const b = [[75,'A1 · Excellent'],[70,'B2 · Very good'],[65,'B3 · Good'],[60,'C4 · Credit'],[55,'C5 · Credit'],[50,'C6 · Credit'],[45,'D7 · Pass'],[40,'E8 · Pass'],[0,'F9 · Fail']];
+    for (const [min, g] of b) if (t >= min) return g;
+    return '';
+  }
+  setField(i, key, value) {
+    if (this.state.submitted) return;
+    const rows = this.state.rows.map((r, j) => (j === i ? { ...r, [key]: value } : r));
+    this.setState({ rows, saved: false });
+  }
+  renderVals() {
+    const fields = [['ca1', 20, 'CA1'], ['ca2', 20, 'CA2'], ['exam', 60, 'Exam']];
+    let missing = 0, invalid = 0, firstProblem = -1, sum = 0;
+    const rows = this.state.rows.map((r, i) => {
+      const out = { ...r };
+      let msg = '', msgColor = '#8a5a10', bad = false;
+      fields.forEach(([k, max, label]) => {
+        const st = this.check(r[k], max);
+        out[k + 'Border'] = st === 'invalid' ? '#c81e1e' : st === 'missing' ? '#b7791f' : '#737c8f';
+        out[k + 'Bg'] = st === 'invalid' ? '#fdecec' : st === 'missing' ? '#fdf3e3' : '#ffffff';
+        out[k + 'Bad'] = st === 'ok' ? 'false' : 'true';
+        if (st === 'invalid') { invalid++; bad = true; if (!msg || msgColor !== '#c81e1e') { msg = label + " score can't be more than " + max + '.'; msgColor = '#c81e1e'; } }
+        if (st === 'missing') { missing++; bad = true; if (!msg) msg = label + ' score is missing.'; }
+      });
+      if (bad && firstProblem < 0) firstProblem = i;
+      const total = bad ? null : fields.reduce((a, [k]) => a + Number(r[k]), 0);
+      if (total !== null) sum += total;
+      out.total = total === null ? '--' : String(total);
+      out.grade = total === null ? 'Incomplete' : this.grade(total);
+      out.hasMsg = bad; out.msg = msg; out.msgColor = msgColor;
+      out.cardBorder = bad ? (msgColor === '#c81e1e' ? '#c81e1e' : '#b7791f') : '#e3e7ee';
+      out.onCa1 = (e) => this.setField(i, 'ca1', e.target.value);
+      out.onCa2 = (e) => this.setField(i, 'ca2', e.target.value);
+      out.onExam = (e) => this.setField(i, 'exam', e.target.value);
+      return out;
+    });
+    rows.forEach((r, i) => { r.anchor = i === firstProblem ? 'problem' : 'row-' + i; });
+    const parts = [];
+    if (missing) parts.push(missing + ' missing');
+    if (invalid) parts.push(invalid + ' invalid');
+    const hasProblems = missing + invalid > 0;
+    const submitted = this.state.submitted;
+    return {
+      rows,
+      locked: submitted,
+      draft: !submitted,
+      submitted,
+      hasProblems: hasProblems && !submitted,
+      allGood: !hasProblems && !submitted,
+      summary: parts.join(', ') + '. Fix these to submit.',
+      avg: (sum / rows.length).toFixed(1),
+      submitBg: hasProblems ? '#e3e7ee' : '#1f4fd8',
+      submitInk: hasProblems ? '#5b6475' : '#ffffff',
+      submitCursor: hasProblems ? 'not-allowed' : 'pointer',
+      saveLabel: this.state.saved ? 'Saved' : 'Save draft',
+      saveDraft: () => this.setState({ saved: true }),
+      submit: () => { if (!hasProblems) this.setState({ submitted: true }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

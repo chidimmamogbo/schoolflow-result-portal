@@ -1,0 +1,578 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>My class</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="sf.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.sf .bs{overflow-x:auto;max-width:100%}
+.sf .bsr{display:grid;grid-template-columns:var(--bc);width:max-content;min-width:100%;border-top:1px solid var(--border)}
+.sf .bsr>span{padding:10px 8px;display:flex;align-items:center;justify-content:center;font-variant-numeric:tabular-nums;font-size:14px;min-width:0}
+.sf .bsr>span.c0{position:sticky;left:0;z-index:1;background:var(--surface);justify-content:flex-start;padding-left:20px;border-right:1px solid var(--border);font-weight:600;text-align:left}
+.sf .bsr.hd{border-top:0}
+.sf .bsr.hd>span{background:var(--surface-2);color:var(--muted);font-size:12px;line-height:16px;font-weight:600;flex-direction:column;gap:6px;text-align:center;justify-content:flex-end}
+.sf .bsr.hd>span.c0{align-items:flex-start;justify-content:flex-end}
+.sf .bsr .tot{font-weight:700;background:var(--surface-2)}
+.sf .slist{display:flex;align-items:center;gap:10px;width:100%;min-height:56px;padding:10px 16px;border:0;border-top:1px solid var(--border);background:var(--surface);color:var(--text);font:inherit;text-align:left;cursor:pointer}
+.sf .slist:first-child{border-top:0}
+.sf .slist:hover{background:var(--surface-2)}
+.sf .slist[aria-current="true"]{background:var(--primary-soft);box-shadow:inset 3px 0 0 var(--primary)}
+.sf .bar{height:8px;background:var(--surface-2);border-radius:9999px;overflow:hidden}
+.sf .bar>div{height:8px;border-radius:9999px}
+.sf .tseg{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;background:var(--surface-2);border-radius:10px;padding:4px;width:100%;max-width:300px}
+.sf .tseg button{min-height:44px;border:0;border-radius:8px;background:transparent;color:var(--muted);font:600 16px Inter,system-ui,sans-serif;cursor:pointer;font-variant-numeric:tabular-nums}
+.sf .tseg button[aria-checked="true"]{background:var(--primary);color:var(--on-primary)}
+.sf .tseg button[disabled]{cursor:not-allowed}
+.sf .trait{display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;padding:8px 0;border-top:1px solid var(--border)}
+.sf .trait:first-of-type{border-top:0}
+.sf .trait .tn{flex:1 1 120px;font-size:15px;font-weight:500}
+.sf .avatar{width:56px;height:56px;border-radius:9999px;background:var(--school);color:var(--on-school);font-weight:700;font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sf .ptabs{flex-shrink:0;background:var(--surface);padding:0 8px}
+.sf .ptabs .tabs button{flex:1 1 0;padding:0 8px}
+.pv{background:#ffffff;color:#0f172a;font-family:Inter,'Segoe UI',system-ui,sans-serif;border:1px solid #c9d0db;border-radius:8px;overflow:hidden;box-shadow:0 4px 12px rgba(15,23,42,.08)}
+.pv .band{display:flex;align-items:center;justify-content:center;gap:8px;padding:8px 12px;background:repeating-linear-gradient(135deg,#fdf3e3 0 12px,#fbe8c8 12px 24px);color:#8a5a10;font-size:13px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;border-bottom:1px solid #e9cf9f}
+.pv .lb{display:block;color:#5b6475;font-size:10px;font-weight:600;letter-spacing:.04em}
+.pv .tr{display:grid;grid-template-columns:minmax(0,1fr) 56px 56px minmax(0,0.8fr);border-top:1px solid #c9d0db;font-size:12px;font-variant-numeric:tabular-nums}
+.pv .tr>span{padding:5px 8px}
+.pv .tr>span+span{border-left:1px solid #c9d0db;text-align:center}
+.pv .tr.th{color:#ffffff;font-weight:600;font-size:11px;border-top:0}
+.pv .tr:nth-child(odd):not(.th){background:#f6f7f9}
+.pv .kv{display:flex;justify-content:space-between;padding:4px 8px;border-top:1px solid #c9d0db;font-size:12px}
+</style>
+</helmet>
+<div class="sf" data-theme="{{theme}}" data-device="{{device}}" style="--school: {{v.colour}}">
+<div class="app">
+  <aside class="side desk-only" aria-label="School navigation">
+    <div class="brand"><span class="crest" aria-hidden="true">{{v.crest}}</span><span class="col" style="gap: 0"><span style="font-weight: 700; font-size: 15px; line-height: 20px">{{v.school}}</span><span class="muted" style="font-size: 13px">{{v.town}}</span></span></div>
+    <nav class="nav" aria-label="Main">
+      <sc-for list="{{nav}}" as="n" hint-placeholder-count="6"><a href="{{n.href}}" class="{{n.cls}}" aria-current="{{n.cur}}"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{n.d}}"></path></svg><span class="l">{{n.label}}</span></a></sc-for>
+    </nav>
+    <div class="powered"><img src="/_blob/b5461303d7a8d45a18f7975e283523ab" alt="" style="width: 20px; height: 20px">Powered by SchoolFlow</div>
+  </aside>
+  <div class="main">
+    <header class="top desk-only">
+      <nav class="crumb" aria-label="Breadcrumb"><b>{{title}}</b></nav>
+      <button class="iconbtn" aria-label="Notices, 2 unread"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.bell}}"></path></svg><span class="dot">2</span></button>
+      <button class="btn sm" aria-label="Profile menu" style="border: 0"><span class="crest" aria-hidden="true" style="width: 32px; height: 32px; border-radius: 9999px; font-size: 12px">{{me.ini}}</span><span class="col" style="gap: 0; align-items: flex-start"><span style="font-size: 14px">{{me.name}}</span><span class="muted" style="font-size: 12px; font-weight: 500">{{me.role}}</span></span></button>
+    </header>
+    <header class="phead phone-only">
+      <button class="iconbtn" aria-label="Open menu" onClick="{{openDrawer}}"><svg class="i l" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.menu}}"></path></svg></button>
+      <span class="crest" aria-hidden="true" style="width: 30px; height: 30px; font-size: 10px; border-radius: 8px">{{v.crest}}</span>
+      <span class="ttl">{{title}}</span>
+      <button class="iconbtn" aria-label="Notices, 2 unread"><svg class="i l" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.bell}}"></path></svg><span class="dot">2</span></button>
+    </header>
+    <div class="ptabs phone-only">
+      <div class="tabs" role="tablist" aria-label="My class sections"><sc-for list="{{tabs}}" as="t" hint-placeholder-count="3"><button role="tab" aria-selected="{{t.sel}}" onClick="{{t.pick}}">{{t.label}}</button></sc-for></div>
+    </div>
+
+    <main class="content" style="gap: 18px; max-width: none">
+      <div class="row" style="align-items: flex-end">
+        <div class="col grow" style="gap: 4px">
+          <h1 class="h1 desk-only">{{title}}</h1>
+          <span class="muted" style="font-size: 14px">{{v.tLabel}}: {{v.teacher}} · {{nStu}} {{v.unit}} · First Term 2026/2027</span>
+        </div>
+        <span class="badge {{secBadge.cls}}"><svg class="i s" viewBox="0 0 24 24" aria-hidden="true"><path d="{{secBadge.ic}}"></path></svg>Class sections: {{secBadge.label}}</span>
+      </div>
+      <div class="tabs desk-only" role="tablist" aria-label="My class sections"><sc-for list="{{tabs}}" as="t" hint-placeholder-count="3"><button role="tab" aria-selected="{{t.sel}}" onClick="{{t.pick}}">{{t.label}}</button></sc-for></div>
+
+      <sc-if value="{{isLoading}}" hint-placeholder-val="{{ false }}">
+        <div class="col" aria-busy="true"><div class="row"><div class="skel" style="height: 30px; width: 120px"></div><div class="skel" style="height: 30px; width: 120px"></div><div class="skel" style="height: 30px; width: 120px"></div></div><div class="skel" style="height: 320px"></div><div class="skel" style="height: 160px"></div></div>
+      </sc-if>
+      <sc-if value="{{isError}}" hint-placeholder-val="{{ false }}">
+        <div class="card state" role="alert"><span class="ic" style="background: var(--danger-soft); color: var(--danger)"><svg class="i l" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.alert}}"></path></svg></span><p class="h3">We couldn't load {{v.cls}}.</p><p class="muted">Check your connection and try again. Anything you saved is safe.</p><button class="btn primary">Try again</button></div>
+      </sc-if>
+      <sc-if value="{{isEmpty}}" hint-placeholder-val="{{ false }}">
+        <div class="card state"><span class="ic" style="background: var(--primary-soft); color: var(--primary)"><svg class="i l" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.users}}"></path></svg></span><p class="h3">No {{v.unit}} in {{v.cls}} yet.</p><p class="muted" style="max-width: 420px">Your school admin adds {{v.unit}} to classes. They show here once they do.</p></div>
+      </sc-if>
+
+      <sc-if value="{{showAssistNote}}" hint-placeholder-val="{{ false }}">
+        <div class="alert a-info"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.info}}"></path></svg><span>Assistants can enter scores, ratings and comments for this class. Only the class teacher can submit.</span></div>
+      </sc-if>
+
+      <sc-if value="{{showMain}}" hint-placeholder-val="{{ true }}">
+        <div class="split">
+          <div class="wide" style="flex-basis: {{wideBasis}}">
+
+            <sc-if value="{{isBroad}}" hint-placeholder-val="{{ true }}">
+              <div class="col" style="gap: 14px">
+                <div class="chips" role="group" aria-label="Subject sheet status">
+                  <sc-for list="{{statusChips}}" as="c" hint-placeholder-count="5"><button class="chip" aria-pressed="{{c.on}}" onClick="{{c.pick}}"><svg class="i s" viewBox="0 0 24 24" aria-hidden="true"><path d="{{c.ic}}"></path></svg>{{c.label}} <span class="n">{{c.n}}</span></button></sc-for>
+                </div>
+
+                <section class="card flush desk-only" aria-label="Broadsheet">
+                  <div class="card-head"><h2 class="h3 grow">Broadsheet</h2><span class="muted" style="font-size: 13px">{{missingNote}}</span></div>
+                  <div class="bs" role="region" aria-label="Broadsheet table, scrolls sideways" tabindex="0" style="--bc: {{bc}}">
+                    <div class="bsr hd">
+                      <span class="c0">{{v.unitCap}}</span>
+                      <sc-for list="{{cols}}" as="c" hint-placeholder-count="10"><span><span>{{c.name}}</span><span class="badge sm {{c.bcls}}" style="font-size: 11px; height: auto; min-height: 20px; padding: 2px 6px; white-space: normal; line-height: 14px; text-align: left"><svg class="i s" viewBox="0 0 24 24" aria-hidden="true" style="width: 12px; height: 12px"><path d="{{c.bic}}"></path></svg>{{c.status}}</span></span></sc-for>
+                      <span>Total</span><span>Average</span>
+                    </div>
+                    <sc-for list="{{bRows}}" as="r" hint-placeholder-count="12">
+                      <div class="bsr">
+                        <span class="c0"><span class="col" style="gap: 0"><span>{{r.name}}</span><span class="muted num" style="font-size: 12px; font-weight: 400">{{r.adm}}</span></span></span>
+                        <sc-for list="{{r.cells}}" as="x" hint-placeholder-count="10">
+                          <span>
+                            <sc-if value="{{x.has}}" hint-placeholder-val="{{ true }}">{{x.v}}</sc-if>
+                            <sc-if value="{{x.miss}}" hint-placeholder-val="{{ false }}"><span class="badge sm b-warning" style="font-size: 11px; padding: 0 6px"><svg class="i s" viewBox="0 0 24 24" aria-hidden="true" style="width: 12px; height: 12px"><path d="{{ic.warn}}"></path></svg>Missing</span></sc-if>
+                          </span>
+                        </sc-for>
+                        <span class="tot">{{r.total}}</span><span class="tot">{{r.avg}}</span>
+                      </div>
+                    </sc-for>
+                  </div>
+                </section>
+
+                <sc-if value="{{phoneList}}" hint-placeholder-val="{{ false }}">
+                  <section class="card flush phone-only" aria-label="Students">
+                    <sc-for list="{{bRows}}" as="r" hint-placeholder-count="6">
+                      <button class="slist" onClick="{{r.open}}">
+                        <span class="crest" aria-hidden="true" style="width: 36px; height: 36px; border-radius: 9999px; font-size: 12px; background: var(--surface-2); color: var(--text)">{{r.ini}}</span>
+                        <span class="col grow" style="gap: 0"><span style="font-weight: 600">{{r.name}}</span><span class="muted num" style="font-size: 13px">Total {{r.total}} · Average {{r.avg}}</span></span>
+                        <sc-if value="{{r.hasMiss}}" hint-placeholder-val="{{ false }}"><span class="badge sm b-warning"><svg class="i s" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.warn}}"></path></svg>{{r.missText}}</span></sc-if>
+                        <svg class="i" viewBox="0 0 24 24" aria-hidden="true" style="color: var(--muted)"><path d="{{ic.next}}"></path></svg>
+                      </button>
+                    </sc-for>
+                  </section>
+                </sc-if>
+                <sc-if value="{{phoneDetail}}" hint-placeholder-val="{{ false }}">
+                  <section class="card flush phone-only" aria-label="{{od.name}}">
+                    <div class="col" style="gap: 10px; padding: 12px 16px; border-bottom: 1px solid var(--border)">
+                      <button class="link" onClick="{{closeStu}}" style="align-self: flex-start; display: inline-flex; align-items: center; gap: 4px; min-height: 44px"><svg class="i s" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.back}}"></path></svg>All {{v.unit}}</button>
+                      <div class="row" style="flex-wrap: nowrap"><span class="crest" aria-hidden="true" style="width: 40px; height: 40px; border-radius: 9999px">{{od.ini}}</span><span class="col grow" style="gap: 0"><span style="font-size: 17px; font-weight: 700">{{od.name}}</span><span class="muted num" style="font-size: 13px">{{od.adm}}</span></span></div>
+                      <div class="row num" style="gap: 8px"><span class="tile grow" style="padding: 8px 12px"><span class="cap" style="display: block">Total</span><b style="font-size: 18px">{{od.total}}</b></span><span class="tile grow" style="padding: 8px 12px"><span class="cap" style="display: block">Average</span><b style="font-size: 18px">{{od.avg}}</b></span></div>
+                    </div>
+                    <sc-for list="{{od.subs}}" as="x" hint-placeholder-count="10">
+                      <div class="row" style="flex-wrap: nowrap; padding: 10px 16px; border-top: 1px solid var(--border); gap: 10px; min-height: 52px">
+                        <span class="col grow" style="gap: 2px"><span style="font-weight: 500; font-size: 15px">{{x.name}}</span><span class="badge sm {{x.bcls}}" style="align-self: flex-start"><svg class="i s" viewBox="0 0 24 24" aria-hidden="true"><path d="{{x.bic}}"></path></svg>{{x.status}}</span></span>
+                        <sc-if value="{{x.has}}" hint-placeholder-val="{{ true }}"><span class="num" style="font-size: 18px; font-weight: 700">{{x.v}}</span></sc-if>
+                        <sc-if value="{{x.miss}}" hint-placeholder-val="{{ false }}"><span class="badge sm b-warning"><svg class="i s" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.warn}}"></path></svg>Missing</span></sc-if>
+                      </div>
+                    </sc-for>
+                  </section>
+                </sc-if>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{isStudents}}" hint-placeholder-val="{{ false }}">
+              <section class="card col" aria-label="Student entry" style="gap: 18px">
+                <div class="row" style="flex-wrap: nowrap; gap: 14px">
+                  <span class="avatar" aria-hidden="true">{{cur.ini}}</span>
+                  <div class="col grow" style="gap: 2px; min-width: 0"><h2 class="h2">{{cur.name}}</h2><span class="muted num" style="font-size: 13px">{{cur.adm}} · {{v.single}} {{curPos}} of {{nStu}}</span></div>
+                  <span class="badge {{cur.bcls}} desk-only"><svg class="i s" viewBox="0 0 24 24" aria-hidden="true"><path d="{{cur.bic}}"></path></svg>{{cur.btext}}</span>
+                </div>
+                <div class="row" style="gap: 8px; flex-wrap: nowrap">
+                  <button class="btn sm" onClick="{{prevStu}}" disabled="{{atFirst}}" aria-label="Previous {{v.single}}" style="min-height: 44px; flex: 1 1 0"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.back}}"></path></svg>Previous</button>
+                  <span class="badge {{cur.bcls}} phone-only" style="align-self: center"><svg class="i s" viewBox="0 0 24 24" aria-hidden="true"><path d="{{cur.bic}}"></path></svg>{{cur.btext}}</span>
+                  <button class="btn sm" onClick="{{nextStu}}" disabled="{{atLast}}" aria-label="Next {{v.single}}" style="min-height: 44px; flex: 1 1 0">Next<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.next}}"></path></svg></button>
+                </div>
+                <sc-if value="{{locked}}" hint-placeholder-val="{{ false }}"><div class="alert a-info"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.lock}}"></path></svg><span>Class sections are submitted, so these entries are locked.</span></div></sc-if>
+
+                <div class="field">
+                  <label for="ctc" style="font-weight: 600">Class teacher's comment</label>
+                  <textarea id="ctc" class="{{cur.cmtCls}}" rows="3" maxlength="300" value="{{cur.comment}}" onChange="{{onComment}}" disabled="{{locked}}" aria-describedby="ctcCount"></textarea>
+                  <div class="row" style="justify-content: space-between; gap: 8px"><span class="help {{cur.cmtHelpCls}}">{{cur.cmtHelp}}</span><span id="ctcCount" class="help num" aria-live="polite">{{cur.count}} of 300 characters</span></div>
+                  <div class="col" style="gap: 6px; margin-top: 4px">
+                    <span class="cap">Suggestions</span>
+                    <div class="chips"><sc-for list="{{suggest}}" as="g" hint-placeholder-count="3"><button class="chip" onClick="{{g.use}}" disabled="{{locked}}" style="white-space: normal; text-align: left; min-height: 44px; padding: 6px 14px">{{g.text}}</button></sc-for></div>
+                  </div>
+                </div>
+
+                <div class="row" style="gap: 6px; font-size: 13px" aria-label="Rating key"><span class="cap" style="margin-right: 4px">Rating key</span><span class="muted">5 Excellent · 4 Very good · 3 Good · 2 Fair · 1 Poor</span></div>
+                <sc-for list="{{traitGroups}}" as="tg" hint-placeholder-count="2">
+                  <fieldset class="col" style="gap: 0; border: 1px solid var(--border); border-radius: 12px; padding: 8px 16px 8px; margin: 0">
+                    <legend style="font-weight: 600; padding: 0 6px">{{tg.label}}</legend>
+                    <sc-for list="{{tg.items}}" as="t" hint-placeholder-count="3">
+                      <div class="trait">
+                        <span class="tn">{{t.name}}<sc-if value="{{t.unset}}" hint-placeholder-val="{{ false }}"><span class="help" style="display: block; color: var(--warning-ink); font-weight: 500">Not rated</span></sc-if></span>
+                        <div class="tseg" role="radiogroup" aria-label="{{t.name}}, 1 to 5"><sc-for list="{{t.opts}}" as="o" hint-placeholder-count="5"><button role="radio" aria-checked="{{o.on}}" aria-label="{{o.aria}}" onClick="{{o.pick}}" disabled="{{locked}}">{{o.n}}</button></sc-for></div>
+                      </div>
+                    </sc-for>
+                  </fieldset>
+                </sc-for>
+
+                <div class="row" style="align-items: flex-end; gap: 16px">
+                  <label class="field" style="max-width: 160px">Times present<span class="row" style="gap: 8px; flex-wrap: nowrap"><input class="{{cur.presCls}}" type="text" inputmode="numeric" value="{{cur.present}}" onChange="{{onPresent}}" disabled="{{locked}}" style="width: 80px"><span class="muted num" style="font-weight: 500; white-space: nowrap">of {{opened}}</span></span></label>
+                  <span class="tile num" style="font-size: 14px">Absent: <b>{{cur.absent}}</b></span>
+                </div>
+                <sc-if value="{{cur.presErr}}" hint-placeholder-val="{{ false }}"><p class="help err" role="alert">{{cur.presMsg}}</p></sc-if>
+              </section>
+            </sc-if>
+
+            <sc-if value="{{isPreview}}" hint-placeholder-val="{{ false }}">
+              <div class="col" style="gap: 14px">
+                <div class="row" style="gap: 8px; flex-wrap: nowrap">
+                  <button class="btn sm" onClick="{{prevStu}}" disabled="{{atFirst}}" aria-label="Previous {{v.single}}" style="min-height: 44px"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.back}}"></path></svg><span class="desk-only">Previous</span></button>
+                  <span class="col grow" style="gap: 0; text-align: center"><b>{{cur.name}}</b><span class="muted num" style="font-size: 13px">{{v.single}} {{curPos}} of {{nStu}}</span></span>
+                  <button class="btn sm" onClick="{{nextStu}}" disabled="{{atLast}}" aria-label="Next {{v.single}}" style="min-height: 44px"><span class="desk-only">Next</span><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.next}}"></path></svg></button>
+                </div>
+                <article class="pv" aria-label="Report card preview for {{cur.name}}" style="max-width: 794px; width: 100%; align-self: center">
+                  <div class="band"><svg class="i s" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.eye}}"></path></svg>Preview, not published</div>
+                  <div style="padding: {{pvPad}}; display: flex; flex-direction: column; gap: 12px">
+                    <header style="display: flex; align-items: center; gap: 12px; border-bottom: 3px solid {{v.colour}}; padding-bottom: 10px">
+                      <span aria-hidden="true" style="width: {{pvCrest}}; height: {{pvCrest}}; flex-shrink: 0; border-radius: 10px; background: {{v.colour}}; color: #ffffff; font-weight: 700; font-size: 14px; display: flex; align-items: center; justify-content: center">{{v.crest}}</span>
+                      <div style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-size: {{pvName}}; font-weight: 700; letter-spacing: .02em; color: {{v.colour}}">{{v.schoolUp}}</span><span style="font-size: 11px; color: #5b6475">{{v.address}}</span></div>
+                      <div style="text-align: right; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 12px; font-weight: 700">FIRST TERM REPORT</span><span style="font-size: 11px; color: #5b6475">2026/2027 Session</span></div>
+                    </header>
+                    <section style="display: grid; grid-template-columns: repeat({{pvCols}}, minmax(0, 1fr)); gap: 8px 14px; background: #f6f7f9; border-radius: 6px; padding: 10px 12px; font-size: 13px">
+                      <div><span class="lb">NAME</span><b>{{cur.name}}</b></div>
+                      <div><span class="lb">ADMISSION NO.</span><b>{{cur.adm}}</b></div>
+                      <div><span class="lb">CLASS</span><b>{{v.cls}}</b></div>
+                      <div><span class="lb">{{v.tLabelUp}}</span><b>{{v.teacher}}</b></div>
+                      <div><span class="lb">ATTENDANCE</span><b class="num">{{cur.present}} of {{opened}}</b></div>
+                      <div><span class="lb">NEXT TERM BEGINS</span><b>5 Jan 2027</b></div>
+                    </section>
+                    <div style="border: 1px solid #c9d0db; border-radius: 4px; overflow: hidden">
+                      <div class="tr th" style="background: {{v.colour}}"><span>SUBJECT</span><span>TOTAL</span><span>GRADE</span><span>REMARK</span></div>
+                      <sc-for list="{{pv.subs}}" as="x" hint-placeholder-count="10"><div class="tr"><span>{{x.name}}</span><span style="font-weight: 700">{{x.v}}</span><span style="font-weight: 700">{{x.grade}}</span><span>{{x.remark}}</span></div></sc-for>
+                    </div>
+                    <sc-if value="{{pv.notFinal}}" hint-placeholder-val="{{ false }}"><p style="font-size: 12px; color: #8a5a10; font-weight: 600">{{pv.notFinalText}}</p></sc-if>
+                    <section style="display: grid; grid-template-columns: repeat({{pvSum}}, minmax(0, 1fr)); border: 2px solid {{v.colour}}; border-radius: 6px; overflow: hidden; text-align: center">
+                      <div style="padding: 6px; border-right: 1px solid #c9d0db; border-bottom: 1px solid #c9d0db"><span class="lb">TOTAL SCORE</span><b class="num" style="font-size: 16px">{{pv.total}}</b></div>
+                      <div style="padding: 6px; border-right: 1px solid #c9d0db; border-bottom: 1px solid #c9d0db"><span class="lb">TOTAL AVERAGE</span><b class="num" style="font-size: 16px">{{pv.avg}}</b></div>
+                      <div style="padding: 6px; border-right: 1px solid #c9d0db; background: {{v.colour}}; color: #ffffff"><span class="lb" style="color: #ffffff">OVERALL CLASS POSITION</span><b style="font-size: 16px">{{pv.pos}}</b></div>
+                      <div style="padding: 6px"><span class="lb">NO. IN CLASS</span><b class="num" style="font-size: 16px">{{nStu}}</b></div>
+                    </section>
+                    <div style="display: grid; grid-template-columns: repeat({{pvTraitCols}}, minmax(0, 1fr)); gap: 12px">
+                      <sc-for list="{{pv.traits}}" as="tg" hint-placeholder-count="2">
+                        <div style="border: 1px solid #c9d0db; border-radius: 4px; overflow: hidden"><div style="background: #f6f7f9; padding: 4px 8px; font-size: 11px; font-weight: 700">{{tg.label}} (1 to 5)</div><sc-for list="{{tg.items}}" as="t" hint-placeholder-count="3"><div class="kv"><span>{{t.name}}</span><b class="num">{{t.v}}</b></div></sc-for></div>
+                      </sc-for>
+                    </div>
+                    <p style="font-size: 11px; color: #5b6475">RATING KEY: 5 Excellent · 4 Very good · 3 Good · 2 Fair · 1 Poor</p>
+                    <div style="display: grid; grid-template-columns: repeat({{pvTraitCols}}, minmax(0, 1fr)); gap: 12px; font-size: 13px">
+                      <div style="border-left: 3px solid {{v.colour}}; padding-left: 10px"><span class="lb">{{v.ctLabel}}</span><span>{{pv.comment}}</span><span style="display: block; font-size: 11px; color: #5b6475; margin-top: 4px">{{v.teacher}}</span></div>
+                      <div style="border-left: 3px solid {{v.colour}}; padding-left: 10px"><span class="lb">{{v.headLabel}}</span><span style="color: #5b6475">[{{v.headTitle}} adds this before publishing]</span><span style="display: block; font-size: 11px; color: #5b6475; margin-top: 4px">{{v.head}}</span></div>
+                    </div>
+                    <footer style="display: flex; align-items: center; gap: 12px; border-top: 1px solid #c9d0db; padding-top: 10px; font-size: 11px; color: #5b6475">
+                      <span style="flex-grow: 1">Report ID, revision, publication date and QR code are added when results are published.</span>
+                      <span aria-hidden="true" style="width: 44px; height: 44px; border: 1px dashed #c9d0db; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 10px">QR</span>
+                    </footer>
+                  </div>
+                </article>
+              </div>
+            </sc-if>
+          </div>
+
+          <sc-if value="{{showNarrow}}" hint-placeholder-val="{{ true }}">
+            <div class="narrow">
+              <section class="card flush" aria-label="Class sections" id="class-sections">
+                <div class="card-head"><h2 class="h3 grow">Class sections</h2><span class="badge {{secBadge.cls}}"><svg class="i s" viewBox="0 0 24 24" aria-hidden="true"><path d="{{secBadge.ic}}"></path></svg>{{secBadge.label}}</span></div>
+                <div class="col" style="gap: 16px; padding: {{cardPad}}">
+                  <sc-if value="{{isReturned}}" hint-placeholder-val="{{ false }}"><div class="alert a-warning" role="status"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.ret}}"></path></svg><span><strong>Returned for correction</strong>Returned by {{v.head}}: {{v.retComment}}</span></div></sc-if>
+                  <sc-if value="{{isSubmitted}}" hint-placeholder-val="{{ false }}"><div class="alert a-info" role="status"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.send}}"></path></svg><span><strong>Submitted</strong>{{v.head}} will check them before results are published.</span></div></sc-if>
+                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px">
+                    <sc-for list="{{progress}}" as="p" hint-placeholder-count="3">
+                      <div class="col" style="gap: 6px">
+                        <div class="row num" style="justify-content: space-between; font-size: 14px; gap: 6px"><span style="font-weight: 600">{{p.label}} {{p.done}} of {{nStu}}</span><span class="row" style="gap: 4px; color: {{p.ink}}; font-weight: 500"><svg class="i s" viewBox="0 0 24 24" aria-hidden="true"><path d="{{p.ic}}"></path></svg>{{p.state}}</span></div>
+                        <div class="bar"><div style="width: {{p.pct}}%; background: {{p.fill}}"></div></div>
+                        <sc-if value="{{p.gap}}" hint-placeholder-val="{{ false }}"><span class="help">{{p.who}} <button class="link" onClick="{{p.show}}" style="font-size: 13px; margin-left: 4px">Show me</button></span></sc-if>
+                      </div>
+                    </sc-for>
+                  </div>
+                  <div class="row" style="align-items: flex-end; gap: 14px">
+                    <label class="field" style="max-width: 180px">Times school opened<input class="{{openedCls}}" type="text" inputmode="numeric" value="{{opened}}" onChange="{{onOpened}}" disabled="{{lockedOrAssist}}"></label>
+                    <sc-if value="{{canSubmit}}" hint-placeholder-val="{{ true }}"><button class="btn primary" onClick="{{askSubmit}}" disabled="{{notReady}}" style="flex: 1 1 200px; max-width: 320px">Submit class sections</button></sc-if>
+                  </div>
+                  <sc-if value="{{openedErr}}" hint-placeholder-val="{{ false }}"><p class="help err" role="alert">{{openedMsg}}</p></sc-if>
+                  <sc-if value="{{showReadyHelp}}" hint-placeholder-val="{{ false }}"><p class="help">{{readyHelp}}</p></sc-if>
+                </div>
+              </section>
+
+              <sc-if value="{{isStudentsDesk}}" hint-placeholder-val="{{ false }}">
+                <section class="card flush desk-only" aria-label="{{v.unitCap}}">
+                  <div class="card-head"><h2 class="h3">{{v.unitCap}}</h2></div>
+                  <div>
+                    <sc-for list="{{roster}}" as="r" hint-placeholder-count="12">
+                      <button class="slist" aria-current="{{r.on}}" onClick="{{r.pick}}" style="min-height: 48px">
+                        <span class="grow" style="font-weight: 500">{{r.name}}</span>
+                        <span class="badge sm {{r.bcls}}"><svg class="i s" viewBox="0 0 24 24" aria-hidden="true"><path d="{{r.bic}}"></path></svg>{{r.btext}}</span>
+                      </button>
+                    </sc-for>
+                  </div>
+                </section>
+              </sc-if>
+            </div>
+          </sc-if>
+        </div>
+      </sc-if>
+    </main>
+
+    <sc-if value="{{showEntryBar}}" hint-placeholder-val="{{ false }}">
+      <div class="actionbar">
+        <span class="grow muted desk-only" style="font-size: 14px">{{barNote}}</span>
+        <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; flex: 1 1 280px; max-width: {{btnMax}}">
+          <button class="btn" onClick="{{save}}">Save</button>
+          <button class="btn primary" onClick="{{saveNext}}">Save and next</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <nav class="bottom phone-only" aria-label="Main">
+      <sc-for list="{{bottom}}" as="b" hint-placeholder-count="4"><a href="{{b.href}}" class="{{b.cls}}" aria-current="{{b.cur}}"><svg class="i l" viewBox="0 0 24 24" aria-hidden="true"><path d="{{b.d}}"></path></svg>{{b.label}}</a></sc-for>
+    </nav>
+  </div>
+</div>
+
+<sc-if value="{{toast}}" hint-placeholder-val="{{ false }}">
+  <div role="status" style="position: {{toastPos}}; left: 50%; bottom: {{toastBottom}}; transform: translateX(-50%); z-index: 40; max-width: 92%; background: var(--text); color: var(--bg); border-radius: 10px; padding: 12px 16px; display: flex; gap: 12px; align-items: center; font-size: 14px; box-shadow: var(--shadow-lg)">
+    <span>{{toast}}</span><button class="iconbtn" aria-label="Dismiss" onClick="{{hideToast}}" style="color: var(--bg); width: 32px; height: 32px"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.close}}"></path></svg></button>
+  </div>
+</sc-if>
+
+<sc-if value="{{confirm}}" hint-placeholder-val="{{ false }}">
+  <div class="modal">
+    <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="csT">
+      <h2 id="csT" class="h3">Submit class sections for {{v.cls}}?</h2>
+      <p class="muted">Comments, ratings and attendance for all {{nStu}} {{v.unit}} go to {{v.head}}. You can't change them unless they are returned to you.</p>
+      <div class="btns"><button class="btn" onClick="{{cancelSubmit}}">Cancel</button><button class="btn primary" onClick="{{doSubmit}}">Submit class sections</button></div>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{drawer}}" hint-placeholder-val="{{ false }}">
+  <div class="scrim">
+    <nav class="drawer" aria-label="Menu">
+      <div class="row" style="flex-wrap: nowrap"><div class="brand grow" style="padding: 0"><span class="crest" aria-hidden="true">{{v.crest}}</span><span class="col" style="gap: 0"><span style="font-weight: 700; font-size: 15px">{{v.school}}</span><span class="muted" style="font-size: 13px">{{me.name}} · {{me.role}}</span></span></div><button class="iconbtn" aria-label="Close menu" onClick="{{closeDrawer}}"><svg class="i l" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.close}}"></path></svg></button></div>
+      <div class="nav"><sc-for list="{{nav}}" as="n" hint-placeholder-count="6"><a href="{{n.href}}" class="{{n.cls}}" aria-current="{{n.cur}}"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{n.d}}"></path></svg><span class="l">{{n.label}}</span></a></sc-for></div>
+      <div class="powered"><img src="/_blob/b5461303d7a8d45a18f7975e283523ab" alt="" style="width: 20px; height: 20px">Powered by SchoolFlow</div>
+    </nav>
+  </div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["Light","Dark"],"default":"Light"},"state":{"editor":"enum","options":["Default","Empty","Loading","Error"],"default":"Default"},"device":{"editor":"enum","options":["Desktop","Phone"],"default":"Desktop"},"variant":{"editor":"enum","options":["Secondary form teacher","Primary class teacher"],"default":"Secondary form teacher"},"tab":{"editor":"enum","options":["Broadsheet","Students","Preview"],"default":"Broadsheet"},"sections":{"editor":"enum","options":["Open","Submitted","Returned"],"default":"Open"},"role":{"editor":"enum","options":["Teacher","Assistant"],"default":"Teacher"},"$preview":{"width":1440,"height":1300}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = this.init(props); }
+  key(P) { return [P.variant, P.tab, P.sections, P.role, P.device].join('|'); }
+  data(primary) {
+    if (primary) {
+      return {
+        school: 'Bright Stars Academy', schoolUp: 'BRIGHT STARS ACADEMY', crest: 'BSA', colour: '#7a1f2b', town: 'Nsukka', address: '3 University Road, Nsukka, Enugu State',
+        cls: 'Primary 4A', teacher: 'Mrs. Ifeoma Chukwu', ini: 'IC', tLabel: 'Class teacher', tLabelUp: 'CLASS TEACHER', unit: 'pupils', unitCap: 'Pupils', single: 'Pupil',
+        head: 'Mrs. Chiamaka Nwafor', headTitle: 'Head teacher', headLabel: "HEAD TEACHER'S COMMENT", ctLabel: "CLASS TEACHER'S COMMENT", asst: { name: 'Miss Ngozi Ani', ini: 'NA' },
+        file: 'MyClassPrimary', retComment: 'Please add a comment for Joy Akpan.', scale: 'pri',
+        subjects: ['English Studies', 'Mathematics', 'Basic Science and Technology', 'Social Studies', 'Civic Education', 'Igbo Language', 'Cultural and Creative Arts', 'Physical and Health Education', 'Christian Religious Studies', 'Computer Studies'],
+        statuses: ['Approved', 'Submitted', 'Draft', 'Approved', 'Approved', 'Submitted', 'Draft', 'Approved', 'Approved', 'Submitted'],
+        names: ['Kamsi Okafor', 'Bisi Adeleke', 'Uche Mba', 'Fatima Lawal', 'David Ezeh', 'Joy Akpan'],
+        adm: ['BSA/2026/031', 'BSA/2026/032', 'BSA/2026/033', 'BSA/2026/034', 'BSA/2026/035', 'BSA/2026/036'],
+        scores: [[75,65,62,65,74,72,77,68,64,61],[79,83,74,79,77,78,73,70,68,65],[51,50,53,53,46,61,64,51,54,69],[63,54,58,67,71,65,72,64,58,56],[44,56,53,42,47,43,null,47,55,59],[54,52,null,59,50,52,49,67,53,87]],
+        entry: [
+          ['Kamsi works hard and helps others. Keep reading every day.', [5, 4, 5, 4, 4], '58'],
+          ['An excellent pupil. Bisi is neat and always ready to learn.', [5, 5, 5, 5, 4], '60'],
+          ['Uche is lively and kind. He needs more practice in reading.', [3, 3, 4, 3, 5], '54'],
+          ['Fatima is careful and polite. Well done this term.', [5, 5, 5, 4, 3], '59'],
+          ['David is improving. He should finish his class work on time.', [0, 0, 0, 0, 0], '55'],
+          ['', [4, 4, 5, 4, 3], '57']
+        ],
+        fill: { 4: { t: [4, 3, 4, 3, 5] }, 5: { c: 'Joy is quiet and hardworking. She should speak up more in class.' } },
+        retClear: { c: [5], t: [] }
+      };
+    }
+    return {
+      school: 'Greenfield Model College', schoolUp: 'GREENFIELD MODEL COLLEGE', crest: 'GMC', colour: '#1e6b45', town: 'Enugu', address: '14 Chime Avenue, Independence Layout, Enugu',
+      cls: 'JSS 1A', teacher: 'Mr. Tunde Adebayo', ini: 'TA', tLabel: 'Form teacher', tLabelUp: 'FORM TEACHER', unit: 'students', unitCap: 'Students', single: 'Student',
+      head: 'Mrs. Ngozi Okeke', headTitle: 'Principal', headLabel: "PRINCIPAL'S COMMENT", ctLabel: "FORM TEACHER'S COMMENT", asst: { name: 'Mrs. Grace Etim', ini: 'GE' },
+      file: 'MyClass', retComment: 'Please add comments for Daniel Okon and Halima Garba.', scale: 'sec',
+      subjects: ['English Language', 'Mathematics', 'Basic Science', 'Basic Technology', 'Social Studies', 'Civic Education', 'Igbo Language', 'Agricultural Science', 'Computer Studies', 'Christian Religious Studies', 'Business Studies', 'Cultural and Creative Arts', 'Physical and Health Education'],
+      statuses: ['Approved', 'Draft', 'Submitted', 'Reviewed', 'Approved', 'Submitted', 'Returned for correction', 'Approved', 'Draft', 'Approved', 'Submitted', 'Reviewed', 'Resubmitted'],
+      names: ['Chukwuemeka Obi', 'Amina Bello', 'Tobi Adeyemi', 'Ifeoma Nwankwo', 'Musa Ibrahim', 'Zainab Yusuf', 'Chinedu Okafor', 'Blessing Eze', 'Daniel Okon', 'Halima Garba', 'Kelechi Uche', 'Funmilayo Ajayi'],
+      adm: ['GMC/2026/014', 'GMC/2026/002', 'GMC/2026/003', 'GMC/2026/004', 'GMC/2026/005', 'GMC/2026/006', 'GMC/2026/007', 'GMC/2026/008', 'GMC/2026/009', 'GMC/2026/010', 'GMC/2026/011', 'GMC/2026/012'],
+      scores: [[74,78,69,65,80,76,62,71,72,77,66,70,68],[77,87,71,79,68,69,84,70,78,85,68,83,75],[57,64,52,53,64,64,53,58,53,68,64,52,81],[74,75,59,63,74,57,74,74,68,57,63,57,64],[63,null,50,55,59,50,63,49,64,55,63,51,42],[57,null,72,72,60,65,57,71,56,72,55,60,64],[58,51,48,56,53,57,49,57,54,52,50,48,44],[56,67,51,67,58,65,64,59,63,58,51,52,51],[45,46,42,34,39,33,44,42,30,31,46,47,21],[51,39,35,51,52,53,42,54,40,40,48,55,41],[44,43,43,51,60,56,51,54,null,53,42,56,52],[74,82,68,66,78,64,70,72,68,70,76,76,88]],
+      entry: [
+        ['A focused and respectful student. Keep it up in Mathematics.', [5, 4, 5, 4, 3], '57'],
+        ['An excellent term. Amina leads by example in class.', [5, 5, 5, 5, 4], '60'],
+        ['Tobi is friendly and willing. More reading will help.', [4, 3, 4, 3, 5], '55'],
+        ['A careful worker with neat books. Well done.', [5, 5, 4, 5, 3], '59'],
+        ['Musa tries hard. He needs more practice in Mathematics.', [3, 3, 4, 3, 5], '52'],
+        ['Zainab is attentive and asks good questions.', [4, 4, 5, 4, 4], '58'],
+        ['Chinedu should spend more time on his studies.', [3, 3, 4, 3, 4], '50'],
+        ['A polite student who works well with others.', [4, 4, 5, 4, 3], '56'],
+        ['', [3, 3, 3, 3, 4], '46'],
+        ['', [4, 4, 4, 4, 3], '54'],
+        ['Kelechi is cheerful. He must be more punctual.', [0, 0, 0, 0, 0], '48'],
+        ['A bright and hardworking student. Keep it up.', [5, 5, 5, 4, 4], '60']
+      ],
+      fill: { 8: { c: 'Daniel needs to attend class more often and revise every day.' }, 9: { c: 'Halima is hardworking. She needs extra help in Basic Science.' }, 10: { t: [3, 4, 4, 3, 5] } },
+      retClear: { c: [8, 9], t: [10] }
+    };
+  }
+  init(P) {
+    const primary = P.variant === 'Primary class teacher';
+    const D = this.data(primary);
+    const sec = String(P.sections || 'Open').toLowerCase();
+    const stu = D.entry.map(([c, t, p], i) => {
+      let o = { c, t: t.slice(), p };
+      if (sec !== 'open' && D.fill[i]) { if (D.fill[i].c) o.c = D.fill[i].c; if (D.fill[i].t) o.t = D.fill[i].t.slice(); }
+      if (sec === 'returned' && D.retClear.c.includes(i)) o.c = '';
+      return o;
+    });
+    const tab = String(P.tab || 'Broadsheet').toLowerCase();
+    return { key: this.key(P), tab, sec, stu, opened: '60', cur: 0, openStu: -1, colF: 'all', confirm: false, toast: '', drawer: false };
+  }
+  icons() {
+    return {
+      home: 'M3 10l9-7 9 7v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z', sheet: 'M3 3h18v18H3zM3 9h18M9 21V9', cls: 'M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8',
+      bell: 'M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.94 1.94 0 0 0 3.4 0', flag: 'M4 22V4M4 4h12l-2 4 2 4H4', user: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21a8 8 0 0 1 16 0',
+      users: 'M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z', back: 'M15 18l-6-6 6-6', next: 'M9 18l6-6-6-6',
+      alert: 'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM12 8v4M12 16h.01', warn: 'M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0zM12 9v4M12 17h.01',
+      ok: 'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM8 12l3 3 5-6', pencil: 'M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z', send: 'M22 2L11 13M22 2l-7 20-4-9-9-4z',
+      ret: 'M9 14L4 9l5-5M4 9h11a5 5 0 0 1 0 10h-1', refresh: 'M21 12a9 9 0 1 1-3-6.7L21 8M21 3v5h-5', eyecheck: 'M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12zM9 12l2 2 4-4',
+      eye: 'M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12zM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z', check: 'M5 12l5 5L20 7', list: 'M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01',
+      close: 'M18 6L6 18M6 6l12 12', menu: 'M4 6h16M4 12h16M4 18h16', info: 'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM12 16v-4M12 8h.01',
+      lock: 'M5 11h14v10H5zM8 11V7a4 4 0 0 1 8 0v4'
+    };
+  }
+  grade(t, scale) {
+    const b = scale === 'pri'
+      ? [[70, 'A', 'Excellent'], [60, 'B', 'Very good'], [50, 'C', 'Good'], [45, 'D', 'Fair'], [40, 'E', 'Pass'], [0, 'F', 'Fail']]
+      : [[75, 'A1', 'Excellent'], [70, 'B2', 'Very good'], [65, 'B3', 'Good'], [60, 'C4', 'Credit'], [55, 'C5', 'Credit'], [50, 'C6', 'Credit'], [45, 'D7', 'Pass'], [40, 'E8', 'Pass'], [0, 'F9', 'Fail']];
+    for (const x of b) if (t >= x[0]) return x;
+    return b[b.length - 1];
+  }
+  ord(n) { const s = ['th', 'st', 'nd', 'rd'], v = n % 100; return n + (s[(v - 20) % 10] || s[v] || s[0]); }
+  jump(id) { if (typeof document !== 'undefined') setTimeout(() => { const el = document.getElementById(id); if (el && el.scrollIntoView) el.scrollIntoView({ block: 'start', behavior: 'smooth' }); }, 60); }
+  renderVals() {
+    const P = this.props, I = this.icons();
+    if (this.state.key !== this.key(P)) this.state = this.init(P);
+    const st = this.state;
+    const theme = String(P.theme || 'Light').toLowerCase(), device = String(P.device || 'Desktop').toLowerCase(), view = String(P.state || 'Default').toLowerCase();
+    const phone = device === 'phone', primary = P.variant === 'Primary class teacher', assistant = P.role === 'Assistant';
+    const V = this.data(primary);
+    const pg = (n) => (n.startsWith('#') ? n : n + (phone && ['Assessment', 'AssessmentBSA', 'Attention', 'AttentionBSA', 'AttentionReviewer', 'AttentionTeacher', 'AttentionTeacherBSA', 'AuditLog', 'BillingV5', 'BsaMenus', 'ChangePassword', 'ClassPage', 'CreateSchool', 'DashboardV5', 'EmailLog', 'Grading', 'GradingBSA', 'LearningAreas', 'Login', 'Login_Link', 'MyClass', 'MyClassPrimary', 'ParentSkills', 'Payments', 'PlatformSettings', 'PricingV5', 'PublishV5', 'RatingSheet', 'RatingSheetAssistant', 'SchoolAdmins', 'SchoolAdminsBSA', 'SchoolDetailBSA', 'SchoolDetailV5', 'SchoolPaused', 'SchoolsV5', 'ScoreGridSS', 'ScoreGridV5', 'SheetsV5', 'StudentDetail', 'SuperBillingV5', 'TemplateEditorBSA', 'TemplateEditorV5'].includes(n) ? '_Phone' : '') + '.dc.html');
+    const navSrc = [['Home', '#home', 'home'], ['Sheets', 'SheetsV5', 'sheet'], ['My class', V.file, 'cls'], ['Notices', '#notices', 'bell'], ['Students needing attention', primary ? 'AttentionTeacherBSA' : 'AttentionTeacher', 'flag'], ['Profile', '#profile', 'user']];
+    const nav = navSrc.map(([label, href, ic]) => ({ label, href: pg(href), d: I[ic], cls: label === 'My class' ? 'on' : '', cur: label === 'My class' ? 'page' : 'false' }));
+    const SB = {
+      'Draft': ['b-neutral', I.pencil], 'Submitted': ['b-info', I.send], 'Returned for correction': ['b-warning', I.ret], 'Resubmitted': ['b-info b-outline', I.refresh],
+      'Reviewed': ['b-reviewed', I.eyecheck], 'Approved': ['b-success', I.check], 'Published': ['b-published', I.ok]
+    };
+    const n = V.names.length, main = view === 'default';
+    const locked = st.sec === 'submitted';
+    const opened = st.opened, openedNum = Number(opened);
+    const openedOk = /^\d+$/.test(String(opened).trim()) && openedNum > 0 && openedNum <= 200;
+    // completeness
+    const pres = (s) => { const t = String(s.p).trim(); return /^\d+$/.test(t) && (!openedOk || Number(t) <= openedNum); };
+    const comp = st.stu.map((s) => ({ c: s.c.trim().length > 0, t: s.t.every((x) => x > 0), p: pres(s) }));
+    const done = { c: comp.filter((x) => x.c).length, t: comp.filter((x) => x.t).length, p: comp.filter((x) => x.p).length };
+    const ready = done.c === n && done.t === n && done.p === n && openedOk;
+    const setStu = (i, patch) => { if (locked) return; this.setState({ stu: this.state.stu.map((s, j) => (j === i ? { ...s, ...patch } : s)) }); };
+    const firstName = (i) => V.names[i].split(' ')[0];
+    const listNames = (arr) => (arr.length <= 1 ? arr.join('') : arr.slice(0, -1).join(', ') + ' and ' + arr[arr.length - 1]);
+    const goStudent = (i) => this.setState({ tab: 'students', cur: i, openStu: -1 });
+    const progress = [['c', 'Comments'], ['t', 'Ratings'], ['p', 'Attendance']].map(([k, label]) => {
+      const d = done[k], gapIdx = comp.map((x, i) => (x[k] ? -1 : i)).filter((i) => i >= 0);
+      const full = d === n;
+      return {
+        label, done: d, pct: Math.round((d / n) * 100), fill: full ? 'var(--success)' : 'var(--warning)', ink: full ? 'var(--success-ink)' : 'var(--warning-ink)',
+        ic: full ? I.check : I.warn, state: full ? 'Done' : (n - d) + ' to go', gap: !full && !locked,
+        who: 'Still needed: ' + listNames(gapIdx.slice(0, 3).map((i) => V.names[i])) + (gapIdx.length > 3 ? ' and ' + (gapIdx.length - 3) + ' more' : '') + '.',
+        show: () => { if (gapIdx.length) { goStudent(gapIdx[0]); this.jump('ctc'); } }
+      };
+    });
+    // broadsheet
+    const colIdx = V.subjects.map((s, i) => i).filter((i) => st.colF === 'all' || V.statuses[i] === st.colF);
+    const cols = colIdx.map((i) => ({ name: V.subjects[i], status: V.statuses[i], bcls: SB[V.statuses[i]][0], bic: SB[V.statuses[i]][1] }));
+    const avgs = V.scores.map((r) => { const v = r.filter((x) => x !== null); return v.reduce((a, b) => a + b, 0) / v.length; });
+    const rank = avgs.map((a) => avgs.filter((b) => b > a).length + 1);
+    let nMissing = 0;
+    const bRows = V.names.map((name, i) => {
+      const r = V.scores[i], v = r.filter((x) => x !== null), miss = r.length - v.length; nMissing += miss;
+      const total = v.reduce((a, b) => a + b, 0);
+      return {
+        name, adm: V.adm[i], ini: name.split(' ').map((w) => w[0]).join(''), total: String(total), avg: avgs[i].toFixed(1), hasMiss: miss > 0, missText: miss + ' missing',
+        cells: colIdx.map((k) => ({ has: r[k] !== null, miss: r[k] === null, v: r[k] === null ? '' : String(r[k]) })),
+        open: () => this.setState({ openStu: i })
+      };
+    });
+    const cnt = {}; V.statuses.forEach((s) => { cnt[s] = (cnt[s] || 0) + 1; });
+    const order = ['Draft', 'Submitted', 'Returned for correction', 'Resubmitted', 'Reviewed', 'Approved', 'Published'];
+    const statusChips = [{ label: 'All subjects', n: V.subjects.length, ic: I.list, on: st.colF === 'all' ? 'true' : 'false', pick: () => this.setState({ colF: 'all' }) }]
+      .concat(order.filter((s) => cnt[s]).map((s) => ({ label: s, n: cnt[s], ic: SB[s][1], on: st.colF === s ? 'true' : 'false', pick: () => this.setState({ colF: st.colF === s ? 'all' : s }) })));
+    const os = st.openStu;
+    const od = os >= 0 ? {
+      name: V.names[os], adm: V.adm[os], ini: bRows[os].ini, total: bRows[os].total, avg: bRows[os].avg,
+      subs: colIdx.map((k) => ({ name: V.subjects[k], status: V.statuses[k], bcls: SB[V.statuses[k]][0], bic: SB[V.statuses[k]][1], has: V.scores[os][k] !== null, miss: V.scores[os][k] === null, v: String(V.scores[os][k]) }))
+    } : { name: '', adm: '', ini: '', total: '', avg: '', subs: [] };
+    // current student entry
+    const ci = st.cur, cs = st.stu[ci], cc = comp[ci];
+    const cmtLen = cs.c.length;
+    const presTxt = String(cs.p).trim(), presNum = Number(presTxt);
+    const presErr = presTxt !== '' && (!/^\d+$/.test(presTxt) || (openedOk && presNum > openedNum));
+    const gaps = []; if (!cc.c) gaps.push('comment'); if (!cc.t) gaps.push('ratings'); if (!cc.p) gaps.push('attendance');
+    const badgeFor = (c) => (c.c && c.t && c.p ? ['b-success', I.check, 'Complete'] : ['b-warning', I.warn, !c.c ? 'Needs comment' : !c.t ? 'Needs ratings' : 'Needs attendance']);
+    const cb = badgeFor(cc);
+    const cur = {
+      name: V.names[ci], adm: V.adm[ci], ini: V.names[ci].split(' ').map((w) => w[0]).join(''), bcls: cb[0], bic: cb[1], btext: cb[2],
+      comment: cs.c, count: cmtLen, cmtCls: 'input' + (cc.c ? '' : ' miss'), cmtHelp: cc.c ? 'Shown on the report card.' : 'Add a comment for ' + firstName(ci) + '.', cmtHelpCls: cc.c ? '' : 'err',
+      present: cs.p, presCls: 'input num' + (presErr ? ' bad' : ''), presErr, presMsg: !/^\d+$/.test(presTxt) ? 'Enter a whole number.' : "Times present can't be more than " + opened + '.',
+      absent: !presErr && presTxt !== '' && openedOk ? String(openedNum - presNum) : '--'
+    };
+    const av = avgs[ci];
+    const band = av >= 70 ? 'An excellent result. Keep it up.' : av >= 55 ? 'A good result. With more effort, ' + firstName(ci) + ' can do even better.' : av >= 40 ? 'A fair result. ' + firstName(ci) + ' needs to study harder next term.' : firstName(ci) + ' needs extra support and daily revision.';
+    const suggest = [band, firstName(ci) + ' is well behaved and respectful.', firstName(ci) + ' takes an active part in class.'].map((text) => ({ text, use: () => setStu(ci, { c: text.slice(0, 300) }) }));
+    const TR = [['Affective', [['Punctuality', 0], ['Neatness', 1], ['Politeness', 2]]], ['Psychomotor', [['Handwriting', 3], ['Sports', 4]]]];
+    const words = ['', 'Poor', 'Fair', 'Good', 'Very good', 'Excellent'];
+    const traitGroups = TR.map(([label, items]) => ({
+      label, items: items.map(([name, k]) => ({
+        name, unset: !cs.t[k],
+        opts: [1, 2, 3, 4, 5].map((x) => ({ n: String(x), aria: x + ', ' + words[x], on: cs.t[k] === x ? 'true' : 'false', pick: () => setStu(ci, { t: cs.t.map((y, m) => (m === k ? x : y)) }) }))
+      }))
+    }));
+    const roster = V.names.map((name, i) => { const b = badgeFor(comp[i]); return { name, on: i === ci ? 'true' : 'false', bcls: b[0], bic: b[1], btext: b[2], pick: () => this.setState({ cur: i }) }; });
+    // preview
+    const pvSubs = V.subjects.map((name, k) => { const x = V.scores[ci][k]; if (x === null) return { name, v: 'Missing', grade: '--', remark: 'Not entered yet' }; const g = this.grade(x, V.scale); return { name, v: String(x), grade: g[1], remark: g[2] }; });
+    const nMissCur = V.scores[ci].filter((x) => x === null).length;
+    const pv = {
+      subs: pvSubs, total: bRows[ci].total, avg: bRows[ci].avg, pos: this.ord(rank[ci]), notFinal: nMissCur > 0,
+      notFinalText: nMissCur + (nMissCur === 1 ? ' subject is' : ' subjects are') + ' still missing, so the total, average and position will change.',
+      comment: cs.c || '[No comment yet]',
+      traits: TR.map(([label, items]) => ({ label: label.toUpperCase(), items: items.map(([name, k]) => ({ name, v: cs.t[k] ? String(cs.t[k]) : '--' })) }))
+    };
+    const sb = st.sec === 'submitted' ? ['b-info', I.send, 'Submitted'] : st.sec === 'returned' ? ['b-warning', I.ret, 'Returned'] : ['b-neutral', I.pencil, 'Open'];
+    const isBroad = st.tab === 'broadsheet', isStudents = st.tab === 'students', isPreview = st.tab === 'preview';
+    const me = assistant ? { name: V.asst.name, ini: V.asst.ini, role: 'Assistant' } : { name: V.teacher, ini: V.ini, role: V.tLabel };
+    const saveCur = (next) => {
+      const name = V.names[ci];
+      if (next && ci < n - 1) this.setState({ cur: ci + 1, toast: 'Saved ' + name + '. Now on ' + V.names[ci + 1] + '.' });
+      else this.setState({ toast: 'Saved ' + name + '.' + (next ? ' That was the last ' + V.single.toLowerCase() + '.' : '') });
+    };
+    const missingCols = []; V.scores.forEach((r) => r.forEach((x, k) => { if (x === null && !missingCols.includes(V.subjects[k])) missingCols.push(V.subjects[k]); }));
+    return {
+      theme, device, ic: I, v: V, nav, bottom: nav.slice(0, 4), me, title: 'My class: ' + V.cls, nStu: n,
+      tabs: [['broadsheet', 'Broadsheet'], ['students', 'Students'], ['preview', 'Preview']].map(([id, label]) => ({ label, sel: st.tab === id ? 'true' : 'false', pick: () => this.setState({ tab: id, openStu: -1 }) })),
+      secBadge: { cls: sb[0], ic: sb[1], label: sb[2] },
+      isLoading: view === 'loading', isError: view === 'error', isEmpty: view === 'empty', showMain: main,
+      showAssistNote: main && assistant && !isPreview,
+      isBroad, isStudents, isPreview, wideBasis: isStudents ? '520px' : '100%', showNarrow: !isPreview, isStudentsDesk: isStudents,
+      statusChips, cols, bRows, bc: '210px repeat(' + cols.length + ', 124px) 76px 84px',
+      missingNote: nMissing ? nMissing + ' missing ' + (nMissing === 1 ? 'score' : 'scores') + ' in ' + listNames(missingCols) + '. Scroll sideways for more subjects.' : 'Scroll sideways for more subjects.',
+      phoneList: phone && os < 0, phoneDetail: phone && os >= 0, od, closeStu: () => this.setState({ openStu: -1 }),
+      cur, curPos: ci + 1, atFirst: ci === 0, atLast: ci === n - 1, prevStu: () => this.setState({ cur: Math.max(0, ci - 1) }), nextStu: () => this.setState({ cur: Math.min(n - 1, ci + 1) }),
+      onComment: (e) => setStu(ci, { c: String(e.target.value).slice(0, 300) }), onPresent: (e) => setStu(ci, { p: e.target.value }),
+      suggest, traitGroups, roster, locked,
+      opened, onOpened: (e) => { if (!locked) this.setState({ opened: e.target.value }); }, openedCls: 'input num' + (openedOk ? '' : ' bad'),
+      openedErr: !openedOk, openedMsg: 'Enter how many times school opened this term.', lockedOrAssist: locked,
+      progress, isReturned: main && st.sec === 'returned', isSubmitted: main && st.sec === 'submitted',
+      canSubmit: !assistant && !locked, notReady: !ready,
+      showReadyHelp: !locked, readyHelp: assistant ? 'Only the class teacher can submit.' : ready ? 'Everything is complete. You can submit.' : 'Complete comments, ratings and attendance for every ' + V.single.toLowerCase() + ' to submit.',
+      askSubmit: () => { if (ready && !assistant && !locked) this.setState({ confirm: true }); },
+      confirm: st.confirm, cancelSubmit: () => this.setState({ confirm: false }),
+      doSubmit: () => this.setState({ confirm: false, sec: 'submitted', toast: 'Class sections for ' + V.cls + ' submitted.' }),
+      pv, pvPad: phone ? '14px' : '24px 28px', pvCols: phone ? 2 : 3, pvSum: phone ? 2 : 4, pvTraitCols: phone ? 1 : 2, pvCrest: phone ? '44px' : '60px', pvName: phone ? '15px' : '20px',
+      cardPad: phone ? '16px' : '20px',
+      showEntryBar: main && isStudents && !locked, barNote: comp[ci].c && comp[ci].t && comp[ci].p ? V.names[ci] + ' is complete.' : V.names[ci] + ' still needs ' + listNames(gaps) + '.',
+      save: () => saveCur(false), saveNext: () => saveCur(true), btnMax: phone ? 'none' : '380px',
+      toast: st.toast, hideToast: () => this.setState({ toast: '' }), toastPos: phone ? 'absolute' : 'fixed', toastBottom: phone ? '160px' : '96px',
+      drawer: st.drawer, openDrawer: () => this.setState({ drawer: true }), closeDrawer: () => this.setState({ drawer: false })
+    };
+  }
+}
+</script>
+</body>
+</html>

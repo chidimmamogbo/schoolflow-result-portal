@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Skills report card, Early Years</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.ey{width:794px;height:1123px;box-sizing:border-box;background:#ffffff;font-family:Nunito,Inter,'Segoe UI',system-ui,sans-serif;color:#2a1418;padding:30px 34px 24px;display:flex;flex-direction:column;gap:12px}
+.ey > *{flex-shrink:0}
+.ey .lb{display:block;font-size:11px;font-weight:800;letter-spacing:.06em;color:#7a1f2b}
+.ey .areas{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px 12px}
+.ey .area{border:2px solid #ecd3d7;border-radius:18px;overflow:hidden;background:#ffffff;display:flex;flex-direction:column}
+.ey .ah{display:flex;align-items:center;gap:8px;background:#f8eaec;padding:6px 14px;font-size:15px;font-weight:800;color:#7a1f2b}
+.ey .ah i{width:9px;height:9px;border-radius:9999px;background:#7a1f2b;display:inline-block}
+.ey .ch{display:flex;justify-content:space-between;padding:4px 14px 0;font-size:10px;font-weight:800;letter-spacing:.06em;color:#8a6a70}
+.ey .sk{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:4px 12px 4px 14px;font-size:13.5px;font-weight:600;line-height:18px}
+.ey .pill{display:inline-flex;align-items:center;gap:5px;height:24px;padding:0 10px;border-radius:9999px;background:#fbf2f3;border:1.5px solid #d9aeb5;font-size:12.5px;font-weight:700;white-space:nowrap;color:#5e1721}
+.ey .pill.hi{background:#7a1f2b;border-color:#7a1f2b;color:#ffffff}
+.ey .pill .dots{display:inline-flex;gap:2px}
+.ey .pill .dots b{width:5px;height:5px;border-radius:9999px;background:currentColor;opacity:.25;display:inline-block}
+.ey .pill .dots b.on{opacity:1}
+.ey .cm{margin:auto 10px 8px;padding:5px 10px;border-radius:12px;background:#fbf5f6;font-size:12.5px;line-height:17px;color:#4a2a30}
+.ey .tile{display:flex;align-items:center;justify-content:space-between;gap:8px;border-radius:14px;background:#f8eaec;padding:3px 12px;font-size:13px;font-weight:700;color:#5e1721}
+.ey .tile b{font-size:19px;line-height:24px;font-weight:800;color:#7a1f2b;font-variant-numeric:tabular-nums}
+.ey .key .pill{height:22px;padding:0 7px;gap:4px;font-size:11px}
+.ey .key .pill .dots b{width:4px;height:4px}
+.ey .sk > span:first-child{min-width:0}
+</style>
+</helmet>
+<div class="ey">
+  <header style="display: flex; align-items: center; gap: 14px; background: #f8eaec; border-radius: 22px; padding: 12px 18px">
+    <span aria-hidden="true" style="width: 64px; height: 64px; flex-shrink: 0; border-radius: 9999px; background: #7a1f2b; color: #ffffff; font-size: 19px; font-weight: 800; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 0 4px #ffffff, 0 0 0 6px #d9aeb5">BSA</span>
+    <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 1px">
+      <span style="font-size: 25px; line-height: 30px; font-weight: 800; color: #7a1f2b">Bright Stars Academy</span>
+      <span style="font-size: 13px; font-weight: 600; color: #5e1721">3 University Road, Nsukka · [SCHOOL PHONE] · [SCHOOL EMAIL]</span>
+      <span style="font-size: 13px; font-style: italic; color: #7a1f2b">[SCHOOL MOTTO]</span>
+    </div>
+    <div style="text-align: right; display: flex; flex-direction: column; gap: 1px; white-space: nowrap">
+      <span style="font-size: 17px; font-weight: 800">Skills Report</span>
+      <span style="font-size: 13px; font-weight: 600; color: #5e1721">First Term · 2026/2027</span>
+    </div>
+  </header>
+
+  <section aria-label="Pupil details" style="display: grid; grid-template-columns: 1.4fr 0.8fr 0.7fr 1.1fr 1.3fr; gap: 10px; border: 2px solid #ecd3d7; border-radius: 18px; padding: 8px 16px; font-size: 15px; white-space: nowrap">
+    <div><span class="lb">PUPIL</span><strong style="font-size: 17px; font-weight: 800">Chidera Okeke</strong></div>
+    <div><span class="lb">CLASS</span><strong>Nursery 2</strong></div>
+    <div><span class="lb">AGE</span><strong>4 years</strong></div>
+    <div><span class="lb">TERM DATES</span><strong>8 Sep to 11 Dec 2026</strong></div>
+    <div><span class="lb">CLASS TEACHER</span><strong>Mrs. Amaka Udeh</strong></div>
+  </section>
+
+  <div class="areas" aria-label="Skills by learning area">
+    <sc-for list="{{areas}}" as="a" hint-placeholder-count="8">
+      <section class="area" aria-label="{{a.name}}">
+        <div class="ah"><i aria-hidden="true"></i>{{a.name}}</div>
+        <div class="ch" aria-hidden="true"><span>SKILL</span><span>RATING</span></div>
+        <sc-for list="{{a.skills}}" as="k" hint-placeholder-count="2">
+          <div class="sk"><span>{{k.name}}</span><span class="{{k.cls}}"><span class="dots" aria-hidden="true"><sc-for list="{{k.dots}}" as="d" hint-placeholder-count="5"><b class="{{d}}"></b></sc-for></span>{{k.label}}</span></div>
+        </sc-for>
+        <p class="cm">{{a.comment}}</p>
+      </section>
+    </sc-for>
+  </div>
+
+  <section class="key" aria-label="Rating key" style="display: flex; flex-wrap: wrap; align-items: center; gap: 5px; white-space: nowrap">
+    <span class="lb" style="margin-right: 4px">RATING KEY</span>
+    <sc-for list="{{key}}" as="k" hint-placeholder-count="5"><span class="{{k.cls}}"><span class="dots" aria-hidden="true"><sc-for list="{{k.dots}}" as="d" hint-placeholder-count="5"><b class="{{d}}"></b></sc-for></span>{{k.label}}</span></sc-for>
+  </section>
+
+  <div style="display: grid; grid-template-columns: 0.95fr 2.05fr; gap: 12px">
+    <section aria-label="Attendance" style="display: flex; flex-direction: column; gap: 5px">
+      <span class="lb">ATTENDANCE</span>
+      <div class="tile"><span>Times school opened</span><b>60</b></div>
+      <div class="tile"><span>Times present</span><b>56</b></div>
+      <div class="tile"><span>Times absent</span><b>4</b></div>
+    </section>
+    <section aria-label="Comments" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+      <div style="border: 2px solid #ecd3d7; border-radius: 18px; padding: 8px 14px; display: flex; flex-direction: column; gap: 4px">
+        <span class="lb">CLASS TEACHER'S COMMENT</span>
+        <p style="margin: 0; font-size: 13.5px; line-height: 18px; font-weight: 600">Chidera is cheerful and eager to learn. She counts confidently and enjoys rhymes.</p>
+        <div style="margin-top: auto; padding-top: 12px"><div style="border-top: 1.5px solid #2a1418; padding-top: 2px; display: flex; justify-content: space-between; font-size: 11px; font-weight: 600; color: #6b4a50"><span>Mrs. Amaka Udeh</span><span>Signature</span></div></div>
+      </div>
+      <div style="border: 2px solid #ecd3d7; border-radius: 18px; padding: 8px 14px; display: flex; flex-direction: column; gap: 4px">
+        <span class="lb">HEAD TEACHER'S COMMENT</span>
+        <p style="margin: 0; font-size: 13.5px; line-height: 18px; font-weight: 600">A happy and confident start to the year. Well done, Chidera.</p>
+        <div style="margin-top: auto; padding-top: 12px"><div style="border-top: 1.5px solid #2a1418; padding-top: 2px; display: flex; justify-content: space-between; gap: 6px; font-size: 11px; font-weight: 600; color: #6b4a50"><span>Mrs. Chiamaka Nwafor, Head teacher</span><span style="white-space: nowrap">Signature</span></div></div>
+      </div>
+    </section>
+  </div>
+
+  <footer style="margin-top: auto; display: flex; align-items: center; gap: 14px; border-top: 2px dotted #d9aeb5; padding-top: 10px; font-family: Inter, 'Segoe UI', system-ui, sans-serif">
+    <div aria-label="QR code placeholder" style="width: 72px; height: 72px; flex-shrink: 0; border: 2px dashed #737c8f; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; color: #5b6475; text-align: center">QR CODE</div>
+    <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px; font-size: 11.5px; color: #0f172a; font-variant-numeric: tabular-nums">
+      <span><strong>Report ID</strong> BSA-2627-T1-NUR2-041 · <strong>Revision</strong> 1 · <strong>Published</strong> 8 Dec 2026</span>
+      <span>Verify this report: scan the QR code or enter code <strong style="letter-spacing: 0.06em">9RVD-K3PA</strong> at [VERIFY URL]</span>
+      <span style="color: #5b6475"><strong style="color: #0f172a">Next term begins</strong> 5 Jan 2027 · Bright Stars Academy, Nsukka</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 6px; font-size: 10.5px; color: #5b6475; white-space: nowrap"><img src="/_blob/b5461303d7a8d45a18f7975e283523ab" alt="" style="width: 16px; height: 16px">Powered by SchoolFlow</div>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":794,"height":1123}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const SC = { E: ['Excellent', 5], VG: ['Very good', 4], G: ['Good', 3], F: ['Fair', 2], NI: ['Needs improvement', 1] };
+    const pill = (code) => {
+      const [word, n] = SC[code];
+      return { label: word + ' (' + code + ')', cls: 'pill' + (n >= 5 ? ' hi' : ''), dots: [1, 2, 3, 4, 5].map((i) => (i <= n ? 'on' : '')) };
+    };
+    // Chidera Okeke, Nursery 2, First Term 2026/2027. Number work matches the Rating sheet.
+    const A = [
+      ['Number work', [['Counts 1 to 20', 'VG'], ['Recognises shapes', 'E']], 'Counts confidently and names every shape.'],
+      ['Letter work', [['Recognises letters A to Z', 'VG'], ['Writes own name', 'G']], 'Knows most letters. Practise writing her name at home.'],
+      ['Phonics', [['Sounds letters correctly', 'VG']], 'Sounds most letters clearly.'],
+      ['Rhymes and songs', [['Recites rhymes', 'E']], 'Loves rhymes and leads the class in songs.'],
+      ['Creative arts', [['Colours within lines', 'G']], 'Enjoys colouring and is learning to stay within the lines.'],
+      ['Social habits', [['Shares with others', 'VG'], ['Greets politely', 'E']], 'Kind to her friends and always greets politely.'],
+      ['Health habits', [['Washes hands', 'VG']], 'Washes her hands before meals without being reminded.'],
+      ['Physical development', [['Hops on one foot', 'F']], 'Still building her balance. Hopping games at home will help.']
+    ];
+    const areas = A.map(([name, sk, comment]) => ({ name, comment, skills: sk.map(([n, code]) => ({ name: n, ...pill(code) })) }));
+    const key = Object.keys(SC).map((c) => pill(c));
+    return { areas, key };
+  }
+}
+</script>
+</body>
+</html>

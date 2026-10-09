@@ -1,0 +1,427 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Platform settings</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="sf.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>body{margin:0}
+.sf .ps-wrap { max-width: 860px; display: flex; flex-direction: column; gap: 20px; }
+.sf .ps-num { width: 88px; text-align: center; font-weight: 600; }
+.sf .ps-tile { border-radius: 10px; border: 1px solid var(--border); background: var(--bg); padding: 16px 18px; display: flex; flex-direction: column; gap: 6px; min-width: 0; flex: 1 1 200px; }
+.sf .ps-tile img { width: 180px; max-width: 100%; height: auto; }
+.sf .ps-band { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+.sf .ps-band > div { background: var(--surface-2); border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 0; font-size: 14px; }
+.sf .ps-band b { font-size: 16px; }
+.sf span.chip { cursor: default; }
+.sf .chip .x { width: 28px; height: 28px; margin-right: -8px; border: 0; border-radius: 9999px; background: transparent; color: inherit; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
+.sf .chip .x:hover { background: var(--surface-2); }
+.sf .ps-styles { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; }
+.sf .ps-inbox { display: flex; gap: 12px; align-items: flex-start; border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; background: var(--surface); }
+.sf .ps-av { width: 40px; height: 40px; border-radius: 9999px; background: var(--primary); color: var(--on-primary); font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.sf .switch[disabled] { opacity: 0.5; cursor: not-allowed; }
+.sf[data-device="phone"] .actionbar .btn.primary { flex: 1 1 auto; }
+</style>
+</helmet>
+<div class="sf" data-theme="{{theme}}" data-device="{{device}}">
+<div class="app">
+  <aside class="side desk-only" aria-label="Platform navigation">
+    <img src="{{logo}}" alt="SchoolFlow Result Portal" style="width: 172px; height: auto; margin: 4px 8px">
+    <nav class="nav" aria-label="Main">
+      <sc-for list="{{nav}}" as="n" hint-placeholder-count="8">
+        <sc-if value="{{n.grp}}" hint-placeholder-val="{{ false }}"><span class="cap grp">{{n.grp}}</span></sc-if>
+        <a href="{{n.href}}" class="{{n.cls}}" aria-current="{{n.cur}}"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{n.d}}"></path></svg><span class="l">{{n.label}}</span></a>
+      </sc-for>
+    </nav>
+  </aside>
+  <div class="main">
+    <header class="top desk-only">
+      <nav class="crumb" aria-label="Breadcrumb"><a href="SuperDashboard.dc.html">Platform</a> / <b>Platform settings</b></nav>
+      <button class="iconbtn" aria-label="Notices"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.bell}}"></path></svg></button>
+      <button class="iconbtn" aria-label="Theme. Choose Light, Dark or System"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.theme}}"></path></svg></button>
+      <button class="btn sm" aria-label="Profile menu" style="border: 0"><span class="crest" aria-hidden="true" style="width: 32px; height: 32px; border-radius: 9999px; background: var(--text); color: var(--bg); font-size: 12px">SA</span><span class="col" style="gap: 0; align-items: flex-start"><span style="font-size: 14px">Platform admin</span><span class="muted" style="font-size: 12px; font-weight: 500">Super admin</span></span></button>
+    </header>
+    <header class="phead phone-only">
+      <button class="iconbtn" aria-label="Open menu" onClick="{{openDrawer}}"><svg class="i l" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.menu}}"></path></svg></button>
+      <span class="ttl">Platform settings</span>
+      <button class="iconbtn" aria-label="Notices"><svg class="i l" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.bell}}"></path></svg></button>
+    </header>
+
+    <main class="content">
+      <div class="col" style="gap: 4px">
+        <h1 class="h1 desk-only">Platform settings</h1>
+        <p class="muted" style="font-size: 15px">Settings for the whole platform. School defaults apply to new schools.</p>
+      </div>
+
+      <div class="tabs" role="tablist" aria-label="Settings sections">
+        <sc-for list="{{tabs}}" as="t" hint-placeholder-count="5"><button role="tab" aria-selected="{{t.sel}}" onClick="{{t.pick}}">{{t.label}}<sc-if value="{{t.dirty}}" hint-placeholder-val="{{ false }}"><span aria-label="unsaved changes" style="display: inline-block; width: 8px; height: 8px; margin-left: 6px; border-radius: 9999px; background: var(--warning); vertical-align: middle"></span></sc-if></button></sc-for>
+      </div>
+
+      <sc-if value="{{isLoading}}" hint-placeholder-val="{{ false }}">
+        <div class="card col ps-wrap" aria-busy="true"><div class="skel" style="height: 20px; width: 30%"></div><div class="skel" style="height: 44px"></div><div class="skel" style="height: 20px; width: 24%"></div><div class="skel" style="height: 44px"></div><div class="skel" style="height: 20px; width: 34%"></div><div class="skel" style="height: 88px"></div></div>
+      </sc-if>
+      <sc-if value="{{isError}}" hint-placeholder-val="{{ false }}">
+        <div class="card state" role="alert"><span class="ic" style="background: var(--danger-soft); color: var(--danger)"><svg class="i l" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.alert}}"></path></svg></span><p class="h3">We couldn't load platform settings.</p><p class="muted">Check your connection and try again.</p><button class="btn primary">Try again</button></div>
+      </sc-if>
+      <sc-if value="{{emptyNote}}" hint-placeholder-val="{{ false }}">
+        <div class="alert a-info ps-wrap"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.settings}}"></path></svg><span><strong>Nothing has been changed yet.</strong>These are the SchoolFlow defaults. Add your support contacts so schools know where to get help.</span></div>
+      </sc-if>
+
+      <sc-if value="{{tGeneral}}" hint-placeholder-val="{{ true }}">
+        <section class="card ps-wrap" aria-label="General">
+          <label class="field">Platform name<input class="input {{f.name.cls}}" type="text" value="{{f.name.value}}" onChange="{{f.name.on}}" aria-invalid="{{f.name.inv}}"><sc-if value="{{f.name.has}}" hint-placeholder-val="{{ false }}"><span class="help err" role="alert">{{f.name.msg}}</span></sc-if></label>
+          <div class="field">
+            <span>Logo</span>
+            <div class="row" style="align-items: stretch">
+              <div class="sf ps-tile" data-theme="light"><span class="cap">On light</span><img src="/_blob/182db0c32744c4f6abeb340d16b2ccfb" alt="Logo preview on a light background"></div>
+              <div class="sf ps-tile" data-theme="dark"><span class="cap">On dark</span><img src="/_blob/f8c668b157c01655c625f83bed0c84c2" alt="Logo preview on a dark background"></div>
+            </div>
+            <div class="row" style="gap: 10px">
+              <span class="badge sm b-neutral"><svg class="i s" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.invoices}}"></path></svg>{{logoFile}}</span>
+              <button class="btn sm" onClick="{{uploadLogo}}"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.upload}}"></path></svg>Upload new logo</button>
+            </div>
+            <span class="help">PNG or SVG, at most 1 MB. Used on the login page, in emails and in the sidebar.</span>
+          </div>
+          <div class="form-grid">
+            <label class="field">Support email<input class="input {{f.supEmail.cls}}" type="email" value="{{f.supEmail.value}}" onChange="{{f.supEmail.on}}" placeholder="support@schoolflow.ng" aria-invalid="{{f.supEmail.inv}}"><sc-if value="{{f.supEmail.has}}" hint-placeholder-val="{{ false }}"><span class="help err" role="alert">{{f.supEmail.msg}}</span></sc-if></label>
+            <label class="field">Support phone<input class="input num {{f.supPhone.cls}}" type="tel" inputmode="tel" value="{{f.supPhone.value}}" onChange="{{f.supPhone.on}}" placeholder="0809 555 0140" aria-invalid="{{f.supPhone.inv}}"><sc-if value="{{f.supPhone.has}}" hint-placeholder-val="{{ false }}"><span class="help err" role="alert">{{f.supPhone.msg}}</span></sc-if></label>
+          </div>
+          <span class="help">Schools see these on the login page, the school paused page and in every email footer.</span>
+        </section>
+      </sc-if>
+
+      <sc-if value="{{tEmail}}" hint-placeholder-val="{{ false }}">
+        <section class="card ps-wrap" aria-label="Email">
+          <div class="form-grid">
+            <label class="field">Sender name<input class="input {{f.sender.cls}}" type="text" value="{{f.sender.value}}" onChange="{{f.sender.on}}" aria-invalid="{{f.sender.inv}}"><sc-if value="{{f.sender.has}}" hint-placeholder-val="{{ false }}"><span class="help err" role="alert">{{f.sender.msg}}</span></sc-if></label>
+            <label class="field">Reply-to address<input class="input {{f.replyTo.cls}}" type="email" value="{{f.replyTo.value}}" onChange="{{f.replyTo.on}}" aria-invalid="{{f.replyTo.inv}}"><sc-if value="{{f.replyTo.has}}" hint-placeholder-val="{{ false }}"><span class="help err" role="alert">{{f.replyTo.msg}}</span></sc-if></label>
+          </div>
+          <div class="col" style="gap: 8px">
+            <span class="cap">Preview</span>
+            <div class="ps-inbox" aria-label="How the sender line looks in an inbox">
+              <span class="ps-av" aria-hidden="true">{{senderInitial}}</span>
+              <span class="col grow" style="gap: 2px">
+                <span style="overflow-wrap: anywhere"><strong>{{senderShown}}</strong> <span class="muted" style="font-size: 14px">&lt;no-reply@schoolflow.ng&gt;</span></span>
+                <span style="font-size: 14px">Activate your account for Greenfield Model College</span>
+                <span class="muted" style="font-size: 13px; overflow-wrap: anywhere">Reply-to: {{replyShown}}</span>
+              </span>
+              <span class="muted num" style="font-size: 13px">09:12</span>
+            </div>
+            <span class="help">Emails come from no-reply@schoolflow.ng. When someone presses Reply, it goes to the reply-to address.</span>
+          </div>
+        </section>
+      </sc-if>
+
+      <sc-if value="{{tDefaults}}" hint-placeholder-val="{{ false }}">
+        <div class="ps-wrap">
+          <div class="alert a-info"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.schools}}"></path></svg><span><strong>For new schools only.</strong>Existing schools keep their own settings. School admins can change them in School setup.</span></div>
+
+          <section class="card col" aria-labelledby="gbH" style="gap: 14px">
+            <div class="row"><div class="col grow" style="gap: 0"><h2 id="gbH" class="h3">Grading bands</h2><span class="help">Junior and Senior Secondary. Nursery and Primary start with A to F.</span></div><button class="btn sm" onClick="{{editBands}}">Edit</button></div>
+            <div class="ps-band num">
+              <sc-for list="{{bands}}" as="b" hint-placeholder-count="9"><div><b>{{b.g}}</b><span>{{b.range}}</span><span class="muted">{{b.remark}}</span></div></sc-for>
+            </div>
+          </section>
+
+          <section class="card col" aria-labelledby="asH" style="gap: 6px">
+            <h2 id="asH" class="h3">Assessment structure</h2>
+            <sc-for list="{{structs}}" as="s" hint-placeholder-count="2">
+              <div class="swrow" style="flex-wrap: wrap; gap: 10px">
+                <span class="col grow" style="gap: 6px; min-width: 220px"><span class="t">{{s.label}}</span><span class="chips num"><sc-for list="{{s.chips}}" as="c" hint-placeholder-count="3"><span class="chip">{{c}}</span></sc-for><span class="badge sm b-success"><svg class="i s" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.check}}"></path></svg>Total {{s.total}}</span></span></span>
+                <button class="btn sm" onClick="{{s.edit}}">Edit</button>
+              </div>
+            </sc-for>
+          </section>
+
+          <section class="card col" aria-labelledby="pmH" style="gap: 8px">
+            <h2 id="pmH" class="h3">Pass mark</h2>
+            <label class="row" style="gap: 8px; font-size: 15px"><span class="sr">Pass mark in percent</span><input class="input num ps-num {{f.pass.cls}}" type="text" inputmode="numeric" value="{{f.pass.value}}" onChange="{{f.pass.on}}" aria-invalid="{{f.pass.inv}}"><span class="muted">%</span></label>
+            <sc-if value="{{f.pass.has}}" hint-placeholder-val="{{ false }}"><span class="help err" role="alert">{{f.pass.msg}}</span></sc-if>
+            <span class="help">Scores below this show in Students needing attention.</span>
+          </section>
+
+          <section class="card col" aria-labelledby="rbH" style="gap: 10px">
+            <div class="col" style="gap: 0"><h2 id="rbH" class="h3">Remark bands</h2><span class="help">Suggested class teacher's comments by average. Teachers can edit them.</span></div>
+            <sc-for list="{{remarks}}" as="r" hint-placeholder-count="5">
+              <label class="row" style="gap: 12px; flex-wrap: nowrap; font-size: 14px"><span class="num" style="width: 82px; flex-shrink: 0; font-weight: 600">{{r.range}}</span><input class="input {{r.cls}}" type="text" value="{{r.text}}" onChange="{{r.on}}" aria-label="Remark for averages {{r.range}}"></label>
+            </sc-for>
+            <sc-if value="{{remarkErr}}" hint-placeholder-val="{{ false }}"><span class="help err" role="alert">Every band needs a remark.</span></sc-if>
+          </section>
+
+          <section class="card col" aria-labelledby="rtH" style="gap: 12px">
+            <div class="col" style="gap: 0"><h2 id="rtH" class="h3">Rating traits</h2><span class="help">Rated 1 to 5 by the form teacher on Secondary report cards.</span></div>
+            <sc-for list="{{traitGroups}}" as="g" hint-placeholder-count="2">
+              <div class="col" style="gap: 6px"><span class="cap">{{g.label}}</span>
+                <div class="chips"><sc-for list="{{g.items}}" as="t" hint-placeholder-count="3"><span class="chip">{{t.name}}<button class="x" aria-label="Remove {{t.name}}" onClick="{{t.remove}}"><svg class="i s" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.close}}"></path></svg></button></span></sc-for></div>
+              </div>
+            </sc-for>
+            <div class="row" style="align-items: flex-end">
+              <label class="field grow" style="min-width: 180px">New trait<input class="input" type="text" value="{{newTrait}}" onChange="{{onNewTrait}}" placeholder="For example, Creativity"></label>
+              <label class="field" style="min-width: 150px">Group<select class="input" value="{{newGroup}}" onChange="{{onNewGroup}}"><option>Affective</option><option>Psychomotor</option></select></label>
+              <button class="btn" onClick="{{addTrait}}"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.plus}}"></path></svg>Add trait</button>
+            </div>
+            <sc-if value="{{traitMsg}}" hint-placeholder-val="{{ false }}"><span class="help err" role="alert">{{traitMsg}}</span></sc-if>
+          </section>
+
+          <section class="card col" aria-labelledby="tsH" style="gap: 10px">
+            <div class="col" style="gap: 0"><h2 id="tsH" class="h3">Report template style</h2><span class="help">Skills report cards start with Early Years.</span></div>
+            <div class="ps-styles" role="radiogroup" aria-labelledby="tsH">
+              <sc-for list="{{styles}}" as="s" hint-placeholder-count="4"><button class="radio" role="radio" aria-checked="{{s.sel}}" onClick="{{s.pick}}"><span class="o"></span><span class="col" style="gap: 2px"><span style="font-weight: 600">{{s.name}}</span><span class="help">{{s.hint}}</span></span></button></sc-for>
+            </div>
+          </section>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{tBilling}}" hint-placeholder-val="{{ false }}">
+        <section class="card ps-wrap" aria-label="Billing" style="gap: 0">
+          <div class="swrow" style="flex-wrap: wrap"><span class="col grow" style="gap: 0; min-width: 200px"><span class="t" id="grL">Grace period</span><span class="help">Days after the due date before a school shows as Overdue.</span><sc-if value="{{f.grace.has}}" hint-placeholder-val="{{ false }}"><span class="help err" role="alert">{{f.grace.msg}}</span></sc-if></span><span class="row" style="gap: 8px"><input class="input num ps-num {{f.grace.cls}}" type="text" inputmode="numeric" value="{{f.grace.value}}" onChange="{{f.grace.on}}" aria-labelledby="grL" aria-invalid="{{f.grace.inv}}"><span class="muted">days</span></span></div>
+          <div class="swrow" style="flex-wrap: wrap"><span class="col grow" style="gap: 0; min-width: 200px"><span class="t" id="duL">Invoice due</span><span class="help">Days from the invoice date to the due date.</span><sc-if value="{{f.due.has}}" hint-placeholder-val="{{ false }}"><span class="help err" role="alert">{{f.due.msg}}</span></sc-if></span><span class="row" style="gap: 8px"><input class="input num ps-num {{f.due.cls}}" type="text" inputmode="numeric" value="{{f.due.value}}" onChange="{{f.due.on}}" aria-labelledby="duL" aria-invalid="{{f.due.inv}}"><span class="muted">days</span></span></div>
+          <div class="swrow" style="flex-wrap: wrap"><span class="col grow" style="gap: 0; min-width: 200px"><span class="t" id="gfL">Gateway fees paid by</span><span class="help">{{feeHint}}</span></span>
+            <div class="seg" role="radiogroup" aria-labelledby="gfL"><sc-for list="{{fees}}" as="o" hint-placeholder-count="2"><button role="radio" aria-checked="{{o.sel}}" onClick="{{o.pick}}">{{o.label}}</button></sc-for></div>
+          </div>
+          <div class="swrow"><span class="col grow" style="gap: 0"><span class="t" id="cpL">Cliff protection</span><span class="help">A school never pays more than the smallest bill on a higher plan.</span></span><span class="badge sm {{cliffCls}}"><svg class="i s" viewBox="0 0 24 24" aria-hidden="true"><path d="{{cliffIc}}"></path></svg>{{cliffWord}}</span><button class="switch" role="switch" aria-checked="{{cliffOn}}" aria-labelledby="cpL" onClick="{{toggleCliff}}"></button></div>
+        </section>
+      </sc-if>
+
+      <sc-if value="{{tSecurity}}" hint-placeholder-val="{{ false }}">
+        <section class="card ps-wrap" aria-label="Security" style="gap: 0">
+          <div class="swrow" style="flex-wrap: wrap"><span class="col grow" style="gap: 0; min-width: 200px"><span class="t" id="adL">Additional school admins per school</span><span class="help">Not counting the principal.</span><sc-if value="{{f.admins.has}}" hint-placeholder-val="{{ false }}"><span class="help err" role="alert">{{f.admins.msg}}</span></sc-if></span><input class="input num ps-num {{f.admins.cls}}" type="text" inputmode="numeric" value="{{f.admins.value}}" onChange="{{f.admins.on}}" aria-labelledby="adL" aria-invalid="{{f.admins.inv}}"></div>
+          <div class="swrow" style="flex-wrap: wrap"><span class="col grow" style="gap: 0; min-width: 200px"><span class="t" id="slL">Session length</span><span class="help">How long people stay logged in before they must log in again.</span></span><select class="input" style="width: 160px" value="{{session}}" onChange="{{onSession}}" aria-labelledby="slL"><option>8 hours</option><option>12 hours</option><option>24 hours</option></select></div>
+          <div class="swrow"><span class="col grow" style="gap: 2px"><span class="row" style="gap: 8px"><span class="t" id="tfL" style="color: var(--muted)">Two-factor login for super admins</span><span class="badge sm b-neutral"><svg class="i s" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.clock}}"></path></svg>After the core</span></span><span class="help">Super admins will confirm each login with a code from an app.</span></span><button class="switch" role="switch" aria-checked="false" aria-labelledby="tfL" disabled="{{yes}}" aria-disabled="true"></button></div>
+        </section>
+      </sc-if>
+    </main>
+    <sc-if value="{{showBar}}" hint-placeholder-val="{{ true }}">
+      <div class="actionbar">
+        <span class="col grow" style="gap: 0; min-width: 200px"><span class="muted" style="font-size: 14px">{{lastLine}}</span><sc-if value="{{barErr}}" hint-placeholder-val="{{ false }}"><span class="help err">Fix the highlighted field to save.</span></sc-if></span>
+        <sc-if value="{{dirty}}" hint-placeholder-val="{{ false }}"><button class="btn" onClick="{{discard}}">Discard changes</button></sc-if>
+        <button class="btn primary" disabled="{{saveOff}}" onClick="{{save}}">Save changes</button>
+      </div>
+    </sc-if>
+  </div>
+</div>
+<sc-if value="{{drawer}}" hint-placeholder-val="{{ false }}">
+  <div class="scrim">
+    <div class="drawer" role="dialog" aria-modal="true" aria-label="Menu">
+      <div class="row" style="justify-content: space-between"><img src="{{logo}}" alt="SchoolFlow Result Portal" style="width: 150px; height: auto"><button class="iconbtn" aria-label="Close menu" onClick="{{closeDrawer}}"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.close}}"></path></svg></button></div>
+      <nav class="nav" aria-label="Main">
+        <sc-for list="{{nav}}" as="n" hint-placeholder-count="8">
+          <sc-if value="{{n.grp}}" hint-placeholder-val="{{ false }}"><span class="cap grp">{{n.grp}}</span></sc-if>
+          <a href="{{n.href}}" class="{{n.cls}}" aria-current="{{n.cur}}"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{n.d}}"></path></svg><span class="l">{{n.label}}</span></a>
+        </sc-for>
+      </nav>
+    </div>
+  </div>
+</sc-if>
+<sc-if value="{{dlgBands}}" hint-placeholder-val="{{ false }}">
+  <div class="modal">
+    <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="bdT" style="width: 600px">
+      <div class="col" style="gap: 2px"><h2 id="bdT" class="h3">Edit grading bands</h2><span class="muted" style="font-size: 14px">Set where each grade starts. Each band ends just below the one above it, so there are no gaps.</span></div>
+      <div class="rt num" style="--cols: 52px 110px 80px minmax(0, 1fr)">
+        <div class="tr th" style="padding-left: 0; padding-right: 0"><span>Grade</span><span>Starts at</span><span>Ends at</span><span>Remark</span></div>
+        <sc-for list="{{bandRows}}" as="b" hint-placeholder-count="9">
+          <div class="tr" style="padding: 6px 0">
+            <span class="td first" style="font-weight: 700">{{b.g}}</span>
+            <span class="td" data-label="Starts at"><input class="input num {{b.cls}}" type="text" inputmode="numeric" value="{{b.min}}" onChange="{{b.onMin}}" aria-label="{{b.g}} starts at" disabled="{{b.fixed}}" style="width: 90px; text-align: center"></span>
+            <span class="td" data-label="Ends at">{{b.max}}</span>
+            <span class="td" data-label="Remark"><input class="input" type="text" value="{{b.remark}}" onChange="{{b.onRemark}}" aria-label="{{b.g}} remark"></span>
+          </div>
+        </sc-for>
+      </div>
+      <sc-if value="{{bandErr}}" hint-placeholder-val="{{ false }}"><p class="help err" role="alert">{{bandErr}}</p></sc-if>
+      <div class="btns"><button class="btn" onClick="{{closeDlg}}">Cancel</button><button class="btn primary" disabled="{{bandBad}}" onClick="{{applyBands}}">Apply</button></div>
+    </div>
+  </div>
+</sc-if>
+<sc-if value="{{dlgStruct}}" hint-placeholder-val="{{ false }}">
+  <div class="modal">
+    <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="stT">
+      <h2 id="stT" class="h3">Edit {{asLevel}} assessment</h2>
+      <sc-for list="{{asRows}}" as="a" hint-placeholder-count="3">
+        <label class="row" style="gap: 12px; flex-wrap: nowrap; font-size: 15px"><span class="grow" style="font-weight: 600">{{a.name}}</span><span class="muted">out of</span><input class="input num ps-num {{a.cls}}" type="text" inputmode="numeric" value="{{a.max}}" onChange="{{a.on}}" aria-label="{{a.name}} out of"></label>
+      </sc-for>
+      <p class="{{asTotalCls}} num" role="status">{{asTotalMsg}}</p>
+      <div class="btns"><button class="btn" onClick="{{closeDlg}}">Cancel</button><button class="btn primary" disabled="{{asBad}}" onClick="{{applyStruct}}">Apply</button></div>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{toast}}" hint-placeholder-val="{{ false }}">
+  <div role="status" style="position: {{toastPos}}; left: 50%; bottom: {{toastBottom}}; transform: translateX(-50%); z-index: 40; max-width: 92%; background: var(--text); color: var(--bg); border-radius: 10px; padding: 12px 16px; display: flex; gap: 12px; align-items: center; font-size: 14px; box-shadow: var(--shadow-lg)">
+    <span>{{toast}}</span><button class="iconbtn" aria-label="Dismiss" onClick="{{hideToast}}" style="color: var(--bg); width: 32px; height: 32px"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.close}}"></path></svg></button>
+  </div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["Light","Dark"],"default":"Light"},"state":{"editor":"enum","options":["Default","Empty","Loading","Error"],"default":"Default"},"device":{"editor":"enum","options":["Desktop","Phone"],"default":"Desktop"},"tab":{"editor":"enum","options":["General","Email","School defaults","Billing","Security"],"default":"General"},"$preview":{"width":1440,"height":1150}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    const empty = String(props.state || '').toLowerCase() === 'empty';
+    const init = {
+      name: 'SchoolFlow Result Portal', logoFile: 'schoolflow-logo.svg', supEmail: empty ? '' : 'support@schoolflow.ng', supPhone: empty ? '' : '0809 555 0140',
+      sender: 'SchoolFlow Result Portal', replyTo: empty ? '' : 'support@schoolflow.ng',
+      bands: [['A1', 75, 'Excellent'], ['B2', 70, 'Very good'], ['B3', 65, 'Good'], ['C4', 60, 'Credit'], ['C5', 55, 'Credit'], ['C6', 50, 'Credit'], ['D7', 45, 'Pass'], ['E8', 40, 'Pass'], ['F9', 0, 'Fail']].map(([g, min, remark]) => ({ g, min, remark })),
+      jss: [20, 20, 60], ss: [10, 10, 10, 10, 60], pass: '40',
+      remarks: ['An excellent result. Keep it up.', 'A very good result. Well done.', 'A good effort. Aim higher next term.', 'A fair result. More effort is needed.', 'Below the pass mark. Needs close support.'],
+      traits: { Affective: ['Punctuality', 'Neatness', 'Politeness'], Psychomotor: ['Handwriting', 'Sports'] },
+      style: 'Modern', grace: '14', due: '14', fees: 'Platform', cliff: true, admins: '2', session: '12 hours'
+    };
+    const nc = 'Not changed yet. Using SchoolFlow defaults.';
+    this.state = {
+      tab: null, tabFrom: null, vals: JSON.parse(JSON.stringify(init)), saved: JSON.parse(JSON.stringify(init)),
+      last: empty ? { general: nc, email: nc, defaults: nc, billing: nc, security: nc } : { general: 'Last changed by Platform admin on 1 Sep 2026', email: 'Last changed by Platform admin on 1 Sep 2026', defaults: 'Last changed by Platform admin on 28 Aug 2026', billing: 'Last changed by Platform admin on 6 Oct 2026', security: 'Last changed by Platform admin on 1 Sep 2026' },
+      dlg: null, draft: null, asLevel: 'jss', newTrait: '', newGroup: 'Affective', traitMsg: '', drawer: false, toast: ''
+    };
+  }
+  icons() {
+    return {
+      dash: 'M3 3h7v9H3zM14 3h7v5h-7zM14 12h7v9h-7zM3 16h7v5H3z', schools: 'M3 21h18M5 21V9l7-5 7 5v12M9 21v-6h6v6',
+      pricing: 'M20.6 13.4l-7.2 7.2a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8zM9 7.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z',
+      invoices: 'M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9zM14 3v6h6M8 13h8M8 17h5', pay: 'M4 5h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2zM2 10h20',
+      audit: 'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM12 7v5l3 2', mail: 'M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zM22 6l-10 7L2 6',
+      settings: 'M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1',
+      bell: 'M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.94 1.94 0 0 0 3.4 0', menu: 'M4 6h16M4 12h16M4 18h16', close: 'M18 6L6 18M6 6l12 12',
+      theme: 'M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0zM12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4',
+      plus: 'M12 5v14M5 12h14', search: 'M17 11a6 6 0 1 1-12 0 6 6 0 0 1 12 0zM21 21l-4.35-4.35', alert: 'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM12 8v4M12 16h.01',
+      check: 'M5 12l5 5L20 7', pause: 'M9 5v14M15 5v14', play: 'M7 4l13 8-13 8z', minus: 'M5 12h14',
+      ok: 'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM8 12l3 3 5-6', xc: 'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM15 9l-6 6M9 9l6 6',
+      clock: 'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM12 7v5l3 2', warn: 'M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0zM12 9v4M12 17h.01',
+      upload: 'M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12', user: 'M16 8a4 4 0 1 1-8 0 4 4 0 0 1 8 0zM4 21a8 8 0 0 1 16 0',
+      key: 'M15 7a4 4 0 1 1-3.9 5H3v3h3v3h3v-3h2.1A4 4 0 0 1 15 7z', hash: 'M4 9h16M4 15h16M10 3L8 21M16 3l-2 18',
+      layers: 'M12 2l10 5-10 5L2 7zM2 17l10 5 10-5M2 12l10 5 10-5', lock: 'M5 11h14v10H5zM8 11V7a4 4 0 0 1 8 0v4',
+      shield: 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z', refresh: 'M21 12a9 9 0 1 1-3-6.7L21 8M21 3v5h-5',
+      down: 'M6 9l6 6 6-6', up: 'M18 15l-6-6-6 6', filter: 'M3 5h18M6 12h12M10 19h4', send: 'M22 2L11 13M22 2l-7 20-4-9-9-4z',
+      bank: 'M3 21h18M4 10h16M12 3l9 5H3zM6 10v8M10 10v8M14 10v8M18 10v8', receipt: 'M5 3v18l3-2 2 2 2-2 2 2 2-2 3 2V3zM9 8h6M9 12h6M9 16h3',
+      ext: 'M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5'
+    };
+  }
+  nav(active, phone) {
+    const I = this.icons(); const go = (n) => (n.startsWith('#') ? n : (phone && ['Assessment', 'AssessmentBSA', 'Attention', 'AttentionBSA', 'AttentionReviewer', 'AttentionTeacher', 'AttentionTeacherBSA', 'AuditLog', 'BillingV5', 'BsaMenus', 'ChangePassword', 'ClassPage', 'CreateSchool', 'DashboardV5', 'EmailLog', 'Grading', 'GradingBSA', 'LearningAreas', 'Login', 'Login_Link', 'MyClass', 'MyClassPrimary', 'ParentSkills', 'Payments', 'PlatformSettings', 'PricingV5', 'PublishV5', 'RatingSheet', 'RatingSheetAssistant', 'SchoolAdmins', 'SchoolAdminsBSA', 'SchoolDetailBSA', 'SchoolDetailV5', 'SchoolPaused', 'SchoolsV5', 'ScoreGridSS', 'ScoreGridV5', 'SheetsV5', 'StudentDetail', 'SuperBillingV5', 'TemplateEditorBSA', 'TemplateEditorV5'].includes(n) ? n + '_Phone.dc.html' : n + '.dc.html'));
+    const items = [[null, 'Dashboard', 'SuperDashboard', 'dash'], [null, 'Schools', 'SchoolsV5', 'schools'], [null, 'Pricing', 'PricingV5', 'pricing'], ['Billing', 'Invoices', 'SuperBillingV5', 'invoices'], [null, 'Payments', 'Payments', 'pay'], ['Platform', 'Audit log', 'AuditLog', 'audit'], [null, 'Email log', 'EmailLog', 'mail'], [null, 'Settings', 'PlatformSettings', 'settings']];
+    return items.map(([grp, label, href, ic]) => ({ grp: grp || '', label, href: go(href), d: I[ic], cls: label === active ? 'on' : '', cur: label === active ? 'page' : 'false' }));
+  }
+  base(active) {
+    const P = this.props, st = this.state, I = this.icons();
+    const theme = String(P.theme || 'Light').toLowerCase(), device = String(P.device || 'Desktop').toLowerCase(), view = String(P.state || 'Default').toLowerCase();
+    const phone = device === 'phone';
+    return {
+      P, st, I, view, phone,
+      vals: {
+        theme, device, ic: I, nav: this.nav(active, phone),
+        logo: theme === 'dark' ? '/_blob/f8c668b157c01655c625f83bed0c84c2' : '/_blob/182db0c32744c4f6abeb340d16b2ccfb',
+        isLoading: view === 'loading', isError: view === 'error', isEmpty: view === 'empty',
+        drawer: !!st.drawer, openDrawer: () => this.setState({ drawer: true }), closeDrawer: () => this.setState({ drawer: false }),
+        toast: st.toast || '', hideToast: () => this.setState({ toast: '' }), toastPos: phone ? 'absolute' : 'fixed', toastBottom: phone ? '96px' : '24px'
+      }
+    };
+  }
+
+  set(k, v) { this.setState({ vals: { ...this.state.vals, [k]: v } }); }
+  renderVals() {
+    const B = this.base('Settings'), st = B.st, I = B.I, P = B.P, v = st.vals, view = B.view;
+    const tabIds = [['general', 'General'], ['email', 'Email'], ['defaults', 'School defaults'], ['billing', 'Billing'], ['security', 'Security']];
+    const propTab = (tabIds.find(([, l]) => l === P.tab) || tabIds[0])[0];
+    const tab = st.tab && st.tabFrom === (P.tab || 'General') ? st.tab : propTab;
+    const keys = { general: ['name', 'logoFile', 'supEmail', 'supPhone'], email: ['sender', 'replyTo'], defaults: ['bands', 'jss', 'ss', 'pass', 'remarks', 'traits', 'style'], billing: ['grace', 'due', 'fees', 'cliff'], security: ['admins', 'session'] };
+    const isDirty = (t) => keys[t].some((k) => JSON.stringify(v[k]) !== JSON.stringify(st.saved[k]));
+    const email = (x) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(x).trim());
+    const whole = (x, lo, hi) => /^\d+$/.test(String(x).trim()) && +x >= lo && +x <= hi;
+    const rules = {
+      name: (x) => (String(x).trim() ? '' : 'Enter the platform name.'),
+      supEmail: (x) => (!String(x).trim() || email(x) ? '' : 'Enter a valid email address, like support@schoolflow.ng.'),
+      supPhone: (x) => (!String(x).trim() || /^0\d{10}$/.test(String(x).replace(/\s/g, '')) ? '' : 'Enter an 11-digit phone number, like 0809 555 0140.'),
+      sender: (x) => (String(x).trim() ? '' : 'Enter a sender name.'),
+      replyTo: (x) => (!String(x).trim() || email(x) ? '' : 'Enter a valid email address, like support@schoolflow.ng.'),
+      pass: (x) => (whole(x, 1, 100) ? '' : 'Pass mark must be a whole number from 1 to 100.'),
+      grace: (x) => (whole(x, 0, 60) ? '' : 'Enter a whole number of days from 0 to 60.'),
+      due: (x) => (whole(x, 1, 60) ? '' : 'Enter a whole number of days from 1 to 60.'),
+      admins: (x) => (whole(x, 0, 10) ? '' : 'Enter a whole number from 0 to 10.')
+    };
+    const f = {};
+    Object.keys(rules).forEach((k) => {
+      const msg = rules[k](v[k]);
+      const show = !!msg && JSON.stringify(v[k]) !== JSON.stringify(st.saved[k]);
+      f[k] = { value: v[k], msg, has: show, cls: show ? 'bad' : '', inv: show ? 'true' : 'false', on: (e) => this.set(k, e.target.value) };
+    });
+    const remarkErr = v.remarks.some((r) => !r.trim());
+    const tabErr = (t) => keys[t].some((k) => rules[k] && rules[k](v[k])) || (t === 'defaults' && remarkErr);
+    const main = view === 'default' || view === 'empty';
+    const dirty = isDirty(tab), bad = tabErr(tab);
+    // bands
+    const bandsView = v.bands.map((b, i) => ({ g: b.g, range: b.min + ' to ' + (i === 0 ? 100 : v.bands[i - 1].min - 1), remark: b.remark }));
+    const d = st.draft;
+    let bandRows = [], bandErr = '';
+    if (st.dlg === 'bands' && d) {
+      d.forEach((b, i) => {
+        const prev = i === 0 ? 101 : +d[i - 1].min;
+        const okN = /^\d+$/.test(String(b.min)) && +b.min < prev && +b.min >= 0;
+        if (!okN && !bandErr) bandErr = /^\d+$/.test(String(b.min)) ? b.g + ' must start below ' + (i === 0 ? '101' : d[i - 1].g) + '.' : b.g + ' needs a whole number.';
+        if (!String(b.remark).trim() && !bandErr) bandErr = b.g + ' needs a remark.';
+        bandRows.push({ g: b.g, min: b.min, remark: b.remark, cls: okN ? '' : 'bad', fixed: i === d.length - 1, max: i === 0 ? 100 : (/^\d+$/.test(String(d[i - 1].min)) ? +d[i - 1].min - 1 : '--'),
+          onMin: (e) => this.setState({ draft: this.state.draft.map((x, j) => (j === i ? { ...x, min: e.target.value.replace(/\D/g, '') } : x)) }),
+          onRemark: (e) => this.setState({ draft: this.state.draft.map((x, j) => (j === i ? { ...x, remark: e.target.value } : x)) }) });
+      });
+    }
+    const asNames = { jss: ['CA1', 'CA2', 'Exam'], ss: ['CA1', 'CA2', 'CA3', 'Project', 'Exam'] };
+    const asLabel = { jss: 'Junior Secondary', ss: 'Senior Secondary' };
+    let asRows = [], asTotal = 0, asOk = true;
+    if (st.dlg === 'struct' && d) {
+      asRows = d.map((m, i) => { const ok = /^\d+$/.test(String(m)) && +m > 0; if (!ok) asOk = false; asTotal += +m || 0; return { name: asNames[st.asLevel][i], max: m, cls: ok ? '' : 'bad', on: (e) => this.setState({ draft: this.state.draft.map((x, j) => (j === i ? e.target.value.replace(/\D/g, '') : x)) }) }; });
+    }
+    const asMsg = !asOk ? 'Each part needs a whole number above 0.' : asTotal === 100 ? 'Total 100.' : asTotal < 100 ? 'Total ' + asTotal + '. Add ' + (100 - asTotal) + ' more to reach 100.' : 'Total ' + asTotal + '. Remove ' + (asTotal - 100) + ' to reach 100.';
+    const structs = ['jss', 'ss'].map((k) => ({ label: asLabel[k], total: v[k].reduce((a, b) => a + b, 0), chips: v[k].map((m, i) => asNames[k][i] + ' /' + m), edit: () => this.setState({ dlg: 'struct', asLevel: k, draft: v[k].map(String) }) }));
+    const ranges = ['70 to 100', '60 to 69', '50 to 59', '40 to 49', '0 to 39'];
+    const remarks = v.remarks.map((t, i) => ({ range: ranges[i], text: t, cls: t.trim() ? '' : 'bad', on: (e) => this.set('remarks', this.state.vals.remarks.map((x, j) => (j === i ? e.target.value : x))) }));
+    const traitGroups = ['Affective', 'Psychomotor'].map((g) => ({ label: g, items: v.traits[g].map((name) => ({ name, remove: () => this.set('traits', { ...this.state.vals.traits, [g]: this.state.vals.traits[g].filter((x) => x !== name) }) })) }));
+    const styleList = [['Modern', 'Default. Clean and clear.'], ['Classic', 'Traditional boxed layout.'], ['Compact', 'Fits 15 or more subjects.'], ['Early Years', 'Larger type for young pupils.']];
+    const today = '7 Oct 2026';
+    return {
+      ...B.vals, yes: true,
+      tabs: tabIds.map(([id, label]) => ({ label, sel: tab === id ? 'true' : 'false', dirty: main && isDirty(id), pick: () => this.setState({ tab: id, tabFrom: P.tab || 'General' }) })),
+      tGeneral: main && tab === 'general', tEmail: main && tab === 'email', tDefaults: main && tab === 'defaults', tBilling: main && tab === 'billing', tSecurity: main && tab === 'security',
+      emptyNote: view === 'empty' && !dirty, f,
+      logoFile: v.logoFile, uploadLogo: () => { this.set('logoFile', 'schoolflow-logo-2026.png'); this.setState({ toast: 'Logo uploaded. Save changes to use it.' }); },
+      senderShown: v.sender.trim() || 'Sender name', senderInitial: (v.sender.trim() || 'S').charAt(0).toUpperCase(), replyShown: v.replyTo.trim() || 'Not set',
+      bands: bandsView, structs, remarks, remarkErr, traitGroups,
+      newTrait: st.newTrait, newGroup: st.newGroup, traitMsg: st.traitMsg,
+      onNewTrait: (e) => this.setState({ newTrait: e.target.value, traitMsg: '' }), onNewGroup: (e) => this.setState({ newGroup: e.target.value }),
+      addTrait: () => {
+        const t = st.newTrait.trim(); if (!t) { this.setState({ traitMsg: 'Type a trait name first.' }); return; }
+        const all = [...v.traits.Affective, ...v.traits.Psychomotor].map((x) => x.toLowerCase());
+        if (all.includes(t.toLowerCase())) { this.setState({ traitMsg: 'That trait is already in the list.' }); return; }
+        this.setState({ vals: { ...v, traits: { ...v.traits, [st.newGroup]: [...v.traits[st.newGroup], t] } }, newTrait: '', traitMsg: '' });
+      },
+      styles: styleList.map(([name, hint]) => ({ name, hint, sel: v.style === name ? 'true' : 'false', pick: () => this.set('style', name) })),
+      fees: ['Platform', 'School'].map((label) => ({ label, sel: v.fees === label ? 'true' : 'false', pick: () => this.set('fees', label) })),
+      feeHint: v.fees === 'Platform' ? 'SchoolFlow covers gateway fees. Schools pay the invoice amount.' : 'Gateway fees are added to what the school pays online.',
+      cliffOn: v.cliff ? 'true' : 'false', cliffWord: v.cliff ? 'On' : 'Off', cliffCls: v.cliff ? 'b-success' : 'b-neutral', cliffIc: v.cliff ? I.check : I.minus,
+      toggleCliff: () => this.set('cliff', !v.cliff),
+      session: v.session, onSession: (e) => this.set('session', e.target.value),
+      showBar: main, lastLine: st.last[tab], dirty, barErr: dirty && bad, saveOff: !dirty || bad,
+      discard: () => { const nv = { ...v }; keys[tab].forEach((k) => { nv[k] = JSON.parse(JSON.stringify(st.saved[k])); }); this.setState({ vals: nv, traitMsg: '' }); },
+      save: () => {
+        if (!dirty || bad) return;
+        const ns = { ...st.saved }; keys[tab].forEach((k) => { ns[k] = JSON.parse(JSON.stringify(v[k])); });
+        this.setState({ saved: ns, last: { ...st.last, [tab]: 'Last changed by Platform admin on ' + today }, toast: 'Saved.' });
+      },
+      dlgBands: st.dlg === 'bands', dlgStruct: st.dlg === 'struct',
+      editBands: () => this.setState({ dlg: 'bands', draft: v.bands.map((b) => ({ ...b, min: String(b.min) })) }),
+      bandRows, bandErr, bandBad: !!bandErr,
+      applyBands: () => { if (bandErr) return; this.setState({ vals: { ...v, bands: d.map((b) => ({ g: b.g, min: +b.min, remark: b.remark.trim() })) }, dlg: null, draft: null }); },
+      asLevel: asLabel[st.asLevel], asRows, asTotalMsg: asMsg, asTotalCls: asOk && asTotal === 100 ? 'help ok' : 'help err', asBad: !(asOk && asTotal === 100),
+      applyStruct: () => { if (!(asOk && asTotal === 100)) return; this.setState({ vals: { ...v, [st.asLevel]: d.map(Number) }, dlg: null, draft: null }); },
+      closeDlg: () => this.setState({ dlg: null, draft: null })
+    };
+  }
+}
+
+</script>
+</body>
+</html>

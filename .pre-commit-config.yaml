@@ -1,0 +1,27 @@
+# Checks that run automatically on every `git commit`.
+# If any check fails, the commit is stopped so the problem never enters history.
+# Run all checks by hand with: pre-commit run --all-files
+# Linters for Python (Ruff, Pyright) and the frontend (ESLint, Prettier, tsc)
+# are added here once the backend/ and frontend/ folders are scaffolded.
+
+repos:
+  # Secret scanning: blocks API keys, tokens and passwords in staged changes.
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.30.1
+    hooks:
+      - id: gitleaks
+
+  # Small safety checks. Only checkers here, no auto-fixers, so the design
+  # handoff files are never rewritten behind your back.
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: detect-private-key
+      - id: check-added-large-files
+        args: ["--maxkb=1024"]
+      - id: check-merge-conflict
+      - id: check-case-conflict
+      - id: check-illegal-windows-names
+      - id: check-yaml
+      - id: check-json
+      - id: check-toml

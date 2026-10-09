@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Billing (super admin)</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="sf.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>body{margin:0}</style>
+</helmet>
+<div class="sf" data-theme="{{theme}}" data-device="{{device}}">
+<div class="app">
+  <aside class="side desk-only" aria-label="Platform navigation">
+    <img src="{{logo}}" alt="SchoolFlow Result Portal" style="width: 172px; height: auto; margin: 4px 8px">
+    <nav class="nav" aria-label="Main">
+      <sc-for list="{{nav}}" as="n" hint-placeholder-count="8">
+        <sc-if value="{{n.grp}}" hint-placeholder-val="{{ false }}"><span class="cap grp">{{n.grp}}</span></sc-if>
+        <a href="{{n.href}}" class="{{n.cls}}" aria-current="{{n.cur}}"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{n.d}}"></path></svg><span class="l">{{n.label}}</span></a>
+      </sc-for>
+    </nav>
+  </aside>
+  <div class="main">
+    <header class="top desk-only">
+      <nav class="crumb" aria-label="Breadcrumb"><a href="SuperDashboard.dc.html">Platform</a> / <b>Billing</b></nav>
+      <button class="iconbtn" aria-label="Notices"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.bell}}"></path></svg></button>
+      <button class="iconbtn" aria-label="Theme. Choose Light, Dark or System"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.theme}}"></path></svg></button>
+      <button class="btn sm" aria-label="Profile menu" style="border: 0"><span class="crest" aria-hidden="true" style="width: 32px; height: 32px; border-radius: 9999px; background: var(--text); color: var(--bg); font-size: 12px">SA</span><span class="col" style="gap: 0; align-items: flex-start"><span style="font-size: 14px">Platform admin</span><span class="muted" style="font-size: 12px; font-weight: 500">Super admin</span></span></button>
+    </header>
+    <header class="phead phone-only">
+      <button class="iconbtn" aria-label="Open menu" onClick="{{openDrawer}}"><svg class="i l" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.menu}}"></path></svg></button>
+      <span class="ttl">Billing</span>
+      <button class="iconbtn" aria-label="Notices"><svg class="i l" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.bell}}"></path></svg></button>
+    </header>
+
+    <main class="content">
+      <div class="row" style="align-items: flex-end">
+        <div class="col grow" style="gap: 4px; min-width: 260px"><h1 class="h1 desk-only">Billing</h1><p class="muted" style="font-size: 15px">One invoice per school per term, priced with pricing version 3.</p></div>
+        <label class="field" style="width: 240px">Term<select class="input"><option>Second Term 2026/2027</option><option>First Term 2026/2027</option></select></label>
+        <sc-if value="{{canGenerate}}" hint-placeholder-val="{{ true }}"><button class="btn primary" onClick="{{askAll}}">Generate invoices for 2 schools</button></sc-if>
+      </div>
+
+      <sc-if value="{{isLoading}}" hint-placeholder-val="{{ false }}">
+        <div class="col" aria-busy="true"><div class="grid-auto"><div class="skel" style="height: 92px"></div><div class="skel" style="height: 92px"></div><div class="skel" style="height: 92px"></div><div class="skel" style="height: 92px"></div></div><div class="skel" style="height: 260px"></div></div>
+      </sc-if>
+      <sc-if value="{{isError}}" hint-placeholder-val="{{ false }}">
+        <div class="card state" role="alert"><span class="ic" style="background: var(--danger-soft); color: var(--danger)"><svg class="i l" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.alert}}"></path></svg></span><p class="h3">We couldn't load billing.</p><p class="muted">Check your connection and try again.</p><button class="btn primary">Try again</button></div>
+      </sc-if>
+      <sc-if value="{{isEmpty}}" hint-placeholder-val="{{ false }}">
+        <div class="card state"><span class="ic" style="background: var(--primary-soft); color: var(--primary)"><svg class="i l" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.invoices}}"></path></svg></span><p class="h3">No schools to bill yet.</p><p class="muted" style="max-width: 440px">Create a school and switch billing on. Its invoices show here each term.</p><a class="btn" href="{{createHref}}">Create school</a></div>
+      </sc-if>
+
+      <sc-if value="{{showMain}}" hint-placeholder-val="{{ true }}">
+        <div class="col" style="gap: 20px">
+          <section class="grid-auto num" aria-label="Totals" style="grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px">
+            <sc-for list="{{totals}}" as="t" hint-placeholder-count="4"><div class="card col" style="gap: 2px; padding: 16px"><span class="muted" style="font-size: 14px; font-weight: 500">{{t.k}}</span><span style="font-size: 26px; font-weight: 700">{{t.v}}</span><sc-if value="{{t.sub}}" hint-placeholder-val="{{ false }}"><span class="muted" style="font-size: 12px">{{t.sub}}</span></sc-if></div></sc-for>
+          </section>
+          <div class="alert a-info"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.shield}}"></path></svg><span><strong>Cliff protection is on.</strong>A school never pays more than it would on a bigger plan. Capped invoices show "Capped" below.</span></div>
+          <sc-if value="{{justGenerated}}" hint-placeholder-val="{{ false }}">
+            <div class="alert a-success" role="status"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.ok}}"></path></svg><span><strong>2 invoices generated.</strong>Each principal now sees the amount due on their dashboard. Student counts were taken today.</span></div>
+          </sc-if>
+          <section class="card flush" aria-label="Invoices by school">
+            <div class="rt num" style="--cols: minmax(0, 2fr) minmax(0, 0.9fr) minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.2fr)">
+              <div class="tr th"><span>School</span><span>Plan</span><span>Billable students</span><span>Amount</span><span>Cliff protection</span><span>Status</span><span>Action</span></div>
+              <sc-for list="{{rows}}" as="r" hint-placeholder-count="3">
+                <div class="tr">
+                  <span class="td first row" style="gap: 10px; flex-wrap: nowrap"><span class="crest" aria-hidden="true" style="width: 32px; height: 32px; font-size: 10px; border-radius: 8px; background: {{r.colour}}">{{r.code}}</span><span class="col" style="gap: 0"><span style="font-weight: 600">{{r.name}}</span><span class="sub">{{r.town}}</span></span></span>
+                  <span class="td" data-label="Plan">{{r.plan}}</span>
+                  <span class="td" data-label="Billable students">{{r.studentsLine}}</span>
+                  <span class="td" data-label="Amount" style="font-weight: 600">{{r.amountLine}}</span>
+                  <span class="td" data-label="Cliff protection">{{r.cliff}}</span>
+                  <span class="td" data-label="Status"><span class="badge sm {{r.cls}}"><svg class="i s" viewBox="0 0 24 24" aria-hidden="true"><path d="{{r.ic}}"></path></svg>{{r.status}}</span></span>
+                  <span class="td" data-label="Action"><sc-if value="{{r.canRecord}}" hint-placeholder-val="{{ false }}"><button class="btn sm" onClick="{{r.record}}">Record payment</button></sc-if><sc-if value="{{r.noAction}}" hint-placeholder-val="{{ true }}"><span class="muted">{{r.note}}</span></sc-if></span>
+                </div>
+              </sc-for>
+            </div>
+          </section>
+        </div>
+      </sc-if>
+    </main>
+  </div>
+</div>
+<sc-if value="{{drawer}}" hint-placeholder-val="{{ false }}">
+  <div class="scrim">
+    <div class="drawer" role="dialog" aria-modal="true" aria-label="Menu">
+      <div class="row" style="justify-content: space-between"><img src="{{logo}}" alt="SchoolFlow Result Portal" style="width: 150px; height: auto"><button class="iconbtn" aria-label="Close menu" onClick="{{closeDrawer}}"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.close}}"></path></svg></button></div>
+      <nav class="nav" aria-label="Main">
+        <sc-for list="{{nav}}" as="n" hint-placeholder-count="8">
+          <sc-if value="{{n.grp}}" hint-placeholder-val="{{ false }}"><span class="cap grp">{{n.grp}}</span></sc-if>
+          <a href="{{n.href}}" class="{{n.cls}}" aria-current="{{n.cur}}"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{n.d}}"></path></svg><span class="l">{{n.label}}</span></a>
+        </sc-for>
+      </nav>
+    </div>
+  </div>
+</sc-if>
+<sc-if value="{{confirming}}" hint-placeholder-val="{{ false }}">
+  <div class="modal"><div class="dialog" role="dialog" aria-modal="true" aria-labelledby="gT"><h2 id="gT" class="h3">Generate Second Term invoices?</h2><p class="num">2 schools, due 5 Jan 2027. Greenfield Model College: ₦290,000. Royal Crest Schools: [AMOUNT]. Bright Stars Academy is on a free pilot and won't be billed.</p><div class="btns"><button class="btn" onClick="{{cancel}}">Cancel</button><button class="btn primary" onClick="{{generate}}">Generate 2 invoices</button></div></div></div>
+</sc-if>
+<sc-if value="{{recording}}" hint-placeholder-val="{{ false }}">
+  <div class="modal"><div class="dialog" role="dialog" aria-modal="true" aria-labelledby="rT"><h2 id="rT" class="h3">Record a manual payment</h2><p class="num muted">{{recName}} · {{recAmount}}</p><label class="field">Payment reference<input class="input" type="text" value="Bank transfer TRF-55021"></label><label class="field">Note (required)<input class="input" type="text" value="Confirmed on bank statement"></label><p class="help">This is recorded in the audit log with your name.</p><div class="btns"><button class="btn" onClick="{{cancelRec}}">Cancel</button><button class="btn primary" onClick="{{confirmRec}}">Mark as paid</button></div></div></div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["Light","Dark"],"default":"Light"},"state":{"editor":"enum","options":["Default","Empty","Loading","Error"],"default":"Default"},"device":{"editor":"enum","options":["Desktop","Phone"],"default":"Desktop"},"$preview":{"width":1440,"height":1000}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { generated: false, confirming: false, paid: {}, recording: null, drawer: false }; }
+  icons() {
+    return {
+      dash: 'M3 3h7v9H3zM14 3h7v5h-7zM14 12h7v9h-7zM3 16h7v5H3z', schools: 'M3 21h18M5 21V9l7-5 7 5v12M9 21v-6h6v6',
+      pricing: 'M20.6 13.4l-7.2 7.2a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8zM9 7.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z',
+      invoices: 'M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9zM14 3v6h6M8 13h8M8 17h5', pay: 'M4 5h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2zM2 10h20',
+      audit: 'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM12 7v5l3 2', mail: 'M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zM22 6l-10 7L2 6',
+      settings: 'M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1',
+      bell: 'M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.94 1.94 0 0 0 3.4 0', menu: 'M4 6h16M4 12h16M4 18h16', close: 'M18 6L6 18M6 6l12 12',
+      theme: 'M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0zM12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4',
+      plus: 'M12 5v14M5 12h14', search: 'M17 11a6 6 0 1 1-12 0 6 6 0 0 1 12 0zM21 21l-4.35-4.35', alert: 'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM12 8v4M12 16h.01',
+      check: 'M5 12l5 5L20 7', pause: 'M9 5v14M15 5v14'
+    };
+  }
+  nav(active, phone) {
+    const I = this.icons(); const go = (n) => (n.startsWith('#') ? n : (phone && ['Assessment', 'AssessmentBSA', 'Attention', 'AttentionBSA', 'AttentionReviewer', 'AttentionTeacher', 'AttentionTeacherBSA', 'AuditLog', 'BillingV5', 'BsaMenus', 'ChangePassword', 'ClassPage', 'CreateSchool', 'DashboardV5', 'EmailLog', 'Grading', 'GradingBSA', 'LearningAreas', 'Login', 'Login_Link', 'MyClass', 'MyClassPrimary', 'ParentSkills', 'Payments', 'PlatformSettings', 'PricingV5', 'PublishV5', 'RatingSheet', 'RatingSheetAssistant', 'SchoolAdmins', 'SchoolAdminsBSA', 'SchoolDetailBSA', 'SchoolDetailV5', 'SchoolPaused', 'SchoolsV5', 'ScoreGridSS', 'ScoreGridV5', 'SheetsV5', 'StudentDetail', 'SuperBillingV5', 'TemplateEditorBSA', 'TemplateEditorV5'].includes(n) ? n + '_Phone.dc.html' : n + '.dc.html'));
+    const items = [[null, 'Dashboard', 'SuperDashboard', 'dash'], [null, 'Schools', 'SchoolsV5', 'schools'], [null, 'Pricing', 'PricingV5', 'pricing'], ['Billing', 'Invoices', 'SuperBillingV5', 'invoices'], [null, 'Payments', 'Payments', 'pay'], ['Platform', 'Audit log', 'AuditLog', 'audit'], [null, 'Email log', 'EmailLog', 'mail'], [null, 'Settings', 'PlatformSettings', 'settings']];
+    return items.map(([grp, label, href, ic]) => ({ grp: grp || '', label, href: go(href), d: I[ic], cls: label === active ? 'on' : '', cur: label === active ? 'page' : 'false' }));
+  }
+  renderVals() {
+    const P = this.props, st = this.state, I = Object.assign(this.icons(), { shield: 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z', ok: 'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM8 12l3 3 5-6', clock: 'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM12 7v5l3 2', minus: 'M5 12h14', gift: 'M20 12v10H4V12M2 7h20v5H2zM12 22V7M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z' });
+    const theme = String(P.theme || 'Light').toLowerCase(), device = String(P.device || 'Desktop').toLowerCase(), view = String(P.state || 'Default').toLowerCase();
+    const phone = device === 'phone';
+    const data = [
+      { code: 'GMC', colour: '#1e6b45', name: 'Greenfield Model College', town: 'Enugu', plan: 'Standard', studentsLine: '580 × ₦500', amount: 290000, amountLine: '₦290,000', cliff: 'Not applied' },
+      { code: 'RCS', colour: '#1d3a6e', name: 'Royal Crest Schools', town: 'Trans-Ekulu, Enugu', plan: '[PLAN]', studentsLine: '[STUDENTS]', amount: null, amountLine: '[AMOUNT]', cliff: '[CLIFF]' }
+    ];
+    let paidSum = 0, invSum = 0;
+    const rows = data.map((d, i) => {
+      const isPaid = !!st.paid[i];
+      if (st.generated && d.amount) invSum += d.amount; if (isPaid && d.amount) paidSum += d.amount;
+      const S = !st.generated ? ['Not generated', 'b-neutral', I.minus] : isPaid ? ['Paid', 'b-success', I.ok] : ['Unpaid', 'b-warning', I.clock];
+      return { ...d, status: S[0], cls: S[1], ic: S[2], canRecord: st.generated && !isPaid, noAction: !(st.generated && !isPaid), note: isPaid ? 'Recorded just now' : 'Generate first', record: () => this.setState({ recording: i }) };
+    });
+    rows.push({ code: 'BSA', colour: '#7a1f2b', name: 'Bright Stars Academy', town: 'Nsukka', plan: 'Free pilot', studentsLine: '[STUDENTS]', amountLine: '--', cliff: '--', status: 'Billing off', cls: 'b-info', ic: I.gift, canRecord: false, noAction: true, note: 'Not billed' });
+    const n = (v) => '₦' + v.toLocaleString('en-NG');
+    const rec = st.recording !== null ? data[st.recording] : null;
+    return {
+      theme, device, ic: I, nav: this.nav('Invoices', phone), logo: theme === 'dark' ? '/_blob/f8c668b157c01655c625f83bed0c84c2' : '/_blob/182db0c32744c4f6abeb340d16b2ccfb',
+      isLoading: view === 'loading', isError: view === 'error', isEmpty: view === 'empty', showMain: view === 'default', canGenerate: view === 'default' && !st.generated,
+      createHref: phone ? 'CreateSchool_Phone.dc.html' : 'CreateSchool.dc.html',
+      totals: [['Invoiced', st.generated ? n(invSum) : '₦0', st.generated ? 'Plus Royal Crest Schools' : ''], ['Paid', n(paidSum), ''], ['Outstanding', n(invSum - paidSum), ''], ['Due date', '5 Jan 2027', '']].map(([k, v, sub]) => ({ k, v, sub })),
+      justGenerated: st.generated, rows,
+      confirming: st.confirming, askAll: () => this.setState({ confirming: true }), cancel: () => this.setState({ confirming: false }), generate: () => this.setState({ confirming: false, generated: true }),
+      recording: !!rec, recName: rec ? rec.name : '', recAmount: rec ? rec.amountLine : '', cancelRec: () => this.setState({ recording: null }), confirmRec: () => this.setState({ paid: { ...st.paid, [st.recording]: true }, recording: null }),
+      drawer: st.drawer, openDrawer: () => this.setState({ drawer: true }), closeDrawer: () => this.setState({ drawer: false })
+    };
+  }
+}
+</script>
+</body>
+</html>

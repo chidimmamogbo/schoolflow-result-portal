@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>School admins, Bright Stars</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="sf.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>body{margin:0}</style>
+</helmet>
+<div style="width: 100%">
+<dc-import name="SchoolAdmins" school="Bright Stars Academy" device="{{device}}" theme="{{theme}}" state="{{state}}" hint-size="1440px,900px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["Light","Dark"],"default":"Light"},"state":{"editor":"enum","options":["Default","Empty","Loading","Error"],"default":"Default"},"device":{"editor":"enum","options":["Desktop","Phone"],"default":"Desktop"},"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() { return { theme: this.props.theme ?? 'Light', state: this.props.state ?? 'Default', device: this.props.device ?? 'Desktop' }; }
+}
+</script>
+</body>
+</html>

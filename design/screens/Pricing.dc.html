@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Pricing table</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#f7f8fa}
+a{color:#1f4fd8}a:hover{color:#163ca8}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid #1f4fd8;outline-offset:2px}
+.num{font-variant-numeric:tabular-nums}
+</style>
+</helmet>
+<div style="min-height: 100vh; display: flex; flex-wrap: wrap; align-items: stretch; background: #f7f8fa; font-family: Inter, 'Segoe UI', system-ui, sans-serif; color: #0f172a">
+
+  <aside aria-label="Platform navigation" style="flex: 1 1 256px; max-width: 100%; box-sizing: border-box; background: #ffffff; border-right: 1px solid #e3e7ee; padding: 18px 12px; display: flex; flex-direction: column; gap: 22px">
+    <img src="/_blob/182db0c32744c4f6abeb340d16b2ccfb" alt="SchoolFlow Result Portal" style="width: 172px; height: auto; margin-left: 8px">
+    <nav style="display: flex; flex-direction: column; gap: 2px">
+      <a href="SuperDashboard.dc.html" style="height: 40px; display: flex; align-items: center; gap: 10px; padding: 0 12px; border-radius: 8px; color: #0f172a; font-size: 14px; font-weight: 500; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5b6475" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="1"></rect><rect x="14" y="3" width="7" height="5" rx="1"></rect><rect x="14" y="12" width="7" height="9" rx="1"></rect><rect x="3" y="16" width="7" height="5" rx="1"></rect></svg><span style="flex-grow: 1">Dashboard</span></a>
+      <a href="Schools.dc.html" style="height: 40px; display: flex; align-items: center; gap: 10px; padding: 0 12px; border-radius: 8px; color: #0f172a; font-size: 14px; font-weight: 500; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5b6475" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18M5 21V9l7-5 7 5v12M9 21v-6h6v6"></path></svg><span style="flex-grow: 1">Schools</span></a>
+      <a href="Pricing.dc.html" aria-current="page" style="height: 40px; display: flex; align-items: center; gap: 10px; padding: 0 12px; border-radius: 8px; background: #eaf0ff; color: #1f4fd8; font-size: 14px; font-weight: 600; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.6 13.4l-7.2 7.2a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"></path><circle cx="7.5" cy="7.5" r="1.5"></circle></svg><span style="flex-grow: 1">Pricing</span></a>
+      <span style="padding: 14px 12px 6px; font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: #5b6475">Billing</span>
+      <a href="SuperBilling.dc.html" style="height: 40px; display: flex; align-items: center; gap: 10px; padding: 0 12px; border-radius: 8px; color: #0f172a; font-size: 14px; font-weight: 500; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5b6475" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><path d="M14 3v6h6M8 13h8M8 17h5"></path></svg><span style="flex-grow: 1">Invoices</span></a>
+      <a href="#payments" style="height: 40px; display: flex; align-items: center; gap: 10px; padding: 0 12px; border-radius: 8px; color: #0f172a; font-size: 14px; font-weight: 500; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5b6475" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"></rect><path d="M2 10h20"></path></svg><span style="flex-grow: 1">Payments</span></a>
+      <span style="padding: 14px 12px 6px; font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: #5b6475">Platform</span>
+      <a href="#notices" style="height: 40px; display: flex; align-items: center; gap: 10px; padding: 0 12px; border-radius: 8px; color: #0f172a; font-size: 14px; font-weight: 500; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5b6475" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l18-5v12L3 14z"></path><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"></path></svg><span style="flex-grow: 1">Notices</span></a>
+      <a href="#settings" style="height: 40px; display: flex; align-items: center; gap: 10px; padding: 0 12px; border-radius: 8px; color: #0f172a; font-size: 14px; font-weight: 500; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5b6475" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"></path></svg><span style="flex-grow: 1">Settings</span></a>
+    </nav>
+  </aside>
+
+  <div style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column">
+    <header style="min-height: 64px; box-sizing: border-box; display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding: 10px 32px; background: #ffffff; border-bottom: 1px solid #e3e7ee">
+      <nav aria-label="Breadcrumb" style="flex-grow: 1; font-size: 14px; color: #5b6475"><a href="SuperDashboard.dc.html" style="color: #5b6475">Platform</a> <span aria-hidden="true">/</span> <span style="color: #0f172a; font-weight: 600">Pricing</span></nav>
+      <button aria-label="Profile menu" style="height: 40px; border: 0; background: transparent; border-radius: 8px; display: flex; align-items: center; gap: 10px; padding: 0 6px; cursor: pointer; font-family: inherit"><span aria-hidden="true" style="width: 32px; height: 32px; border-radius: 9999px; background: #0f172a; color: #ffffff; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center">SA</span><span style="display: flex; flex-direction: column; align-items: flex-start"><span style="font-size: 14px; font-weight: 600; color: #0f172a">Platform admin</span><span style="font-size: 12px; color: #5b6475">Super admin</span></span></button>
+    </header>
+
+    <main style="padding: 28px 32px 40px; display: flex; flex-direction: column; gap: 20px; max-width: 1280px; box-sizing: border-box; width: 100%">
+      <div style="display: flex; flex-wrap: wrap; align-items: flex-end; gap: 16px">
+        <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 4px">
+          <h1 style="margin: 0; font-size: 30px; line-height: 38px; font-weight: 700; letter-spacing: -0.01em">Pricing table</h1>
+          <p style="margin: 0; font-size: 15px; color: #5b6475">Price per student, per term, in Naira. Editing version {{editingVersion}}.</p>
+        </div>
+      </div>
+
+      <sc-if value="{{justSaved}}" hint-placeholder-val="{{ false }}">
+        <div role="status" style="background: #e6f8f1; border-radius: 12px; padding: 14px 18px; display: flex; align-items: center; gap: 12px; color: #047857; font-size: 15px">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M8 12l3 3 5-6"></path></svg>
+          <span><strong style="font-weight: 600">Saved as version 4.</strong> New invoices will use it. Invoices already issued keep their old price. The change is in the audit log.</span>
+        </div>
+      </sc-if>
+
+      <div style="display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start">
+        <div style="flex: 999 1 600px; min-width: 0; display: flex; flex-direction: column; gap: 20px">
+          <section aria-labelledby="tiers" style="background: #ffffff; border: 1px solid #e3e7ee; border-radius: 12px; box-shadow: 0 1px 2px rgba(15,23,42,0.06); overflow: hidden">
+            <div style="padding: 16px 20px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #e3e7ee">
+              <h2 id="tiers" style="margin: 0; flex-grow: 1; font-size: 20px; line-height: 28px; font-weight: 600">Plans</h2>
+              <button onClick="{{addTier}}" style="height: 36px; padding: 0 12px; border: 1px solid #737c8f; border-radius: 8px; background: #ffffff; color: #0f172a; font: 600 14px Inter, system-ui, sans-serif; cursor: pointer; display: inline-flex; align-items: center; gap: 6px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Add plan</button>
+            </div>
+            <div style="overflow-x: auto">
+              <table class="num" style="width: 100%; border-collapse: collapse; font-size: 14px; min-width: 640px">
+                <thead><tr style="background: #f1f3f7; text-align: left; color: #5b6475"><th scope="col" style="padding: 10px 20px; font-weight: 600">Plan name</th><th scope="col" style="padding: 10px 12px; font-weight: 600">Min students</th><th scope="col" style="padding: 10px 12px; font-weight: 600">Max students</th><th scope="col" style="padding: 10px 12px; font-weight: 600">Price per student (₦)</th><th scope="col" style="padding: 10px 20px"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Remove</span></th></tr></thead>
+                <tbody>
+                  <sc-for list="{{rows}}" as="r" hint-placeholder-count="3">
+                    <tr style="border-top: 1px solid #e3e7ee">
+                      <td style="padding: 10px 20px"><input type="text" value="{{r.name}}" onChange="{{r.onName}}" aria-label="Plan name" style="width: 100%; height: 40px; box-sizing: border-box; border: 1px solid #737c8f; border-radius: 8px; padding: 0 10px; font: 600 14px Inter, system-ui, sans-serif; color: #0f172a"></td>
+                      <td style="padding: 10px 12px"><input type="text" inputmode="numeric" value="{{r.min}}" onChange="{{r.onMin}}" aria-label="Minimum students" aria-invalid="{{r.minBad}}" style="width: 110px; height: 40px; box-sizing: border-box; border: 2px solid {{r.minBorder}}; border-radius: 8px; padding: 0 10px; font: 500 14px Inter, system-ui, sans-serif; color: #0f172a; background: {{r.minBg}}"></td>
+                      <td style="padding: 10px 12px"><input type="text" inputmode="numeric" value="{{r.max}}" onChange="{{r.onMax}}" placeholder="and above" aria-label="Maximum students" aria-invalid="{{r.maxBad}}" style="width: 110px; height: 40px; box-sizing: border-box; border: 2px solid {{r.maxBorder}}; border-radius: 8px; padding: 0 10px; font: 500 14px Inter, system-ui, sans-serif; color: #0f172a; background: {{r.maxBg}}"></td>
+                      <td style="padding: 10px 12px"><input type="text" inputmode="numeric" value="{{r.price}}" onChange="{{r.onPrice}}" aria-label="Price per student in Naira" style="width: 120px; height: 40px; box-sizing: border-box; border: 2px solid {{r.priceBorder}}; border-radius: 8px; padding: 0 10px; font: 500 14px Inter, system-ui, sans-serif; color: #0f172a"></td>
+                      <td style="padding: 10px 20px; text-align: right"><button onClick="{{r.remove}}" aria-label="Remove {{r.name}}" style="width: 36px; height: 36px; border: 0; background: transparent; border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5b6475" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"></path></svg></button></td>
+                    </tr>
+                  </sc-for>
+                </tbody>
+              </table>
+            </div>
+            <sc-if value="{{hasErrors}}" hint-placeholder-val="{{ false }}">
+              <div role="alert" style="margin: 0 20px 16px; background: #fdecec; border-radius: 8px; padding: 12px 14px; display: flex; flex-direction: column; gap: 6px">
+                <sc-for list="{{errors}}" as="e" hint-placeholder-count="1">
+                  <span style="display: flex; gap: 8px; align-items: flex-start; font-size: 14px; font-weight: 500; color: #c81e1e"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true" style="flex-shrink: 0; margin-top: 2px"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v4M12 16h.01"></path></svg>{{e.text}}</span>
+                </sc-for>
+              </div>
+            </sc-if>
+            <sc-if value="{{noErrors}}" hint-placeholder-val="{{ true }}">
+              <p style="margin: 0 20px 16px; display: flex; gap: 8px; align-items: center; font-size: 14px; color: #047857"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"></path></svg>No gaps or overlaps. Every school size fits exactly one plan.</p>
+            </sc-if>
+          </section>
+
+          <section aria-labelledby="model" style="background: #ffffff; border: 1px solid #e3e7ee; border-radius: 12px; box-shadow: 0 1px 2px rgba(15,23,42,0.06); padding: 20px; display: flex; flex-direction: column; gap: 14px">
+            <h2 id="model" style="margin: 0; font-size: 20px; line-height: 28px; font-weight: 600">Pricing model</h2>
+            <div role="radiogroup" aria-label="Pricing model" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px">
+              <button role="radio" aria-checked="{{volChecked}}" onClick="{{pickVolume}}" style="text-align: left; border: 2px solid {{volBorder}}; border-radius: 12px; background: {{volBg}}; padding: 14px 16px; cursor: pointer; font-family: inherit; color: #0f172a; display: flex; flex-direction: column; gap: 4px"><span style="font-size: 15px; font-weight: 600">Volume</span><span style="font-size: 14px; color: #5b6475; line-height: 20px">Every student is charged at the rate of the plan the total falls into.</span></button>
+              <button role="radio" aria-checked="{{gradChecked}}" onClick="{{pickGraduated}}" style="text-align: left; border: 2px solid {{gradBorder}}; border-radius: 12px; background: {{gradBg}}; padding: 14px 16px; cursor: pointer; font-family: inherit; color: #0f172a; display: flex; flex-direction: column; gap: 4px"><span style="font-size: 15px; font-weight: 600">Graduated</span><span style="font-size: 14px; color: #5b6475; line-height: 20px">Each band of students is charged at that band's rate. No price cliff.</span></button>
+            </div>
+          </section>
+
+          <sc-if value="{{noErrors}}" hint-placeholder-val="{{ true }}">
+            <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center">
+              <button onClick="{{askSave}}" style="height: 48px; padding: 0 22px; border: 0; border-radius: 8px; background: #1f4fd8; color: #ffffff; font: 600 16px Inter, system-ui, sans-serif; cursor: pointer">Save as new version</button>
+              <span style="font-size: 14px; color: #5b6475">This will not change invoices already issued.</span>
+            </div>
+          </sc-if>
+          <sc-if value="{{hasErrors}}" hint-placeholder-val="{{ false }}">
+            <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center">
+              <button disabled="{{yes}}" style="height: 48px; padding: 0 22px; border: 0; border-radius: 8px; background: #e3e7ee; color: #5b6475; font: 600 16px Inter, system-ui, sans-serif; cursor: not-allowed">Save as new version</button>
+              <span style="font-size: 14px; color: #c81e1e; font-weight: 500">Fix the problems above to save.</span>
+            </div>
+          </sc-if>
+        </div>
+
+        <div style="flex: 1 1 320px; min-width: 0; display: flex; flex-direction: column; gap: 20px">
+          <section aria-labelledby="calc" style="background: #0f172a; color: #e6eaf2; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 14px">
+            <h2 id="calc" style="margin: 0; font-size: 18px; font-weight: 600">Try it</h2>
+            <label style="display: flex; flex-direction: column; gap: 6px; font-size: 14px; font-weight: 500; color: #9aa4b8">A school with
+              <span style="display: flex; align-items: center; gap: 10px"><input type="text" inputmode="numeric" value="{{calcN}}" onChange="{{onCalc}}" aria-label="Number of students" style="width: 110px; height: 44px; box-sizing: border-box; border: 1px solid #5f6f92; border-radius: 8px; padding: 0 12px; font: 700 18px Inter, system-ui, sans-serif; color: #e6eaf2; background: #17223a"><span style="color: #e6eaf2; font-size: 15px">students pays</span></span>
+            </label>
+            <span class="num" style="font-size: 36px; line-height: 44px; font-weight: 700; color: #ffffff">{{calcAmount}}</span>
+            <span class="num" style="font-size: 14px; line-height: 20px; color: #9aa4b8">{{calcWorking}}</span>
+            <div class="num" style="border-top: 1px solid #24314d; padding-top: 12px; font-size: 14px; color: #9aa4b8">With the other model: <strong style="color: #e6eaf2">{{calcOther}}</strong></div>
+            <div style="display: flex; flex-wrap: wrap; gap: 6px">
+              <button onClick="{{q499}}" style="height: 32px; padding: 0 10px; border: 1px solid #5f6f92; border-radius: 9999px; background: transparent; color: #e6eaf2; font: 600 12px Inter, system-ui, sans-serif; cursor: pointer">499</button>
+              <button onClick="{{q500}}" style="height: 32px; padding: 0 10px; border: 1px solid #5f6f92; border-radius: 9999px; background: transparent; color: #e6eaf2; font: 600 12px Inter, system-ui, sans-serif; cursor: pointer">500</button>
+              <button onClick="{{q1000}}" style="height: 32px; padding: 0 10px; border: 1px solid #5f6f92; border-radius: 9999px; background: transparent; color: #e6eaf2; font: 600 12px Inter, system-ui, sans-serif; cursor: pointer">1,000</button>
+              <button onClick="{{q1001}}" style="height: 32px; padding: 0 10px; border: 1px solid #5f6f92; border-radius: 9999px; background: transparent; color: #e6eaf2; font: 600 12px Inter, system-ui, sans-serif; cursor: pointer">1,001</button>
+            </div>
+          </section>
+
+          <section aria-labelledby="ver" style="background: #ffffff; border: 1px solid #e3e7ee; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 4px">
+            <h2 id="ver" style="margin: 0 0 8px; font-size: 18px; font-weight: 600">Version history</h2>
+            <sc-for list="{{versions}}" as="v" hint-placeholder-count="3">
+              <div style="display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid #e3e7ee; font-size: 14px">
+                <span style="width: 34px; height: 24px; border-radius: 6px; background: {{v.bg}}; color: {{v.ink}}; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center">{{v.id}}</span>
+                <span style="flex-grow: 1; display: flex; flex-direction: column"><span style="font-weight: 500">{{v.summary}}</span><span style="font-size: 13px; color: #5b6475">{{v.when}}</span></span>
+                <span style="font-size: 12px; font-weight: 600; color: #047857">{{v.tag}}</span>
+              </div>
+            </sc-for>
+          </section>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <sc-if value="{{confirming}}" hint-placeholder-val="{{ false }}">
+    <div style="position: fixed; inset: 0; background: rgba(15,23,42,0.5); display: flex; align-items: center; justify-content: center; padding: 16px">
+      <div role="dialog" aria-modal="true" aria-labelledby="svTitle" style="width: 460px; max-width: 100%; box-sizing: border-box; background: #ffffff; border-radius: 12px; box-shadow: 0 12px 32px rgba(15,23,42,0.14); padding: 24px; display: flex; flex-direction: column; gap: 16px">
+        <h2 id="svTitle" style="margin: 0; font-size: 18px; line-height: 26px; font-weight: 600">Save pricing as version 4?</h2>
+        <p style="margin: 0; font-size: 15px; line-height: 22px; color: #5b6475">New invoices will use these prices. Invoices already issued keep their version and price.</p>
+        <div style="display: flex; justify-content: flex-end; gap: 10px">
+          <button onClick="{{cancel}}" style="height: 44px; padding: 0 18px; border: 1px solid #737c8f; border-radius: 8px; background: #ffffff; color: #0f172a; font: 600 15px Inter, system-ui, sans-serif; cursor: pointer">Cancel</button>
+          <button onClick="{{save}}" style="height: 44px; padding: 0 18px; border: 0; border-radius: 8px; background: #1f4fd8; color: #ffffff; font: 600 15px Inter, system-ui, sans-serif; cursor: pointer">Save version 4</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1040}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = {
+      tiers: [
+        { name: 'Basic', min: '1', max: '499', price: '1000' },
+        { name: 'Standard', min: '500', max: '1000', price: '500' },
+        { name: 'Premium', min: '1001', max: '', price: '300' }
+      ],
+      model: 'volume', calcN: '500', confirming: false, saved: false
+    };
+  }
+  naira(n) { return '₦' + Math.round(n).toLocaleString('en-NG'); }
+  int(s) { const t = String(s).replace(/,/g, '').trim(); return /^\d+$/.test(t) ? Number(t) : null; }
+  setTier(i, key, value) {
+    const tiers = this.state.tiers.map((t, j) => (j === i ? { ...t, [key]: value } : t));
+    this.setState({ tiers, saved: false });
+  }
+  validate(tiers) {
+    const errs = []; const bad = tiers.map(() => ({ min: false, max: false, price: false }));
+    tiers.forEach((t, i) => {
+      const min = this.int(t.min), max = t.max.trim() === '' ? null : this.int(t.max), price = this.int(t.price);
+      const last = i === tiers.length - 1;
+      if (min === null) { errs.push(t.name + ': enter a minimum number of students.'); bad[i].min = true; }
+      if (t.max.trim() !== '' && max === null) { errs.push(t.name + ': the maximum must be a whole number.'); bad[i].max = true; }
+      if (!last && t.max.trim() === '') { errs.push('Only the last plan can have no maximum. Add a maximum for ' + t.name + '.'); bad[i].max = true; }
+      if (last && t.max.trim() !== '') { errs.push('Leave ' + t.name + "'s maximum blank so every school size fits."); bad[i].max = true; }
+      if (min !== null && max !== null && max < min) { errs.push(t.name + ": the maximum can't be below the minimum."); bad[i].max = true; }
+      if (price === null || price <= 0) { errs.push(t.name + ': enter a price above ₦0.'); bad[i].price = true; }
+      if (i === 0 && min !== null && min !== 1) { errs.push(t.name + ' must start at 1 so the smallest schools fit.'); bad[i].min = true; }
+      if (i > 0) {
+        const prev = tiers[i - 1]; const pmax = this.int(prev.max);
+        if (pmax !== null && min !== null && min !== pmax + 1) {
+          const kind = min <= pmax ? 'overlaps ' + prev.name : 'leaves a gap after ' + prev.name;
+          errs.push(t.name + ' ' + kind + '. ' + t.name + ' must start at ' + (pmax + 1).toLocaleString('en-NG') + ' because ' + prev.name + ' ends at ' + pmax.toLocaleString('en-NG') + '.');
+          bad[i].min = true;
+        }
+      }
+    });
+    return { errs, bad };
+  }
+  price(n, model, tiers) {
+    const parsed = tiers.map((t) => ({ name: t.name, min: this.int(t.min), max: t.max.trim() === '' ? Infinity : this.int(t.max), price: this.int(t.price) }));
+    if (model === 'volume') {
+      const t = parsed.find((p) => n >= p.min && n <= p.max);
+      if (!t) return { amount: 0, working: 'No plan covers this size.' };
+      return { amount: n * t.price, working: t.name + ': ' + n.toLocaleString('en-NG') + ' × ' + this.naira(t.price) };
+    }
+    let amount = 0; const parts = [];
+    parsed.forEach((p) => {
+      const count = Math.max(0, Math.min(n, p.max) - p.min + 1);
+      if (count > 0) { amount += count * p.price; parts.push(count.toLocaleString('en-NG') + ' × ' + this.naira(p.price)); }
+    });
+    return { amount, working: parts.join(' + ') };
+  }
+  renderVals() {
+    const st = this.state;
+    const { errs, bad } = this.validate(st.tiers);
+    const rows = st.tiers.map((t, i) => ({
+      ...t,
+      minBorder: bad[i].min ? '#c81e1e' : '#737c8f', minBg: bad[i].min ? '#fdecec' : '#ffffff', minBad: bad[i].min ? 'true' : 'false',
+      maxBorder: bad[i].max ? '#c81e1e' : '#737c8f', maxBg: bad[i].max ? '#fdecec' : '#ffffff', maxBad: bad[i].max ? 'true' : 'false',
+      priceBorder: bad[i].price ? '#c81e1e' : '#737c8f',
+      onName: (e) => this.setTier(i, 'name', e.target.value),
+      onMin: (e) => this.setTier(i, 'min', e.target.value),
+      onMax: (e) => this.setTier(i, 'max', e.target.value),
+      onPrice: (e) => this.setTier(i, 'price', e.target.value),
+      remove: () => this.setState({ tiers: st.tiers.filter((_, j) => j !== i) })
+    }));
+    const n = this.int(st.calcN) || 0;
+    const other = st.model === 'volume' ? 'graduated' : 'volume';
+    const cur = errs.length ? { amount: 0, working: 'Fix the plan table to see a price.' } : this.price(n, st.model, st.tiers);
+    const alt = errs.length ? { amount: 0 } : this.price(n, other, st.tiers);
+    const vol = st.model === 'volume';
+    const versions = [
+      { id: 'v3', summary: 'Volume · 3 plans', when: '1 Sep 2026 · Platform admin', tag: st.saved ? '' : 'In use' },
+      { id: 'v2', summary: 'Volume · Standard at ₦550', when: '20 Aug 2026 · Platform admin', tag: '' },
+      { id: 'v1', summary: 'Volume · 2 plans', when: '15 Aug 2026 · Platform admin', tag: '' }
+    ];
+    if (st.saved) versions.unshift({ id: 'v4', summary: (vol ? 'Volume' : 'Graduated') + ' · ' + st.tiers.length + ' plans', when: 'Today · Platform admin', tag: 'In use' });
+    versions.forEach((v) => { v.bg = v.tag ? '#e6f8f1' : '#f1f3f7'; v.ink = v.tag ? '#047857' : '#5b6475'; });
+    const q = (v) => () => this.setState({ calcN: v });
+    return {
+      rows, errors: errs.map((text) => ({ text })), hasErrors: errs.length > 0, noErrors: errs.length === 0, yes: true,
+      editingVersion: st.saved ? '4' : '3 (in use)',
+      volChecked: vol ? 'true' : 'false', gradChecked: vol ? 'false' : 'true',
+      volBorder: vol ? '#1f4fd8' : '#e3e7ee', volBg: vol ? '#f7f9ff' : '#ffffff',
+      gradBorder: vol ? '#e3e7ee' : '#1f4fd8', gradBg: vol ? '#ffffff' : '#f7f9ff',
+      pickVolume: () => this.setState({ model: 'volume', saved: false }),
+      pickGraduated: () => this.setState({ model: 'graduated', saved: false }),
+      calcN: st.calcN, onCalc: (e) => this.setState({ calcN: e.target.value }),
+      calcAmount: errs.length ? '--' : this.naira(cur.amount), calcWorking: cur.working,
+      calcOther: errs.length ? '--' : this.naira(alt.amount) + ' (' + other + ')',
+      q499: q('499'), q500: q('500'), q1000: q('1000'), q1001: q('1001'),
+      versions, justSaved: st.saved, confirming: st.confirming,
+      addTier: () => {
+        const t = st.tiers.slice(); const last = t[t.length - 1];
+        const lastMin = this.int(last.min) || 1;
+        t[t.length - 1] = { ...last, max: String(lastMin + 999) };
+        t.push({ name: 'New plan', min: String(lastMin + 1000), max: '', price: '250' });
+        this.setState({ tiers: t, saved: false });
+      },
+      askSave: () => this.setState({ confirming: true }),
+      cancel: () => this.setState({ confirming: false }),
+      save: () => this.setState({ confirming: false, saved: true })
+    };
+  }
+}
+</script>
+</body>
+</html>

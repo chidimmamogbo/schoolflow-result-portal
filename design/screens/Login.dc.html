@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Log in to SchoolFlow</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="sf.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>body{margin:0}</style>
+</helmet>
+<div class="sf" data-theme="{{theme}}" data-device="{{device}}" style="min-height: {{minH}}; display: flex; flex-wrap: wrap; align-items: stretch">
+
+  <section class="desk-only" aria-label="About SchoolFlow" style="flex: 1 1 520px; background: var(--primary); color: var(--on-primary); padding: 56px; display: flex; flex-direction: column; gap: 28px; justify-content: space-between">
+    <img src="/_blob/b4f836d2cb8985bd195997cc28052153" alt="" style="width: 56px; height: 56px">
+    <div style="display: flex; flex-direction: column; gap: 16px; max-width: 460px">
+      <p style="font-size: 36px; line-height: 44px; font-weight: 700; letter-spacing: -0.02em">Results you can trust, from score entry to verified report card.</p>
+      <p style="font-size: 17px; line-height: 26px; opacity: 0.92">Teachers enter scores once. Reviewers and principals approve. Parents get a report card they can verify.</p>
+    </div>
+    <p style="font-size: 14px; opacity: 0.85">SchoolFlow Result Portal</p>
+  </section>
+
+  <main style="flex: 1 1 390px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: {{pad}}; gap: 22px; height: {{mainH}}; overflow-y: auto">
+    <div style="width: 100%; max-width: 420px; display: flex; flex-direction: column; gap: 22px">
+      <sc-if value="{{isStandard}}" hint-placeholder-val="{{ true }}">
+        <img src="{{logo}}" alt="SchoolFlow Result Portal" style="width: 190px; height: auto">
+      </sc-if>
+      <sc-if value="{{isLink}}" hint-placeholder-val="{{ false }}">
+        <div style="display: flex; align-items: center; gap: 12px">
+          <span class="crest" aria-hidden="true" style="width: 52px; height: 52px; font-size: 16px">GMC</span>
+          <div style="display: flex; flex-direction: column"><span style="font-size: 18px; font-weight: 700">Greenfield Model College</span><span class="muted" style="font-size: 14px">Enugu, Enugu State</span></div>
+        </div>
+      </sc-if>
+
+      <div style="display: flex; flex-direction: column; gap: 6px">
+        <h1 style="font-size: 26px; line-height: 34px; font-weight: 700">Welcome back</h1>
+        <p class="muted">Log in with the details your school gave you.</p>
+      </div>
+
+      <div class="card col" style="gap: 18px">
+        <div class="seg" role="tablist" aria-label="Who is logging in" style="width: 100%">
+          <button role="tab" aria-selected="{{staffSel}}" onClick="{{pickStaff}}">Staff and parents</button>
+          <button role="tab" aria-selected="{{studentSel}}" onClick="{{pickStudent}}">Student</button>
+        </div>
+
+        <sc-if value="{{showError}}" hint-placeholder-val="{{ false }}">
+          <div class="alert a-danger" role="alert"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM12 8v4M12 16h.01"></path></svg><span>That login didn't work. Check your details and try again.</span></div>
+        </sc-if>
+
+        <sc-if value="{{isStaff}}" hint-placeholder-val="{{ true }}">
+          <div class="col" style="gap: 16px">
+            <label class="field">Email or username<input class="input" type="text" autocomplete="username" value="{{f.id}}" onChange="{{onId}}"></label>
+            <label class="field">Password<input class="input" type="password" autocomplete="current-password" value="{{f.pw}}" onChange="{{onPw}}"></label>
+          </div>
+        </sc-if>
+        <sc-if value="{{isStudent}}" hint-placeholder-val="{{ false }}">
+          <div class="col" style="gap: 16px">
+            <label class="field">School code<input class="input code" type="text" maxlength="10" value="{{f.code}}" onChange="{{onCode}}"></label>
+            <label class="field">Username or admission number<input class="input" type="text" autocomplete="username" value="{{f.sid}}" onChange="{{onSid}}"></label>
+            <label class="field">Password<input class="input" type="password" autocomplete="current-password" value="{{f.spw}}" onChange="{{onSpw}}"></label>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{isLoading}}" hint-placeholder-val="{{ false }}">
+          <button class="btn primary full" disabled="{{yes}}" aria-busy="true"><span class="spin" aria-hidden="true"></span>Log in</button>
+        </sc-if>
+        <sc-if value="{{notLoading}}" hint-placeholder-val="{{ true }}">
+          <a class="btn primary full" href="{{next}}">Log in</a>
+        </sc-if>
+
+        <sc-if value="{{isStaff}}" hint-placeholder-val="{{ true }}">
+          <a href="#forgot-password" style="align-self: center; font-size: 14px; font-weight: 600">Forgot password?</a>
+        </sc-if>
+        <sc-if value="{{isStudent}}" hint-placeholder-val="{{ false }}">
+          <p class="muted" style="font-size: 14px; text-align: center">Forgot your password? Ask your school admin for a new one.</p>
+        </sc-if>
+      </div>
+
+      <div class="card row" style="gap: 12px; padding: 14px 16px; flex-wrap: nowrap">
+        <svg class="i l" viewBox="0 0 24 24" aria-hidden="true" style="color: var(--success-ink)"><path d="M12 3l7 3v5c0 4.5-3 8.3-7 10-4-1.7-7-5.5-7-10V6zM9 12l2 2 4-4"></path></svg>
+        <div class="col grow" style="gap: 2px"><span style="font-size: 14px; font-weight: 600">Checking a report card?</span><a href="Verify.dc.html" style="font-size: 14px; font-weight: 500">Verify a report without logging in</a></div>
+      </div>
+
+      <p class="muted" style="font-size: 14px; text-align: center">There is no sign-up. Your school creates your account and sends you a link.</p>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["Light","Dark"],"default":"Light"},"state":{"editor":"enum","options":["Default","Empty","Loading","Error"],"default":"Default"},"device":{"editor":"enum","options":["Desktop","Phone"],"default":"Desktop"},"variant":{"editor":"enum","options":["Standard","School login link"],"default":"Standard"},"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    const link = (props.variant || 'Standard') === 'School login link';
+    this.state = { tab: link ? 'student' : 'staff', f: null };
+  }
+  renderVals() {
+    const P = this.props;
+    const theme = String(P.theme || 'Light').toLowerCase();
+    const device = String(P.device || 'Desktop').toLowerCase();
+    const st = String(P.state || 'Default').toLowerCase();
+    const link = (P.variant || 'Standard') === 'School login link';
+    const phone = device === 'phone';
+    const filled = { id: 'tunde.adebayo', pw: 'password123', code: 'GMC', sid: 'GMC/2026/014', spw: 'password123' };
+    const blank = { id: '', pw: '', code: link ? 'GMC' : '', sid: '', spw: '' };
+    const f = this.state.f || (st === 'empty' ? blank : filled);
+    const set = (k) => (e) => this.setState({ f: { ...f, [k]: e.target.value } });
+    const staff = this.state.tab === 'staff';
+    return {
+      theme, device, f, yes: true,
+      minH: phone ? '844px' : '100vh', mainH: phone ? '844px' : 'auto', pad: phone ? '28px 16px' : '48px 40px',
+      logo: theme === 'dark' ? '/_blob/f8c668b157c01655c625f83bed0c84c2' : '/_blob/182db0c32744c4f6abeb340d16b2ccfb',
+      isLink: link, isStandard: !link,
+      isStaff: staff, isStudent: !staff,
+      staffSel: staff ? 'true' : 'false', studentSel: staff ? 'false' : 'true',
+      pickStaff: () => this.setState({ tab: 'staff' }),
+      pickStudent: () => this.setState({ tab: 'student' }),
+      showError: st === 'error', isLoading: st === 'loading', notLoading: st !== 'loading',
+      next: staff ? (phone ? 'SheetsV5_Phone.dc.html' : 'SheetsV5.dc.html') : (phone ? 'ChangePassword_Phone.dc.html' : 'ChangePassword.dc.html'),
+      onId: set('id'), onPw: set('pw'), onCode: (e) => this.setState({ f: { ...f, code: e.target.value.toUpperCase() } }), onSid: set('sid'), onSpw: set('spw')
+    };
+  }
+}
+</script>
+</body>
+</html>

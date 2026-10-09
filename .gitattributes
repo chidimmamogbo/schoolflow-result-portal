@@ -1,0 +1,23 @@
+# How git stores line endings and which files are binary.
+# Every text file is stored and checked out with LF (Linux) line endings,
+# so Windows, Docker and GitHub Actions all see the same bytes.
+* text=auto eol=lf
+
+# Windows-only scripts keep Windows (CRLF) line endings.
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# Binary files: never convert or diff them as text.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.otf binary
+*.zip binary

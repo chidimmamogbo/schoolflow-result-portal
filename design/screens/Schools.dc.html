@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Schools</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#f7f8fa}
+a{color:#1f4fd8}a:hover{color:#163ca8}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #1f4fd8;outline-offset:2px}
+.num{font-variant-numeric:tabular-nums}
+</style>
+</helmet>
+<div style="position: relative; min-height: 100vh; display: flex; flex-wrap: wrap; align-items: stretch; background: #f7f8fa; font-family: Inter, 'Segoe UI', system-ui, sans-serif; color: #0f172a">
+
+  <aside aria-label="Platform navigation" style="flex: 1 1 256px; max-width: 100%; box-sizing: border-box; background: #ffffff; border-right: 1px solid #e3e7ee; padding: 18px 12px; display: flex; flex-direction: column; gap: 22px">
+    <img src="/_blob/182db0c32744c4f6abeb340d16b2ccfb" alt="SchoolFlow Result Portal" style="width: 172px; height: auto; margin-left: 8px">
+    <nav style="display: flex; flex-direction: column; gap: 2px">
+      <a href="SuperDashboard.dc.html" style="height: 40px; display: flex; align-items: center; gap: 10px; padding: 0 12px; border-radius: 8px; color: #0f172a; font-size: 14px; font-weight: 500; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5b6475" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="1"></rect><rect x="14" y="3" width="7" height="5" rx="1"></rect><rect x="14" y="12" width="7" height="9" rx="1"></rect><rect x="3" y="16" width="7" height="5" rx="1"></rect></svg><span style="flex-grow: 1">Dashboard</span></a>
+      <a href="Schools.dc.html" aria-current="page" style="height: 40px; display: flex; align-items: center; gap: 10px; padding: 0 12px; border-radius: 8px; background: #eaf0ff; color: #1f4fd8; font-size: 14px; font-weight: 600; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18M5 21V9l7-5 7 5v12M9 21v-6h6v6"></path></svg><span style="flex-grow: 1">Schools</span></a>
+      <a href="Pricing.dc.html" style="height: 40px; display: flex; align-items: center; gap: 10px; padding: 0 12px; border-radius: 8px; color: #0f172a; font-size: 14px; font-weight: 500; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5b6475" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.6 13.4l-7.2 7.2a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"></path><circle cx="7.5" cy="7.5" r="1.5"></circle></svg><span style="flex-grow: 1">Pricing</span></a>
+      <span style="padding: 14px 12px 6px; font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: #5b6475">Billing</span>
+      <a href="SuperBilling.dc.html" style="height: 40px; display: flex; align-items: center; gap: 10px; padding: 0 12px; border-radius: 8px; color: #0f172a; font-size: 14px; font-weight: 500; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5b6475" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><path d="M14 3v6h6M8 13h8M8 17h5"></path></svg><span style="flex-grow: 1">Invoices</span></a>
+      <a href="#payments" style="height: 40px; display: flex; align-items: center; gap: 10px; padding: 0 12px; border-radius: 8px; color: #0f172a; font-size: 14px; font-weight: 500; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5b6475" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"></rect><path d="M2 10h20"></path></svg><span style="flex-grow: 1">Payments</span></a>
+      <span style="padding: 14px 12px 6px; font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: #5b6475">Platform</span>
+      <a href="#notices" style="height: 40px; display: flex; align-items: center; gap: 10px; padding: 0 12px; border-radius: 8px; color: #0f172a; font-size: 14px; font-weight: 500; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5b6475" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l18-5v12L3 14z"></path><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"></path></svg><span style="flex-grow: 1">Notices</span></a>
+      <a href="#settings" style="height: 40px; display: flex; align-items: center; gap: 10px; padding: 0 12px; border-radius: 8px; color: #0f172a; font-size: 14px; font-weight: 500; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5b6475" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"></path></svg><span style="flex-grow: 1">Settings</span></a>
+    </nav>
+  </aside>
+
+  <div style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column">
+    <header style="min-height: 64px; box-sizing: border-box; display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding: 10px 32px; background: #ffffff; border-bottom: 1px solid #e3e7ee">
+      <nav aria-label="Breadcrumb" style="flex-grow: 1; font-size: 14px; color: #5b6475"><a href="SuperDashboard.dc.html" style="color: #5b6475">Platform</a> <span aria-hidden="true">/</span> <span style="color: #0f172a; font-weight: 600">Schools</span></nav>
+      <button aria-label="Profile menu" style="height: 40px; border: 0; background: transparent; border-radius: 8px; display: flex; align-items: center; gap: 10px; padding: 0 6px; cursor: pointer; font-family: inherit"><span aria-hidden="true" style="width: 32px; height: 32px; border-radius: 9999px; background: #0f172a; color: #ffffff; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center">SA</span><span style="display: flex; flex-direction: column; align-items: flex-start"><span style="font-size: 14px; font-weight: 600; color: #0f172a">Platform admin</span><span style="font-size: 12px; color: #5b6475">Super admin</span></span></button>
+    </header>
+
+    <main style="padding: 28px 32px 40px; display: flex; flex-direction: column; gap: 20px; max-width: 1280px; box-sizing: border-box; width: 100%">
+      <div style="display: flex; flex-wrap: wrap; align-items: flex-end; gap: 16px">
+        <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 4px">
+          <h1 style="margin: 0; font-size: 30px; line-height: 38px; font-weight: 700; letter-spacing: -0.01em">Schools</h1>
+          <p class="num" style="margin: 0; font-size: 15px; color: #5b6475">{{countLine}}</p>
+        </div>
+        <label style="display: flex; align-items: center; gap: 8px; height: 44px; padding: 0 12px; border: 1px solid #737c8f; border-radius: 8px; background: #ffffff; width: 280px; max-width: 100%; box-sizing: border-box"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5b6475" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M21 21l-4.3-4.3"></path></svg><input type="search" placeholder="Search schools or principals" aria-label="Search schools" style="border: 0; outline: none; font: 400 14px Inter, system-ui, sans-serif; flex-grow: 1; min-width: 0; color: #0f172a; background: transparent"></label>
+        <button onClick="{{openDrawer}}" style="height: 44px; display: inline-flex; align-items: center; gap: 8px; padding: 0 18px; border: 0; border-radius: 8px; background: #1f4fd8; color: #ffffff; font: 600 15px Inter, system-ui, sans-serif; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Create school</button>
+      </div>
+
+      <sc-if value="{{justCreated}}" hint-placeholder-val="{{ false }}">
+        <div role="status" style="background: #e6f8f1; border-radius: 12px; padding: 14px 18px; display: flex; align-items: center; gap: 12px; color: #047857; font-size: 15px">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M8 12l3 3 5-6"></path></svg>
+          <span><strong style="font-weight: 600">Sunrise Model School created.</strong> An activation link was emailed to Mrs. Adaobi Nwafor. It expires in 72 hours.</span>
+        </div>
+      </sc-if>
+
+      <section aria-label="All schools" style="background: #ffffff; border: 1px solid #e3e7ee; border-radius: 12px; box-shadow: 0 1px 2px rgba(15,23,42,0.06); overflow: hidden">
+        <div style="overflow-x: auto">
+          <table class="num" style="width: 100%; border-collapse: collapse; font-size: 14px; min-width: 860px">
+            <thead><tr style="background: #f1f3f7; text-align: left; color: #5b6475"><th scope="col" style="padding: 12px 20px; font-weight: 600">School</th><th scope="col" style="padding: 12px; font-weight: 600">Principal</th><th scope="col" style="padding: 12px; font-weight: 600">Students</th><th scope="col" style="padding: 12px; font-weight: 600">Plan</th><th scope="col" style="padding: 12px; font-weight: 600">Subscription</th><th scope="col" style="padding: 12px 20px; font-weight: 600">Features on</th></tr></thead>
+            <tbody>
+              <sc-for list="{{schools}}" as="s" hint-placeholder-count="6">
+                <tr style="border-top: 1px solid #e3e7ee; background: {{s.rowBg}}">
+                  <th scope="row" style="padding: 13px 20px; text-align: left">
+                    <div style="display: flex; align-items: center; gap: 10px">
+                      <span aria-hidden="true" style="width: 32px; height: 32px; flex-shrink: 0; border-radius: 8px; background: {{s.colour}}; color: #ffffff; font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center">{{s.short}}</span>
+                      <span style="display: flex; flex-direction: column"><a href="{{s.href}}" style="font-weight: 600; text-decoration: none">{{s.name}}</a><span style="font-size: 13px; font-weight: 400; color: #5b6475">{{s.town}}</span></span>
+                    </div>
+                  </th>
+                  <td style="padding: 13px 12px">{{s.principal}}<span style="display: block; font-size: 13px; color: #5b6475">{{s.principalState}}</span></td>
+                  <td style="padding: 13px 12px">{{s.students}}</td>
+                  <td style="padding: 13px 12px">{{s.plan}}</td>
+                  <td style="padding: 13px 12px"><span style="display: inline-flex; align-items: center; height: 24px; padding: 0 10px; border-radius: 9999px; background: {{s.statusBg}}; color: {{s.statusInk}}; font-size: 12px; font-weight: 600">{{s.status}}</span></td>
+                  <td style="padding: 13px 20px">{{s.features}}</td>
+                </tr>
+              </sc-for>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <sc-if value="{{drawer}}" hint-placeholder-val="{{ false }}">
+    <div style="position: fixed; inset: 0; background: rgba(15,23,42,0.45); display: flex; justify-content: flex-end">
+      <div role="dialog" aria-modal="true" aria-labelledby="csTitle" style="width: 520px; max-width: 100%; height: 100%; box-sizing: border-box; background: #ffffff; box-shadow: 0 12px 32px rgba(15,23,42,0.14); display: flex; flex-direction: column">
+        <div style="padding: 20px 24px; border-bottom: 1px solid #e3e7ee; display: flex; align-items: center; gap: 12px">
+          <h2 id="csTitle" style="margin: 0; flex-grow: 1; font-size: 20px; font-weight: 600">Create school</h2>
+          <button onClick="{{closeDrawer}}" aria-label="Close" style="width: 40px; height: 40px; border: 0; background: transparent; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0f172a" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"></path></svg></button>
+        </div>
+        <div style="flex-grow: 1; overflow-y: auto; padding: 20px 24px; display: flex; flex-direction: column; gap: 24px">
+          <section style="display: flex; flex-direction: column; gap: 14px">
+            <h3 style="margin: 0; font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: #5b6475">1 · School details</h3>
+            <label style="display: flex; flex-direction: column; gap: 6px; font-size: 14px; font-weight: 500">School name<input type="text" value="Sunrise Model School" style="height: 44px; box-sizing: border-box; border: 1px solid #737c8f; border-radius: 8px; padding: 0 12px; font: 400 15px Inter, system-ui, sans-serif; color: #0f172a"></label>
+            <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+              <label style="display: flex; flex-direction: column; gap: 6px; font-size: 14px; font-weight: 500">Town<input type="text" value="Awka" style="height: 44px; box-sizing: border-box; border: 1px solid #737c8f; border-radius: 8px; padding: 0 12px; font: 400 15px Inter, system-ui, sans-serif; color: #0f172a"></label>
+              <label style="display: flex; flex-direction: column; gap: 6px; font-size: 14px; font-weight: 500">School code<input type="text" value="SMS" style="height: 44px; box-sizing: border-box; border: 1px solid #737c8f; border-radius: 8px; padding: 0 12px; font: 600 15px Inter, system-ui, sans-serif; letter-spacing: 0.06em; color: #0f172a"></label>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14px; font-weight: 500"><span>School colour</span>
+              <div style="display: flex; gap: 8px; align-items: center">
+                <span style="width: 32px; height: 32px; border-radius: 8px; background: #9a3412; box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px #1f4fd8"></span>
+                <span style="width: 32px; height: 32px; border-radius: 8px; background: #14532d"></span>
+                <span style="width: 32px; height: 32px; border-radius: 8px; background: #7f1d1d"></span>
+                <span style="width: 32px; height: 32px; border-radius: 8px; background: #1e3a8a"></span>
+                <span style="font-size: 13px; font-weight: 400; color: #047857; margin-left: 6px">Readable on light and dark</span>
+              </div>
+            </div>
+          </section>
+          <section style="display: flex; flex-direction: column; gap: 10px">
+            <h3 style="margin: 0; font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: #5b6475">2 · Features</h3>
+            <sc-for list="{{features}}" as="f" hint-placeholder-count="6">
+              <div style="display: flex; align-items: center; gap: 12px; padding: 6px 0">
+                <span style="flex-grow: 1; display: flex; flex-direction: column"><span style="font-size: 15px; font-weight: 500">{{f.label}}</span><span style="font-size: 13px; color: #5b6475">{{f.hint}}</span></span>
+                <button role="switch" aria-checked="{{f.checked}}" aria-label="{{f.label}}" onClick="{{f.toggle}}" style="width: 44px; height: 26px; flex-shrink: 0; border: 0; border-radius: 9999px; background: {{f.track}}; position: relative; cursor: pointer; padding: 0"><span style="position: absolute; top: 3px; left: {{f.knob}}; width: 20px; height: 20px; border-radius: 9999px; background: #ffffff; box-shadow: 0 1px 2px rgba(15,23,42,0.2)"></span></button>
+              </div>
+            </sc-for>
+          </section>
+          <section style="display: flex; flex-direction: column; gap: 14px">
+            <h3 style="margin: 0; font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: #5b6475">3 · Principal account</h3>
+            <label style="display: flex; flex-direction: column; gap: 6px; font-size: 14px; font-weight: 500">Full name<input type="text" value="Mrs. Adaobi Nwafor" style="height: 44px; box-sizing: border-box; border: 1px solid #737c8f; border-radius: 8px; padding: 0 12px; font: 400 15px Inter, system-ui, sans-serif; color: #0f172a"></label>
+            <label style="display: flex; flex-direction: column; gap: 6px; font-size: 14px; font-weight: 500">Email<input type="email" value="adaobi.nwafor@sunrise.edu.ng" style="height: 44px; box-sizing: border-box; border: 1px solid #737c8f; border-radius: 8px; padding: 0 12px; font: 400 15px Inter, system-ui, sans-serif; color: #0f172a"></label>
+            <p style="margin: 0; font-size: 13px; line-height: 19px; color: #5b6475">We email a one-time activation link. No password is ever sent by email.</p>
+          </section>
+        </div>
+        <div style="padding: 16px 24px; border-top: 1px solid #e3e7ee; display: flex; justify-content: flex-end; gap: 10px">
+          <button onClick="{{closeDrawer}}" style="height: 44px; padding: 0 18px; border: 1px solid #737c8f; border-radius: 8px; background: #ffffff; color: #0f172a; font: 600 15px Inter, system-ui, sans-serif; cursor: pointer">Cancel</button>
+          <button onClick="{{create}}" style="height: 44px; padding: 0 18px; border: 0; border-radius: 8px; background: #1f4fd8; color: #ffffff; font: 600 15px Inter, system-ui, sans-serif; cursor: pointer">Create school and send invite</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1000}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { drawer: false, created: false, feats: { results: true, report_cards: true, parent_portal: true, correction_queue: false, notice_board: true, email_notifications: true } };
+  }
+  renderVals() {
+    const ok = { bg: '#e6f8f1', ink: '#047857' };
+    const base = [
+      { name: 'Greenfield Model College', short: 'GMC', colour: '#14532d', town: 'Independence Layout, Enugu', principal: 'Mrs. Ngozi Okeke', principalState: 'Active', students: '642', plan: 'Standard', status: 'Active', statusBg: ok.bg, statusInk: ok.ink, features: '6 of 6', href: 'SchoolDetail.dc.html' },
+      { name: 'Royal Crest Academy', short: 'RCA', colour: '#1e3a8a', town: 'Onitsha', principal: 'Mr. Obinna Mba', principalState: 'Active', students: '1,240', plan: 'Premium', status: 'Active', statusBg: ok.bg, statusInk: ok.ink, features: '6 of 6', href: '#rca' },
+      { name: "St. Bernard's College", short: 'SBC', colour: '#7c2d12', town: 'Owerri', principal: 'Rev. Sr. Chioma Ibe', principalState: 'Active', students: '875', plan: 'Standard', status: 'Active', statusBg: ok.bg, statusInk: ok.ink, features: '5 of 6', href: '#sbc' },
+      { name: 'Unity Heights Secondary School', short: 'UHS', colour: '#4c1d95', town: 'Abakaliki', principal: 'Mr. Ifeanyi Nweke', principalState: 'Active', students: '312', plan: 'Basic', status: 'Active', statusBg: ok.bg, statusInk: ok.ink, features: '4 of 6', href: '#uhs' },
+      { name: 'Hilltop Grammar School', short: 'HGS', colour: '#334155', town: 'Enugu', principal: 'Mrs. Funke Adeleke', principalState: 'Active', students: '410', plan: 'Basic', status: 'Overdue', statusBg: '#fdecec', statusInk: '#c81e1e', features: '6 of 6', href: '#hgs' },
+      { name: 'Bright Stars Academy', short: 'BSA', colour: '#7f1d1d', town: 'Nsukka', principal: 'Mr. Kingsley Onah', principalState: 'Active', students: '186', plan: '--', status: 'Free pilot', statusBg: '#eaf1fe', statusInk: '#2563eb', features: '3 of 6 · results off', href: '#bsa' }
+    ];
+    const f = this.state.feats;
+    const on = Object.values(f).filter(Boolean).length;
+    const schools = base.map((s) => ({ ...s, rowBg: '#ffffff' }));
+    if (this.state.created) {
+      schools.unshift({ name: 'Sunrise Model School', short: 'SMS', colour: '#9a3412', town: 'Awka', principal: 'Mrs. Adaobi Nwafor', principalState: 'Invite sent', students: '0', plan: '--', status: 'Free pilot', statusBg: '#eaf1fe', statusInk: '#2563eb', features: on + ' of 6', href: '#sms', rowBg: '#f7f9ff' });
+    }
+    const meta = [
+      ['results', 'Results', 'Score entry, review, approval and publishing'],
+      ['report_cards', 'Report cards', 'Branded PDF report cards and the template editor'],
+      ['parent_portal', 'Parent portal', 'Parents and students see published results'],
+      ['correction_queue', 'Correction queue', 'Parents can report a problem with a result'],
+      ['notice_board', 'Notice board', 'School notices for every role'],
+      ['email_notifications', 'Email notifications', 'Activation, results and receipt emails']
+    ];
+    const features = meta.map(([key, label, hint]) => ({
+      label, hint,
+      checked: f[key] ? 'true' : 'false',
+      track: f[key] ? '#1f4fd8' : '#737c8f',
+      knob: f[key] ? '21px' : '3px',
+      toggle: () => this.setState({ feats: { ...this.state.feats, [key]: !this.state.feats[key] } })
+    }));
+    return {
+      schools,
+      features,
+      drawer: this.state.drawer,
+      justCreated: this.state.created,
+      countLine: schools.length + ' schools · 5 billed · ' + (schools.length - 5) + ' on free pilot',
+      openDrawer: () => this.setState({ drawer: true }),
+      closeDrawer: () => this.setState({ drawer: false }),
+      create: () => this.setState({ drawer: false, created: true })
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Report card, compact style, SS 2A</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.cp{width:794px;height:1123px;box-sizing:border-box;background:#ffffff;font-family:Inter,'Segoe UI',system-ui,sans-serif;color:#0f172a;padding:28px 34px 22px;display:flex;flex-direction:column;gap:9px;font-variant-numeric:tabular-nums}
+.cp .lb{display:block;color:#5b6475;font-size:9px;font-weight:600;letter-spacing:.04em}
+.cp .sg{display:grid;grid-template-columns:minmax(0,2.6fr) repeat(5,minmax(0,.62fr)) minmax(0,.7fr) minmax(0,.62fr) minmax(0,1.05fr) minmax(0,.8fr) minmax(0,.8fr);align-items:center;font-size:11px;line-height:14px}
+.cp .sg > span{padding:3px 4px;text-align:center;border-right:1px solid #d5dbe4}
+.cp .sg > span:last-child{border-right:0}
+.cp .sg > span:first-child{text-align:left;padding-left:7px}
+.cp .tb{border:1px solid #c9d0db;border-radius:4px;overflow:hidden}
+.cp .tb .hd{background:#1e6b45;color:#ffffff;font-weight:600;font-size:9.5px;line-height:12px}
+.cp .tb .hd > span{border-right-color:rgba(255,255,255,.28);padding-top:4px;padding-bottom:4px}
+.cp .tb .rw{border-top:1px solid #e3e7ee}
+.cp .tb .rw:nth-child(odd){background:#f3f8f5}
+.cp .b{font-weight:700}
+.cp .box{border:1px solid #c9d0db;border-radius:4px;overflow:hidden}
+.cp .bh{background:#f3f8f5;padding:3px 7px;font-size:9.5px;font-weight:700;letter-spacing:.04em;color:#1e6b45;border-bottom:1px solid #c9d0db}
+.cp .kv{display:flex;justify-content:space-between;gap:6px;padding:2px 7px;font-size:10.5px;line-height:14px;border-top:1px solid #eef1f5}
+.cp .kv:first-of-type{border-top:0}
+.cp .kv b{font-weight:700}
+</style>
+</helmet>
+<div class="cp">
+  <header style="display: flex; align-items: center; gap: 12px; border-bottom: 2px solid #1e6b45; padding-bottom: 8px">
+    <span aria-hidden="true" style="width: 52px; height: 52px; flex-shrink: 0; border-radius: 10px; background: #1e6b45; color: #ffffff; font-size: 16px; font-weight: 700; display: flex; align-items: center; justify-content: center">GMC</span>
+    <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 1px">
+      <span style="font-size: 19px; line-height: 23px; font-weight: 700; letter-spacing: 0.02em; color: #1e6b45">GREENFIELD MODEL COLLEGE</span>
+      <span style="font-size: 10.5px; color: #5b6475">14 Chime Avenue, Independence Layout, Enugu · 0803 000 1122 · info@greenfield.edu.ng</span>
+      <span style="font-size: 10.5px; font-style: italic; color: #1e6b45">[SCHOOL MOTTO]</span>
+    </div>
+    <div style="text-align: right; display: flex; flex-direction: column; gap: 1px">
+      <span style="font-size: 12.5px; font-weight: 700">STUDENT REPORT CARD</span>
+      <span style="font-size: 10.5px; color: #5b6475">First Term · 2026/2027 Session</span>
+    </div>
+  </header>
+
+  <section aria-label="Student details" style="display: grid; grid-template-columns: 1.35fr 1fr 0.55fr 0.6fr 1.2fr 1.35fr; white-space: nowrap; gap: 4px 12px; font-size: 11px; background: #f3f8f5; border-radius: 4px; padding: 6px 10px">
+    <div><span class="lb">NAME</span><strong style="font-size: 12.5px">{{s.name}}</strong></div>
+    <div><span class="lb">ADMISSION NO.</span><strong>{{s.adm}}</strong></div>
+    <div><span class="lb">CLASS</span><strong>SS 2A</strong></div>
+    <div><span class="lb">GENDER</span><strong>{{s.gender}}</strong></div>
+    <div><span class="lb">FORM TEACHER</span><strong>{{s.teacher}}</strong></div>
+    <div><span class="lb">TERM DATES</span><strong>8 Sep to 11 Dec 2026</strong></div>
+  </section>
+
+  <div class="tb" role="table" aria-label="Subject scores">
+    <div class="sg hd" role="row"><span role="columnheader">Subject</span><span role="columnheader">CA1<br>10</span><span role="columnheader">CA2<br>10</span><span role="columnheader">CA3<br>10</span><span role="columnheader">Project<br>10</span><span role="columnheader">Exam<br>60</span><span role="columnheader">Total<br>100</span><span role="columnheader">Grade</span><span role="columnheader">Remark</span><span role="columnheader">Subject<br>position</span><span role="columnheader">Class<br>average</span></div>
+    <sc-for list="{{rows}}" as="r" hint-placeholder-count="15">
+      <div class="sg rw" role="row"><span role="rowheader" style="font-weight: 500">{{r.name}}</span><span role="cell">{{r.c1}}</span><span role="cell">{{r.c2}}</span><span role="cell">{{r.c3}}</span><span role="cell">{{r.pj}}</span><span role="cell">{{r.ex}}</span><span role="cell" class="b">{{r.total}}</span><span role="cell" class="b">{{r.grade}}</span><span role="cell">{{r.remark}}</span><span role="cell">{{r.pos}}</span><span role="cell">{{r.avg}}</span></div>
+    </sc-for>
+  </div>
+
+  <section aria-label="Summary" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border: 1.5px solid #1e6b45; border-radius: 4px; overflow: hidden; text-align: center">
+    <div style="padding: 4px; border-right: 1px solid #c9d0db"><span class="lb">TOTAL SCORE</span><strong style="font-size: 14px">{{total}}</strong></div>
+    <div style="padding: 4px; border-right: 1px solid #c9d0db"><span class="lb">TOTAL AVERAGE</span><strong style="font-size: 14px">{{avg}}</strong></div>
+    <div style="padding: 4px; border-right: 1px solid #c9d0db; background: #1e6b45; color: #ffffff"><span class="lb" style="color: #ffffff">OVERALL CLASS POSITION</span><strong style="font-size: 14px">{{s.pos}}</strong></div>
+    <div style="padding: 4px"><span class="lb">NO. IN CLASS</span><strong style="font-size: 14px">12</strong></div>
+  </section>
+
+  <p style="margin: 0; font-size: 9px; color: #5b6475; line-height: 13px; white-space: nowrap"><strong style="color: #0f172a">Grading:</strong> A1 75 to 100 Excellent · B2 70 to 74 Very good · B3 65 to 69 Good · C4 60 to 64, C5 55 to 59, C6 50 to 54 Credit · D7 45 to 49, E8 40 to 44 Pass · F9 0 to 39 Fail</p>
+
+  <div style="display: grid; grid-template-columns: 1fr 1fr 0.8fr; gap: 8px">
+    <div class="box" aria-label="Affective domain">
+      <div class="bh">AFFECTIVE DOMAIN (1 to 5)</div>
+      <sc-for list="{{aff}}" as="t" hint-placeholder-count="5"><div class="kv"><span>{{t.n}}</span><b>{{t.v}}</b></div></sc-for>
+    </div>
+    <div class="box" aria-label="Psychomotor domain">
+      <div class="bh">PSYCHOMOTOR DOMAIN (1 to 5)</div>
+      <sc-for list="{{psy}}" as="t" hint-placeholder-count="5"><div class="kv"><span>{{t.n}}</span><b>{{t.v}}</b></div></sc-for>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <div class="box" aria-label="Attendance">
+        <div class="bh">ATTENDANCE</div>
+        <div class="kv"><span>Times school opened</span><b>60</b></div>
+        <div class="kv"><span>Times present</span><b>{{s.present}}</b></div>
+        <div class="kv"><span>Times absent</span><b>{{s.absent}}</b></div>
+      </div>
+      <div style="font-size: 9.5px; line-height: 13px; color: #5b6475"><strong style="color: #0f172a">Rating key:</strong> 5 Excellent · 4 Very good · 3 Good · 2 Fair · 1 Poor</div>
+    </div>
+  </div>
+
+  <section aria-label="Comments" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; font-size: 11px">
+    <div style="display: flex; flex-direction: column; gap: 3px">
+      <span style="font-size: 9.5px; font-weight: 700; letter-spacing: 0.04em; color: #1e6b45">FORM TEACHER'S COMMENT</span>
+      <p style="margin: 0; line-height: 15px">{{s.ftc}}</p>
+      <div style="margin-top: auto; padding-top: 14px"><div style="border-top: 1px solid #0f172a; padding-top: 2px; display: flex; justify-content: space-between; color: #5b6475; font-size: 9.5px"><span>{{s.teacher}}</span><span>Signature</span><span>Date</span></div></div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 3px">
+      <span style="font-size: 9.5px; font-weight: 700; letter-spacing: 0.04em; color: #1e6b45">PRINCIPAL'S COMMENT</span>
+      <p style="margin: 0; line-height: 15px">{{s.pc}}</p>
+      <div style="margin-top: auto; padding-top: 14px"><div style="border-top: 1px solid #0f172a; padding-top: 2px; display: flex; justify-content: space-between; color: #5b6475; font-size: 9.5px"><span>Mrs. Ngozi Okeke, Principal</span><span>Signature and stamp</span><span>Date</span></div></div>
+    </div>
+  </section>
+
+  <footer style="margin-top: auto; display: flex; align-items: center; gap: 12px; border-top: 1px solid #c9d0db; padding-top: 8px">
+    <div aria-label="QR code placeholder" style="width: 64px; height: 64px; flex-shrink: 0; border: 2px dashed #737c8f; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 9.5px; font-weight: 600; color: #5b6475; text-align: center">QR CODE</div>
+    <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px; font-size: 10.5px">
+      <span><strong>Report ID</strong> {{s.rid}} · <strong>Revision</strong> 1 · <strong>Published</strong> 8 Dec 2026</span>
+      <span>Verify this report: scan the QR code or enter code <strong style="letter-spacing: 0.06em">{{s.code}}</strong> at [VERIFY URL]</span>
+      <span style="color: #5b6475"><strong style="color: #0f172a">Next term begins</strong> 5 Jan 2027 · Greenfield Model College · 0803 000 1122</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 5px; font-size: 9.5px; color: #5b6475; white-space: nowrap"><img src="/_blob/b5461303d7a8d45a18f7975e283523ab" alt="" style="width: 15px; height: 15px">Powered by SchoolFlow</div>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":794,"height":1123}}'>
+class Component extends DCLogic {
+  grade(t) {
+    const b = [[75, 'A1', 'Excellent'], [70, 'B2', 'Very good'], [65, 'B3', 'Good'], [60, 'C4', 'Credit'], [55, 'C5', 'Credit'], [50, 'C6', 'Credit'], [45, 'D7', 'Pass'], [40, 'E8', 'Pass'], [0, 'F9', 'Fail']];
+    for (const x of b) if (t >= x[0]) return x;
+    return b[b.length - 1];
+  }
+  ord(n) { const s = ['th', 'st', 'nd', 'rd'], v = n % 100; return n + (s[(v - 20) % 10] || s[v] || s[0]); }
+  renderVals() {
+    // [subject, CA1, CA2, CA3, Project, Exam, subject position, class average]
+    const data = [
+      ['English Language', 7, 8, 7, 8, 42, 3, '61.4'],
+      ['Mathematics', 8, 7, 8, 9, 45, 2, '58.9'],
+      ['Civic Education', 8, 8, 7, 8, 44, 2, '66.2'],
+      ['Physics', 7, 6, 7, 8, 38, 4, '55.7'],
+      ['Chemistry', 6, 7, 6, 8, 36, 4, '54.3'],
+      ['Biology', 8, 7, 7, 8, 41, 3, '60.8'],
+      ['Further Mathematics', 7, 6, 6, 7, 33, 5, '49.6'],
+      ['Agricultural Science', 8, 8, 8, 9, 46, 1, '64.5'],
+      ['Geography', 7, 7, 6, 8, 39, 3, '59.2'],
+      ['Economics', 8, 7, 7, 8, 43, 2, '62.0'],
+      ['Igbo Language', 6, 7, 6, 7, 35, 6, '60.1'],
+      ['Literature in English', 7, 8, 7, 8, 40, 3, '63.4'],
+      ['Data Processing', 8, 8, 8, 9, 47, 2, '67.3'],
+      ['Christian Religious Studies', 8, 8, 7, 9, 45, 2, '68.0'],
+      ['Technical Drawing', 6, 6, 5, 7, 31, 7, '52.9']
+    ];
+    let total = 0;
+    const rows = data.map(([name, c1, c2, c3, pj, ex, pos, avg]) => {
+      const t = c1 + c2 + c3 + pj + ex; total += t;
+      const g = this.grade(t);
+      return { name, c1, c2, c3, pj, ex, total: t, grade: g[1], remark: g[2], pos: this.ord(pos), avg };
+    });
+    const s = {
+      name: 'Ugochi Anyanwu', adm: 'GMC/2025/147', gender: 'Female', teacher: 'Mrs. Uche Okonkwo', pos: '2nd',
+      present: 58, absent: 2, rid: 'GMC-2627-T1-SS2A-147', code: '3HTP-W9QA',
+      ftc: 'Ugochi is diligent and leads her group well. More practice in Technical Drawing will lift her result.',
+      pc: 'A very good result. Keep working hard, Ugochi.'
+    };
+    const aff = [['Punctuality', 5], ['Neatness', 5], ['Politeness', 4], ['Attentiveness', 5], ['Relationship with others', 4]].map(([n, v]) => ({ n, v }));
+    const psy = [['Handwriting', 4], ['Sports and games', 3], ['Crafts', 4], ['Verbal fluency', 5], ['Musical skills', 3]].map(([n, v]) => ({ n, v }));
+    return { rows, total, avg: (total / rows.length).toFixed(1), s, aff, psy };
+  }
+}
+</script>
+</body>
+</html>

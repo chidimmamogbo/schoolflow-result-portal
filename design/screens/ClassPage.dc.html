@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Primary 4A</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="sf.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>body{margin:0}
+.sf .stabs{display:flex;gap:2px;border-bottom:1px solid var(--border);overflow-x:auto}
+.sf .stabs a,.sf .stabs button{min-height:44px;display:inline-flex;align-items:center;padding:0 14px;border:0;border-bottom:3px solid transparent;margin-bottom:-1px;background:transparent;color:var(--muted);font:600 14px Inter,system-ui,sans-serif;text-decoration:none;white-space:nowrap;cursor:pointer}
+.sf .stabs a[aria-current="page"],.sf .stabs button[aria-selected="true"]{color:var(--primary);border-bottom-color:var(--primary)}
+.sf .iconbtn.ib{width:36px;height:36px}
+.sf[data-device="phone"] .iconbtn.ib{width:44px;height:44px}
+.sf .iconbtn[disabled]{opacity:.35;cursor:not-allowed;background:transparent}
+.sf .menu{position:absolute;z-index:6;min-width:220px;background:var(--surface);border:1px solid var(--border);border-radius:10px;box-shadow:var(--shadow-md);padding:6px;display:flex;flex-direction:column}
+.sf .menu button{min-height:40px;text-align:left;padding:0 12px;border:0;border-radius:6px;background:transparent;color:var(--text);font:500 14px Inter,system-ui,sans-serif;cursor:pointer;display:flex;align-items:center;gap:8px}
+.sf .menu button[aria-selected="true"]{background:var(--primary-soft);color:var(--primary);font-weight:600}
+.sf[data-device="phone"] .menu button{min-height:44px}
+
+.sf .cp{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:24px;align-items:start}
+.sf[data-device="phone"] .cp{grid-template-columns:minmax(0,1fr);gap:16px}
+.sf .arow2{display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--border)}
+.sf .av{width:36px;height:36px;border-radius:9999px;background:var(--surface-2);color:var(--text);font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sf .tline{display:flex;gap:10px;align-items:flex-start;padding:12px 0;border-top:1px solid var(--border)}
+.sf .tline:first-of-type{border-top:0}
+</style>
+</helmet>
+<div class="sf" data-theme="{{theme}}" data-device="{{device}}" style="--school: #7a1f2b">
+<div class="app">
+  <aside class="side desk-only " aria-label="School navigation">
+    <div class="brand"><span class="crest" aria-hidden="true">BSA</span><span class="col bt" style="gap: 0"><span style="font-weight: 700; font-size: 15px; line-height: 20px">Bright Stars Academy</span><span class="muted" style="font-size: 13px">Nsukka</span></span></div>
+    <nav class="nav" aria-label="Main">
+      <sc-for list="{{nav}}" as="n" hint-placeholder-count="16">
+        <sc-if value="{{n.grp}}" hint-placeholder-val="{{ false }}"><span class="cap grp">{{n.grp}}</span></sc-if>
+        <a href="{{n.href}}" class="{{n.cls}}" aria-current="{{n.cur}}" title="{{n.label}}"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{n.d}}"></path></svg><span class="l">{{n.label}}</span><sc-if value="{{n.count}}" hint-placeholder-val="{{ false }}"><span class="{{n.countCls}}">{{n.count}}</span></sc-if></a>
+      </sc-for>
+    </nav>
+    <div class="powered"><img src="/_blob/b5461303d7a8d45a18f7975e283523ab" alt="" style="width: 20px; height: 20px"><span class="pw">Powered by SchoolFlow</span></div>
+  </aside>
+  <div class="main">
+    <header class="top desk-only">
+      <nav class="crumb" aria-label="Breadcrumb"><a href="DashboardV5.dc.html">Dashboard</a> / <a href="LearningAreas.dc.html">School setup</a> / Classes / <b>Primary 4A</b></nav>
+      <button class="iconbtn" aria-label="Notices, 2 unread"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.bell}}"></path></svg><span class="dot">2</span></button>
+      <button class="btn sm" aria-label="Profile menu" style="border: 0"><span class="crest" aria-hidden="true" style="width: 32px; height: 32px; border-radius: 9999px; font-size: 12px">CN</span><span class="col" style="gap: 0; align-items: flex-start"><span style="font-size: 14px">Mrs. Chiamaka Nwafor</span><span class="muted" style="font-size: 12px; font-weight: 500">Head teacher</span></span></button>
+    </header>
+    <header class="phead phone-only">
+      <button class="iconbtn" aria-label="Open menu" onClick="{{openDrawer}}"><svg class="i l" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.menu}}"></path></svg></button>
+      <span class="crest" aria-hidden="true" style="width: 30px; height: 30px; font-size: 10px; border-radius: 8px">BSA</span>
+      <span class="ttl">Primary 4A</span>
+      <button class="iconbtn" aria-label="Notices, 2 unread"><svg class="i l" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.bell}}"></path></svg><span class="dot">2</span></button>
+    </header>
+
+    <main class="content">
+      <div class="row" style="gap: 14px">
+        <span class="crest" aria-hidden="true" style="width: 52px; height: 52px; font-size: 15px">P4A</span>
+        <div class="col grow" style="gap: 2px; min-width: 200px">
+          <h1 class="h1" style="font-size: {{h1Size}}">Primary 4A</h1>
+          <span class="muted" style="font-size: 14px">Primary · {{pupilCount}} pupils · First Term 2026/2027</span>
+        </div>
+        <span class="row" style="gap: 8px"><span class="badge b-neutral"><svg class="i s" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.student}}"></path></svg>Primary</span><span class="badge b-info"><svg class="i s" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.book}}"></path></svg>Scores, A to F</span></span>
+      </div>
+
+      <div class="stabs" role="tablist" aria-label="Class sections">
+        <sc-for list="{{tabs}}" as="t" hint-placeholder-count="3"><button role="tab" aria-selected="{{t.sel}}" onClick="{{t.pick}}">{{t.label}}</button></sc-for>
+      </div>
+
+      <sc-if value="{{isLoading}}" hint-placeholder-val="{{ false }}">
+        <div class="cp" aria-busy="true"><div class="col"><div class="card col"><div class="skel" style="height: 22px; width: 30%"></div><div class="skel" style="height: 44px"></div><div class="skel" style="height: 52px"></div></div><div class="card col"><div class="skel" style="height: 22px; width: 40%"></div><div class="skel" style="height: 44px"></div><div class="skel" style="height: 44px"></div></div></div><div class="card col"><div class="skel" style="height: 22px; width: 50%"></div><div class="skel" style="height: 60px"></div><div class="skel" style="height: 60px"></div></div></div>
+      </sc-if>
+      <sc-if value="{{isError}}" hint-placeholder-val="{{ false }}">
+        <div class="card state" role="alert"><span class="ic" style="background: var(--danger-soft); color: var(--danger)"><svg class="i l" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.alert}}"></path></svg></span><p class="h3">We couldn't load Primary 4A.</p><p class="muted">Check your connection and try again.</p><button class="btn primary">Try again</button></div>
+      </sc-if>
+
+      <sc-if value="{{showOverview}}" hint-placeholder-val="{{ true }}">
+        <div class="cp">
+          <div class="col" style="gap: 20px">
+            <section class="card" aria-labelledby="cth">
+              <h2 id="cth" class="h3" style="margin-bottom: 12px">Class teacher</h2>
+              <label class="field" style="max-width: 420px">Class teacher<select class="input" value="{{ct}}" onChange="{{onCt}}"><option value="">Choose a teacher</option><option>Mrs. Ifeoma Chukwu</option><option>Mr. Obinna Agu</option><option>Mrs. Ruth Okonkwo</option><option>Mr. Samuel Odo</option><option>Miss Ngozi Ani</option></select><span class="help">The class teacher writes the class teacher's comment and submits for Primary 4A.</span></label>
+              <div class="swrow" style="margin-top: 8px; border-top: 1px solid var(--border)">
+                <span class="col grow" style="gap: 0"><span class="t" id="tas">Teaches all subjects</span><span class="help">Gives this teacher every subject in Primary 4A, including subjects added later.</span></span>
+                <button class="switch" role="switch" aria-checked="{{allChecked}}" aria-labelledby="tas" onClick="{{toggleAll}}" disabled="{{noCt}}"></button>
+              </div>
+              <sc-if value="{{noCt}}" hint-placeholder-val="{{ false }}"><p class="help">Choose a class teacher first.</p></sc-if>
+              <div class="row" style="margin-top: 8px"><button class="link" onClick="{{goSubjects}}">{{subjLinkText}}</button></div>
+            </section>
+
+            <section class="card" aria-labelledby="ash">
+              <div class="row" style="margin-bottom: 4px"><div class="col grow" style="gap: 2px; min-width: 200px"><h2 id="ash" class="h3">Class teacher assistants</h2><span class="help">You can add up to 2 assistants.</span></div><button class="btn sm" onClick="{{openAdd}}" disabled="{{atLimit}}"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.plus}}"></path></svg>Add assistant</button></div>
+              <sc-for list="{{assistants}}" as="a" hint-placeholder-count="1">
+                <div class="arow2"><span class="av" aria-hidden="true">{{a.ini}}</span><span class="col grow" style="gap: 0"><span style="font-weight: 600">{{a.name}}</span><span class="help">Assistant in Primary 4A</span></span><button class="btn sm danger" onClick="{{a.remove}}" aria-label="Remove {{a.name}}">Remove</button></div>
+              </sc-for>
+              <sc-if value="{{noAssistants}}" hint-placeholder-val="{{ false }}"><p class="muted" style="font-size: 14px; padding: 12px 0; border-top: 1px solid var(--border)">No assistants yet.</p></sc-if>
+              <div class="alert a-info" style="margin-top: 8px"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.info}}"></path></svg><span>Assistants can enter scores, ratings and comments for this class. Only the class teacher can submit.</span></div>
+              <sc-if value="{{atLimit}}" hint-placeholder-val="{{ false }}"><p class="help" style="margin-top: 8px">Primary 4A has 2 assistants. Remove one to add another.</p></sc-if>
+            </section>
+          </div>
+
+          <aside class="card" aria-labelledby="tdh">
+            <div class="col" style="gap: 2px; margin-bottom: 8px"><h2 id="tdh" class="h3">On teacher pages</h2><span class="help">What Teacher detail shows for this class.</span></div>
+            <sc-for list="{{lines}}" as="l" hint-placeholder-count="2">
+              <div class="tline"><span class="av" aria-hidden="true">{{l.ini}}</span><span class="col grow" style="gap: 2px"><span style="font-weight: 600">{{l.name}}</span><sc-for list="{{l.rows}}" as="r" hint-placeholder-count="1"><span style="font-size: 14px">{{r}}</span></sc-for><a href="#teachers" style="font-size: 13px; font-weight: 600">Open teacher detail</a></span></div>
+            </sc-for>
+            <sc-if value="{{noLines}}" hint-placeholder-val="{{ false }}"><p class="muted" style="font-size: 14px">Choose a class teacher to see how it shows on teacher pages.</p></sc-if>
+          </aside>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{showSubjects}}" hint-placeholder-val="{{ false }}">
+        <section class="card flush" aria-labelledby="sjh">
+          <div class="card-head"><div class="col grow" style="gap: 2px"><h2 id="sjh" class="h3">Subjects</h2><span class="help">{{subjCount}} Primary 4 subjects</span></div></div>
+          <div class="swrow" style="padding: 12px 20px; background: var(--surface-2)">
+            <span class="col grow" style="gap: 0"><span class="t" id="tas2">Teaches all subjects</span><span class="help">Gives this teacher every subject in Primary 4A, including subjects added later.</span></span>
+            <button class="switch" role="switch" aria-checked="{{allChecked}}" aria-labelledby="tas2" onClick="{{toggleAll}}" disabled="{{noCt}}"></button>
+          </div>
+          <div class="rt" style="--cols: minmax(0, 1.4fr) minmax(0, 1.6fr)">
+            <div class="tr th"><span>Subject</span><span>Teacher</span></div>
+            <sc-for list="{{subjects}}" as="s" hint-placeholder-count="10">
+              <div class="tr">
+                <span class="td first" style="font-weight: 600">{{s.name}}</span>
+                <span class="td" data-label="Teacher">
+                  <sc-if value="{{all}}" hint-placeholder-val="{{ true }}"><span class="row" style="gap: 8px"><span>{{ct}}</span><span class="badge sm b-info"><svg class="i s" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.lock}}"></path></svg>Class teacher</span></span></sc-if>
+                  <sc-if value="{{notAll}}" hint-placeholder-val="{{ false }}"><select class="input" aria-label="Teacher for {{s.name}}" value="{{s.teacher}}" onChange="{{s.onTeacher}}" style="max-width: 320px"><option value="">Not assigned</option><option>Mrs. Ifeoma Chukwu</option><option>Mr. Obinna Agu</option><option>Mrs. Ruth Okonkwo</option><option>Mr. Samuel Odo</option><option>Miss Ngozi Ani</option></select></sc-if>
+                </span>
+              </div>
+            </sc-for>
+          </div>
+          <div style="padding: 14px 20px; border-top: 1px solid var(--border)"><span class="help">{{subjNote}}</span></div>
+        </section>
+      </sc-if>
+
+      <sc-if value="{{showPupils}}" hint-placeholder-val="{{ false }}">
+        <section class="card flush" aria-labelledby="puh">
+          <div class="card-head"><h2 id="puh" class="h3 grow">Pupils</h2><span class="badge sm b-neutral num">{{pupilCount}}</span></div>
+          <sc-if value="{{hasPupils}}" hint-placeholder-val="{{ true }}">
+            <div class="rt" style="--cols: minmax(0, 1.6fr) minmax(0, 1fr) 120px">
+              <div class="tr th"><span>Pupil</span><span>Admission number</span><span><span class="sr">Open</span></span></div>
+              <sc-for list="{{pupils}}" as="p" hint-placeholder-count="6">
+                <div class="tr"><span class="td first" style="font-weight: 600">{{p.name}}</span><span class="td num" data-label="Admission number">{{p.adm}}</span><span class="td"><a href="#students" style="font-weight: 600; font-size: 14px">Open</a></span></div>
+              </sc-for>
+            </div>
+          </sc-if>
+          <sc-if value="{{noPupils}}" hint-placeholder-val="{{ false }}"><div class="state"><p class="h3">No pupils in Primary 4A yet.</p><p class="muted">Add pupils from Students, or import them from a CSV file.</p><a class="btn" href="#students">Open students</a></div></sc-if>
+        </section>
+      </sc-if>
+    </main>
+
+  </div>
+</div>
+
+<sc-if value="{{dlgAdd}}" hint-placeholder-val="{{ false }}">
+  <div class="modal"><div class="dialog" role="dialog" aria-modal="true" aria-labelledby="aaT">
+    <div class="col" style="gap: 2px"><h2 id="aaT" class="h3">Add assistant</h2><span class="muted" style="font-size: 14px">Primary 4A · You can add up to 2 assistants.</span></div>
+    <div class="col" role="radiogroup" aria-label="Teacher" style="gap: 8px">
+      <sc-for list="{{choices}}" as="c" hint-placeholder-count="3"><button class="radio" role="radio" aria-checked="{{c.on}}" onClick="{{c.pick}}"><span class="o"></span><span class="col" style="gap: 0"><span style="font-weight: 600">{{c.name}}</span><span class="help">{{c.hint}}</span></span></button></sc-for>
+    </div>
+    <p class="help">Assistants can enter scores, ratings and comments for this class. Only the class teacher can submit.</p>
+    <div class="btns"><button class="btn" onClick="{{closeDlg}}">Cancel</button><button class="btn primary" onClick="{{confirmAdd}}" disabled="{{noPick}}">Add assistant</button></div>
+  </div></div>
+</sc-if>
+
+<sc-if value="{{toast}}" hint-placeholder-val="{{ false }}">
+  <div role="status" style="position: {{toastPos}}; left: 50%; bottom: 24px; transform: translateX(-50%); z-index: 40; width: max-content; max-width: 92%; background: var(--text); color: var(--bg); border-radius: 10px; padding: 12px 16px; display: flex; gap: 12px; align-items: center; font-size: 14px; box-shadow: var(--shadow-lg)"><span>{{toast}}</span><sc-if value="{{canUndo}}" hint-placeholder-val="{{ false }}"><button class="link" onClick="{{undo}}" style="color: var(--bg)">Undo</button></sc-if><button class="iconbtn" aria-label="Dismiss" onClick="{{hideToast}}" style="color: var(--bg); width: 32px; height: 32px"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.close}}"></path></svg></button></div>
+</sc-if>
+
+<sc-if value="{{drawer}}" hint-placeholder-val="{{ false }}">
+  <div class="scrim" onClick="{{scrimClose}}"><nav class="drawer" aria-label="Menu">
+    <div class="row" style="flex-wrap: nowrap"><div class="brand grow" style="padding: 0"><span class="crest" aria-hidden="true">BSA</span><span class="col" style="gap: 0"><span style="font-weight: 700; font-size: 15px">Bright Stars Academy</span><span class="muted" style="font-size: 13px">Mrs. Chiamaka Nwafor · Head teacher</span></span></div><button class="iconbtn" aria-label="Close menu" onClick="{{closeDrawer}}"><svg class="i l" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.close}}"></path></svg></button></div>
+    <div class="nav"><sc-for list="{{nav}}" as="n" hint-placeholder-count="16">
+        <sc-if value="{{n.grp}}" hint-placeholder-val="{{ false }}"><span class="cap grp">{{n.grp}}</span></sc-if>
+        <a href="{{n.href}}" class="{{n.cls}}" aria-current="{{n.cur}}" title="{{n.label}}"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{n.d}}"></path></svg><span class="l">{{n.label}}</span><sc-if value="{{n.count}}" hint-placeholder-val="{{ false }}"><span class="{{n.countCls}}">{{n.count}}</span></sc-if></a>
+      </sc-for></div>
+    <div class="powered"><img src="/_blob/b5461303d7a8d45a18f7975e283523ab" alt="" style="width: 20px; height: 20px">Powered by SchoolFlow</div>
+  </nav></div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["Light","Dark"],"default":"Light"},"state":{"editor":"enum","options":["Default","Empty","Loading","Error"],"default":"Default"},"device":{"editor":"enum","options":["Desktop","Phone"],"default":"Desktop"},"$preview":{"width":1440,"height":1000}}'>
+class Component extends DCLogic {
+
+  constructor(props) {
+    super(props);
+    this.SUBJ = ['English Studies', 'Mathematics', 'Basic Science and Technology', 'Social Studies', 'Civic Education', 'Igbo Language', 'Cultural and Creative Arts', 'Physical and Health Education', 'Christian Religious Studies', 'Computer Studies'];
+    this.state = { ct: 'Mrs. Ifeoma Chukwu', all: true, subj: {}, assistants: ['Miss Ngozi Ani'], tab: 'overview', dlg: null, pick: '', toast: '', drawer: false, touched: false };
+  }
+
+  icons() {
+    return {
+      dash: 'M3 3h7v9H3zM14 3h7v5h-7zM14 12h7v9h-7zM3 16h7v5H3z', approve: 'M9 11l3 3 8-8M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9', send: 'M22 2L11 13M22 2l-7 20-4-9-9-4z',
+      flag: 'M4 22V4M4 4h12l-2 4 2 4H4', tmpl: 'M4 4h16v16H4zM4 9h16M9 9v11', audit: 'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM12 7v5l3 2', student: 'M22 10L12 5 2 10l10 5 10-5zM6 12v5c3 2 9 2 12 0v-5',
+      teacher: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21a8 8 0 0 1 16 0', review: 'M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12zM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z', parent: 'M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8',
+      shield: 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z', setup: 'M3 21h18M5 21V9l7-5 7 5v12M9 21v-6h6v6', bell: 'M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.94 1.94 0 0 0 3.4 0',
+      mail: 'M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zM22 6l-10 7L2 6', bill: 'M4 5h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2zM2 10h20',
+      settings: 'M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1',
+      menu: 'M4 6h16M4 12h16M4 18h16', close: 'M18 6L6 18M6 6l12 12', alert: 'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM12 8v4M12 16h.01',
+      ok: 'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM8 12l3 3 5-6', info: 'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM12 16v-4M12 8h.01', lock: 'M5 11h14v10H5zM8 11V7a4 4 0 0 1 8 0v4',
+      warn: 'M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0zM12 9v4M12 17h.01',
+      up: 'M18 15l-6-6-6 6', down: 'M6 9l6 6 6-6', next: 'M9 18l6-6-6-6', back: 'M15 18l-6-6 6-6', plus: 'M12 5v14M5 12h14',
+      edit: 'M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z', trash: 'M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v6M14 11v6',
+      check: 'M5 12l5 5L20 7', minus: 'M5 12h14', dotc: 'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z', star: 'M12 3l2.8 5.7 6.2.9-4.5 4.4 1 6.2L12 17.3 6.5 20.2l1-6.2L3 9.6l6.2-.9z',
+      users: 'M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8',
+      book: 'M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5zM4 19.5V21h16', panel: 'M3 3h18v18H3zM9 3v18', filter: 'M3 5h18l-7 8v6l-4 2v-8z'
+    };
+  }
+  pg(n, phone) {
+    const ph = ['LearningAreas', 'ClassPage', 'BsaMenus', 'DashboardV5', 'PublishV5', 'BillingV5', 'Assessment', 'Grading'];
+    return n.startsWith('#') ? n : n + (phone && ['Assessment', 'AssessmentBSA', 'Attention', 'AttentionBSA', 'AttentionReviewer', 'AttentionTeacher', 'AttentionTeacherBSA', 'AuditLog', 'BillingV5', 'BsaMenus', 'ChangePassword', 'ClassPage', 'CreateSchool', 'DashboardV5', 'EmailLog', 'Grading', 'GradingBSA', 'LearningAreas', 'Login', 'Login_Link', 'MyClass', 'MyClassPrimary', 'ParentSkills', 'Payments', 'PlatformSettings', 'PricingV5', 'PublishV5', 'RatingSheet', 'RatingSheetAssistant', 'SchoolAdmins', 'SchoolAdminsBSA', 'SchoolDetailBSA', 'SchoolDetailV5', 'SchoolPaused', 'SchoolsV5', 'ScoreGridSS', 'ScoreGridV5', 'SheetsV5', 'StudentDetail', 'SuperBillingV5', 'TemplateEditorBSA', 'TemplateEditorV5'].includes(n) ? '_Phone' : '') + '.dc.html';
+  }
+  nav(active, phone) {
+    const I = this.icons();
+    const items = [[null, 'Dashboard', 'DashboardV5', 'dash'], ['Results', 'Approvals', 'Approvals', 'approve', '2', 'count strong'], [null, 'Publish results', 'PublishV5', 'send'], [null, 'Students needing attention', 'AttentionBSA', 'flag'], [null, 'Report templates', 'TemplateEditorBSA', 'tmpl'], [null, 'Audit trail', '#audit-trail', 'audit'],
+      ['People', 'Students', 'StudentDetail', 'student'], [null, 'Teachers', '#teachers', 'teacher'], [null, 'Reviewers', '#reviewers', 'review'], [null, 'Parents', '#parents', 'parent'], [null, 'School admins', 'SchoolAdminsBSA', 'shield'],
+      ['School', 'School setup', 'LearningAreas', 'setup'], [null, 'Notices', '#notices', 'bell'], [null, 'Emails', '#emails', 'mail'], [null, 'Billing', 'BillingV5', 'bill'], [null, 'School settings', '#school-settings', 'settings']];
+    return items.map(([grp, label, href, ic, count, countCls]) => ({ grp: grp || '', label, href: this.pg(href, phone), d: I[ic], count: count || '', countCls: countCls || '', cls: label === active ? 'on' : '', cur: label === active ? 'page' : 'false' }));
+  }
+  setupTabs(active, phone) {
+    const t = [['Sessions and terms', '#sessions-and-terms'], ['Classes', 'ClassPage'], ['Subjects', '#subjects'], ['Departments', '#departments'], ['Grading', 'GradingBSA'], ['Assessment', 'AssessmentBSA'], ['Learning areas and skills', 'LearningAreas'], ['Rating traits', '#rating-traits']];
+    return t.map(([label, href]) => ({ label, href: this.pg(href, phone), cur: label === active ? 'page' : 'false' }));
+  }
+  shellVals(active) {
+    const P = this.props, st = this.state;
+    const theme = String(P.theme || 'Light').toLowerCase(), device = String(P.device || 'Desktop').toLowerCase(), view = String(P.state || 'Default').toLowerCase();
+    const phone = device === 'phone';
+    return {
+      theme, device, view, phone, ic: this.icons(), nav: this.nav(active, phone),
+      toast: st.toast || '', canUndo: !!st.undoAreas, hideToast: () => this.setState({ toast: '', undoAreas: null }), toastPos: phone ? 'absolute' : 'fixed',
+      drawer: !!st.drawer, openDrawer: () => this.setState({ drawer: true }), closeDrawer: () => this.setState({ drawer: false }),
+      scrimClose: (e) => { if (e && e.target && e.currentTarget && e.target === e.currentTarget) this.setState({ drawer: false }); }
+    };
+  }
+
+  ini(n) { return n.replace(/^(Mrs?\.|Miss)\s+/, '').split(' ').map((x) => x[0]).join('').slice(0, 2); }
+  renderVals() {
+    const st = this.state, I = this.icons();
+    const sh = this.shellVals('School setup');
+    const { view, phone } = sh;
+    const empty = view === 'empty' && !st.touched;
+    const ct = empty ? '' : st.ct, all = empty ? false : st.all, assistants = empty ? [] : st.assistants;
+    const T = ['Mrs. Ifeoma Chukwu', 'Mr. Obinna Agu', 'Mrs. Ruth Okonkwo', 'Mr. Samuel Odo', 'Miss Ngozi Ani'];
+    const main = view === 'default' || view === 'empty';
+    const base = { ct, all, assistants, touched: true };
+    const tOf = (s) => (all ? ct : (st.subj[s] !== undefined ? st.subj[s] : ct));
+    const subjects = this.SUBJ.map((s) => ({ name: s, teacher: tOf(s), onTeacher: (e) => { const v = e.target.value; this.setState({ ...base, subj: { ...st.subj, [s]: v }, toast: s + ': ' + (v || 'Not assigned') + '. Saved.' }); } }));
+    const pupils = view === 'empty' ? [] : ['Kamsi Okafor', 'Bisi Adeleke', 'Uche Mba', 'Fatima Lawal', 'David Ezeh', 'Joy Akpan'].map((name, i) => ({ name, adm: 'BSA/2026/' + String(41 + i).padStart(3, '0') }));
+    // Teacher detail preview lines
+    const lines = [];
+    if (ct) {
+      const own = this.SUBJ.filter((s) => tOf(s) === ct).length;
+      lines.push({ name: ct, ini: this.ini(ct), rows: [all ? 'Class teacher of Primary 4A (all subjects)' : 'Class teacher of Primary 4A', ...(all ? [] : [own + ' of ' + this.SUBJ.length + ' subjects in Primary 4A'])] });
+    }
+    assistants.forEach((a) => {
+      const subs = this.SUBJ.filter((s) => tOf(s) === a);
+      lines.push({ name: a, ini: this.ini(a), rows: ['Assistant in Primary 4A', ...(subs.length ? ['Teaches ' + subs.join(', ') + ' in Primary 4A'] : [])] });
+    });
+    if (!all) T.filter((t) => t !== ct && !assistants.includes(t)).forEach((t) => { const subs = this.SUBJ.filter((s) => tOf(s) === t); if (subs.length) lines.push({ name: t, ini: this.ini(t), rows: ['Teaches ' + subs.join(', ') + ' in Primary 4A'] }); });
+    const choices = T.filter((t) => t !== ct && !assistants.includes(t)).map((t) => ({ name: t, hint: t === 'Mr. Samuel Odo' ? 'Subject teacher, Igbo Language' : 'Teacher', on: st.pick === t ? 'true' : 'false', pick: () => this.setState({ pick: t }) }));
+    const unassigned = subjects.filter((s) => !s.teacher).length;
+    return {
+      ...sh, h1Size: phone ? '24px' : '30px', pupilCount: pupils.length,
+      tabs: [['overview', 'Overview'], ['subjects', 'Subjects'], ['pupils', 'Pupils']].map(([id, label]) => ({ label, sel: st.tab === id ? 'true' : 'false', pick: () => this.setState({ tab: id }) })),
+      isLoading: view === 'loading', isError: view === 'error',
+      showOverview: main && st.tab === 'overview', showSubjects: main && st.tab === 'subjects', showPupils: main && st.tab === 'pupils',
+      ct, noCt: !ct, all, notAll: !all, allChecked: all ? 'true' : 'false',
+      onCt: (e) => {
+        const v = e.target.value; if (!v) return;
+        const wasAsst = assistants.includes(v);
+        this.setState({ ...base, ct: v, all: all, assistants: assistants.filter((a) => a !== v), toast: v + ' is now class teacher of Primary 4A.' + (wasAsst ? ' They are no longer an assistant.' : '') });
+      },
+      toggleAll: () => {
+        if (!ct) return;
+        if (all) { const subj = {}; this.SUBJ.forEach((s) => { subj[s] = ct; }); this.setState({ ...base, all: false, subj, toast: 'Teaches all subjects is off. ' + ct + ' keeps every subject until you change them.' }); }
+        else this.setState({ ...base, all: true, toast: ct + ' now teaches every subject in Primary 4A.' });
+      },
+      goSubjects: () => this.setState({ tab: 'subjects' }), subjLinkText: all ? 'See the ' + this.SUBJ.length + ' subjects' : 'Choose a teacher for each subject',
+      assistants: assistants.map((a) => ({ name: a, ini: this.ini(a), remove: () => this.setState({ ...base, assistants: assistants.filter((x) => x !== a), toast: a + ' is no longer an assistant in Primary 4A.' }) })),
+      noAssistants: assistants.length === 0, atLimit: assistants.length >= 2,
+      lines, noLines: lines.length === 0,
+      subjects, subjCount: this.SUBJ.length,
+      subjNote: all ? 'Teaches all subjects is on, so ' + ct + ' teaches every subject. Turn it off to choose a teacher for each subject.' : (unassigned ? unassigned + (unassigned === 1 ? ' subject has' : ' subjects have') + ' no teacher yet.' : 'Each subject has a teacher. Changes save straight away.'),
+      pupils, hasPupils: pupils.length > 0, noPupils: pupils.length === 0,
+      dlgAdd: st.dlg === 'add', choices, noPick: !st.pick || !choices.some((c) => c.name === st.pick),
+      openAdd: () => { if (assistants.length < 2) this.setState({ dlg: 'add', pick: '' }); },
+      closeDlg: () => this.setState({ dlg: null }),
+      confirmAdd: () => { if (!st.pick || assistants.length >= 2) return; this.setState({ ...base, assistants: [...assistants, st.pick], dlg: null, pick: '', toast: st.pick + ' is now an assistant in Primary 4A.' }); }
+    };
+  }
+
+}
+</script>
+</body>
+</html>

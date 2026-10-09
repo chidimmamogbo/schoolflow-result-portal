@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Report card, classic style</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+.ct{border-collapse:collapse;width:100%;font-size:13px;font-variant-numeric:tabular-nums}
+.ct th,.ct td{border:1px solid #0f172a;padding:4px 6px;text-align:center}
+.ct thead th{font-weight:700;font-size:11px;background:#ffffff}
+.ct tbody th{text-align:left;font-weight:400}
+.ct .b{font-weight:700}
+.kv{border-collapse:collapse;width:100%;font-size:12px}
+.kv th,.kv td{border:1px solid #0f172a;padding:3px 8px}
+.kv th{text-align:left;font-weight:400}
+.kv td{text-align:center;width:36px;font-weight:700}
+</style>
+</helmet>
+<div style="width: 794px; height: 1123px; box-sizing: border-box; background: #ffffff; font-family: Georgia, 'Times New Roman', serif; color: #0f172a; padding: 32px 40px 28px; display: flex; flex-direction: column; gap: 10px">
+  <div style="border: 3px double #0f172a; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; flex-grow: 1">
+    <header style="display: flex; align-items: center; gap: 16px; padding-bottom: 10px; border-bottom: 1px solid #0f172a">
+      <span aria-hidden="true" style="width: 76px; height: 76px; flex-shrink: 0; border-radius: 9999px; border: 3px solid #14532d; color: #14532d; font: 700 20px Georgia, serif; display: flex; align-items: center; justify-content: center">GMC</span>
+      <div style="flex-grow: 1; text-align: center; display: flex; flex-direction: column; gap: 2px">
+        <span style="font-size: 26px; font-weight: 700; letter-spacing: 0.04em">GREENFIELD MODEL COLLEGE</span>
+        <span style="font-size: 13px">Independence Layout, Enugu</span>
+        <span style="font-size: 13px; font-style: italic">Motto: [SCHOOL MOTTO]</span>
+        <span style="margin-top: 4px; font-size: 14px; font-weight: 700; letter-spacing: 0.08em">STUDENT'S TERMLY REPORT</span>
+      </div>
+      <div aria-label="Passport photo placeholder" style="width: 72px; height: 86px; flex-shrink: 0; border: 1px solid #0f172a; display: flex; align-items: center; justify-content: center; font: 600 10px Inter, sans-serif; color: #5b6475; text-align: center">PHOTO</div>
+    </header>
+
+    <table class="kv" style="font-size: 13px">
+      <tbody>
+        <tr><th style="width: 18%">Name</th><td style="width: auto; text-align: left; font-weight: 700" colspan="3">CHUKWUEMEKA OBI</td><th style="width: 16%">Admission no.</th><td style="width: auto; text-align: left">GMC/2026/014</td></tr>
+        <tr><th>Class</th><td style="text-align: left">JSS 1A</td><th style="width: 12%">Term</th><td style="text-align: left">First</td><th>Session</th><td style="text-align: left">2026/2027</td></tr>
+        <tr><th>Times present</th><td style="text-align: left">[ ]</td><th>School opened</th><td style="text-align: left">[ ]</td><th>Next term begins</th><td style="text-align: left">5 Jan 2027</td></tr>
+      </tbody>
+    </table>
+
+    <table class="ct">
+      <thead>
+        <tr><th rowspan="2" style="text-align: left; width: 30%">SUBJECTS</th><th>1st CA</th><th>2nd CA</th><th>EXAM</th><th>TOTAL</th><th rowspan="2">GRADE</th><th rowspan="2">POS.</th><th rowspan="2">CLASS AVG.</th><th rowspan="2">REMARK</th></tr>
+        <tr><th>20</th><th>20</th><th>60</th><th>100</th></tr>
+      </thead>
+      <tbody>
+        <tr><th scope="row">English Language</th><td>15</td><td>14</td><td>45</td><td class="b">74</td><td class="b">B2</td><td>4th</td><td>65.1</td><td>Very good</td></tr>
+        <tr><th scope="row">Mathematics</th><td>16</td><td>15</td><td>47</td><td class="b">78</td><td class="b">A1</td><td>2nd</td><td>64.8</td><td>Excellent</td></tr>
+        <tr><th scope="row">Basic Science</th><td>14</td><td>13</td><td>42</td><td class="b">69</td><td class="b">B3</td><td>5th</td><td>61.7</td><td>Good</td></tr>
+        <tr><th scope="row">Basic Technology</th><td>13</td><td>12</td><td>40</td><td class="b">65</td><td class="b">B3</td><td>6th</td><td>60.2</td><td>Good</td></tr>
+        <tr><th scope="row">Social Studies</th><td>16</td><td>15</td><td>49</td><td class="b">80</td><td class="b">A1</td><td>2nd</td><td>70.3</td><td>Excellent</td></tr>
+        <tr><th scope="row">Civic Education</th><td>15</td><td>14</td><td>47</td><td class="b">76</td><td class="b">A1</td><td>3rd</td><td>68.9</td><td>Excellent</td></tr>
+        <tr><th scope="row">Igbo Language</th><td>12</td><td>12</td><td>38</td><td class="b">62</td><td class="b">C4</td><td>7th</td><td>63.5</td><td>Credit</td></tr>
+        <tr><th scope="row">Agricultural Science</th><td>14</td><td>13</td><td>44</td><td class="b">71</td><td class="b">B2</td><td>4th</td><td>66.0</td><td>Very good</td></tr>
+        <tr><th scope="row">Computer Studies</th><td>14</td><td>14</td><td>44</td><td class="b">72</td><td class="b">B2</td><td>5th</td><td>69.4</td><td>Very good</td></tr>
+        <tr><th scope="row">Christian Religious Studies</th><td>15</td><td>15</td><td>47</td><td class="b">77</td><td class="b">A1</td><td>3rd</td><td>71.2</td><td>Excellent</td></tr>
+        <tr><th scope="row">Business Studies</th><td>13</td><td>13</td><td>40</td><td class="b">66</td><td class="b">B3</td><td>6th</td><td>62.8</td><td>Good</td></tr>
+        <tr><th scope="row">Cultural and Creative Arts</th><td>14</td><td>13</td><td>43</td><td class="b">70</td><td class="b">B2</td><td>4th</td><td>67.5</td><td>Very good</td></tr>
+        <tr><th scope="row">Physical and Health Education</th><td>14</td><td>13</td><td>41</td><td class="b">68</td><td class="b">B3</td><td>7th</td><td>72.1</td><td>Good</td></tr>
+      </tbody>
+    </table>
+
+    <table class="kv" aria-label="Summary" style="font-size: 13px">
+      <tbody>
+        <tr>
+          <th style="font-weight: 700">TOTAL SCORE</th><td style="width: 70px; font-size: 15px">928</td>
+          <th style="font-weight: 700">TOTAL AVERAGE</th><td style="width: 70px; font-size: 15px">71.4</td>
+          <th style="font-weight: 700">CLASS POSITION</th><td style="width: 70px; font-size: 15px">3rd</td>
+          <th style="font-weight: 700">NO. IN CLASS</th><td style="width: 50px; font-size: 15px">12</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px">
+      <table class="kv">
+        <thead><tr><th colspan="2" style="font-weight: 700; font-size: 11px">AFFECTIVE DOMAIN</th></tr></thead>
+        <tbody><tr><th>Punctuality</th><td>5</td></tr><tr><th>Neatness</th><td>4</td></tr><tr><th>Politeness</th><td>5</td></tr><tr><th>Attentiveness</th><td>4</td></tr><tr><th>Relationship with others</th><td>5</td></tr></tbody>
+      </table>
+      <table class="kv">
+        <thead><tr><th colspan="2" style="font-weight: 700; font-size: 11px">PSYCHOMOTOR DOMAIN</th></tr></thead>
+        <tbody><tr><th>Handwriting</th><td>4</td></tr><tr><th>Sports and games</th><td>5</td></tr><tr><th>Crafts</th><td>3</td></tr><tr><th>Verbal fluency</th><td>4</td></tr><tr><th>Musical skills</th><td>3</td></tr></tbody>
+      </table>
+      <table class="kv">
+        <thead><tr><th colspan="2" style="font-weight: 700; font-size: 11px">KEY TO RATINGS AND GRADES</th></tr></thead>
+        <tbody>
+          <tr><th>5 Excellent · 4 Very good</th><td></td></tr>
+          <tr><th>3 Good · 2 Fair · 1 Poor</th><td></td></tr>
+          <tr><th>A1 75-100 · B2 70-74 · B3 65-69</th><td></td></tr>
+          <tr><th>C4 to C6 50-64 · D7 45-49</th><td></td></tr>
+          <tr><th>E8 40-44 · F9 0-39</th><td></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 10px; font-size: 13px">
+      <div><strong>Form Teacher's Remark:</strong> <span style="border-bottom: 1px dotted #0f172a">Chukwuemeka is attentive and works well with others. More reading at home will lift his English.</span></div>
+      <div style="display: flex; justify-content: space-between; gap: 20px"><span>Name: Mr. Tunde Adebayo</span><span>Signature: ______________________</span></div>
+      <div><strong>Principal's Remark:</strong> <span style="border-bottom: 1px dotted #0f172a">A good result. Keep it up.</span></div>
+      <div style="display: flex; justify-content: space-between; gap: 20px"><span>Name: Mrs. Ngozi Okeke</span><span>Signature and stamp: ______________________</span></div>
+    </div>
+
+    <footer style="margin-top: auto; display: flex; align-items: center; gap: 14px; border-top: 1px solid #0f172a; padding-top: 10px; font-family: Inter, 'Segoe UI', system-ui, sans-serif; font-size: 11px">
+      <div aria-label="QR code placeholder" style="width: 70px; height: 70px; flex-shrink: 0; border: 2px dashed #737c8f; display: flex; align-items: center; justify-content: center; font-weight: 600; color: #5b6475">QR CODE</div>
+      <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px; font-variant-numeric: tabular-nums">
+        <span><strong>Report ID</strong> GMC-2627-T1-JSS1A-014 · <strong>Revision</strong> 1 · <strong>Published</strong> 8 Dec 2026</span>
+        <span>Verify: scan the QR code or enter <strong style="letter-spacing: 0.06em">7KQ4-M2XD</strong> at [VERIFY URL]</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 6px; color: #5b6475"><img src="/_blob/b5461303d7a8d45a18f7975e283523ab" alt="" style="width: 16px; height: 16px">Powered by SchoolFlow</div>
+    </footer>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":794,"height":1123}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

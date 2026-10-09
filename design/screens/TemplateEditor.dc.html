@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Report template editor</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#f7f8fa}
+a{color:#1f4fd8}a:hover{color:#163ca8}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #1f4fd8;outline-offset:2px}
+.num{font-variant-numeric:tabular-nums}
+</style>
+</helmet>
+<div style="min-height: 100vh; display: flex; flex-direction: column; background: #f7f8fa; font-family: Inter, 'Segoe UI', system-ui, sans-serif; color: #0f172a">
+  <header style="min-height: 64px; box-sizing: border-box; display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding: 10px 24px; background: #ffffff; border-bottom: 1px solid #e3e7ee">
+    <a href="Dashboard.dc.html" aria-label="Back to dashboard" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 8px; color: #0f172a"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"></path></svg></a>
+    <div style="display: flex; flex-direction: column; flex-grow: 1; min-width: 200px">
+      <h1 style="margin: 0; font-size: 18px; line-height: 24px; font-weight: 700">Greenfield Junior Secondary</h1>
+      <span style="font-size: 13px; color: #5b6475">Report template · JSS 1 to JSS 3 · {{versionLine}}</span>
+    </div>
+    <div role="radiogroup" aria-label="Report style" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; background: #f1f3f7; border-radius: 10px; padding: 4px">
+      <button role="radio" aria-checked="{{modernSel}}" onClick="{{pickModern}}" style="height: 36px; padding: 0 14px; border: 0; border-radius: 8px; background: {{modernBg}}; color: {{modernInk}}; font: 600 14px Inter, system-ui, sans-serif; cursor: pointer; box-shadow: {{modernShadow}}">Modern</button>
+      <button role="radio" aria-checked="{{classicSel}}" onClick="{{pickClassic}}" style="height: 36px; padding: 0 14px; border: 0; border-radius: 8px; background: {{classicBg}}; color: {{classicInk}}; font: 600 14px Inter, system-ui, sans-serif; cursor: pointer; box-shadow: {{classicShadow}}">Classic</button>
+    </div>
+    <a href="{{fullPreview}}" style="height: 40px; display: inline-flex; align-items: center; padding: 0 14px; border: 1px solid #737c8f; border-radius: 8px; color: #0f172a; font-size: 14px; font-weight: 600; text-decoration: none">Full A4 preview</a>
+    <button onClick="{{save}}" style="height: 40px; padding: 0 16px; border: 0; border-radius: 8px; background: #1f4fd8; color: #ffffff; font: 600 14px Inter, system-ui, sans-serif; cursor: pointer">{{saveLabel}}</button>
+  </header>
+
+  <sc-if value="{{saved}}" hint-placeholder-val="{{ false }}">
+    <div role="status" style="margin: 16px 24px 0; background: #e6f8f1; border-radius: 12px; padding: 12px 16px; display: flex; align-items: center; gap: 10px; color: #047857; font-size: 14px">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M8 12l3 3 5-6"></path></svg>
+      <span><strong style="font-weight: 600">Saved as version 4.</strong> New report cards use it. Reports already published keep the version they were issued with.</span>
+    </div>
+  </sc-if>
+
+  <div style="display: flex; flex-wrap: wrap; gap: 20px; padding: 20px 24px 32px; align-items: flex-start">
+    <section aria-labelledby="blk" style="flex: 1 1 280px; max-width: 100%; min-width: 0; background: #ffffff; border: 1px solid #e3e7ee; border-radius: 12px; overflow: hidden">
+      <div style="padding: 14px 16px; border-bottom: 1px solid #e3e7ee; display: flex; flex-direction: column; gap: 2px">
+        <h2 id="blk" style="margin: 0; font-size: 16px; font-weight: 600">Blocks</h2>
+        <span style="font-size: 13px; color: #5b6475">Show, hide and reorder. Click a block for its settings.</span>
+      </div>
+      <ul style="list-style: none; margin: 0; padding: 6px">
+        <sc-for list="{{blocks}}" as="b" hint-placeholder-count="9">
+          <li style="display: flex; align-items: center; gap: 4px; padding: 4px; border-radius: 8px; background: {{b.rowBg}}; border: 1px solid {{b.rowBorder}}; margin-bottom: 2px">
+            <button onClick="{{b.select}}" aria-pressed="{{b.selAttr}}" style="flex-grow: 1; min-width: 0; height: 36px; border: 0; background: transparent; text-align: left; padding: 0 8px; font: 500 14px Inter, system-ui, sans-serif; color: {{b.labelInk}}; cursor: pointer; display: flex; align-items: center; gap: 8px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5b6475" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M9 6h.01M15 6h.01M9 12h.01M15 12h.01M9 18h.01M15 18h.01"></path></svg><span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{b.label}}</span></button>
+            <button onClick="{{b.up}}" aria-label="Move {{b.label}} up" disabled="{{b.first}}" style="width: 30px; height: 30px; border: 0; background: transparent; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; opacity: {{b.upOpacity}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0f172a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 15l-6-6-6 6"></path></svg></button>
+            <button onClick="{{b.down}}" aria-label="Move {{b.label}} down" disabled="{{b.last}}" style="width: 30px; height: 30px; border: 0; background: transparent; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; opacity: {{b.downOpacity}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0f172a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg></button>
+            <button onClick="{{b.toggle}}" aria-label="{{b.eyeLabel}}" aria-pressed="{{b.visAttr}}" style="width: 30px; height: 30px; border: 0; background: transparent; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center">
+              <sc-if value="{{b.visible}}" hint-placeholder-val="{{ true }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1f4fd8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle></svg></sc-if>
+              <sc-if value="{{b.hidden}}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5b6475" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3l18 18M10.6 10.6a2 2 0 0 0 2.8 2.8M9.9 5.1A10 10 0 0 1 12 5c6.5 0 10 7 10 7a17 17 0 0 1-3.2 4.2M6.6 6.6A17 17 0 0 0 2 12s3.5 7 10 7a9.7 9.7 0 0 0 5.4-1.6"></path></svg></sc-if>
+            </button>
+          </li>
+        </sc-for>
+      </ul>
+    </section>
+
+    <section aria-labelledby="set" style="flex: 1 1 300px; max-width: 100%; min-width: 0; background: #ffffff; border: 1px solid #e3e7ee; border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 14px">
+      <div style="display: flex; flex-direction: column; gap: 2px">
+        <span style="font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: #5b6475">Settings</span>
+        <h2 id="set" style="margin: 0; font-size: 18px; font-weight: 600">{{selLabel}}</h2>
+      </div>
+      <sc-if value="{{selHasOptions}}" hint-placeholder-val="{{ true }}">
+        <div style="display: flex; flex-direction: column; gap: 2px">
+          <sc-for list="{{options}}" as="o" hint-placeholder-count="4">
+            <div style="display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid #e3e7ee">
+              <span style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 14px; font-weight: 600">{{o.label}}</span><span style="font-size: 13px; line-height: 18px; color: #5b6475">{{o.hint}}</span></span>
+              <button role="switch" aria-checked="{{o.checked}}" aria-label="{{o.label}}" onClick="{{o.toggle}}" style="width: 44px; height: 26px; flex-shrink: 0; border: 0; border-radius: 9999px; background: {{o.track}}; position: relative; cursor: pointer; padding: 0"><span style="position: absolute; top: 3px; left: {{o.knob}}; width: 20px; height: 20px; border-radius: 9999px; background: #ffffff; box-shadow: 0 1px 2px rgba(15,23,42,0.2)"></span></button>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+      <sc-if value="{{selNoOptions}}" hint-placeholder-val="{{ false }}">
+        <p style="margin: 0; font-size: 14px; line-height: 20px; color: #5b6475">This block has no extra settings. Use the eye button to show or hide it, and the arrows to move it.</p>
+      </sc-if>
+      <div style="margin-top: 6px; background: #f1f3f7; border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 8px">
+        <span style="font-size: 13px; font-weight: 600">Version history</span>
+        <sc-for list="{{versions}}" as="v" hint-placeholder-count="3">
+          <div style="display: flex; justify-content: space-between; gap: 8px; font-size: 13px"><span><strong style="font-weight: 600">{{v.id}}</strong> · {{v.note}}</span><span style="color: #5b6475; white-space: nowrap">{{v.when}}</span></div>
+        </sc-for>
+      </div>
+    </section>
+
+    <section aria-label="Live A4 preview" style="flex: 999 1 520px; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 10px">
+      <span style="align-self: stretch; display: flex; justify-content: space-between; font-size: 13px; color: #5b6475"><span>Live preview · A4 · print is always light</span><span>Sample: Chukwuemeka Obi</span></span>
+      <div style="width: 524px; max-width: 100%; height: 741px; overflow: hidden; background: #e3e7ee; border-radius: 8px; padding: 16px; box-sizing: border-box">
+        <div style="width: 794px; height: 1123px; transform: scale(0.62); transform-origin: top left; background: #ffffff; box-shadow: 0 4px 12px rgba(15,23,42,0.12); box-sizing: border-box; padding: 36px 40px; display: flex; flex-direction: column; gap: 12px; font-family: {{pvFont}}; color: #0f172a; overflow: hidden">
+          <sc-for list="{{preview}}" as="b" hint-placeholder-count="6">
+            <sc-if value="{{b.isHeader}}" hint-placeholder-val="{{ false }}">
+              <div style="display: flex; align-items: center; gap: 14px; border-bottom: 3px solid {{b.accent}}; padding-bottom: 12px; text-align: {{b.align}}">
+                <span aria-hidden="true" style="width: 64px; height: 64px; flex-shrink: 0; border-radius: {{b.crestRadius}}; background: {{b.accent}}; color: #ffffff; font: 700 20px Inter, sans-serif; display: flex; align-items: center; justify-content: center">GMC</span>
+                <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px">
+                  <span style="font-size: 24px; font-weight: 700; letter-spacing: 0.02em; color: {{b.accent}}">GREENFIELD MODEL COLLEGE</span>
+                  <span style="font-size: 13px; color: #5b6475">Independence Layout, Enugu</span>
+                  <sc-if value="{{b.motto}}" hint-placeholder-val="{{ true }}"><span style="font-size: 13px; font-style: italic; color: {{b.accent}}">[SCHOOL MOTTO]</span></sc-if>
+                </div>
+                <div style="text-align: right; font-size: 13px"><strong style="display: block; font-size: 15px">FIRST TERM REPORT</strong>2026/2027 Session</div>
+              </div>
+            </sc-if>
+            <sc-if value="{{b.isStudent}}" hint-placeholder-val="{{ false }}">
+              <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px 14px; font-size: 13px; background: {{b.tint}}; border: {{b.boxBorder}}; border-radius: 6px; padding: 10px 12px">
+                <div><span style="display: block; font-size: 11px; color: #5b6475">NAME</span><strong>Chukwuemeka Obi</strong></div>
+                <div><span style="display: block; font-size: 11px; color: #5b6475">ADMISSION NO.</span><strong>GMC/2026/014</strong></div>
+                <div><span style="display: block; font-size: 11px; color: #5b6475">CLASS</span><strong>JSS 1A</strong></div>
+                <div><span style="display: block; font-size: 11px; color: #5b6475">NEXT TERM BEGINS</span><strong>5 Jan 2027</strong></div>
+              </div>
+            </sc-if>
+            <sc-if value="{{b.isSubjects}}" hint-placeholder-val="{{ false }}">
+              <div role="table" aria-label="Subjects" class="num" style="font-size: 12px; border-top: 1px solid #c9d0db; border-left: 1px solid #c9d0db">
+                <div role="row" style="display: grid; grid-template-columns: {{b.gridCols}}; background: {{b.headBg}}; color: {{b.headInk}}; font-weight: 600">
+                  <sc-for list="{{b.head}}" as="h" hint-placeholder-count="9"><span role="columnheader" style="padding: 4px 5px; border-right: 1px solid #c9d0db; border-bottom: 1px solid #c9d0db; text-align: {{h.align}}">{{h.v}}</span></sc-for>
+                </div>
+                <sc-for list="{{b.rows}}" as="r" hint-placeholder-count="13">
+                  <div role="row" style="display: grid; grid-template-columns: {{b.gridCols}}; background: {{r.bg}}">
+                    <sc-for list="{{r.cells}}" as="c" hint-placeholder-count="9"><span role="cell" style="padding: 3px 5px; border-right: 1px solid #c9d0db; border-bottom: 1px solid #c9d0db; text-align: {{c.align}}; font-weight: {{c.w}}">{{c.v}}</span></sc-for>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+            <sc-if value="{{b.isSummary}}" hint-placeholder-val="{{ false }}">
+              <div style="display: grid; grid-template-columns: repeat({{b.sumCols}}, minmax(0, 1fr)); border: 2px solid {{b.accent}}; border-radius: 6px; overflow: hidden; text-align: center">
+                <sc-for list="{{b.sumItems}}" as="si" hint-placeholder-count="3">
+                  <div style="padding: 8px; border-right: 1px solid #c9d0db"><span style="display: block; font-size: 11px; color: #5b6475">{{si.k}}</span><strong class="num" style="font-size: 18px">{{si.v}}</strong></div>
+                </sc-for>
+              </div>
+            </sc-if>
+            <sc-if value="{{b.isDomains}}" hint-placeholder-val="{{ false }}">
+              <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; font-size: 12px">
+                <div style="border: 1px solid #c9d0db; border-radius: 4px; padding: 8px 10px"><strong style="display: block; font-size: 11px; margin-bottom: 4px">AFFECTIVE DOMAIN (1 to 5)</strong>Punctuality 5 · Neatness 4 · Politeness 5 · Attentiveness 4 · Relationship with others 5</div>
+                <div style="border: 1px solid #c9d0db; border-radius: 4px; padding: 8px 10px"><strong style="display: block; font-size: 11px; margin-bottom: 4px">PSYCHOMOTOR DOMAIN (1 to 5)</strong>Handwriting 4 · Sports and games 5 · Crafts 3 · Verbal fluency 4 · Musical skills 3</div>
+              </div>
+            </sc-if>
+            <sc-if value="{{b.isAttendance}}" hint-placeholder-val="{{ false }}">
+              <div style="font-size: 13px; border: 1px dashed #737c8f; border-radius: 4px; padding: 8px 10px; color: #5b6475">Attendance: [DAYS PRESENT] of [DAYS OPEN]</div>
+            </sc-if>
+            <sc-if value="{{b.isComments}}" hint-placeholder-val="{{ false }}">
+              <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; font-size: 13px">
+                <div><strong style="display: block; font-size: 11px; color: {{b.accent}}">FORM TEACHER'S COMMENT</strong>Chukwuemeka is attentive and works well with others. More reading at home will lift his English.</div>
+                <div><strong style="display: block; font-size: 11px; color: {{b.accent}}">PRINCIPAL'S COMMENT</strong>A good result. Keep it up.</div>
+              </div>
+            </sc-if>
+            <sc-if value="{{b.isSignatures}}" hint-placeholder-val="{{ false }}">
+              <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; font-size: 11px; color: #5b6475; padding-top: 14px">
+                <div style="border-top: 1px solid #0f172a; padding-top: 4px">Form teacher's signature</div>
+                <div style="border-top: 1px solid #0f172a; padding-top: 4px">Principal's signature and stamp</div>
+              </div>
+            </sc-if>
+            <sc-if value="{{b.isFooter}}" hint-placeholder-val="{{ false }}">
+              <div style="margin-top: auto; display: flex; align-items: center; gap: 14px; border-top: 1px solid #c9d0db; padding-top: 10px; font-size: 12px">
+                <div style="width: 64px; height: 64px; border: 2px dashed #737c8f; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; color: #5b6475">QR</div>
+                <div style="flex-grow: 1"><strong>Report ID</strong> GMC-2627-T1-JSS1A-014 · <strong>Revision</strong> 1 · <strong>Published</strong> 8 Dec 2026<br>Verify with code <strong>7KQ4-M2XD</strong></div>
+                <div style="display: flex; align-items: center; gap: 6px; font-size: 11px; color: #5b6475"><img src="/_blob/b5461303d7a8d45a18f7975e283523ab" alt="" style="width: 16px; height: 16px">Powered by SchoolFlow</div>
+              </div>
+            </sc-if>
+          </sc-for>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1180}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = {
+      style: 'modern', selected: 'summary', saved: false,
+      blocks: [
+        { id: 'header', label: 'School header', visible: true },
+        { id: 'student', label: 'Student details', visible: true },
+        { id: 'subjects', label: 'Subject table', visible: true },
+        { id: 'summary', label: 'Summary: total, average, position', visible: true },
+        { id: 'domains', label: 'Affective and psychomotor', visible: true },
+        { id: 'attendance', label: 'Attendance', visible: false },
+        { id: 'comments', label: 'Comments', visible: true },
+        { id: 'signatures', label: 'Signatures', visible: true },
+        { id: 'footer', label: 'Footer, QR and report ID', visible: true }
+      ],
+      opts: {
+        header: { motto: true },
+        subjects: { ca: true, subjectPos: true, classAvg: true },
+        summary: { total: true, average: true, position: true, numInClass: true, result: false }
+      }
+    };
+  }
+  move(i, d) {
+    const b = this.state.blocks.slice(); const j = i + d;
+    if (j < 0 || j >= b.length) return;
+    [b[i], b[j]] = [b[j], b[i]];
+    this.setState({ blocks: b, saved: false });
+  }
+  setOpt(block, key) {
+    const o = this.state.opts;
+    this.setState({ opts: { ...o, [block]: { ...o[block], [key]: !o[block][key] } }, saved: false });
+  }
+  renderVals() {
+    const st = this.state; const o = st.opts; const modern = st.style === 'modern';
+    const n = st.blocks.length;
+    const blocks = st.blocks.map((b, i) => {
+      const sel = st.selected === b.id;
+      return {
+        ...b, hidden: !b.visible,
+        rowBg: sel ? '#eaf0ff' : '#ffffff', rowBorder: sel ? '#1f4fd8' : 'transparent',
+        labelInk: b.visible ? '#0f172a' : '#5b6475', selAttr: sel ? 'true' : 'false', visAttr: b.visible ? 'true' : 'false',
+        eyeLabel: (b.visible ? 'Hide ' : 'Show ') + b.label,
+        first: i === 0, last: i === n - 1, upOpacity: i === 0 ? '0.3' : '1', downOpacity: i === n - 1 ? '0.3' : '1',
+        select: () => this.setState({ selected: b.id }),
+        up: () => this.move(i, -1), down: () => this.move(i, 1),
+        toggle: () => this.setState({ blocks: st.blocks.map((x, j) => (j === i ? { ...x, visible: !x.visible } : x)), saved: false })
+      };
+    });
+    const meta = {
+      header: [['motto', 'School motto', 'Shown under the school name.']],
+      subjects: [
+        ['ca', 'CA and exam breakdown', 'CA1, CA2 and Exam columns before the total.'],
+        ['subjectPos', 'Position in each subject', 'Some schools leave subject positions off.'],
+        ['classAvg', 'Class average per subject', 'Helps parents compare with the class.']
+      ],
+      summary: [
+        ['total', 'Total score', 'Sum of all subject totals.'],
+        ['average', 'Total average', 'Total score divided by number of subjects.'],
+        ['position', 'Overall class position (optional)', 'Turn off if your school does not publish positions.'],
+        ['numInClass', 'Number in class', 'Shown beside the position, for example 3rd of 12.'],
+        ['result', 'Promotion result', 'Mainly for the Third Term report.']
+      ]
+    };
+    const selBlock = st.blocks.find((b) => b.id === st.selected) || st.blocks[0];
+    const options = (meta[selBlock.id] || []).map(([key, label, hint]) => {
+      const on = o[selBlock.id][key];
+      return { label, hint, checked: on ? 'true' : 'false', track: on ? '#1f4fd8' : '#737c8f', knob: on ? '21px' : '3px', toggle: () => this.setOpt(selBlock.id, key) };
+    });
+    const accent = modern ? '#14532d' : '#0f172a';
+    const subj = [
+      ['English Language',15,14,45,74,'B2','Very good','4th','65.1'],['Mathematics',16,15,47,78,'A1','Excellent','2nd','64.8'],['Basic Science',14,13,42,69,'B3','Good','5th','61.7'],
+      ['Basic Technology',13,12,40,65,'B3','Good','6th','60.2'],['Social Studies',16,15,49,80,'A1','Excellent','2nd','70.3'],['Civic Education',15,14,47,76,'A1','Excellent','3rd','68.9'],
+      ['Igbo Language',12,12,38,62,'C4','Credit','7th','63.5'],['Agricultural Science',14,13,44,71,'B2','Very good','4th','66.0'],['Computer Studies',14,14,44,72,'B2','Very good','5th','69.4'],
+      ['Christian Religious Studies',15,15,47,77,'A1','Excellent','3rd','71.2'],['Business Studies',13,13,40,66,'B3','Good','6th','62.8'],['Cultural and Creative Arts',14,13,43,70,'B2','Very good','4th','67.5'],
+      ['Physical and Health Education',14,13,41,68,'B3','Good','7th','72.1']
+    ].map(([s,c1,c2,e,t,g,rm,p,a]) => ({ s, c1, c2, e, t, g, rm, p, a }));
+    const so = o.subjects;
+    const cols = [['Subject', 's', 'left', '2.6fr', 500]];
+    if (so.ca) cols.push(['CA1', 'c1', 'center', '0.6fr', 400], ['CA2', 'c2', 'center', '0.6fr', 400], ['Exam', 'e', 'center', '0.7fr', 400]);
+    cols.push(['Total', 't', 'center', '0.7fr', 700], ['Grade', 'g', 'center', '0.7fr', 700], ['Remark', 'rm', 'center', '1.1fr', 400]);
+    if (so.subjectPos) cols.push(['Pos.', 'p', 'center', '0.6fr', 400]);
+    if (so.classAvg) cols.push(['Class avg', 'a', 'center', '0.9fr', 400]);
+    const gridCols = cols.map((c) => 'minmax(0, ' + c[3] + ')').join(' ');
+    const head = cols.map((c) => ({ v: c[0], align: c[2] }));
+    const tableRows = subj.map((r, i) => ({ bg: i % 2 ? (modern ? '#f4f7f5' : '#ffffff') : '#ffffff', cells: cols.map((c) => ({ v: String(r[c[1]]), align: c[2], w: String(c[4]) })) }));
+    const s = o.summary; const sumItems = [];
+    if (s.total) sumItems.push({ k: 'TOTAL SCORE', v: '928' });
+    if (s.average) sumItems.push({ k: 'TOTAL AVERAGE', v: '71.4' });
+    if (s.position) sumItems.push({ k: 'CLASS POSITION', v: s.numInClass ? '3rd of 12' : '3rd' });
+    if (!s.position && s.numInClass) sumItems.push({ k: 'NO. IN CLASS', v: '12' });
+    if (s.result) sumItems.push({ k: 'RESULT', v: 'Promoted' });
+    const preview = st.blocks.filter((b) => b.visible).map((b) => ({
+      isHeader: b.id === 'header', isStudent: b.id === 'student', isSubjects: b.id === 'subjects', isSummary: b.id === 'summary' && sumItems.length > 0,
+      isDomains: b.id === 'domains', isAttendance: b.id === 'attendance', isComments: b.id === 'comments', isSignatures: b.id === 'signatures', isFooter: b.id === 'footer',
+      accent, motto: o.header.motto, align: 'left', crestRadius: modern ? '14px' : '9999px',
+      tint: modern ? '#f4f7f5' : '#ffffff', boxBorder: modern ? '0' : '1px solid #0f172a',
+      headBg: modern ? '#14532d' : '#ffffff', headInk: modern ? '#ffffff' : '#0f172a',
+      gridCols, head, rows: tableRows,
+      sumItems, sumCols: String(Math.max(1, sumItems.length))
+    }));
+    const versions = [
+      { id: 'v3', note: 'Added QR footer', when: '1 Sep 2026' },
+      { id: 'v2', note: 'Subject position column', when: '28 Aug 2026' },
+      { id: 'v1', note: 'First version', when: '25 Aug 2026' }
+    ];
+    if (st.saved) versions.unshift({ id: 'v4', note: (modern ? 'Modern' : 'Classic') + ' style, block changes', when: 'Today' });
+    const on = 'background: #ffffff';
+    return {
+      blocks, options, preview, versions,
+      selLabel: selBlock.label, selHasOptions: options.length > 0, selNoOptions: options.length === 0,
+      pvFont: modern ? "Inter, 'Segoe UI', system-ui, sans-serif" : "Georgia, 'Times New Roman', serif",
+      modernSel: modern ? 'true' : 'false', classicSel: modern ? 'false' : 'true',
+      modernBg: modern ? '#ffffff' : 'transparent', classicBg: modern ? 'transparent' : '#ffffff',
+      modernInk: modern ? '#0f172a' : '#5b6475', classicInk: modern ? '#5b6475' : '#0f172a',
+      modernShadow: modern ? '0 1px 2px rgba(15,23,42,0.08)' : 'none', classicShadow: modern ? 'none' : '0 1px 2px rgba(15,23,42,0.08)',
+      pickModern: () => this.setState({ style: 'modern', saved: false }),
+      pickClassic: () => this.setState({ style: 'classic', saved: false }),
+      fullPreview: modern ? 'ReportCard.dc.html' : 'ReportCardClassic.dc.html',
+      versionLine: st.saved ? 'version 4 in use' : 'editing version 3 (in use)',
+      saved: st.saved, saveLabel: st.saved ? 'Saved' : 'Save as version 4',
+      save: () => this.setState({ saved: true })
+    };
+  }
+}
+</script>
+</body>
+</html>

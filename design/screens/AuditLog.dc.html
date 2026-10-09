@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Audit log</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="sf.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>body{margin:0}
+.sf .al-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.sf .al-item { display: flex; gap: 14px; align-items: flex-start; padding: 16px 20px; border-top: 1px solid var(--border); }
+.sf .al-item:first-child { border-top: 0; }
+.sf[data-device="phone"] .al-item { padding: 14px 16px; gap: 12px; }
+.sf .al-ic { width: 36px; height: 36px; flex-shrink: 0; border-radius: 9999px; display: flex; align-items: center; justify-content: center; }
+.sf .al-chip { display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 9px 0 4px; border-radius: 9999px; background: var(--surface-2); font-size: 12px; font-weight: 600; color: var(--text); white-space: nowrap; }
+.sf .al-chip i { width: 16px; height: 16px; border-radius: 4px; display: inline-block; }
+.sf .al-det { margin-top: 10px; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+.sf .al-det .rt .tr { padding: 8px 14px; }
+.sf .al-toggle { min-height: 44px; margin: -12px 0 -12px -6px; padding: 0 6px; border: 0; background: transparent; color: var(--primary); font: 600 13px Inter, system-ui, sans-serif; display: inline-flex; align-items: center; gap: 4px; cursor: pointer; }
+</style>
+</helmet>
+<div class="sf" data-theme="{{theme}}" data-device="{{device}}">
+<div class="app">
+  <aside class="side desk-only" aria-label="Platform navigation">
+    <img src="{{logo}}" alt="SchoolFlow Result Portal" style="width: 172px; height: auto; margin: 4px 8px">
+    <nav class="nav" aria-label="Main">
+      <sc-for list="{{nav}}" as="n" hint-placeholder-count="8">
+        <sc-if value="{{n.grp}}" hint-placeholder-val="{{ false }}"><span class="cap grp">{{n.grp}}</span></sc-if>
+        <a href="{{n.href}}" class="{{n.cls}}" aria-current="{{n.cur}}"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{n.d}}"></path></svg><span class="l">{{n.label}}</span></a>
+      </sc-for>
+    </nav>
+  </aside>
+  <div class="main">
+    <header class="top desk-only">
+      <nav class="crumb" aria-label="Breadcrumb"><a href="SuperDashboard.dc.html">Platform</a> / <b>Audit log</b></nav>
+      <button class="iconbtn" aria-label="Notices"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.bell}}"></path></svg></button>
+      <button class="iconbtn" aria-label="Theme. Choose Light, Dark or System"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.theme}}"></path></svg></button>
+      <button class="btn sm" aria-label="Profile menu" style="border: 0"><span class="crest" aria-hidden="true" style="width: 32px; height: 32px; border-radius: 9999px; background: var(--text); color: var(--bg); font-size: 12px">SA</span><span class="col" style="gap: 0; align-items: flex-start"><span style="font-size: 14px">Platform admin</span><span class="muted" style="font-size: 12px; font-weight: 500">Super admin</span></span></button>
+    </header>
+    <header class="phead phone-only">
+      <button class="iconbtn" aria-label="Open menu" onClick="{{openDrawer}}"><svg class="i l" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.menu}}"></path></svg></button>
+      <span class="ttl">Audit log</span>
+      <button class="iconbtn" aria-label="Notices"><svg class="i l" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.bell}}"></path></svg></button>
+    </header>
+
+    <main class="content">
+      <div class="row" style="align-items: flex-end">
+        <div class="col grow" style="gap: 4px"><h1 class="h1 desk-only">Audit log</h1><p class="muted" style="font-size: 15px">{{countLine}}</p></div>
+        <sc-if value="{{phoneFilterBtn}}" hint-placeholder-val="{{ false }}"><button class="btn" aria-expanded="{{filtersOpen}}" onClick="{{toggleFilters}}"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.filter}}"></path></svg>Filters<sc-if value="{{activeCount}}" hint-placeholder-val="{{ false }}"><span class="count strong">{{activeCount}}</span></sc-if></button></sc-if>
+      </div>
+
+      <sc-if value="{{filtersShown}}" hint-placeholder-val="{{ true }}">
+        <div class="form-grid" style="grid-template-columns: repeat(auto-fit, minmax(190px, 1fr))">
+          <label class="field">School<select class="input" value="{{fSchool}}" onChange="{{onSchool}}"><option>All schools</option><option>Greenfield Model College</option><option>Bright Stars Academy</option><option>Royal Crest Schools</option><option>Platform only</option></select></label>
+          <label class="field">Person<select class="input" value="{{fPerson}}" onChange="{{onPerson}}"><option>Everyone</option><option>Platform admin</option><option>Mrs. Ngozi Okeke</option><option>Mrs. Chiamaka Nwafor</option><option>SchoolFlow (automatic)</option></select></label>
+          <label class="field">Action<select class="input" value="{{fAction}}" onChange="{{onAction}}"><option>All actions</option><option>Schools</option><option>Report cards by level</option><option>Logins and accounts</option><option>Pricing</option><option>Invoices</option><option>Payments</option><option>Emails</option></select></label>
+          <label class="field">Date<select class="input" value="{{fDate}}" onChange="{{onDate}}"><option>Any time</option><option>Today</option><option>Last 7 days</option><option>Last 30 days</option></select></label>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{isLoading}}" hint-placeholder-val="{{ false }}">
+        <div class="card col" aria-busy="true"><div class="row" style="flex-wrap: nowrap"><div class="skel" style="width: 36px; height: 36px; border-radius: 9999px"></div><div class="col grow" style="gap: 6px"><div class="skel" style="height: 16px; width: 70%"></div><div class="skel" style="height: 14px; width: 30%"></div></div></div><div class="row" style="flex-wrap: nowrap"><div class="skel" style="width: 36px; height: 36px; border-radius: 9999px"></div><div class="col grow" style="gap: 6px"><div class="skel" style="height: 16px; width: 60%"></div><div class="skel" style="height: 14px; width: 26%"></div></div></div><div class="row" style="flex-wrap: nowrap"><div class="skel" style="width: 36px; height: 36px; border-radius: 9999px"></div><div class="col grow" style="gap: 6px"><div class="skel" style="height: 16px; width: 76%"></div><div class="skel" style="height: 14px; width: 34%"></div></div></div></div>
+      </sc-if>
+      <sc-if value="{{isError}}" hint-placeholder-val="{{ false }}">
+        <div class="card state" role="alert"><span class="ic" style="background: var(--danger-soft); color: var(--danger)"><svg class="i l" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.alert}}"></path></svg></span><p class="h3">We couldn't load the audit log.</p><p class="muted">Check your connection and try again.</p><button class="btn primary">Try again</button></div>
+      </sc-if>
+      <sc-if value="{{isEmpty}}" hint-placeholder-val="{{ false }}">
+        <div class="card state"><span class="ic" style="background: var(--primary-soft); color: var(--primary)"><svg class="i l" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.audit}}"></path></svg></span><p class="h3">No events yet.</p><p class="muted" style="max-width: 440px">Every change to schools, logins, pricing, invoices and payments is recorded here. Start by creating a school.</p><a class="btn" href="{{createHref}}">Create school</a></div>
+      </sc-if>
+      <sc-if value="{{noMatch}}" hint-placeholder-val="{{ false }}">
+        <div class="card state"><p class="h3">No events match these filters.</p><button class="btn" onClick="{{clear}}">Clear filters</button></div>
+      </sc-if>
+
+      <sc-if value="{{hasRows}}" hint-placeholder-val="{{ true }}">
+        <section class="card flush" aria-label="Events, newest first">
+          <ol class="al-list">
+            <sc-for list="{{events}}" as="e" hint-placeholder-count="6">
+              <li class="al-item">
+                <span class="al-ic" style="background: {{e.bg}}; color: {{e.fg}}" aria-hidden="true"><svg class="i" viewBox="0 0 24 24"><path d="{{e.icon}}"></path></svg></span>
+                <div class="col grow" style="gap: 6px">
+                  <p style="font-size: 15px"><time class="num" style="font-weight: 600">{{e.when}}.</time> {{e.text}}</p>
+                  <div class="row" style="gap: 8px 12px; font-size: 13px">
+                    <span class="muted">{{e.actor}} · {{e.role}}</span>
+                    <span class="al-chip"><i style="background: {{e.colour}}"></i>{{e.chip}}</span>
+                    <span class="badge sm b-neutral"><svg class="i s" viewBox="0 0 24 24" aria-hidden="true"><path d="{{e.icon}}"></path></svg>{{e.group}}</span>
+                    <sc-if value="{{e.hasDet}}" hint-placeholder-val="{{ true }}"><button class="al-toggle" aria-expanded="{{e.open}}" onClick="{{e.toggle}}">{{e.toggleLabel}}<svg class="i s" viewBox="0 0 24 24" aria-hidden="true"><path d="{{e.chev}}"></path></svg></button></sc-if>
+                  </div>
+                  <sc-if value="{{e.showDet}}" hint-placeholder-val="{{ false }}">
+                    <div class="al-det">
+                      <div class="rt num" style="--cols: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr)">
+                        <div class="tr th"><span>Field</span><span>Before</span><span>After</span></div>
+                        <sc-for list="{{e.det}}" as="d" hint-placeholder-count="2">
+                          <div class="tr"><span class="td first" style="font-weight: 600">{{d.k}}</span><span class="td muted" data-label="Before">{{d.b}}</span><span class="td" data-label="After">{{d.a}}</span></div>
+                        </sc-for>
+                      </div>
+                    </div>
+                  </sc-if>
+                </div>
+              </li>
+            </sc-for>
+          </ol>
+        </section>
+      </sc-if>
+    </main>
+
+  </div>
+</div>
+<sc-if value="{{drawer}}" hint-placeholder-val="{{ false }}">
+  <div class="scrim">
+    <div class="drawer" role="dialog" aria-modal="true" aria-label="Menu">
+      <div class="row" style="justify-content: space-between"><img src="{{logo}}" alt="SchoolFlow Result Portal" style="width: 150px; height: auto"><button class="iconbtn" aria-label="Close menu" onClick="{{closeDrawer}}"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.close}}"></path></svg></button></div>
+      <nav class="nav" aria-label="Main">
+        <sc-for list="{{nav}}" as="n" hint-placeholder-count="8">
+          <sc-if value="{{n.grp}}" hint-placeholder-val="{{ false }}"><span class="cap grp">{{n.grp}}</span></sc-if>
+          <a href="{{n.href}}" class="{{n.cls}}" aria-current="{{n.cur}}"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{n.d}}"></path></svg><span class="l">{{n.label}}</span></a>
+        </sc-for>
+      </nav>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{toast}}" hint-placeholder-val="{{ false }}">
+  <div role="status" style="position: {{toastPos}}; left: 50%; bottom: {{toastBottom}}; transform: translateX(-50%); z-index: 40; max-width: 92%; background: var(--text); color: var(--bg); border-radius: 10px; padding: 12px 16px; display: flex; gap: 12px; align-items: center; font-size: 14px; box-shadow: var(--shadow-lg)">
+    <span>{{toast}}</span><button class="iconbtn" aria-label="Dismiss" onClick="{{hideToast}}" style="color: var(--bg); width: 32px; height: 32px"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.close}}"></path></svg></button>
+  </div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["Light","Dark"],"default":"Light"},"state":{"editor":"enum","options":["Default","Empty","Loading","Error"],"default":"Default"},"device":{"editor":"enum","options":["Desktop","Phone"],"default":"Desktop"},"$preview":{"width":1440,"height":1500}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { fSchool: 'All schools', fPerson: 'Everyone', fAction: 'All actions', fDate: 'Any time', open: {}, filtersOpen: false, drawer: false, toast: '' }; }
+  icons() {
+    return {
+      dash: 'M3 3h7v9H3zM14 3h7v5h-7zM14 12h7v9h-7zM3 16h7v5H3z', schools: 'M3 21h18M5 21V9l7-5 7 5v12M9 21v-6h6v6',
+      pricing: 'M20.6 13.4l-7.2 7.2a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8zM9 7.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z',
+      invoices: 'M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9zM14 3v6h6M8 13h8M8 17h5', pay: 'M4 5h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2zM2 10h20',
+      audit: 'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM12 7v5l3 2', mail: 'M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zM22 6l-10 7L2 6',
+      settings: 'M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1',
+      bell: 'M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.94 1.94 0 0 0 3.4 0', menu: 'M4 6h16M4 12h16M4 18h16', close: 'M18 6L6 18M6 6l12 12',
+      theme: 'M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0zM12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4',
+      plus: 'M12 5v14M5 12h14', search: 'M17 11a6 6 0 1 1-12 0 6 6 0 0 1 12 0zM21 21l-4.35-4.35', alert: 'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM12 8v4M12 16h.01',
+      check: 'M5 12l5 5L20 7', pause: 'M9 5v14M15 5v14', play: 'M7 4l13 8-13 8z', minus: 'M5 12h14',
+      ok: 'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM8 12l3 3 5-6', xc: 'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM15 9l-6 6M9 9l6 6',
+      clock: 'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM12 7v5l3 2', warn: 'M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0zM12 9v4M12 17h.01',
+      upload: 'M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12', user: 'M16 8a4 4 0 1 1-8 0 4 4 0 0 1 8 0zM4 21a8 8 0 0 1 16 0',
+      key: 'M15 7a4 4 0 1 1-3.9 5H3v3h3v3h3v-3h2.1A4 4 0 0 1 15 7z', hash: 'M4 9h16M4 15h16M10 3L8 21M16 3l-2 18',
+      layers: 'M12 2l10 5-10 5L2 7zM2 17l10 5 10-5M2 12l10 5 10-5', lock: 'M5 11h14v10H5zM8 11V7a4 4 0 0 1 8 0v4',
+      shield: 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z', refresh: 'M21 12a9 9 0 1 1-3-6.7L21 8M21 3v5h-5',
+      down: 'M6 9l6 6 6-6', up: 'M18 15l-6-6-6 6', filter: 'M3 5h18M6 12h12M10 19h4', send: 'M22 2L11 13M22 2l-7 20-4-9-9-4z',
+      bank: 'M3 21h18M4 10h16M12 3l9 5H3zM6 10v8M10 10v8M14 10v8M18 10v8', receipt: 'M5 3v18l3-2 2 2 2-2 2 2 2-2 3 2V3zM9 8h6M9 12h6M9 16h3',
+      ext: 'M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5'
+    };
+  }
+  nav(active, phone) {
+    const I = this.icons(); const go = (n) => (n.startsWith('#') ? n : (phone && ['Assessment', 'AssessmentBSA', 'Attention', 'AttentionBSA', 'AttentionReviewer', 'AttentionTeacher', 'AttentionTeacherBSA', 'AuditLog', 'BillingV5', 'BsaMenus', 'ChangePassword', 'ClassPage', 'CreateSchool', 'DashboardV5', 'EmailLog', 'Grading', 'GradingBSA', 'LearningAreas', 'Login', 'Login_Link', 'MyClass', 'MyClassPrimary', 'ParentSkills', 'Payments', 'PlatformSettings', 'PricingV5', 'PublishV5', 'RatingSheet', 'RatingSheetAssistant', 'SchoolAdmins', 'SchoolAdminsBSA', 'SchoolDetailBSA', 'SchoolDetailV5', 'SchoolPaused', 'SchoolsV5', 'ScoreGridSS', 'ScoreGridV5', 'SheetsV5', 'StudentDetail', 'SuperBillingV5', 'TemplateEditorBSA', 'TemplateEditorV5'].includes(n) ? n + '_Phone.dc.html' : n + '.dc.html'));
+    const items = [[null, 'Dashboard', 'SuperDashboard', 'dash'], [null, 'Schools', 'SchoolsV5', 'schools'], [null, 'Pricing', 'PricingV5', 'pricing'], ['Billing', 'Invoices', 'SuperBillingV5', 'invoices'], [null, 'Payments', 'Payments', 'pay'], ['Platform', 'Audit log', 'AuditLog', 'audit'], [null, 'Email log', 'EmailLog', 'mail'], [null, 'Settings', 'PlatformSettings', 'settings']];
+    return items.map(([grp, label, href, ic]) => ({ grp: grp || '', label, href: go(href), d: I[ic], cls: label === active ? 'on' : '', cur: label === active ? 'page' : 'false' }));
+  }
+  base(active) {
+    const P = this.props, st = this.state, I = this.icons();
+    const theme = String(P.theme || 'Light').toLowerCase(), device = String(P.device || 'Desktop').toLowerCase(), view = String(P.state || 'Default').toLowerCase();
+    const phone = device === 'phone';
+    return {
+      P, st, I, view, phone,
+      vals: {
+        theme, device, ic: I, nav: this.nav(active, phone),
+        logo: theme === 'dark' ? '/_blob/f8c668b157c01655c625f83bed0c84c2' : '/_blob/182db0c32744c4f6abeb340d16b2ccfb',
+        isLoading: view === 'loading', isError: view === 'error', isEmpty: view === 'empty',
+        drawer: !!st.drawer, openDrawer: () => this.setState({ drawer: true }), closeDrawer: () => this.setState({ drawer: false }),
+        toast: st.toast || '', hideToast: () => this.setState({ toast: '' }), toastPos: phone ? 'absolute' : 'fixed', toastBottom: phone ? '96px' : '24px'
+      }
+    };
+  }
+
+  renderVals() {
+    const B = this.base('Audit log'), st = B.st, I = B.I, view = B.view, phone = B.phone;
+    const SC = { GMC: ['Greenfield Model College', '#1e6b45'], BSA: ['Bright Stars Academy', '#7a1f2b'], RCS: ['Royal Crest Schools', '#1d3a6e'] };
+    const PA = 'Platform admin', SYS = 'SchoolFlow (automatic)';
+    const G = {
+      Schools: [I.schools, 'var(--primary-soft)', 'var(--primary)'], 'Report cards by level': [I.layers, 'var(--info-soft)', 'var(--info)'],
+      'Logins and accounts': [I.key, 'var(--warning-soft)', 'var(--warning-ink)'], Pricing: [I.pricing, 'var(--reviewed-soft)', 'var(--reviewed)'],
+      Invoices: [I.invoices, 'var(--neutral-soft)', 'var(--neutral)'], Payments: [I.pay, 'var(--success-soft)', 'var(--success-ink)'], Emails: [I.mail, 'var(--neutral-soft)', 'var(--neutral)']
+    };
+    // [date 'YYYY-MM-DD', time, actor, role, school code or '', group, text, details [[field, before, after]], icon override]
+    const raw = [
+      ['2026-08-28', '15:05', PA, 'Super admin', '', 'Pricing', 'Platform admin saved pricing as version 3. Cliff protection is on.', [['Pricing version', '2', '3'], ['Standard price per student', '[PREVIOUS]', '₦500'], ['Cliff protection', 'On', 'On']]],
+      ['2026-09-01', '09:12', PA, 'Super admin', 'GMC', 'Schools', 'Platform admin created Greenfield Model College as Secondary only.', [['School code', 'None', 'GMC'], ['School type', 'None', 'Secondary only'], ['Billing', 'None', 'On']]],
+      ['2026-09-01', '09:12', SYS, 'System', 'GMC', 'Emails', 'Set-up email sent to info@greenfield.edu.ng.', []],
+      ['2026-09-01', '10:40', 'Mrs. Ngozi Okeke', 'Principal', 'GMC', 'Logins and accounts', 'Mrs. Ngozi Okeke activated her account.', [['Account status', 'Invited', 'Active']]],
+      ['2026-09-01', '16:00', PA, 'Super admin', '', 'Invoices', 'Platform admin generated First Term 2026/2027 invoices for 2 schools.', [['Greenfield Model College', 'None', '₦285,500 (571 students)'], ['Royal Crest Schools', 'None', '[AMOUNT]'], ['Due date', 'None', '[DUE DATE]']]],
+      ['2026-09-02', '11:05', 'Payment gateway', 'System', 'GMC', 'Payments', 'Payment recorded: ₦285,500 for INV-GMC-2627-T1, reference PSK-8F3K2Q.', [['Invoice status', 'Unpaid', 'Paid'], ['Method', 'None', 'Gateway']]],
+      ['2026-09-03', '08:30', 'Mrs. Ngozi Okeke', 'Principal', 'GMC', 'Logins and accounts', 'Mrs. Ngozi Okeke added Mr. Chukwudi Eze as a school admin.', [['Role', 'None', 'School admin'], ['Account status', 'None', 'Invited']]],
+      ['2026-09-10', '14:02', PA, 'Super admin', 'RCS', 'Report cards by level', 'Platform admin turned off Nursery report cards for Royal Crest Schools. Its data and published reports are kept.', [['Nursery report cards', 'On', 'Off'], ['School type', 'Nursery, Primary and Secondary', 'Custom']]],
+      ['2026-09-10', '14:09', PA, 'Super admin', 'RCS', 'Report cards by level', 'Platform admin turned Nursery report cards back on for Royal Crest Schools.', [['Nursery report cards', 'Off', 'On'], ['School type', 'Custom', 'Nursery, Primary and Secondary']]],
+      ['2026-09-15', '09:00', PA, 'Super admin', 'RCS', 'Schools', 'Platform admin suspended Royal Crest Schools. Reason: First Term invoice unpaid after the grace period.', [['School status', 'Active', 'Suspended'], ['Reason', 'None', 'First Term invoice unpaid after the grace period.']], I.pause],
+      ['2026-09-18', '10:15', PA, 'Super admin', 'RCS', 'Payments', 'Platform admin recorded a manual payment: [AMOUNT] for INV-RCS-2627-T1, reference TRF-55021.', [['Invoice status', 'Unpaid', 'Paid'], ['Method', 'None', 'Manual (bank transfer)'], ['Note', 'None', 'Confirmed on bank statement']]],
+      ['2026-09-18', '10:20', PA, 'Super admin', 'RCS', 'Schools', 'Platform admin reactivated Royal Crest Schools.', [['School status', 'Suspended', 'Active']], I.play],
+      ['2026-09-22', '12:30', PA, 'Super admin', 'RCS', 'Schools', 'Platform admin changed the school code for Royal Crest Schools from RCSE to RCS. The old code no longer works.', [['School code', 'RCSE', 'RCS'], ['School login link', '/login/RCSE', '/login/RCS']], I.hash],
+      ['2026-09-29', '09:05', PA, 'Super admin', 'GMC', 'Logins and accounts', 'Platform admin sent a reset link to Mrs. Ngozi Okeke. Her other sessions ended.', [['Reset link sent to', 'None', 'ngozi.okeke@greenfield.edu.ng'], ['Signed in devices', '2', '0']]],
+      ['2026-10-02', '14:10', PA, 'Super admin', 'GMC', 'Logins and accounts', 'Platform admin issued a temporary password for Mr. Chukwudi Eze. His other sessions ended.', [['Account status', 'Active', 'Must change password'], ['Password', 'Not shown', 'Not shown']]],
+      ['2026-10-07', '09:40', PA, 'Super admin', 'BSA', 'Schools', 'Platform admin created Bright Stars Academy as Nursery and Primary, free pilot.', [['School code', 'None', 'BSA'], ['School type', 'None', 'Nursery and Primary'], ['Billing', 'None', 'Off (free pilot)']]],
+      ['2026-10-07', '09:40', SYS, 'System', 'BSA', 'Emails', 'Set-up email sent to info@brightstars.edu.ng.', []],
+      ['2026-10-07', '11:02', 'Mrs. Chiamaka Nwafor', 'Head teacher', 'BSA', 'Logins and accounts', 'Mrs. Chiamaka Nwafor activated her account.', [['Account status', 'Invited', 'Active']]]
+    ];
+    const mon = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const today = Date.UTC(2026, 9, 7), day = 86400000;
+    const list = raw.map((r, i) => {
+      const [y, m, d] = r[0].split('-').map(Number);
+      return { i, t: Date.UTC(y, m - 1, d), when: d + ' ' + mon[m - 1] + ' ' + y + ', ' + r[1], sortKey: r[0] + r[1] + String(i).padStart(2, '0'), actor: r[2], role: r[3], code: r[4], group: r[5], text: r[6], det: r[7], icon: r[8] || G[r[5]][0] };
+    });
+    const minT = { 'Any time': -Infinity, Today: today, 'Last 7 days': today - 6 * day, 'Last 30 days': today - 29 * day }[st.fDate];
+    const filtered = view === 'empty' ? [] : list.filter((e) =>
+      (st.fSchool === 'All schools' || (st.fSchool === 'Platform only' ? !e.code : (e.code && SC[e.code][0] === st.fSchool))) &&
+      (st.fPerson === 'Everyone' || (st.fPerson === SYS ? e.role === 'System' : e.actor === st.fPerson)) &&
+      (st.fAction === 'All actions' || e.group === st.fAction) && e.t >= minT
+    ).sort((a, b) => (a.sortKey < b.sortKey ? 1 : -1));
+    const events = filtered.map((e) => {
+      const open = !!st.open[e.i];
+      return {
+        ...e, bg: G[e.group][1], fg: G[e.group][2],
+        chip: e.code ? SC[e.code][0] : 'Platform', colour: e.code ? SC[e.code][1] : 'var(--border-strong)',
+        det: e.det.map(([k, b, a]) => ({ k, b, a })), hasDet: e.det.length > 0, showDet: open && e.det.length > 0,
+        open: open ? 'true' : 'false', toggleLabel: open ? 'Hide details' : 'Show details', chev: open ? I.up : I.down,
+        toggle: () => this.setState({ open: { ...this.state.open, [e.i]: !this.state.open[e.i] } })
+      };
+    });
+    const main = view === 'default';
+    const active = [st.fSchool !== 'All schools', st.fPerson !== 'Everyone', st.fAction !== 'All actions', st.fDate !== 'Any time'].filter(Boolean).length;
+    return {
+      ...B.vals,
+      countLine: view === 'empty' ? 'Every change across the platform, newest first.' : (active ? events.length + ' of ' + list.length + ' events' : list.length + ' events') + " · newest first · events can't be edited or deleted",
+      phoneFilterBtn: main && phone, filtersShown: main && (!phone || st.filtersOpen), filtersOpen: st.filtersOpen ? 'true' : 'false', activeCount: active ? String(active) : '',
+      toggleFilters: () => this.setState({ filtersOpen: !st.filtersOpen }),
+      fSchool: st.fSchool, fPerson: st.fPerson, fAction: st.fAction, fDate: st.fDate,
+      onSchool: (e) => this.setState({ fSchool: e.target.value }), onPerson: (e) => this.setState({ fPerson: e.target.value }),
+      onAction: (e) => this.setState({ fAction: e.target.value }), onDate: (e) => this.setState({ fDate: e.target.value }),
+      clear: () => this.setState({ fSchool: 'All schools', fPerson: 'Everyone', fAction: 'All actions', fDate: 'Any time' }),
+      createHref: phone ? 'CreateSchool_Phone.dc.html' : 'CreateSchool.dc.html',
+      hasRows: main && events.length > 0, noMatch: main && events.length === 0, events
+    };
+  }
+}
+
+</script>
+</body>
+</html>

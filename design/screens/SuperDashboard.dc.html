@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Platform dashboard</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#f7f8fa}
+a{color:#1f4fd8}a:hover{color:#163ca8}
+a:focus-visible,button:focus-visible,select:focus-visible{outline:2px solid #1f4fd8;outline-offset:2px}
+.num{font-variant-numeric:tabular-nums}
+</style>
+</helmet>
+<div style="min-height: 100vh; display: flex; flex-wrap: wrap; align-items: stretch; background: #f7f8fa; font-family: Inter, 'Segoe UI', system-ui, sans-serif; color: #0f172a">
+
+  <aside aria-label="Platform navigation" style="flex: 1 1 256px; max-width: 100%; box-sizing: border-box; background: #ffffff; border-right: 1px solid #e3e7ee; padding: 18px 12px; display: flex; flex-direction: column; gap: 22px">
+    <img src="/_blob/182db0c32744c4f6abeb340d16b2ccfb" alt="SchoolFlow Result Portal" style="width: 172px; height: auto; margin-left: 8px">
+    <nav style="display: flex; flex-direction: column; gap: 2px">
+      <a href="SuperDashboard.dc.html" aria-current="page" style="height: 40px; display: flex; align-items: center; gap: 10px; padding: 0 12px; border-radius: 8px; background: #eaf0ff; color: #1f4fd8; font-size: 14px; font-weight: 600; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="1"></rect><rect x="14" y="3" width="7" height="5" rx="1"></rect><rect x="14" y="12" width="7" height="9" rx="1"></rect><rect x="3" y="16" width="7" height="5" rx="1"></rect></svg><span style="flex-grow: 1">Dashboard</span></a>
+      <a href="Schools.dc.html" style="height: 40px; display: flex; align-items: center; gap: 10px; padding: 0 12px; border-radius: 8px; color: #0f172a; font-size: 14px; font-weight: 500; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5b6475" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18M5 21V9l7-5 7 5v12M9 21v-6h6v6"></path></svg><span style="flex-grow: 1">Schools</span></a>
+      <a href="Pricing.dc.html" style="height: 40px; display: flex; align-items: center; gap: 10px; padding: 0 12px; border-radius: 8px; color: #0f172a; font-size: 14px; font-weight: 500; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5b6475" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.6 13.4l-7.2 7.2a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"></path><circle cx="7.5" cy="7.5" r="1.5"></circle></svg><span style="flex-grow: 1">Pricing</span></a>
+      <span style="padding: 14px 12px 6px; font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: #5b6475">Billing</span>
+      <a href="SuperBilling.dc.html" style="height: 40px; display: flex; align-items: center; gap: 10px; padding: 0 12px; border-radius: 8px; color: #0f172a; font-size: 14px; font-weight: 500; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5b6475" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><path d="M14 3v6h6M8 13h8M8 17h5"></path></svg><span style="flex-grow: 1">Invoices</span></a>
+      <a href="#payments" style="height: 40px; display: flex; align-items: center; gap: 10px; padding: 0 12px; border-radius: 8px; color: #0f172a; font-size: 14px; font-weight: 500; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5b6475" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"></rect><path d="M2 10h20"></path></svg><span style="flex-grow: 1">Payments</span></a>
+      <span style="padding: 14px 12px 6px; font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: #5b6475">Platform</span>
+      <a href="#notices" style="height: 40px; display: flex; align-items: center; gap: 10px; padding: 0 12px; border-radius: 8px; color: #0f172a; font-size: 14px; font-weight: 500; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5b6475" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l18-5v12L3 14z"></path><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"></path></svg><span style="flex-grow: 1">Notices</span></a>
+      <a href="#settings" style="height: 40px; display: flex; align-items: center; gap: 10px; padding: 0 12px; border-radius: 8px; color: #0f172a; font-size: 14px; font-weight: 500; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5b6475" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"></path></svg><span style="flex-grow: 1">Settings</span></a>
+    </nav>
+  </aside>
+
+  <div style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column">
+    <header style="min-height: 64px; box-sizing: border-box; display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding: 10px 32px; background: #ffffff; border-bottom: 1px solid #e3e7ee">
+      <nav aria-label="Breadcrumb" style="flex-grow: 1; font-size: 14px; color: #5b6475">Platform <span aria-hidden="true">/</span> <span style="color: #0f172a; font-weight: 600">Dashboard</span></nav>
+      <button aria-label="Profile menu" style="height: 40px; border: 0; background: transparent; border-radius: 8px; display: flex; align-items: center; gap: 10px; padding: 0 6px; cursor: pointer; font-family: inherit"><span aria-hidden="true" style="width: 32px; height: 32px; border-radius: 9999px; background: #0f172a; color: #ffffff; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center">SA</span><span style="display: flex; flex-direction: column; align-items: flex-start"><span style="font-size: 14px; font-weight: 600; color: #0f172a">Platform admin</span><span style="font-size: 12px; color: #5b6475">Super admin</span></span></button>
+    </header>
+
+    <main style="padding: 28px 32px 40px; display: flex; flex-direction: column; gap: 24px; max-width: 1280px; box-sizing: border-box; width: 100%">
+      <div style="display: flex; flex-wrap: wrap; align-items: flex-end; gap: 16px">
+        <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 4px">
+          <span style="font-size: 14px; color: #5b6475">First Term 2026/2027</span>
+          <h1 style="margin: 0; font-size: 30px; line-height: 38px; font-weight: 700; letter-spacing: -0.01em">Platform overview</h1>
+        </div>
+        <a href="Schools.dc.html" style="height: 44px; display: inline-flex; align-items: center; gap: 8px; padding: 0 18px; border-radius: 8px; border: 1px solid #737c8f; background: #ffffff; color: #0f172a; font-size: 15px; font-weight: 600; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Create school</a>
+        <a href="SuperBilling.dc.html" style="height: 44px; display: inline-flex; align-items: center; gap: 8px; padding: 0 18px; border-radius: 8px; background: #1f4fd8; color: #ffffff; font-size: 15px; font-weight: 600; text-decoration: none">Generate Second Term invoices</a>
+      </div>
+
+      <section aria-label="Key figures" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px">
+        <div style="background: #ffffff; border: 1px solid #e3e7ee; border-radius: 12px; box-shadow: 0 1px 2px rgba(15,23,42,0.06); padding: 18px 20px; display: flex; flex-direction: column; gap: 6px">
+          <span style="font-size: 14px; font-weight: 500; color: #5b6475">Schools</span>
+          <span class="num" style="font-size: 30px; line-height: 36px; font-weight: 700">6</span>
+          <span style="font-size: 13px; color: #5b6475">5 billed · 1 free pilot</span>
+        </div>
+        <div style="background: #ffffff; border: 1px solid #e3e7ee; border-radius: 12px; box-shadow: 0 1px 2px rgba(15,23,42,0.06); padding: 18px 20px; display: flex; flex-direction: column; gap: 6px">
+          <span style="font-size: 14px; font-weight: 500; color: #5b6475">Billable students</span>
+          <span class="num" style="font-size: 30px; line-height: 36px; font-weight: 700">3,479</span>
+          <span style="font-size: 13px; color: #5b6475">across 5 schools</span>
+        </div>
+        <div style="background: #ffffff; border: 1px solid #e3e7ee; border-radius: 12px; box-shadow: 0 1px 2px rgba(15,23,42,0.06); padding: 18px 20px; display: flex; flex-direction: column; gap: 6px">
+          <span style="font-size: 14px; font-weight: 500; color: #5b6475">First Term paid</span>
+          <span class="num" style="font-size: 30px; line-height: 36px; font-weight: 700">₦1,384,500</span>
+          <span class="num" style="font-size: 13px; color: #5b6475">of ₦1,789,500 invoiced</span>
+        </div>
+        <div style="background: #ffffff; border: 1px solid #e3e7ee; border-radius: 12px; box-shadow: 0 1px 2px rgba(15,23,42,0.06); padding: 18px 20px; display: flex; flex-direction: column; gap: 6px">
+          <span style="display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 600; color: #c81e1e"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v4M12 16h.01"></path></svg>Outstanding</span>
+          <span class="num" style="font-size: 30px; line-height: 36px; font-weight: 700">₦405,000</span>
+          <span style="font-size: 13px; color: #5b6475">1 school overdue</span>
+        </div>
+      </section>
+
+      <div style="display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start">
+        <section aria-labelledby="subs" style="flex: 999 1 560px; min-width: 0; background: #ffffff; border: 1px solid #e3e7ee; border-radius: 12px; box-shadow: 0 1px 2px rgba(15,23,42,0.06); overflow: hidden">
+          <div style="padding: 16px 20px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #e3e7ee">
+            <h2 id="subs" style="margin: 0; flex-grow: 1; font-size: 20px; line-height: 28px; font-weight: 600">Subscriptions</h2>
+            <a href="Schools.dc.html" style="font-size: 14px; font-weight: 600">All schools</a>
+          </div>
+          <div style="overflow-x: auto">
+            <table class="num" style="width: 100%; border-collapse: collapse; font-size: 14px; min-width: 620px">
+              <thead><tr style="background: #f1f3f7; text-align: left; color: #5b6475"><th scope="col" style="padding: 10px 20px; font-weight: 600">School</th><th scope="col" style="padding: 10px 12px; font-weight: 600">Plan</th><th scope="col" style="padding: 10px 12px; font-weight: 600">Students</th><th scope="col" style="padding: 10px 12px; font-weight: 600">First Term</th><th scope="col" style="padding: 10px 20px; font-weight: 600">Status</th></tr></thead>
+              <tbody>
+                <tr style="border-top: 1px solid #e3e7ee"><th scope="row" style="padding: 13px 20px; text-align: left; font-weight: 600"><a href="SchoolDetail.dc.html" style="text-decoration: none">Greenfield Model College</a><span style="display: block; font-size: 13px; font-weight: 400; color: #5b6475">Enugu</span></th><td style="padding: 13px 12px">Standard</td><td style="padding: 13px 12px">642</td><td style="padding: 13px 12px">₦309,500</td><td style="padding: 13px 20px"><span style="display: inline-flex; align-items: center; gap: 4px; height: 24px; padding: 0 10px; border-radius: 9999px; background: #e6f8f1; color: #047857; font-size: 12px; font-weight: 600"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"></path></svg>Active</span></td></tr>
+                <tr style="border-top: 1px solid #e3e7ee"><th scope="row" style="padding: 13px 20px; text-align: left; font-weight: 600">Royal Crest Academy<span style="display: block; font-size: 13px; font-weight: 400; color: #5b6475">Onitsha</span></th><td style="padding: 13px 12px">Premium</td><td style="padding: 13px 12px">1,240</td><td style="padding: 13px 12px">₦357,000</td><td style="padding: 13px 20px"><span style="display: inline-flex; align-items: center; gap: 4px; height: 24px; padding: 0 10px; border-radius: 9999px; background: #e6f8f1; color: #047857; font-size: 12px; font-weight: 600"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"></path></svg>Active</span></td></tr>
+                <tr style="border-top: 1px solid #e3e7ee"><th scope="row" style="padding: 13px 20px; text-align: left; font-weight: 600">St. Bernard's College<span style="display: block; font-size: 13px; font-weight: 400; color: #5b6475">Owerri</span></th><td style="padding: 13px 12px">Standard</td><td style="padding: 13px 12px">875</td><td style="padding: 13px 12px">₦420,000</td><td style="padding: 13px 20px"><span style="display: inline-flex; align-items: center; gap: 4px; height: 24px; padding: 0 10px; border-radius: 9999px; background: #e6f8f1; color: #047857; font-size: 12px; font-weight: 600"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"></path></svg>Active</span></td></tr>
+                <tr style="border-top: 1px solid #e3e7ee"><th scope="row" style="padding: 13px 20px; text-align: left; font-weight: 600">Unity Heights Secondary School<span style="display: block; font-size: 13px; font-weight: 400; color: #5b6475">Abakaliki</span></th><td style="padding: 13px 12px">Basic</td><td style="padding: 13px 12px">312</td><td style="padding: 13px 12px">₦298,000</td><td style="padding: 13px 20px"><span style="display: inline-flex; align-items: center; gap: 4px; height: 24px; padding: 0 10px; border-radius: 9999px; background: #e6f8f1; color: #047857; font-size: 12px; font-weight: 600"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"></path></svg>Active</span></td></tr>
+                <tr style="border-top: 1px solid #e3e7ee; background: #fffafa"><th scope="row" style="padding: 13px 20px; text-align: left; font-weight: 600">Hilltop Grammar School<span style="display: block; font-size: 13px; font-weight: 400; color: #5b6475">Enugu</span></th><td style="padding: 13px 12px">Basic</td><td style="padding: 13px 12px">410</td><td style="padding: 13px 12px">₦405,000</td><td style="padding: 13px 20px"><span style="display: inline-flex; align-items: center; gap: 4px; height: 24px; padding: 0 10px; border-radius: 9999px; background: #fdecec; color: #c81e1e; font-size: 12px; font-weight: 600"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v4M12 16h.01"></path></svg>Overdue 18 days</span></td></tr>
+                <tr style="border-top: 1px solid #e3e7ee"><th scope="row" style="padding: 13px 20px; text-align: left; font-weight: 600">Bright Stars Academy<span style="display: block; font-size: 13px; font-weight: 400; color: #5b6475">Nsukka</span></th><td style="padding: 13px 12px">--</td><td style="padding: 13px 12px">186</td><td style="padding: 13px 12px">Not billed</td><td style="padding: 13px 20px"><span style="display: inline-flex; align-items: center; gap: 4px; height: 24px; padding: 0 10px; border-radius: 9999px; background: #eaf1fe; color: #2563eb; font-size: 12px; font-weight: 600">Free pilot</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <div style="flex: 1 1 320px; min-width: 0; display: flex; flex-direction: column; gap: 24px">
+          <section aria-labelledby="rp" style="background: #ffffff; border: 1px solid #e3e7ee; border-radius: 12px; box-shadow: 0 1px 2px rgba(15,23,42,0.06); padding: 20px; display: flex; flex-direction: column; gap: 4px">
+            <h2 id="rp" style="margin: 0 0 8px; font-size: 18px; font-weight: 600">Recent payments</h2>
+            <div class="num" style="display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid #e3e7ee; font-size: 14px"><span><strong style="font-weight: 600">St. Bernard's College</strong><br><span style="color: #5b6475">6 Sep 2026 · PSK-2LQ8XW</span></span><strong>₦420,000</strong></div>
+            <div class="num" style="display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid #e3e7ee; font-size: 14px"><span><strong style="font-weight: 600">Royal Crest Academy</strong><br><span style="color: #5b6475">4 Sep 2026 · PSK-7TB3NM</span></span><strong>₦357,000</strong></div>
+            <div class="num" style="display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid #e3e7ee; font-size: 14px"><span><strong style="font-weight: 600">Greenfield Model College</strong><br><span style="color: #5b6475">2 Sep 2026 · PSK-8F3K2Q</span></span><strong>₦309,500</strong></div>
+            <div class="num" style="display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; font-size: 14px"><span><strong style="font-weight: 600">Unity Heights Secondary School</strong><br><span style="color: #5b6475">1 Sep 2026 · manual, bank transfer</span></span><strong>₦298,000</strong></div>
+          </section>
+
+          <section aria-labelledby="att" style="background: #ffffff; border: 1px solid #e3e7ee; border-radius: 12px; box-shadow: 0 1px 2px rgba(15,23,42,0.06); padding: 20px; display: flex; flex-direction: column; gap: 12px">
+            <h2 id="att" style="margin: 0; font-size: 18px; font-weight: 600">Needs attention</h2>
+            <div style="display: flex; gap: 10px; font-size: 14px; line-height: 20px"><span style="width: 32px; height: 32px; flex-shrink: 0; border-radius: 9999px; background: #fdecec; display: flex; align-items: center; justify-content: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c81e1e" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v4M12 16h.01"></path></svg></span><span><strong style="font-weight: 600">Hilltop Grammar School is past its grace period.</strong> Send a reminder or suspend access. Suspending never deletes data.</span></div>
+            <div style="display: flex; gap: 10px; font-size: 14px; line-height: 20px"><span style="width: 32px; height: 32px; flex-shrink: 0; border-radius: 9999px; background: #eaf1fe; display: flex; align-items: center; justify-content: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg></span><span><strong style="font-weight: 600">Bright Stars Academy pilot ends 11 Dec 2026.</strong> Decide whether to start billing next term.</span></div>
+          </section>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1000}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

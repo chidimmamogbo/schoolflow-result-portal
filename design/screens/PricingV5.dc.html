@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Pricing table</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="sf.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>body{margin:0}</style>
+</helmet>
+<div class="sf" data-theme="{{theme}}" data-device="{{device}}">
+<div class="app">
+  <aside class="side desk-only" aria-label="Platform navigation">
+    <img src="{{logo}}" alt="SchoolFlow Result Portal" style="width: 172px; height: auto; margin: 4px 8px">
+    <nav class="nav" aria-label="Main">
+      <sc-for list="{{nav}}" as="n" hint-placeholder-count="8">
+        <sc-if value="{{n.grp}}" hint-placeholder-val="{{ false }}"><span class="cap grp">{{n.grp}}</span></sc-if>
+        <a href="{{n.href}}" class="{{n.cls}}" aria-current="{{n.cur}}"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{n.d}}"></path></svg><span class="l">{{n.label}}</span></a>
+      </sc-for>
+    </nav>
+  </aside>
+  <div class="main">
+    <header class="top desk-only">
+      <nav class="crumb" aria-label="Breadcrumb"><a href="SuperDashboard.dc.html">Platform</a> / <b>Pricing</b></nav>
+      <button class="iconbtn" aria-label="Notices"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.bell}}"></path></svg></button>
+      <button class="iconbtn" aria-label="Theme. Choose Light, Dark or System"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.theme}}"></path></svg></button>
+      <button class="btn sm" aria-label="Profile menu" style="border: 0"><span class="crest" aria-hidden="true" style="width: 32px; height: 32px; border-radius: 9999px; background: var(--text); color: var(--bg); font-size: 12px">SA</span><span class="col" style="gap: 0; align-items: flex-start"><span style="font-size: 14px">Platform admin</span><span class="muted" style="font-size: 12px; font-weight: 500">Super admin</span></span></button>
+    </header>
+    <header class="phead phone-only">
+      <button class="iconbtn" aria-label="Open menu" onClick="{{openDrawer}}"><svg class="i l" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.menu}}"></path></svg></button>
+      <span class="ttl">Pricing table</span>
+      <button class="iconbtn" aria-label="Notices"><svg class="i l" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.bell}}"></path></svg></button>
+    </header>
+
+    <main class="content">
+      <div class="row" style="align-items: flex-end">
+        <div class="col grow" style="gap: 4px">
+          <h1 class="h1 desk-only">Pricing table</h1>
+          <p class="muted">Price per student, per term, in Naira. Editing version {{editingVersion}}.</p>
+        </div>
+      </div>
+
+      <sc-if value="{{isLoading}}" hint-placeholder-val="{{ false }}">
+        <div class="split" aria-busy="true">
+          <div class="wide"><div class="card col"><div class="skel" style="height: 24px; width: 30%"></div><div class="skel" style="height: 44px"></div><div class="skel" style="height: 44px"></div><div class="skel" style="height: 44px"></div></div><div class="card"><div class="skel" style="height: 80px"></div></div></div>
+          <div class="narrow"><div class="card"><div class="skel" style="height: 220px"></div></div></div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{isError}}" hint-placeholder-val="{{ false }}">
+        <div class="card state" role="alert">
+          <span class="ic" style="background: var(--danger-soft); color: var(--danger)"><svg class="i l" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.alert}}"></path></svg></span>
+          <p class="h3">We couldn't load this page.</p>
+          <p class="muted">Check your connection and try again.</p>
+          <button class="btn primary">Try again</button>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{isEmpty}}" hint-placeholder-val="{{ false }}">
+        <div class="card state">
+          <span class="ic" style="background: var(--primary-soft); color: var(--primary)"><svg class="i l" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.pricing}}"></path></svg></span>
+          <p class="h3">No plans yet.</p>
+          <p class="muted">Add a plan to start charging schools.</p>
+          <button class="btn primary" onClick="{{addTier}}"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.plus}}"></path></svg>Add plan</button>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{isMain}}" hint-placeholder-val="{{ true }}">
+        <div class="col" style="gap: 24px">
+          <sc-if value="{{justSaved}}" hint-placeholder-val="{{ false }}">
+            <div class="alert a-success" role="status"><svg class="i l" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.checkc}}"></path></svg><span><strong>Saved as version 4.</strong>New invoices will use it. Invoices already issued keep their old price. The change is in the audit log.</span></div>
+          </sc-if>
+
+          <div class="split">
+            <div class="wide">
+              <section class="card flush" aria-labelledby="plans">
+                <div class="card-head"><h2 id="plans" class="h2 grow">Plans</h2><button class="btn sm" onClick="{{addTier}}"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.plus}}"></path></svg>Add plan</button></div>
+                <div class="rt num" style="--cols: minmax(0, 1.3fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.2fr) 44px">
+                  <div class="tr th"><span>Plan name</span><span>Min students</span><span>Max students</span><span>Price per student (₦)</span><span><span class="sr">Remove</span></span></div>
+                  <sc-for list="{{rows}}" as="r" hint-placeholder-count="3">
+                    <div class="tr">
+                      <label class="td first" data-label="Plan name"><span class="sr">Plan name</span><input class="input" type="text" value="{{r.name}}" onChange="{{r.onName}}" style="font-weight: 600"></label>
+                      <label class="td" data-label="Min students"><span class="sr">Min students</span><input class="{{r.minCls}}" type="text" inputmode="numeric" value="{{r.min}}" onChange="{{r.onMin}}" aria-invalid="{{r.minBad}}"></label>
+                      <label class="td" data-label="Max students"><span class="sr">Max students</span><input class="{{r.maxCls}}" type="text" inputmode="numeric" value="{{r.max}}" placeholder="and above" onChange="{{r.onMax}}" aria-invalid="{{r.maxBad}}"></label>
+                      <label class="td" data-label="Price per student (₦)"><span class="sr">Price per student (₦)</span><input class="{{r.priceCls}}" type="text" inputmode="numeric" value="{{r.price}}" onChange="{{r.onPrice}}"></label>
+                      <span class="td"><button class="iconbtn" aria-label="Remove {{r.name}}" onClick="{{r.remove}}"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.trash}}"></path></svg></button></span>
+                    </div>
+                  </sc-for>
+                </div>
+                <div class="col" style="padding: 14px 20px 18px; gap: 10px; border-top: 1px solid var(--border)">
+                  <p style="font-size: 14px">Each school pays the price of the plan its student count falls into, for every student.</p>
+                  <sc-if value="{{hasErrors}}" hint-placeholder-val="{{ false }}">
+                    <div class="alert a-danger" role="alert"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.alert}}"></path></svg><div class="col" style="gap: 4px"><sc-for list="{{errors}}" as="e" hint-placeholder-count="1"><span>{{e.text}}</span></sc-for></div></div>
+                  </sc-if>
+                  <sc-if value="{{noErrors}}" hint-placeholder-val="{{ true }}">
+                    <p class="help ok" style="display: flex; gap: 6px; align-items: center"><svg class="i s" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.check}}"></path></svg>No gaps or overlaps. Every school size fits exactly one plan.</p>
+                  </sc-if>
+                </div>
+              </section>
+
+              <section class="card" aria-labelledby="cliff">
+                <div class="swrow" style="padding: 0; border: 0">
+                  <div class="col grow" style="gap: 2px"><h2 id="cliff" class="t">Cliff protection</h2><span class="help">A school never pays more than the smallest bill on a higher plan.</span></div>
+                  <button class="switch" role="switch" aria-checked="{{cliffOn}}" aria-labelledby="cliff" onClick="{{toggleCliff}}"></button>
+                </div>
+              </section>
+
+              <sc-if value="{{hasCliffs}}" hint-placeholder-val="{{ true }}">
+                <section class="alert a-warning" aria-labelledby="pc" style="flex-direction: column; gap: 8px; padding: 16px 18px">
+                  <h2 id="pc" class="row" style="gap: 8px; font-size: 16px; font-weight: 700"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.warn}}"></path></svg>Price check</h2>
+                  <ul style="margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 4px">
+                    <sc-for list="{{cliffs}}" as="c" hint-placeholder-count="2"><li>{{c.text}}</li></sc-for>
+                  </ul>
+                  <sc-if value="{{cliffOnBool}}" hint-placeholder-val="{{ true }}"><p style="display: flex; gap: 6px; align-items: center; font-weight: 600"><svg class="i s" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.shield}}"></path></svg>Cliff protection caps these bills.</p></sc-if>
+                </section>
+              </sc-if>
+
+              <div class="row">
+                <button class="btn primary" onClick="{{askSave}}" disabled="{{hasErrors}}">Save as new version</button>
+                <span class="muted" style="font-size: 14px">This will not change invoices already issued.</span>
+              </div>
+            </div>
+
+            <div class="narrow">
+              <section class="card col" aria-labelledby="try" style="gap: 14px">
+                <h2 id="try" class="h3">Try it</h2>
+                <label class="field">Number of students<input class="input num" type="text" inputmode="numeric" value="{{calcN}}" onChange="{{onCalc}}" style="max-width: 160px; font-weight: 700; font-size: 18px"></label>
+                <div class="chips">
+                  <sc-for list="{{quick}}" as="q" hint-placeholder-count="5"><button class="chip" aria-pressed="{{q.on}}" onClick="{{q.pick}}">{{q.label}}</button></sc-for>
+                </div>
+                <dl class="num" style="margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 8px 16px; font-size: 15px">
+                  <dt class="muted">Plan</dt><dd style="margin: 0; font-weight: 600">{{calc.plan}}</dd>
+                  <dt class="muted">Price per student</dt><dd style="margin: 0; font-weight: 600">{{calc.rate}}</dd>
+                  <dt class="muted">Amount</dt><dd style="margin: 0; font-size: 28px; line-height: 34px; font-weight: 700">{{calc.amount}}</dd>
+                </dl>
+                <sc-if value="{{calc.capped}}" hint-placeholder-val="{{ false }}">
+                  <span class="badge b-info" style="height: auto; min-height: 26px; padding: 4px 10px; white-space: normal"><svg class="i s" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.shield}}"></path></svg>{{calc.cappedLine}}</span>
+                </sc-if>
+              </section>
+
+              <section class="card col" aria-labelledby="ver" style="gap: 4px">
+                <h2 id="ver" class="h3" style="margin-bottom: 6px">Version history</h2>
+                <sc-for list="{{versions}}" as="v" hint-placeholder-count="3">
+                  <div class="row" style="gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border); flex-wrap: nowrap; font-size: 14px">
+                    <span class="badge sm {{v.cls}}">{{v.id}}</span>
+                    <span class="col grow" style="gap: 0"><span style="font-weight: 500">{{v.summary}}</span><span class="muted" style="font-size: 13px">{{v.when}}</span></span>
+                    <span style="font-size: 12px; font-weight: 600; color: var(--success-ink)">{{v.tag}}</span>
+                  </div>
+                </sc-for>
+              </section>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+    </main>
+  </div>
+</div>
+
+<sc-if value="{{drawer}}" hint-placeholder-val="{{ false }}">
+  <div class="scrim">
+    <div class="drawer" role="dialog" aria-modal="true" aria-label="Menu">
+      <div class="row" style="justify-content: space-between"><img src="{{logo}}" alt="SchoolFlow Result Portal" style="width: 150px; height: auto"><button class="iconbtn" aria-label="Close menu" onClick="{{closeDrawer}}"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.close}}"></path></svg></button></div>
+      <nav class="nav" aria-label="Main">
+        <sc-for list="{{nav}}" as="n" hint-placeholder-count="8">
+          <sc-if value="{{n.grp}}" hint-placeholder-val="{{ false }}"><span class="cap grp">{{n.grp}}</span></sc-if>
+          <a href="{{n.href}}" class="{{n.cls}}" aria-current="{{n.cur}}"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{n.d}}"></path></svg><span class="l">{{n.label}}</span></a>
+        </sc-for>
+      </nav>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{confirming}}" hint-placeholder-val="{{ false }}">
+  <div class="modal">
+    <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="svT">
+      <h2 id="svT" class="h3">Save pricing as version 4?</h2>
+      <p class="muted">New invoices will use these prices. Invoices already issued keep their version and price.</p>
+      <div class="btns"><button class="btn" onClick="{{cancel}}">Cancel</button><button class="btn primary" onClick="{{save}}">Save version 4</button></div>
+    </div>
+  </div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["Light","Dark"],"default":"Light"},"state":{"editor":"enum","options":["Default","Empty","Loading","Error"],"default":"Default"},"device":{"editor":"enum","options":["Desktop","Phone"],"default":"Desktop"},"$preview":{"width":1440,"height":1200}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = {
+      tiers: [{ name: 'Basic', min: '1', max: '499', price: '1000' }, { name: 'Standard', min: '500', max: '1000', price: '500' }, { name: 'Premium', min: '1001', max: '', price: '300' }],
+      cliff: true, calcN: '642', confirming: false, saved: false, drawer: false, emptyAdded: false
+    };
+  }
+  icons() {
+    return {
+      dash: 'M3 3h7v9H3zM14 3h7v5h-7zM14 12h7v9h-7zM3 16h7v5H3z', schools: 'M3 21h18M5 21V9l7-5 7 5v12M9 21v-6h6v6',
+      pricing: 'M20.6 13.4l-7.2 7.2a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8zM9 7.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z',
+      invoices: 'M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9zM14 3v6h6M8 13h8M8 17h5', pay: 'M4 5h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2zM2 10h20',
+      audit: 'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM12 7v5l3 2', mail: 'M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zM22 6l-10 7L2 6',
+      settings: 'M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1',
+      bell: 'M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.94 1.94 0 0 0 3.4 0', menu: 'M4 6h16M4 12h16M4 18h16', close: 'M18 6L6 18M6 6l12 12',
+      theme: 'M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0zM12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4',
+      plus: 'M12 5v14M5 12h14', trash: 'M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14', check: 'M5 12l5 5L20 7', checkc: 'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM8 12l3 3 5-6',
+      alert: 'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM12 8v4M12 16h.01', warn: 'M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0zM12 9v4M12 17h.01',
+      shield: 'M12 3l7 3v5c0 4.5-3 8.3-7 10-4-1.7-7-5.5-7-10V6z'
+    };
+  }
+  nav(active, phone) {
+    const I = this.icons(); const go = (n) => (n.startsWith('#') ? n : (phone && ['Assessment', 'AssessmentBSA', 'Attention', 'AttentionBSA', 'AttentionReviewer', 'AttentionTeacher', 'AttentionTeacherBSA', 'AuditLog', 'BillingV5', 'BsaMenus', 'ChangePassword', 'ClassPage', 'CreateSchool', 'DashboardV5', 'EmailLog', 'Grading', 'GradingBSA', 'LearningAreas', 'Login', 'Login_Link', 'MyClass', 'MyClassPrimary', 'ParentSkills', 'Payments', 'PlatformSettings', 'PricingV5', 'PublishV5', 'RatingSheet', 'RatingSheetAssistant', 'SchoolAdmins', 'SchoolAdminsBSA', 'SchoolDetailBSA', 'SchoolDetailV5', 'SchoolPaused', 'SchoolsV5', 'ScoreGridSS', 'ScoreGridV5', 'SheetsV5', 'StudentDetail', 'SuperBillingV5', 'TemplateEditorBSA', 'TemplateEditorV5'].includes(n) ? n + '_Phone.dc.html' : n + '.dc.html'));
+    const items = [[null, 'Dashboard', 'SuperDashboard', 'dash'], [null, 'Schools', 'SchoolsV5', 'schools'], [null, 'Pricing', 'PricingV5', 'pricing'], ['Billing', 'Invoices', 'SuperBillingV5', 'invoices'], [null, 'Payments', 'Payments', 'pay'], ['Platform', 'Audit log', 'AuditLog', 'audit'], [null, 'Email log', 'EmailLog', 'mail'], [null, 'Settings', 'PlatformSettings', 'settings']];
+    return items.map(([grp, label, href, ic]) => ({ grp: grp || '', label, href: go(href), d: I[ic], cls: label === active ? 'on' : '', cur: label === active ? 'page' : 'false' }));
+  }
+  int(s) { const t = String(s).replace(/,/g, '').trim(); return /^\d+$/.test(t) ? Number(t) : null; }
+  naira(n) { return '₦' + Math.round(n).toLocaleString('en-NG'); }
+  setTier(i, k, v) { this.setState({ tiers: this.state.tiers.map((t, j) => (j === i ? { ...t, [k]: v } : t)), saved: false }); }
+  parsed(tiers) { return tiers.map((t) => ({ name: t.name, min: this.int(t.min), max: t.max.trim() === '' ? Infinity : this.int(t.max), price: this.int(t.price) })); }
+  validate(tiers) {
+    const errs = []; const bad = tiers.map(() => ({ min: false, max: false, price: false }));
+    tiers.forEach((t, i) => {
+      const min = this.int(t.min), max = t.max.trim() === '' ? null : this.int(t.max), price = this.int(t.price), last = i === tiers.length - 1;
+      if (min === null) { errs.push(t.name + ': enter a minimum number of students.'); bad[i].min = true; }
+      if (t.max.trim() !== '' && max === null) { errs.push(t.name + ': the maximum must be a whole number.'); bad[i].max = true; }
+      if (!last && t.max.trim() === '') { errs.push('Only the last plan can have no maximum. Add a maximum for ' + t.name + '.'); bad[i].max = true; }
+      if (last && t.max.trim() !== '') { errs.push('Leave ' + t.name + "'s maximum blank so every school size fits."); bad[i].max = true; }
+      if (min !== null && max !== null && max < min) { errs.push(t.name + ": the maximum can't be below the minimum."); bad[i].max = true; }
+      if (price === null || price <= 0) { errs.push(t.name + ': enter a price above ₦0.'); bad[i].price = true; }
+      if (i === 0 && min !== null && min !== 1) { errs.push(t.name + ' must start at 1 so the smallest schools fit.'); bad[i].min = true; }
+      if (i > 0) {
+        const prev = tiers[i - 1], pmax = this.int(prev.max);
+        if (pmax !== null && min !== null && min !== pmax + 1) {
+          errs.push(t.name + ' ' + (min <= pmax ? 'overlaps ' + prev.name : 'leaves a gap after ' + prev.name) + '. ' + t.name + ' must start at ' + (pmax + 1).toLocaleString('en-NG') + ' because ' + prev.name + ' ends at ' + pmax.toLocaleString('en-NG') + '.');
+          bad[i].min = true;
+        }
+      }
+    });
+    return { errs, bad };
+  }
+  cliffs(tiers) {
+    const p = this.parsed(tiers); const out = [];
+    p.forEach((t, i) => {
+      let best = null;
+      for (let j = i + 1; j < p.length; j++) { const bill = p[j].min * p[j].price; if (!best || bill < best.bill) best = { bill, at: p[j].min }; }
+      if (!best) return;
+      const from = Math.floor(best.bill / t.price) + 1, to = t.max;
+      if (from <= to && from >= t.min) out.push({ text: 'Schools with ' + from.toLocaleString('en-NG') + ' to ' + to.toLocaleString('en-NG') + ' students would pay more than a school with ' + best.at.toLocaleString('en-NG') + ' students.' });
+    });
+    return out;
+  }
+  price(n, tiers, cliff) {
+    const p = this.parsed(tiers); const i = p.findIndex((t) => n >= t.min && n <= t.max);
+    if (i < 0 || !n) return { plan: '--', rate: '--', amount: '--', capped: false, cappedLine: '' };
+    const full = n * p[i].price; let cap = Infinity;
+    for (let j = i + 1; j < p.length; j++) cap = Math.min(cap, p[j].min * p[j].price);
+    const capped = cliff && cap < full; const amt = capped ? cap : full;
+    return { plan: p[i].name, rate: this.naira(p[i].price), amount: this.naira(amt), capped, cappedLine: 'Capped by cliff protection: ' + this.naira(cap) + ' instead of ' + this.naira(full) };
+  }
+  renderVals() {
+    const P = this.props, st0 = this.state;
+    const theme = String(P.theme || 'Light').toLowerCase(), device = String(P.device || 'Desktop').toLowerCase(), view = String(P.state || 'Default').toLowerCase();
+    const phone = device === 'phone';
+    const tiers = view === 'empty' && !st0.emptyAdded ? [] : st0.tiers;
+    const { errs, bad } = this.validate(tiers);
+    const rows = tiers.map((t, i) => ({
+      ...t,
+      minCls: bad[i].min ? 'input bad' : 'input', maxCls: bad[i].max ? 'input bad' : 'input', priceCls: bad[i].price ? 'input bad' : 'input',
+      minBad: bad[i].min ? 'true' : 'false', maxBad: bad[i].max ? 'true' : 'false',
+      onName: (e) => this.setTier(i, 'name', e.target.value), onMin: (e) => this.setTier(i, 'min', e.target.value),
+      onMax: (e) => this.setTier(i, 'max', e.target.value), onPrice: (e) => this.setTier(i, 'price', e.target.value),
+      remove: () => this.setState({ tiers: st0.tiers.filter((_, j) => j !== i) })
+    }));
+    const n = this.int(st0.calcN) || 0;
+    const calc = errs.length ? { plan: '--', rate: '--', amount: '--', capped: false, cappedLine: '' } : this.price(n, tiers, st0.cliff);
+    const cl = errs.length ? [] : this.cliffs(tiers);
+    const versions = [
+      { id: 'v3', summary: 'Basic, Standard, Premium · cliff protection on', when: '1 Sep 2026 · Platform admin', tag: st0.saved ? '' : 'In use' },
+      { id: 'v2', summary: 'Standard at ₦550', when: '20 Aug 2026 · Platform admin', tag: '' },
+      { id: 'v1', summary: 'Two plans', when: '15 Aug 2026 · Platform admin', tag: '' }
+    ];
+    if (st0.saved) versions.unshift({ id: 'v4', summary: tiers.map((t) => t.name).join(', ') + ' · cliff protection ' + (st0.cliff ? 'on' : 'off'), when: 'Today · Platform admin', tag: 'In use' });
+    versions.forEach((v) => { v.cls = v.tag ? 'b-success' : 'b-neutral'; });
+    const quick = ['499', '580', '642', '1000', '1001'].map((q) => ({ label: Number(q).toLocaleString('en-NG'), on: st0.calcN === q ? 'true' : 'false', pick: () => this.setState({ calcN: q }) }));
+    return {
+      theme, device, ic: this.icons(), nav: this.nav('Pricing', phone),
+      logo: theme === 'dark' ? '/_blob/f8c668b157c01655c625f83bed0c84c2' : '/_blob/182db0c32744c4f6abeb340d16b2ccfb',
+      isLoading: view === 'loading', isError: view === 'error', isEmpty: view === 'empty' && !st0.emptyAdded, isMain: view === 'default' || (view === 'empty' && st0.emptyAdded),
+      rows, errors: errs.map((text) => ({ text })), hasErrors: errs.length > 0, noErrors: errs.length === 0,
+      cliffOn: st0.cliff ? 'true' : 'false', cliffOnBool: st0.cliff, toggleCliff: () => this.setState({ cliff: !st0.cliff, saved: false }),
+      cliffs: cl, hasCliffs: cl.length > 0,
+      calcN: st0.calcN, onCalc: (e) => this.setState({ calcN: e.target.value }), calc, quick,
+      versions, justSaved: st0.saved, editingVersion: st0.saved ? '4' : '3 (in use)',
+      confirming: st0.confirming, askSave: () => this.setState({ confirming: true }), cancel: () => this.setState({ confirming: false }), save: () => this.setState({ confirming: false, saved: true }),
+      addTier: () => {
+        if (view === 'empty' && !st0.emptyAdded) { this.setState({ emptyAdded: true, tiers: [{ name: 'Basic', min: '1', max: '', price: '1000' }] }); return; }
+        const t = st0.tiers.slice(); const last = t[t.length - 1]; const lastMin = this.int(last.min) || 1;
+        t[t.length - 1] = { ...last, max: String(lastMin + 999) };
+        t.push({ name: 'New plan', min: String(lastMin + 1000), max: '', price: '250' });
+        this.setState({ tiers: t, saved: false });
+      },
+      drawer: st0.drawer, openDrawer: () => this.setState({ drawer: true }), closeDrawer: () => this.setState({ drawer: false })
+    };
+  }
+}
+</script>
+</body>
+</html>

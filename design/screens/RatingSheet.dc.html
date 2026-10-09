@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Rating sheet</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="sf.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.sf .rb{min-height:48px;min-width:44px;border:1.5px solid var(--border-strong);border-radius:10px;background:var(--surface);color:var(--text);font:700 15px Inter,system-ui,sans-serif;cursor:pointer;padding:0 4px}
+.sf .rb:hover{background:var(--surface-2)}
+.sf .rb[aria-pressed="true"]{border:2px solid var(--rbd);background:var(--rbg);color:var(--rink)}
+.sf .rb[disabled]{cursor:not-allowed;opacity:.75}
+.sf .rgrid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+.sf .key{display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 10px;border-radius:8px;background:var(--surface-2);font-size:13px}
+.sf .key b{font-weight:700}
+.sf .gr{display:grid;grid-template-columns:minmax(180px,1.1fr) minmax(220px,1fr) minmax(220px,1fr) minmax(220px,1.4fr);gap:0 14px;align-items:center;padding:10px 20px;border-top:1px solid var(--border)}
+.sf .gr.hd{background:var(--surface-2);color:var(--muted);font-size:13px;font-weight:600;border-top:0}
+.sf .gr.hl{background:var(--primary-soft);box-shadow:inset 3px 0 0 var(--primary)}
+.sf .pcard.hl{border-color:var(--primary);box-shadow:0 0 0 2px var(--primary)}
+</style>
+</helmet>
+<div class="sf" data-theme="{{theme}}" data-device="{{device}}" style="--school: #7a1f2b">
+<div class="app">
+  <aside class="side desk-only" aria-label="School navigation">
+    <div class="brand"><span class="crest" aria-hidden="true">BSA</span><span class="col" style="gap: 0"><span style="font-weight: 700; font-size: 15px; line-height: 20px">Bright Stars Academy</span><span class="muted" style="font-size: 13px">Nsukka</span></span></div>
+    <nav class="nav" aria-label="Main">
+      <sc-for list="{{nav}}" as="n" hint-placeholder-count="6"><a href="{{n.href}}" class="{{n.cls}}" aria-current="{{n.cur}}"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{n.d}}"></path></svg><span class="l">{{n.label}}</span></a></sc-for>
+    </nav>
+    <div class="powered"><img src="/_blob/b5461303d7a8d45a18f7975e283523ab" alt="" style="width: 20px; height: 20px">Powered by SchoolFlow</div>
+  </aside>
+  <div class="main">
+    <header class="top desk-only">
+      <nav class="crumb" aria-label="Breadcrumb"><a href="{{sheetsHref}}">My score sheets</a> / <b>{{title}}</b></nav>
+      <button class="iconbtn" aria-label="Notices, 2 unread"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.bell}}"></path></svg><span class="dot">2</span></button>
+      <button class="btn sm" aria-label="Profile menu" style="border: 0"><span class="crest" aria-hidden="true" style="width: 32px; height: 32px; border-radius: 9999px; font-size: 12px">{{me.ini}}</span><span class="col" style="gap: 0; align-items: flex-start"><span style="font-size: 14px">{{me.name}}</span><span class="muted" style="font-size: 12px; font-weight: 500">{{me.role}}</span></span></button>
+    </header>
+    <header class="phone-only" style="flex-shrink: 0; background: var(--surface); border-bottom: 1px solid var(--border); padding: 6px 12px 12px; display: flex; flex-direction: column; gap: 8px">
+      <div class="row" style="gap: 4px; flex-wrap: nowrap">
+        <a class="iconbtn" href="{{sheetsHref}}" aria-label="Back to my score sheets"><svg class="i l" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.back}}"></path></svg></a>
+        <div class="col grow" style="gap: 0; min-width: 0"><span style="font-size: 18px; line-height: 24px; font-weight: 700">{{title}}</span><span class="muted" style="font-size: 13px">First Term 2026/2027</span></div>
+        <span class="badge {{statusCls}}"><svg class="i s" viewBox="0 0 24 24" aria-hidden="true"><path d="{{statusIc}}"></path></svg>{{statusLabel}}</span>
+      </div>
+    </header>
+
+    <main class="content" style="gap: 16px">
+      <div class="row desk-only" style="flex-wrap: nowrap; align-items: flex-end">
+        <div class="col grow" style="gap: 4px"><h1 class="h1">{{title}}</h1><span class="muted" style="font-size: 14px">Learning area: Number work · Class: Nursery 2 · First Term 2026/2027 · {{nPupils}} pupils · Class teacher: Mrs. Amaka Udeh</span></div>
+        <span class="badge {{statusCls}}"><svg class="i s" viewBox="0 0 24 24" aria-hidden="true"><path d="{{statusIc}}"></path></svg>{{statusLabel}}</span>
+      </div>
+      <p class="muted phone-only" style="font-size: 14px">Number work · Nursery 2 · {{nPupils}} pupils · Class teacher: Mrs. Amaka Udeh</p>
+
+      <div class="row" style="gap: 6px" aria-label="Rating key">
+        <span class="cap" style="margin-right: 4px">Rating key</span>
+        <sc-for list="{{scale}}" as="k" hint-placeholder-count="5"><span class="key"><b>{{k.code}}</b>{{k.word}}</span></sc-for>
+      </div>
+
+      <sc-if value="{{isAssistant}}" hint-placeholder-val="{{ false }}">
+        <div class="alert a-info"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.info}}"></path></svg><span>Assistants can enter scores, ratings and comments for this class. Only the class teacher can submit.</span></div>
+      </sc-if>
+      <sc-if value="{{submitted}}" hint-placeholder-val="{{ false }}">
+        <div class="alert a-success" role="status"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.ok}}"></path></svg><span><strong>Sheet submitted</strong>Mrs. Chiamaka Nwafor will review it. You can't change ratings while it is being reviewed.</span></div>
+      </sc-if>
+
+      <sc-if value="{{isLoading}}" hint-placeholder-val="{{ false }}">
+        <div class="col" aria-busy="true"><div class="skel" style="height: 44px; max-width: 520px"></div><div class="row"><div class="skel" style="height: 36px; width: 80px"></div><div class="skel" style="height: 36px; width: 120px"></div></div><div class="skel" style="height: 190px"></div><div class="skel" style="height: 190px"></div></div>
+      </sc-if>
+      <sc-if value="{{isError}}" hint-placeholder-val="{{ false }}">
+        <div class="card state" role="alert"><span class="ic" style="background: var(--danger-soft); color: var(--danger)"><svg class="i l" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.alert}}"></path></svg></span><p class="h3">We couldn't load this rating sheet.</p><p class="muted">Check your connection and try again. Ratings you saved are safe.</p><button class="btn primary">Try again</button></div>
+      </sc-if>
+      <sc-if value="{{isEmpty}}" hint-placeholder-val="{{ false }}">
+        <div class="card state"><span class="ic" style="background: var(--primary-soft); color: var(--primary)"><svg class="i l" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.users}}"></path></svg></span><p class="h3">No pupils in Nursery 2 yet.</p><p class="muted" style="max-width: 420px">Your school admin adds pupils to classes. They show here once they do.</p></div>
+      </sc-if>
+
+      <sc-if value="{{showSheet}}" hint-placeholder-val="{{ true }}">
+        <div class="col" style="gap: 12px">
+          <label class="search" style="max-width: 520px"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.search}}"></path></svg><span class="sr">Find a pupil</span><input type="search" placeholder="Search by name" value="{{q}}" onChange="{{onQ}}"></label>
+          <sc-if value="{{qNoMatch}}" hint-placeholder-val="{{ false }}"><p class="help err" role="status">No pupil matches "{{q}}".</p></sc-if>
+          <div class="chips" role="group" aria-label="Show">
+            <sc-for list="{{chips}}" as="c" hint-placeholder-count="2"><button class="chip" aria-pressed="{{c.on}}" onClick="{{c.pick}}"><svg class="i s" viewBox="0 0 24 24" aria-hidden="true" style="color: {{c.ink}}"><path d="{{c.ic}}"></path></svg>{{c.label}} <span class="n">{{c.n}}</span></button></sc-for>
+          </div>
+
+          <sc-if value="{{chipEmpty}}" hint-placeholder-val="{{ false }}"><div class="card state" style="padding: 32px"><span class="ic" style="background: var(--success-soft); color: var(--success-ink)"><svg class="i l" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.ok}}"></path></svg></span><p class="h3">Every skill is rated.</p><button class="btn" onClick="{{showAll}}">Show all</button></div></sc-if>
+
+          <section class="card flush desk-only" aria-label="Rating grid">
+            <div class="gr hd"><span>Pupil</span><sc-for list="{{skills}}" as="s" hint-placeholder-count="2"><span>{{s}}</span></sc-for><span>{{commentLabel}}</span></div>
+            <sc-for list="{{shown}}" as="p" hint-placeholder-count="6">
+              <div class="{{p.rowCls}}" id="{{p.anchor}}">
+                <span class="col" style="gap: 2px; min-width: 0"><span style="font-weight: 600; font-size: 15px">{{p.name}}</span><sc-if value="{{p.hasGap}}" hint-placeholder-val="{{ false }}"><span class="row" style="gap: 4px; font-size: 13px; font-weight: 500; color: var(--warning-ink)"><svg class="i s" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.warn}}"></path></svg>{{p.gapText}}</span></sc-if></span>
+                <sc-for list="{{p.cells}}" as="x" hint-placeholder-count="2">
+                  <select class="{{x.selCls}}" aria-label="{{x.aria}}" value="{{x.v}}" onChange="{{x.onSel}}" disabled="{{locked}}"><option value="">Not rated</option><option value="E">E · Excellent</option><option value="VG">VG · Very good</option><option value="G">G · Good</option><option value="F">F · Fair</option><option value="NI">NI · Needs improvement</option></select>
+                </sc-for>
+                <input class="input" type="text" aria-label="{{p.commentAria}}" placeholder="Optional" value="{{p.comment}}" onChange="{{p.onComment}}" disabled="{{locked}}">
+              </div>
+            </sc-for>
+          </section>
+
+          <div class="col phone-only" style="gap: 12px">
+            <sc-for list="{{shown}}" as="p" hint-placeholder-count="3">
+              <section class="{{p.cardCls}}" id="{{p.anchorPh}}" aria-label="{{p.name}}" style="gap: 14px; border-color: {{p.border}}">
+                <div class="row" style="flex-wrap: nowrap; gap: 10px">
+                  <span class="crest" aria-hidden="true" style="width: 36px; height: 36px; border-radius: 9999px; font-size: 12px; background: var(--surface-2); color: var(--text)">{{p.ini}}</span>
+                  <span class="grow" style="font-size: 17px; font-weight: 600">{{p.name}}</span>
+                  <span class="badge sm {{p.bCls}}"><svg class="i s" viewBox="0 0 24 24" aria-hidden="true"><path d="{{p.bIc}}"></path></svg>{{p.bText}}</span>
+                </div>
+                <sc-for list="{{p.cells}}" as="x" hint-placeholder-count="2">
+                  <div class="col" role="group" aria-label="{{x.aria}}" style="gap: 6px">
+                    <span style="font-size: 14px; font-weight: 600">{{x.skill}}</span>
+                    <div class="rgrid">
+                      <sc-for list="{{x.btns}}" as="b" hint-placeholder-count="5"><button class="rb" aria-pressed="{{b.on}}" aria-label="{{b.word}}" onClick="{{b.pick}}" disabled="{{locked}}" style="--rbg: {{b.bg}}; --rbd: {{b.bd}}; --rink: {{b.ink}}">{{b.code}}</button></sc-for>
+                    </div>
+                    <sc-if value="{{x.rated}}" hint-placeholder-val="{{ true }}"><span class="row" style="gap: 6px; font-size: 14px; font-weight: 600; color: {{x.ink}}"><svg class="i s" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.check}}"></path></svg>{{x.word}}</span></sc-if>
+                    <sc-if value="{{x.notRated}}" hint-placeholder-val="{{ false }}"><span class="row" style="gap: 6px; font-size: 14px; font-weight: 500; color: var(--warning-ink)"><svg class="i s" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.warn}}"></path></svg>Not rated yet</span></sc-if>
+                  </div>
+                </sc-for>
+                <label class="field">{{commentLabel}}<textarea class="input" rows="2" value="{{p.comment}}" onChange="{{p.onComment}}" disabled="{{locked}}"></textarea></label>
+              </section>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+    </main>
+
+    <sc-if value="{{showBar}}" hint-placeholder-val="{{ true }}">
+      <div class="actionbar">
+        <sc-if value="{{hasGaps}}" hint-placeholder-val="{{ true }}"><div class="row grow" style="gap: 8px; flex-wrap: nowrap; font-size: 14px; font-weight: 500; color: var(--warning-ink); min-width: 220px"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.warn}}"></path></svg><span>{{summary}}</span><button class="link" onClick="{{showMe}}">Show me.</button></div></sc-if>
+        <sc-if value="{{allRated}}" hint-placeholder-val="{{ false }}"><div class="row grow" style="gap: 8px; font-size: 14px; font-weight: 500; color: var(--success-ink); min-width: 220px"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.ok}}"></path></svg><span>All {{nSkills}} skills rated.</span></div></sc-if>
+        <sc-if value="{{draft}}" hint-placeholder-val="{{ true }}">
+          <div style="display: grid; grid-template-columns: repeat({{btnCols}}, minmax(0, 1fr)); gap: 10px; flex: 1 1 280px; max-width: {{btnMax}}">
+            <button class="btn" onClick="{{saveDraft}}">{{saveLabel}}</button>
+            <sc-if value="{{canSubmit}}" hint-placeholder-val="{{ true }}"><button class="btn primary" onClick="{{askSubmit}}" disabled="{{hasGaps}}">Submit</button></sc-if>
+          </div>
+        </sc-if>
+        <sc-if value="{{submitted}}" hint-placeholder-val="{{ false }}"><a class="btn primary" href="{{sheetsHref}}" style="flex: 1 1 280px; max-width: {{btnMax}}">Back to my sheets</a></sc-if>
+      </div>
+    </sc-if>
+
+    <nav class="bottom phone-only" aria-label="Main">
+      <sc-for list="{{bottom}}" as="b" hint-placeholder-count="4"><a href="{{b.href}}" class="{{b.cls}}" aria-current="{{b.cur}}"><svg class="i l" viewBox="0 0 24 24" aria-hidden="true"><path d="{{b.d}}"></path></svg>{{b.label}}</a></sc-for>
+    </nav>
+  </div>
+</div>
+
+<sc-if value="{{toast}}" hint-placeholder-val="{{ false }}">
+  <div role="status" style="position: {{toastPos}}; left: 50%; bottom: {{toastBottom}}; transform: translateX(-50%); z-index: 40; max-width: 92%; background: var(--text); color: var(--bg); border-radius: 10px; padding: 12px 16px; display: flex; gap: 12px; align-items: center; font-size: 14px; box-shadow: var(--shadow-lg)">
+    <span>{{toast}}</span><button class="iconbtn" aria-label="Dismiss" onClick="{{hideToast}}" style="color: var(--bg); width: 32px; height: 32px"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.close}}"></path></svg></button>
+  </div>
+</sc-if>
+
+<sc-if value="{{confirm}}" hint-placeholder-val="{{ false }}">
+  <div class="modal">
+    <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="sbT">
+      <h2 id="sbT" class="h3">Submit {{title}}?</h2>
+      <p class="muted">All {{nSkills}} skills are rated. Mrs. Chiamaka Nwafor will review the sheet. You can't change ratings unless it is returned to you.</p>
+      <div class="btns"><button class="btn" onClick="{{cancelSubmit}}">Cancel</button><button class="btn primary" onClick="{{doSubmit}}">Submit</button></div>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{drawer}}" hint-placeholder-val="{{ false }}">
+  <div class="scrim">
+    <nav class="drawer" aria-label="Menu">
+      <div class="row" style="flex-wrap: nowrap"><div class="brand grow" style="padding: 0"><span class="crest" aria-hidden="true">BSA</span><span class="col" style="gap: 0"><span style="font-weight: 700; font-size: 15px">Bright Stars Academy</span><span class="muted" style="font-size: 13px">{{me.name}} · {{me.role}}</span></span></div><button class="iconbtn" aria-label="Close menu" onClick="{{closeDrawer}}"><svg class="i l" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.close}}"></path></svg></button></div>
+      <div class="nav"><sc-for list="{{nav}}" as="n" hint-placeholder-count="6"><a href="{{n.href}}" class="{{n.cls}}" aria-current="{{n.cur}}"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{n.d}}"></path></svg><span class="l">{{n.label}}</span></a></sc-for></div>
+      <div class="powered"><img src="/_blob/b5461303d7a8d45a18f7975e283523ab" alt="" style="width: 20px; height: 20px">Powered by SchoolFlow</div>
+    </nav>
+  </div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["Light","Dark"],"default":"Light"},"state":{"editor":"enum","options":["Default","Empty","Loading","Error"],"default":"Default"},"device":{"editor":"enum","options":["Desktop","Phone"],"default":"Desktop"},"role":{"editor":"enum","options":["Class teacher","Assistant"],"default":"Class teacher"},"$preview":{"width":1440,"height":1000}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = {
+      pupils: [
+        { name: 'Chidera Okeke', r: ['VG', 'E'], c: 'Counts confidently and names every shape.' },
+        { name: 'Tolu Bamidele', r: ['G', 'VG'], c: '' },
+        { name: 'Ebube Eze', r: ['E', 'G'], c: '' },
+        { name: 'Hauwa Sani', r: ['NI', 'F'], c: 'Needs daily counting practice at home.' },
+        { name: 'Somto Nnaji', r: ['', ''], c: '' },
+        { name: 'Ada Onuoha', r: ['VG', ''], c: '' }
+      ],
+      q: '', chip: 'all', submitted: false, saved: false, confirm: false, toast: '', drawer: false
+    };
+  }
+  icons() {
+    return {
+      home: 'M3 10l9-7 9 7v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z', sheet: 'M3 3h18v18H3zM3 9h18M9 21V9', cls: 'M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8',
+      bell: 'M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.94 1.94 0 0 0 3.4 0', flag: 'M4 22V4M4 4h12l-2 4 2 4H4', user: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21a8 8 0 0 1 16 0',
+      users: 'M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z', back: 'M15 18l-6-6 6-6', search: 'M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM21 21l-4.3-4.3',
+      alert: 'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM12 8v4M12 16h.01', warn: 'M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0zM12 9v4M12 17h.01',
+      ok: 'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM8 12l3 3 5-6', pencil: 'M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z', send: 'M22 2L11 13M22 2l-7 20-4-9-9-4z',
+      list: 'M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01', check: 'M5 12l5 5L20 7', close: 'M18 6L6 18M6 6l12 12', menu: 'M4 6h16M4 12h16M4 18h16',
+      info: 'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM12 16v-4M12 8h.01'
+    };
+  }
+  jump(id) { if (typeof document !== 'undefined') setTimeout(() => { const el = document.getElementById(id); if (el && el.scrollIntoView) el.scrollIntoView({ block: 'center', behavior: 'smooth' }); }, 60); }
+  renderVals() {
+    const P = this.props, st = this.state, I = this.icons();
+    const theme = String(P.theme || 'Light').toLowerCase(), device = String(P.device || 'Desktop').toLowerCase(), view = String(P.state || 'Default').toLowerCase();
+    const phone = device === 'phone', assistant = P.role === 'Assistant';
+    const pg = (n) => (n.startsWith('#') ? n : n + (phone && ['Assessment', 'AssessmentBSA', 'Attention', 'AttentionBSA', 'AttentionReviewer', 'AttentionTeacher', 'AttentionTeacherBSA', 'AuditLog', 'BillingV5', 'BsaMenus', 'ChangePassword', 'ClassPage', 'CreateSchool', 'DashboardV5', 'EmailLog', 'Grading', 'GradingBSA', 'LearningAreas', 'Login', 'Login_Link', 'MyClass', 'MyClassPrimary', 'ParentSkills', 'Payments', 'PlatformSettings', 'PricingV5', 'PublishV5', 'RatingSheet', 'RatingSheetAssistant', 'SchoolAdmins', 'SchoolAdminsBSA', 'SchoolDetailBSA', 'SchoolDetailV5', 'SchoolPaused', 'SchoolsV5', 'ScoreGridSS', 'ScoreGridV5', 'SheetsV5', 'StudentDetail', 'SuperBillingV5', 'TemplateEditorBSA', 'TemplateEditorV5'].includes(n) ? '_Phone' : '') + '.dc.html');
+    const navSrc = [['Home', '#home', 'home'], ['Sheets', 'SheetsV5', 'sheet'], ['My class', '#my-class', 'cls'], ['Notices', '#notices', 'bell'], ['Students needing attention', 'AttentionTeacherBSA', 'flag'], ['Profile', '#profile', 'user']];
+    const nav = navSrc.map(([label, href, ic]) => ({ label, href: pg(href), d: I[ic], cls: label === 'Sheets' ? 'on' : '', cur: label === 'Sheets' ? 'page' : 'false' }));
+    const SC = [
+      ['E', 'Excellent', 'var(--success-soft)', 'var(--success)', 'var(--success-ink)'],
+      ['VG', 'Very good', 'var(--success-soft)', 'var(--success)', 'var(--success-ink)'],
+      ['G', 'Good', 'var(--info-soft)', 'var(--info)', 'var(--info)'],
+      ['F', 'Fair', 'var(--warning-soft)', 'var(--warning)', 'var(--warning-ink)'],
+      ['NI', 'Needs improvement', 'var(--danger-soft)', 'var(--danger)', 'var(--danger)']
+    ];
+    const byCode = {}; SC.forEach((s) => { byCode[s[0]] = s; });
+    const skills = ['Counts 1 to 20', 'Recognises shapes'];
+    const locked = st.submitted;
+    const q = st.q.trim().toLowerCase();
+    const setR = (i, k, v) => { if (locked) return; this.setState({ pupils: st.pupils.map((p, j) => (j === i ? { ...p, r: p.r.map((x, m) => (m === k ? v : x)) } : p)), saved: false }); };
+    let gaps = 0;
+    const rows = st.pupils.map((p, i) => {
+      const miss = p.r.filter((x) => !x).length; gaps += miss;
+      const cells = skills.map((skill, k) => {
+        const v = p.r[k], s = byCode[v];
+        return {
+          skill, v, aria: skill + ' for ' + p.name, rated: !!v, notRated: !v, word: s ? s[0] + ' · ' + s[1] : '', ink: s ? s[4] : 'var(--muted)',
+          selCls: 'input' + (v ? '' : ' miss'), onSel: (e) => setR(i, k, e.target.value),
+          btns: SC.map(([code, word, bg, bd, ink]) => ({ code, word, bg, bd, ink, on: v === code ? 'true' : 'false', pick: () => setR(i, k, v === code ? '' : code) }))
+        };
+      });
+      const ini = p.name.split(' ').map((w) => w[0]).join('');
+      return {
+        ...p, i, ini, cells, miss, hasGap: miss > 0, gapText: miss === 1 ? '1 skill not rated' : miss + ' skills not rated',
+        bCls: miss ? 'b-warning' : 'b-success', bIc: miss ? I.warn : I.check, bText: miss ? (miss === 1 ? '1 not rated' : miss + ' not rated') : 'Rated',
+        comment: p.c, commentAria: 'Comment on Number work for ' + p.name,
+        onComment: (e) => { if (!locked) this.setState({ pupils: st.pupils.map((x, j) => (j === i ? { ...x, c: e.target.value } : x)), saved: false }); },
+        anchor: 'pupil-' + i, anchorPh: 'pupil-ph-' + i
+      };
+    });
+    const nNot = rows.filter((r) => r.miss > 0).length;
+    const filtered = rows.filter((r) => (st.chip === 'all' || r.miss > 0) && (!q || r.name.toLowerCase().includes(q)));
+    const shown = filtered.map((r) => {
+      const hl = !!q;
+      return { ...r, rowCls: 'gr' + (hl ? ' hl' : ''), cardCls: 'card col pcard' + (hl ? ' hl' : ''), border: r.miss ? 'var(--warning)' : 'var(--border)' };
+    });
+    const main = view === 'default';
+    const hasGaps = gaps > 0;
+    const S = st.submitted ? ['b-info', I.send, 'Submitted'] : ['b-neutral', I.pencil, 'Draft'];
+    const me = assistant ? { name: 'Miss Oluchi Ibe', ini: 'OI', role: 'Assistant' } : { name: 'Mrs. Amaka Udeh', ini: 'AU', role: 'Class teacher' };
+    return {
+      theme, device, ic: I, nav, bottom: nav.slice(0, 4), me, title: 'Number work, Nursery 2', nPupils: st.pupils.length, nSkills: st.pupils.length * skills.length,
+      sheetsHref: pg('SheetsV5'), skills, scale: SC.map(([code, word]) => ({ code, word })), commentLabel: 'Comment on Number work (optional)',
+      statusCls: S[0], statusIc: S[1], statusLabel: S[2], isAssistant: assistant && main, locked,
+      isLoading: view === 'loading', isError: view === 'error', isEmpty: view === 'empty', showSheet: main, showBar: main,
+      q: st.q, onQ: (e) => { const v = e.target.value; this.setState({ q: v, chip: 'all' }); },
+      qNoMatch: !!q && filtered.length === 0 && st.chip === 'all',
+      chips: [['all', 'All', st.pupils.length, I.list, 'currentColor'], ['not', 'Not rated', nNot, I.warn, 'var(--warning-ink)']].map(([k, label, n, ic, ink]) => ({ label, n, ic, ink, on: st.chip === k ? 'true' : 'false', pick: () => this.setState({ chip: k }) })),
+      chipEmpty: main && st.chip === 'not' && nNot === 0, showAll: () => this.setState({ chip: 'all' }),
+      shown, hasGaps: hasGaps && !st.submitted, allRated: !hasGaps && !st.submitted && main, draft: !st.submitted, submitted: st.submitted && main,
+      summary: gaps === 1 ? '1 skill not rated yet.' : gaps + ' skills not rated yet.',
+      showMe: () => { const j = rows.findIndex((r) => r.miss > 0); this.setState({ chip: 'not', q: '' }); if (j >= 0) this.jump((phone ? 'pupil-ph-' : 'pupil-') + j); },
+      canSubmit: !assistant, btnCols: assistant ? 1 : 2, btnMax: phone ? 'none' : (assistant ? '200px' : '380px'),
+      saveLabel: st.saved ? 'Saved' : 'Save draft', saveDraft: () => this.setState({ saved: true, toast: 'Draft saved. ' + (gaps ? (gaps === 1 ? '1 skill' : gaps + ' skills') + ' still to rate.' : 'Ready to submit.') }),
+      askSubmit: () => { if (!hasGaps && !assistant) this.setState({ confirm: true }); },
+      confirm: st.confirm, cancelSubmit: () => this.setState({ confirm: false }),
+      doSubmit: () => this.setState({ confirm: false, submitted: true, chip: 'all', toast: 'Number work, Nursery 2 submitted.' }),
+      toast: st.toast, hideToast: () => this.setState({ toast: '' }), toastPos: phone ? 'absolute' : 'fixed', toastBottom: phone ? '160px' : '96px',
+      drawer: st.drawer, openDrawer: () => this.setState({ drawer: true }), closeDrawer: () => this.setState({ drawer: false })
+    };
+  }
+}
+</script>
+</body>
+</html>

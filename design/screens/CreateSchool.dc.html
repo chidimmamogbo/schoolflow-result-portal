@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Create school</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="sf.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>body{margin:0}</style>
+</helmet>
+<div class="sf" data-theme="{{theme}}" data-device="{{device}}">
+<div class="app">
+  <aside class="side desk-only" aria-label="Platform navigation">
+    <img src="{{logo}}" alt="SchoolFlow Result Portal" style="width: 172px; height: auto; margin: 4px 8px">
+    <nav class="nav" aria-label="Main">
+      <sc-for list="{{nav}}" as="n" hint-placeholder-count="8">
+        <sc-if value="{{n.grp}}" hint-placeholder-val="{{ false }}"><span class="cap grp">{{n.grp}}</span></sc-if>
+        <a href="{{n.href}}" class="{{n.cls}}" aria-current="{{n.cur}}"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{n.d}}"></path></svg><span class="l">{{n.label}}</span></a>
+      </sc-for>
+    </nav>
+  </aside>
+  <div class="main">
+    <header class="top desk-only">
+      <nav class="crumb" aria-label="Breadcrumb"><a href="SuperDashboard.dc.html">Platform</a> / <a href="SchoolsV5.dc.html">Schools</a> / <b>Create school</b></nav>
+      <button class="iconbtn" aria-label="Notices"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.bell}}"></path></svg></button>
+      <button class="btn sm" aria-label="Profile menu" style="border: 0"><span class="crest" aria-hidden="true" style="width: 32px; height: 32px; border-radius: 9999px; background: var(--text); color: var(--bg); font-size: 12px">SA</span><span class="col" style="gap: 0; align-items: flex-start"><span style="font-size: 14px">Platform admin</span><span class="muted" style="font-size: 12px; font-weight: 500">Super admin</span></span></button>
+    </header>
+    <header class="phead phone-only">
+      <a class="iconbtn" aria-label="Back to schools" href="SchoolsV5_Phone.dc.html"><svg class="i l" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.back}}"></path></svg></a>
+      <span class="ttl">Create school</span>
+    </header>
+
+    <main class="content">
+      <h1 class="h1 desk-only">Create school</h1>
+
+      <sc-if value="{{isLoading}}" hint-placeholder-val="{{ false }}">
+        <div class="split" aria-busy="true"><div class="wide"><div class="card col"><div class="skel" style="height: 24px; width: 35%"></div><div class="skel" style="height: 44px"></div><div class="skel" style="height: 44px"></div><div class="skel" style="height: 44px"></div><div class="skel" style="height: 160px"></div></div></div><div class="narrow"><div class="card"><div class="skel" style="height: 260px"></div></div></div></div>
+      </sc-if>
+      <sc-if value="{{isError}}" hint-placeholder-val="{{ false }}">
+        <div class="card state" role="alert"><span class="ic" style="background: var(--danger-soft); color: var(--danger)"><svg class="i l" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.alert}}"></path></svg></span><p class="h3">We couldn't load this page.</p><p class="muted">Check your connection and try again.</p><button class="btn primary">Try again</button></div>
+      </sc-if>
+
+      <sc-if value="{{isDone}}" hint-placeholder-val="{{ false }}">
+        <div class="card state" role="status" style="gap: 16px; padding: 40px 24px">
+          <span class="ic" style="background: var(--success-soft); color: var(--success-ink)"><svg class="i l" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.checkc}}"></path></svg></span>
+          <p class="h2" style="max-width: 640px">{{doneLine}}</p>
+          <div class="grid-auto" style="width: 100%; max-width: 640px; text-align: left">
+            <div class="tile"><span class="help">School code</span><p class="num" style="font-size: 22px; font-weight: 700; letter-spacing: 0.06em">{{f.code}}</p></div>
+            <div class="tile"><span class="help">School login link</span><div class="row" style="gap: 8px; flex-wrap: nowrap"><p class="num grow" style="font-size: 16px; font-weight: 600">/login/{{f.code}}</p><button class="btn sm" onClick="{{copyLink}}"><svg class="i s" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.copy}}"></path></svg>{{copyLabel}}</button></div></div>
+          </div>
+          <a class="btn primary" href="{{detailHref}}">Open school</a>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{isForm}}" hint-placeholder-val="{{ true }}">
+        <div class="split">
+          <div class="wide">
+            <section class="card col" aria-labelledby="s1" style="gap: 18px">
+              <h2 id="s1" class="h2">1 · School details</h2>
+              <div class="form-grid">
+                <label class="field" style="grid-column: 1 / -1">School name<input class="input" type="text" value="{{f.name}}" onChange="{{on.name}}"></label>
+                <label class="field">School email<input class="input" type="email" value="{{f.email}}" onChange="{{on.email}}"></label>
+                <label class="field">Phone number<input class="input" type="tel" value="{{f.phone}}" onChange="{{on.phone}}"></label>
+                <label class="field" style="grid-column: 1 / -1">Address<input class="input" type="text" value="{{f.address}}" onChange="{{on.address}}"></label>
+                <label class="field">City<input class="input" type="text" value="{{f.city}}" onChange="{{on.city}}"></label>
+                <sc-if value="{{isNigeria}}" hint-placeholder-val="{{ true }}">
+                  <label class="field">State<select class="input" value="{{f.state}}" onChange="{{on.state}}"><option value="">Choose a state</option><option>Abia</option><option>Adamawa</option><option>Akwa Ibom</option><option>Anambra</option><option>Bauchi</option><option>Bayelsa</option><option>Benue</option><option>Borno</option><option>Cross River</option><option>Delta</option><option>Ebonyi</option><option>Edo</option><option>Ekiti</option><option>Enugu</option><option>FCT</option><option>Gombe</option><option>Imo</option><option>Jigawa</option><option>Kaduna</option><option>Kano</option><option>Katsina</option><option>Kebbi</option><option>Kogi</option><option>Kwara</option><option>Lagos</option><option>Nasarawa</option><option>Niger</option><option>Ogun</option><option>Ondo</option><option>Osun</option><option>Oyo</option><option>Plateau</option><option>Rivers</option><option>Sokoto</option><option>Taraba</option><option>Yobe</option><option>Zamfara</option></select></label>
+                </sc-if>
+                <sc-if value="{{notNigeria}}" hint-placeholder-val="{{ false }}">
+                  <label class="field">State<input class="input" type="text" value="{{f.stateText}}" onChange="{{on.stateText}}"></label>
+                </sc-if>
+                <label class="field">Country<select class="input" value="{{f.country}}" onChange="{{on.country}}"><option>Nigeria</option><option>Ghana</option><option>Other</option></select></label>
+                <label class="field">School code
+                  <input class="{{codeCls}}" type="text" maxlength="10" value="{{f.code}}" onChange="{{on.code}}" aria-describedby="codeMsg" style="max-width: none">
+                  <span id="codeMsg" class="{{codeMsgCls}}" role="status">{{codeMsg}}</span>
+                </label>
+              </div>
+
+              <div class="divider"></div>
+              <div class="col" style="gap: 12px">
+                <label class="field" style="max-width: 420px">School type<select class="input" value="{{typeValue}}" onChange="{{on.type}}"><option value="">Choose a school type</option><option>Nursery and Primary</option><option>Secondary only</option><option>Nursery, Primary and Secondary</option><option disabled="{{yes}}">Custom</option></select></label>
+                <div class="col" style="gap: 0">
+                  <span style="font-size: 14px; font-weight: 600">Report cards</span>
+                  <sc-for list="{{levels}}" as="l" hint-placeholder-count="3">
+                    <div class="swrow">
+                      <span class="col grow" style="gap: 0"><span class="t" id="{{l.id}}">{{l.label}}</span><sc-if value="{{l.hasHint}}" hint-placeholder-val="{{ false }}"><span class="help">{{l.hint}}</span></sc-if></span>
+                      <span class="badge sm {{l.badgeCls}}"><svg class="i s" viewBox="0 0 24 24" aria-hidden="true"><path d="{{l.badgeIc}}"></path></svg>{{l.state}}</span>
+                      <button class="switch" role="switch" aria-checked="{{l.checked}}" aria-labelledby="{{l.id}}" onClick="{{l.toggle}}"></button>
+                    </div>
+                  </sc-for>
+                  <sc-if value="{{noLevel}}" hint-placeholder-val="{{ false }}"><p class="help err" role="alert" style="margin-top: 8px">Switch on at least one level.</p></sc-if>
+                </div>
+              </div>
+
+              <div class="divider"></div>
+              <div class="col" style="gap: 12px">
+                <span style="font-size: 14px; font-weight: 600">School colour</span>
+                <div class="row" style="align-items: flex-start; gap: 20px">
+                  <div class="col" style="gap: 10px; width: 280px; max-width: 100%">
+                    <button aria-label="Saturation and brightness. Click to pick." onClick="{{pickSV}}" style="position: relative; width: 100%; height: 170px; border: 1px solid var(--border); border-radius: 10px; cursor: crosshair; padding: 0; background: linear-gradient(to top, #000000, rgba(0,0,0,0)), linear-gradient(to right, #ffffff, {{hueColour}})">
+                      <span aria-hidden="true" style="position: absolute; left: {{svX}}; top: {{svY}}; width: 18px; height: 18px; margin: -9px 0 0 -9px; border-radius: 9999px; border: 3px solid #ffffff; box-shadow: 0 0 0 1px rgba(0,0,0,0.4); background: {{f.colour}}"></span>
+                    </button>
+                    <label class="field">Hue<input type="range" min="0" max="360" value="{{hue}}" onChange="{{on.hue}}" style="width: 100%; height: 14px; border-radius: 9999px; appearance: none; -webkit-appearance: none; background: linear-gradient(to right, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000)"></label>
+                    <div class="row" style="gap: 10px; flex-wrap: nowrap">
+                      <span aria-hidden="true" style="width: 44px; height: 44px; flex-shrink: 0; border-radius: 8px; border: 1px solid var(--border); background: {{f.colour}}"></span>
+                      <label class="field grow">Hex<input class="input num" type="text" maxlength="7" value="{{hexText}}" onChange="{{on.hex}}" style="text-transform: uppercase"></label>
+                    </div>
+                    <div class="col" style="gap: 6px"><span class="help">Recent colours</span>
+                      <div class="row" style="gap: 8px">
+                        <sc-for list="{{recent}}" as="r" hint-placeholder-count="5"><button aria-label="Use {{r.hex}}" onClick="{{r.pick}}" style="width: 32px; height: 32px; border-radius: 8px; border: 2px solid {{r.ring}}; background: {{r.hex}}; cursor: pointer; padding: 0"></button></sc-for>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col grow" style="gap: 10px; min-width: 240px">
+                    <span class="help">Preview</span>
+                    <div class="row" style="gap: 10px; flex-wrap: nowrap; background: #ffffff; border: 1px solid #e3e7ee; border-radius: 10px; padding: 10px 12px">
+                      <span aria-hidden="true" style="width: 36px; height: 36px; border-radius: 9px; background: {{f.colour}}; color: #ffffff; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center">{{f.code}}</span>
+                      <span class="col" style="gap: 0"><span style="font-size: 14px; font-weight: 700; color: #0f172a">{{f.name}}</span><span style="font-size: 12px; color: #5b6475">Light</span></span>
+                    </div>
+                    <div class="row" style="gap: 10px; flex-wrap: nowrap; background: #111a2c; border: 1px solid #24314d; border-radius: 10px; padding: 10px 12px">
+                      <span aria-hidden="true" style="width: 36px; height: 36px; border-radius: 9px; background: {{f.colour}}; color: #ffffff; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center">{{f.code}}</span>
+                      <span class="col" style="gap: 0"><span style="font-size: 14px; font-weight: 700; color: #e6eaf2">{{f.name}}</span><span style="font-size: 12px; color: #9aa4b8">Dark</span></span>
+                    </div>
+                    <div style="background: #ffffff; border: 1px solid #e3e7ee; border-radius: 10px; padding: 12px 14px; display: flex; flex-direction: column; gap: 6px">
+                      <span style="height: 4px; border-radius: 2px; background: {{f.colour}}"></span>
+                      <span style="font-size: 13px; font-weight: 700; letter-spacing: 0.04em; color: {{reportInk}}">STUDENT REPORT CARD</span>
+                      <span style="height: 6px; width: 80%; border-radius: 3px; background: #f1f3f7"></span><span style="height: 6px; width: 60%; border-radius: 3px; background: #f1f3f7"></span>
+                    </div>
+                    <sc-if value="{{lowContrast}}" hint-placeholder-val="{{ false }}">
+                      <div class="alert a-warning" role="status"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.warn}}"></path></svg><span>Text on this colour may be hard to read. We'll use the SchoolFlow blue for buttons and text.</span></div>
+                    </sc-if>
+                  </div>
+                </div>
+              </div>
+
+              <div class="divider"></div>
+              <div class="col" style="gap: 8px">
+                <span style="font-size: 14px; font-weight: 600">Logo</span>
+                <button class="row" style="gap: 12px; flex-wrap: nowrap; border: 2px dashed var(--border-strong); border-radius: 12px; padding: 16px; background: var(--surface-2); color: var(--text); cursor: pointer; font: inherit; text-align: left">
+                  <svg class="i l" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.upload}}"></path></svg>
+                  <span class="col" style="gap: 0"><span style="font-weight: 600">Upload logo</span><span class="help">PNG or SVG, up to 1 MB. Optional.</span></span>
+                </button>
+              </div>
+            </section>
+
+            <section class="card col" aria-labelledby="s2" style="gap: 6px">
+              <h2 id="s2" class="h2" style="margin-bottom: 4px">2 · Features</h2>
+              <sc-for list="{{features}}" as="x" hint-placeholder-count="6">
+                <div class="swrow">
+                  <span class="col grow" style="gap: 0"><span class="t" id="{{x.id}}">{{x.label}}</span><span class="help">{{x.hint}}</span></span>
+                  <button class="switch" role="switch" aria-checked="{{x.checked}}" aria-labelledby="{{x.id}}" onClick="{{x.toggle}}"></button>
+                </div>
+              </sc-for>
+              <p class="help" style="padding-top: 6px">Turning a feature off hides it for this school straight away. Its data is kept.</p>
+            </section>
+
+            <section class="card" aria-labelledby="s3">
+              <h2 id="s3" class="h2" style="margin-bottom: 10px">3 · Billing</h2>
+              <div class="swrow" style="border: 0; padding: 0">
+                <span class="col grow" style="gap: 0"><span class="t" id="billingLbl">Billing</span><span class="help">{{billingHint}}</span></span>
+                <sc-if value="{{billingOff}}" hint-placeholder-val="{{ false }}"><span class="badge sm b-info">Free pilot</span></sc-if>
+                <button class="switch" role="switch" aria-checked="{{billingChecked}}" aria-labelledby="billingLbl" onClick="{{toggleBilling}}"></button>
+              </div>
+            </section>
+
+            <section class="card col" aria-labelledby="s4" style="gap: 16px">
+              <h2 id="s4" class="h2">4 · Principal account</h2>
+              <div class="form-grid">
+                <label class="field">Full name<input class="input" type="text" value="{{f.pname}}" onChange="{{on.pname}}"></label>
+                <label class="field">Username<input class="{{userCls}}" type="text" value="{{f.username}}" onChange="{{on.username}}" aria-describedby="userMsg"><span id="userMsg" class="{{userMsgCls}}" role="status">{{userMsg}}</span></label>
+                <label class="field">Email<input class="input" type="email" value="{{f.pemail}}" onChange="{{on.pemail}}"></label>
+              </div>
+            </section>
+          </div>
+
+          <div class="narrow desk-only" style="position: sticky; top: 24px">
+            <section class="card col" aria-label="Summary" style="gap: 12px">
+              <div class="row" style="gap: 10px; flex-wrap: nowrap"><span aria-hidden="true" style="width: 40px; height: 40px; flex-shrink: 0; border-radius: 10px; background: {{f.colour}}; color: #ffffff; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center">{{f.code}}</span><span class="col" style="gap: 0; min-width: 0"><span style="font-weight: 700">{{nameOrBlank}}</span><span class="help">{{f.city}}{{stateLine}}</span></span></div>
+              <dl class="num" style="margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 8px 12px; font-size: 14px">
+                <dt class="muted">School type</dt><dd style="margin: 0; font-weight: 600">{{typeShown}}</dd>
+                <dt class="muted">Report cards</dt><dd style="margin: 0; font-weight: 600">{{levelsLine}}</dd>
+                <dt class="muted">Features</dt><dd style="margin: 0; font-weight: 600">{{featuresLine}}</dd>
+                <dt class="muted">Billing</dt><dd style="margin: 0; font-weight: 600">{{billingLine}}</dd>
+                <dt class="muted">Principal</dt><dd style="margin: 0; font-weight: 600">{{f.pname}}</dd>
+              </dl>
+              <button class="btn primary full" onClick="{{create}}" disabled="{{cannotCreate}}">Create school and send invite</button>
+              <sc-if value="{{cannotCreate}}" hint-placeholder-val="{{ false }}"><p class="help">{{blockReason}}</p></sc-if>
+            </section>
+          </div>
+        </div>
+      </sc-if>
+    </main>
+
+    <sc-if value="{{showPhoneBar}}" hint-placeholder-val="{{ false }}">
+      <div class="actionbar phone-only" style="flex-direction: column; align-items: stretch">
+        <sc-if value="{{cannotCreate}}" hint-placeholder-val="{{ false }}"><p class="help">{{blockReason}}</p></sc-if>
+        <button class="btn primary full" onClick="{{create}}" disabled="{{cannotCreate}}">Create school and send invite</button>
+      </div>
+    </sc-if>
+  </div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["Light","Dark"],"default":"Light"},"state":{"editor":"enum","options":["Default","Empty","Loading","Error"],"default":"Default"},"device":{"editor":"enum","options":["Desktop","Phone"],"default":"Desktop"},"$preview":{"width":1440,"height":2300}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    const empty = String(props.state || 'Default').toLowerCase() === 'empty';
+    const filled = { name: 'Greenfield Model College', email: 'info@greenfield.edu.ng', phone: '0803 000 1122', address: '14 Chime Avenue, Independence Layout', city: 'Enugu', state: 'Enugu', stateText: '', country: 'Nigeria', code: 'GMC', colour: '#1e6b45', pname: 'Mrs. Ngozi Okeke', username: 'ngozi.okeke', pemail: 'ngozi.okeke@greenfield.edu.ng' };
+    const blank = { name: '', email: '', phone: '', address: '', city: '', state: '', stateText: '', country: 'Nigeria', code: '', colour: '#1f4fd8', pname: '', username: '', pemail: '' };
+    this.state = {
+      f: empty ? blank : filled, codeTouched: false, userTouched: false,
+      type: empty ? '' : 'Secondary only', lv: empty ? { n: false, p: false, s: false } : { n: false, p: false, s: true },
+      feats: { results: true, report_cards: true, parent_portal: true, correction_queue: false, notice_board: true, email_notifications: true },
+      billing: true, done: false, copied: false, hue: null
+    };
+  }
+  icons() {
+    return {
+      dash: 'M3 3h7v9H3zM14 3h7v5h-7zM14 12h7v9h-7zM3 16h7v5H3z', schools: 'M3 21h18M5 21V9l7-5 7 5v12M9 21v-6h6v6',
+      pricing: 'M20.6 13.4l-7.2 7.2a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8zM9 7.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z',
+      invoices: 'M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9zM14 3v6h6M8 13h8M8 17h5', pay: 'M4 5h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2zM2 10h20',
+      audit: 'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM12 7v5l3 2', mail: 'M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zM22 6l-10 7L2 6',
+      settings: 'M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1',
+      bell: 'M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.94 1.94 0 0 0 3.4 0', back: 'M15 18l-6-6 6-6', alert: 'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM12 8v4M12 16h.01',
+      warn: 'M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0zM12 9v4M12 17h.01', checkc: 'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM8 12l3 3 5-6',
+      check: 'M5 12l5 5L20 7', minus: 'M5 12h14', copy: 'M8 8h12v12H8zM4 16V4h12', upload: 'M12 16V4M7 9l5-5 5 5M4 20h16'
+    };
+  }
+  nav(active, phone) {
+    const I = this.icons(); const go = (n) => (n.startsWith('#') ? n : (phone && ['Assessment', 'AssessmentBSA', 'Attention', 'AttentionBSA', 'AttentionReviewer', 'AttentionTeacher', 'AttentionTeacherBSA', 'AuditLog', 'BillingV5', 'BsaMenus', 'ChangePassword', 'ClassPage', 'CreateSchool', 'DashboardV5', 'EmailLog', 'Grading', 'GradingBSA', 'LearningAreas', 'Login', 'Login_Link', 'MyClass', 'MyClassPrimary', 'ParentSkills', 'Payments', 'PlatformSettings', 'PricingV5', 'PublishV5', 'RatingSheet', 'RatingSheetAssistant', 'SchoolAdmins', 'SchoolAdminsBSA', 'SchoolDetailBSA', 'SchoolDetailV5', 'SchoolPaused', 'SchoolsV5', 'ScoreGridSS', 'ScoreGridV5', 'SheetsV5', 'StudentDetail', 'SuperBillingV5', 'TemplateEditorBSA', 'TemplateEditorV5'].includes(n) ? n + '_Phone.dc.html' : n + '.dc.html'));
+    const items = [[null, 'Dashboard', 'SuperDashboard', 'dash'], [null, 'Schools', 'SchoolsV5', 'schools'], [null, 'Pricing', 'PricingV5', 'pricing'], ['Billing', 'Invoices', 'SuperBillingV5', 'invoices'], [null, 'Payments', 'Payments', 'pay'], ['Platform', 'Audit log', 'AuditLog', 'audit'], [null, 'Email log', 'EmailLog', 'mail'], [null, 'Settings', 'PlatformSettings', 'settings']];
+    return items.map(([grp, label, href, ic]) => ({ grp: grp || '', label, href: go(href), d: I[ic], cls: label === active ? 'on' : '', cur: label === active ? 'page' : 'false' }));
+  }
+  hexToRgb(h) { const m = /^#?([0-9a-f]{6})$/i.exec(h); if (!m) return null; const n = parseInt(m[1], 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; }
+  rgbToHex(r, g, b) { return '#' + [r, g, b].map((v) => Math.round(v).toString(16).padStart(2, '0')).join(''); }
+  rgbToHsv(r, g, b) { r /= 255; g /= 255; b /= 255; const mx = Math.max(r, g, b), mn = Math.min(r, g, b), d = mx - mn; let h = 0; if (d) { if (mx === r) h = ((g - b) / d) % 6; else if (mx === g) h = (b - r) / d + 2; else h = (r - g) / d + 4; h *= 60; if (h < 0) h += 360; } return [h, mx ? d / mx : 0, mx]; }
+  hsvToHex(h, s, v) { const c = v * s, x = c * (1 - Math.abs(((h / 60) % 2) - 1)), m = v - c; let r = 0, g = 0, b = 0; if (h < 60) [r, g, b] = [c, x, 0]; else if (h < 120) [r, g, b] = [x, c, 0]; else if (h < 180) [r, g, b] = [0, c, x]; else if (h < 240) [r, g, b] = [0, x, c]; else if (h < 300) [r, g, b] = [x, 0, c]; else [r, g, b] = [c, 0, x]; return this.rgbToHex((r + m) * 255, (g + m) * 255, (b + m) * 255); }
+  lum(hex) { const c = this.hexToRgb(hex) || [0, 0, 0]; const f = (v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }; return 0.2126 * f(c[0]) + 0.7152 * f(c[1]) + 0.0722 * f(c[2]); }
+  initials(name) { return name.replace(/[^A-Za-z0-9 ]/g, ' ').split(/\s+/).filter((w) => w && !/^(of|the|and)$/i.test(w)).map((w) => w[0].toUpperCase()).join('').slice(0, 6); }
+  userFrom(name) { return name.replace(/^(mr|mrs|miss|ms|dr|rev|prof)\.?\s+/i, '').trim().toLowerCase().replace(/[^a-z0-9 ]/g, '').split(/\s+/).filter(Boolean).join('.'); }
+  setF(k, v) {
+    const f = { ...this.state.f, [k]: v };
+    const extra = {};
+    if (k === 'name' && !this.state.codeTouched) f.code = this.initials(v);
+    if (k === 'pname' && !this.state.userTouched) f.username = this.userFrom(v);
+    if (k === 'code') { f.code = v.toUpperCase().replace(/[^A-Z0-9]/g, ''); extra.codeTouched = true; }
+    if (k === 'username') extra.userTouched = true;
+    this.setState({ f, ...extra });
+  }
+  renderVals() {
+    const P = this.props, st = this.state, f = st.f, I = this.icons();
+    const theme = String(P.theme || 'Light').toLowerCase(), device = String(P.device || 'Desktop').toLowerCase(), view = String(P.state || 'Default').toLowerCase();
+    const phone = device === 'phone';
+    const takenCodes = ['BSA', 'RCS'];
+    const codeValid = /^[A-Z0-9]{3,10}$/.test(f.code);
+    let codeMsg = '3 to 10 letters or numbers.', codeMsgCls = 'help', codeOk = false;
+    if (codeValid && takenCodes.includes(f.code)) { codeMsg = f.code + ' is taken'; codeMsgCls = 'help err'; }
+    else if (codeValid) { codeMsg = f.code + ' is available'; codeMsgCls = 'help ok'; codeOk = true; }
+    const takenUsers = ['chiamaka.nwafor', 'tunde.adebayo', 'chukwudi.eze'];
+    const userValid = /^[a-z0-9._-]{3,30}$/.test(f.username);
+    let userMsg = '3 to 30 characters: lowercase letters, numbers, dot, underscore or hyphen.', userMsgCls = 'help', userOk = false;
+    if (userValid && takenUsers.includes(f.username)) { userMsg = f.username + ' is taken'; userMsgCls = 'help err'; }
+    else if (userValid) { userMsg = f.username + ' is available'; userMsgCls = 'help ok'; userOk = true; }
+    const lv = st.lv;
+    const typeMap = { 'Nursery and Primary': { n: true, p: true, s: false }, 'Secondary only': { n: false, p: false, s: true }, 'Nursery, Primary and Secondary': { n: true, p: true, s: true } };
+    const matchType = Object.keys(typeMap).find((k) => typeMap[k].n === lv.n && typeMap[k].p === lv.p && typeMap[k].s === lv.s);
+    const anyLevel = lv.n || lv.p || lv.s;
+    const typeValue = st.type === '' && !anyLevel ? '' : (matchType || 'Custom');
+    const levels = [['n', 'Nursery report cards', ''], ['p', 'Primary report cards', ''], ['s', 'Secondary report cards', 'Junior and Senior Secondary']].map(([k, label, hint]) => ({
+      id: 'lv-' + k, label, hint, hasHint: !!hint, checked: lv[k] ? 'true' : 'false', state: lv[k] ? 'On' : 'Off',
+      badgeCls: lv[k] ? 'b-success' : 'b-neutral', badgeIc: lv[k] ? I.check : I.minus,
+      toggle: () => this.setState({ lv: { ...lv, [k]: !lv[k] }, type: 'set' })
+    }));
+    const rgb = this.hexToRgb(f.colour) || [31, 79, 216];
+    const [h0, s0, v0] = this.rgbToHsv(rgb[0], rgb[1], rgb[2]);
+    const hue = st.hue === null ? h0 : st.hue;
+    const contrastWhite = 1.05 / (this.lum(f.colour) + 0.05);
+    const low = contrastWhite < 4.5;
+    const recent = ['#1e6b45', '#7a1f2b', '#1d3a6e', '#1f4fd8', '#f2c94c'].map((hex) => ({ hex, ring: hex === f.colour.toLowerCase() ? 'var(--text)' : 'var(--border)', pick: () => this.setState({ f: { ...f, colour: hex }, hue: null }) }));
+    const fm = [['results', 'Results', 'Score entry, review, approval and publishing'], ['report_cards', 'Report cards', 'Branded PDF report cards and the template editor'], ['parent_portal', 'Parent portal', 'Parents and students see published results'], ['correction_queue', 'Correction queue', 'Parents can report a problem with a result'], ['notice_board', 'Notice board', 'School notices for every role'], ['email_notifications', 'Email notifications', 'Activation, results and receipt emails']];
+    const features = fm.map(([k, label, hint]) => ({ id: 'ft-' + k, label, hint, checked: st.feats[k] ? 'true' : 'false', toggle: () => this.setState({ feats: { ...st.feats, [k]: !st.feats[k] } }) }));
+    const featOn = fm.filter(([k]) => st.feats[k]).length;
+    const reasons = [];
+    if (!f.name.trim()) reasons.push('Add the school name.');
+    if (!codeOk) reasons.push('Choose an available school code.');
+    if (!anyLevel) reasons.push('Switch on at least one level.');
+    if (!f.pname.trim() || !userOk) reasons.push("Add the principal's full name and an available username.");
+    const cannot = reasons.length > 0;
+    const on = {};
+    ['name', 'email', 'phone', 'address', 'city', 'state', 'stateText', 'country', 'code', 'pname', 'username', 'pemail'].forEach((k) => { on[k] = (e) => this.setF(k, e.target.value); });
+    on.type = (e) => { const t = e.target.value; if (typeMap[t]) this.setState({ type: t, lv: { ...typeMap[t] } }); };
+    on.hex = (e) => { let v = e.target.value.trim(); if (!v.startsWith('#')) v = '#' + v; if (/^#[0-9a-fA-F]{6}$/.test(v)) this.setState({ f: { ...f, colour: v.toLowerCase() }, hue: null, hexDraft: null }); else this.setState({ hexDraft: v }); };
+    on.hue = (e) => { const h = Number(e.target.value); this.setState({ hue: h, f: { ...f, colour: this.hsvToHex(h % 360, s0 || 0.7, v0 || 0.5) } }); };
+    const lvNames = [lv.n ? 'Nursery' : '', lv.p ? 'Primary' : '', lv.s ? 'Secondary' : ''].filter(Boolean);
+    const showForm = (view === 'default' || view === 'empty') && !st.done;
+    return {
+      theme, device, ic: I, nav: this.nav('Schools', phone), yes: true, f,
+      logo: theme === 'dark' ? '/_blob/f8c668b157c01655c625f83bed0c84c2' : '/_blob/182db0c32744c4f6abeb340d16b2ccfb',
+      isLoading: view === 'loading', isError: view === 'error', isForm: showForm, isDone: st.done && (view === 'default' || view === 'empty'),
+      showPhoneBar: showForm,
+      states: ['Abia', 'Adamawa', 'Akwa Ibom', 'Anambra', 'Bauchi', 'Bayelsa', 'Benue', 'Borno', 'Cross River', 'Delta', 'Ebonyi', 'Edo', 'Ekiti', 'Enugu', 'FCT', 'Gombe', 'Imo', 'Jigawa', 'Kaduna', 'Kano', 'Katsina', 'Kebbi', 'Kogi', 'Kwara', 'Lagos', 'Nasarawa', 'Niger', 'Ogun', 'Ondo', 'Osun', 'Oyo', 'Plateau', 'Rivers', 'Sokoto', 'Taraba', 'Yobe', 'Zamfara'],
+      isNigeria: f.country === 'Nigeria', notNigeria: f.country !== 'Nigeria',
+      codeCls: codeMsgCls === 'help err' ? 'input code bad' : 'input code', codeMsg, codeMsgCls,
+      userCls: userMsgCls === 'help err' ? 'input bad' : 'input', userMsg, userMsgCls,
+      typeValue, typeShown: typeValue || 'Not chosen', levels, noLevel: !anyLevel && st.type !== '',
+      hue: Math.round(hue), hueColour: this.hsvToHex(hue % 360, 1, 1), svX: Math.round(s0 * 100) + '%', svY: Math.round((1 - v0) * 100) + '%',
+      hexText: st.hexDraft || f.colour.toUpperCase(), recent, lowContrast: low, reportInk: low ? '#1f4fd8' : f.colour,
+      pickSV: (e) => { const r = e.currentTarget.getBoundingClientRect(); const s = Math.min(1, Math.max(0, (e.clientX - r.left) / r.width)); const v = Math.min(1, Math.max(0, 1 - (e.clientY - r.top) / r.height)); this.setState({ f: { ...f, colour: this.hsvToHex(hue % 360, s, v) }, hue }); },
+      features, billingChecked: st.billing ? 'true' : 'false', billingOff: !st.billing, billingHint: st.billing ? 'The school gets an invoice every term.' : 'Off means free pilot: no invoices or payment prompts.',
+      toggleBilling: () => this.setState({ billing: !st.billing }),
+      nameOrBlank: f.name || 'New school', stateLine: f.country === 'Nigeria' ? (f.state ? ', ' + f.state + ' State' : '') : (f.stateText ? ', ' + f.stateText : ''),
+      levelsLine: lvNames.length ? lvNames.join(', ') : 'None', featuresLine: featOn + ' of 6 on', billingLine: st.billing ? 'Billing on' : 'Free pilot',
+      cannotCreate: cannot, blockReason: reasons[0] || '', on,
+      create: () => { if (!cannot) this.setState({ done: true }); },
+      doneLine: f.name + ' is ready. We\'ve emailed ' + f.pname + ' an activation link and sent a set-up confirmation to ' + (f.email || 'the school email') + '.',
+      copyLabel: st.copied ? 'Copied' : 'Copy', copyLink: () => this.setState({ copied: true }),
+      detailHref: (st.lv && !st.lv.s ? 'SchoolDetailBSA' : 'SchoolDetailV5') + (phone ? '_Phone' : '') + '.dc.html'
+    };
+  }
+}
+</script>
+</body>
+</html>

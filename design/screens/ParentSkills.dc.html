@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Skills report, parent view</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="sf.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.sf .bottom a{min-height:44px}
+.sf .ahd{width:100%;min-height:56px;border:0;background:transparent;color:var(--text);display:flex;align-items:center;gap:12px;padding:12px 16px;cursor:pointer;text-align:left;font:inherit}
+.sf .ahd:hover{background:var(--surface-2)}
+.sf .ahd .nm{flex-grow:1;min-width:0;display:flex;flex-direction:column}
+.sf .ahd .nm b{font-size:16px;font-weight:600}
+.sf .ahd .nm span{font-size:13px;color:var(--muted)}
+.sf .ahd .chev{transition:transform .15s;color:var(--muted)}
+.sf .ahd[aria-expanded="true"] .chev{transform:rotate(180deg)}
+.sf .codes{display:flex;gap:4px;flex-shrink:0}
+.sf .codes span{min-width:30px;height:24px;padding:0 6px;border-radius:6px;background:var(--surface-2);color:var(--text);font-size:12px;font-weight:700;display:inline-flex;align-items:center;justify-content:center}
+.sf .skr{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;padding:12px 16px;border-top:1px solid var(--border)}
+.sf .skr .sn{flex:1 1 160px;min-width:0;font-size:15px}
+.sf .acm{margin:0 16px 16px;padding:12px 14px;border-radius:8px;background:var(--surface-2);font-size:14px;line-height:21px}
+.sf .acm .cap{display:block;margin-bottom:2px}
+.sf .att{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.sf .att .tile{text-align:center;padding:10px 6px}
+.sf .att b{display:block;font-size:22px;line-height:28px;font-weight:700}
+.sf .att span{font-size:12px;color:var(--muted)}
+.sf .keyc{display:flex;flex-wrap:wrap;gap:6px}
+.sf .ewrap{max-width:1180px;width:100%}
+.sf .agrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:start}
+.sf[data-device="phone"] .agrid{grid-template-columns:minmax(0,1fr)}
+@media (prefers-reduced-motion: reduce){.sf .ahd .chev{transition:none}}
+</style>
+</helmet>
+<div class="sf" data-theme="{{theme}}" data-device="{{device}}" style="--school: #7a1f2b">
+<div class="app">
+  <aside class="side desk-only" aria-label="Parent navigation">
+    <div class="brand"><span class="crest" aria-hidden="true">BSA</span><span class="col" style="gap: 0"><span style="font-weight: 700; font-size: 15px; line-height: 20px">Bright Stars Academy</span><span class="muted" style="font-size: 13px">Nsukka</span></span></div>
+    <nav class="nav" aria-label="Main">
+      <sc-for list="{{nav}}" as="n" hint-placeholder-count="4"><a href="{{n.href}}" class="{{n.cls}}" aria-current="{{n.cur}}"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{n.d}}"></path></svg><span class="l">{{n.label}}</span></a></sc-for>
+    </nav>
+    <div class="powered"><img src="/_blob/b5461303d7a8d45a18f7975e283523ab" alt="" style="width: 20px; height: 20px">Powered by SchoolFlow</div>
+  </aside>
+  <div class="main">
+    <header class="top desk-only">
+      <nav class="crumb" aria-label="Breadcrumb"><a href="#results">Results</a> / <b>Chidera Okeke, First Term 2026/2027</b></nav>
+      <button class="iconbtn" aria-label="Notices, 1 unread"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.bell}}"></path></svg><span class="dot">1</span></button>
+      <button class="btn sm" aria-label="Profile menu" style="border: 0"><span class="crest" aria-hidden="true" style="width: 32px; height: 32px; border-radius: 9999px; font-size: 12px">NO</span><span class="col" style="gap: 0; align-items: flex-start"><span style="font-size: 14px">Mrs. Nneka Okeke</span><span class="muted" style="font-size: 12px; font-weight: 500">Parent</span></span></button>
+    </header>
+    <header class="phead phone-only">
+      <a class="iconbtn" href="#results" aria-label="Back to results"><svg class="i l" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.back}}"></path></svg></a>
+      <div class="col grow" style="gap: 0; min-width: 0"><span style="font-size: 17px; line-height: 22px; font-weight: 700">Chidera Okeke</span><span class="muted" style="font-size: 13px; line-height: 18px">Nursery 2 · First Term 2026/2027</span></div>
+      <button class="iconbtn" aria-label="Notices, 1 unread"><svg class="i l" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.bell}}"></path></svg><span class="dot">1</span></button>
+    </header>
+
+    <main class="content">
+      <sc-if value="{{isDefault}}" hint-placeholder-val="{{ true }}">
+        <div class="col ewrap" style="gap: 20px">
+          <div class="row desk-only" style="flex-wrap: nowrap; align-items: flex-end">
+            <div class="col grow" style="gap: 4px"><h1 class="h1">Chidera Okeke</h1><span class="muted" style="font-size: 15px">Nursery 2 · First Term 2026/2027 · Skills report</span></div>
+            <a class="btn" href="Verify.dc.html"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.shield}}"></path></svg>Verify</a>
+            <a class="btn primary" href="ReportSkillsEY.dc.html"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.download}}"></path></svg>Download PDF</a>
+          </div>
+
+          <div class="split">
+            <div class="wide" style="gap: 16px">
+              <section class="card" aria-labelledby="rep" style="display: flex; flex-direction: column; gap: 14px">
+                <div class="row" style="gap: 10px">
+                  <h2 id="rep" class="h3 grow">Skills report</h2>
+                  <span class="badge b-published"><svg class="i s" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.badge}}"></path></svg>Published</span>
+                </div>
+                <p class="muted" style="font-size: 14px; line-height: 20px">Mrs. Amaka Udeh rated Chidera's skills in 8 learning areas this term. Open an area to see each skill and the teacher's comment.</p>
+                <div class="row phone-only" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+                  <a class="btn" href="Verify.dc.html"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.shield}}"></path></svg>Verify</a>
+                  <a class="btn primary" href="ReportSkillsEY.dc.html"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.download}}"></path></svg>Download PDF</a>
+                </div>
+                <div class="col" style="gap: 6px">
+                  <span class="cap">Rating key</span>
+                  <div class="keyc"><sc-for list="{{key}}" as="k" hint-placeholder-count="5"><span class="badge sm {{k.cls}}"><svg class="i s" viewBox="0 0 24 24" aria-hidden="true"><path d="{{k.d}}"></path></svg>{{k.label}}</span></sc-for></div>
+                </div>
+              </section>
+
+              <div class="row" style="gap: 8px">
+                <h2 class="h2 grow">Learning areas</h2>
+                <button class="link" onClick="{{toggleAll}}" style="min-height: 44px">{{allLabel}}</button>
+              </div>
+
+              <div class="agrid">
+              <sc-for list="{{areas}}" as="a" hint-placeholder-count="8">
+                <section class="card flush" aria-label="{{a.name}}">
+                  <button class="ahd" aria-expanded="{{a.exp}}" aria-controls="{{a.id}}" onClick="{{a.toggle}}">
+                    <span class="nm"><b>{{a.name}}</b><span>{{a.count}}</span></span>
+                    <sc-if value="{{a.closed}}" hint-placeholder-val="{{ false }}"><span class="codes" aria-hidden="true"><sc-for list="{{a.skills}}" as="k" hint-placeholder-count="2"><span>{{k.code}}</span></sc-for></span></sc-if>
+                    <svg class="i chev" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.down}}"></path></svg>
+                  </button>
+                  <sc-if value="{{a.open}}" hint-placeholder-val="{{ true }}">
+                    <div id="{{a.id}}">
+                      <sc-for list="{{a.skills}}" as="k" hint-placeholder-count="2">
+                        <div class="skr"><span class="sn">{{k.name}}</span><span class="badge {{k.cls}}"><svg class="i s" viewBox="0 0 24 24" aria-hidden="true"><path d="{{k.d}}"></path></svg>{{k.label}}</span></div>
+                      </sc-for>
+                      <p class="acm"><span class="cap">Comment</span>{{a.comment}}</p>
+                    </div>
+                  </sc-if>
+                </section>
+              </sc-for>
+              </div>
+            </div>
+
+            <div class="narrow" style="gap: 16px">
+              <section class="card" aria-labelledby="cm" style="display: flex; flex-direction: column; gap: 14px">
+                <h2 id="cm" class="h3">Comments</h2>
+                <div class="col" style="gap: 2px"><span class="muted" style="font-size: 13px">Class teacher's comment · Mrs. Amaka Udeh</span><span style="font-size: 15px; line-height: 22px">Chidera is cheerful and eager to learn. She counts confidently and enjoys rhymes.</span></div>
+                <div class="divider"></div>
+                <div class="col" style="gap: 2px"><span class="muted" style="font-size: 13px">Head teacher's comment · Mrs. Chiamaka Nwafor</span><span style="font-size: 15px; line-height: 22px">A happy and confident start to the year. Well done, Chidera.</span></div>
+              </section>
+
+              <section class="card" aria-labelledby="at" style="display: flex; flex-direction: column; gap: 12px">
+                <h2 id="at" class="h3">Attendance</h2>
+                <div class="att">
+                  <div class="tile"><b class="num">60</b><span>Times school opened</span></div>
+                  <div class="tile"><b class="num">56</b><span>Times present</span></div>
+                  <div class="tile"><b class="num">4</b><span>Times absent</span></div>
+                </div>
+              </section>
+
+              <section class="alert a-success" aria-label="Report validity">
+                <svg class="i l" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.shield}}"></path></svg>
+                <div class="col" style="gap: 2px"><strong>Valid · revision 1</strong><span class="num" style="color: var(--muted); font-size: 13px">Report ID BSA-2627-T1-NUR2-041 · published 8 Dec 2026</span><span style="color: var(--muted); font-size: 13px">Next term begins 5 Jan 2027</span></div>
+              </section>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{isLoading}}" hint-placeholder-val="{{ false }}">
+        <div class="col ewrap" aria-busy="true" aria-label="Loading the skills report" style="gap: 16px">
+          <div class="skel desk-only" style="height: 38px; width: 320px"></div>
+          <div class="split">
+            <div class="wide" style="gap: 16px">
+              <div class="card col" style="gap: 12px"><div class="skel" style="height: 22px; width: 50%"></div><div class="skel" style="height: 14px; width: 90%"></div><div class="skel" style="height: 26px; width: 80%"></div></div>
+              <sc-for list="{{skelRows}}" as="x" hint-placeholder-count="5"><div class="card row" style="gap: 12px"><div class="col grow" style="gap: 6px"><div class="skel" style="height: 16px; width: 45%"></div><div class="skel" style="height: 12px; width: 25%"></div></div><div class="skel" style="height: 24px; width: 70px"></div></div></sc-for>
+            </div>
+            <div class="narrow" style="gap: 16px">
+              <div class="card col" style="gap: 10px"><div class="skel" style="height: 20px; width: 40%"></div><div class="skel" style="height: 14px; width: 100%"></div><div class="skel" style="height: 14px; width: 85%"></div></div>
+              <div class="card"><div class="skel" style="height: 64px"></div></div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{isEmpty}}" hint-placeholder-val="{{ false }}">
+        <div class="card state ewrap">
+          <span class="ic" style="background: var(--neutral-soft); color: var(--neutral)"><svg class="i l" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.clock}}"></path></svg></span>
+          <h1 class="h3">Chidera's First Term report is not ready yet</h1>
+          <p class="muted" style="max-width: 420px">Mrs. Amaka Udeh is still rating this term's skills. We'll send you a notice the moment the report is published.</p>
+          <a class="btn" href="#home">Back to home</a>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{isError}}" hint-placeholder-val="{{ false }}">
+        <div class="card state ewrap" role="alert">
+          <span class="ic" style="background: var(--danger-soft); color: var(--danger)"><svg class="i l" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ic.alert}}"></path></svg></span>
+          <h1 class="h3">We couldn't load Chidera's skills report</h1>
+          <p class="muted" style="max-width: 420px">Check your connection and try again. Your report is safe.</p>
+          <button class="btn primary" onClick="{{retry}}">Try again</button>
+        </div>
+      </sc-if>
+    </main>
+
+    <nav class="bottom phone-only" aria-label="Main">
+      <sc-for list="{{nav}}" as="n" hint-placeholder-count="4"><a href="{{n.href}}" class="{{n.cls}}" aria-current="{{n.cur}}"><svg class="i l" viewBox="0 0 24 24" aria-hidden="true"><path d="{{n.d}}"></path></svg>{{n.label}}</a></sc-for>
+    </nav>
+  </div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["Light","Dark"],"default":"Light"},"state":{"editor":"enum","options":["Default","Empty","Loading","Error"],"default":"Default"},"device":{"editor":"enum","options":["Desktop","Phone"],"default":"Desktop"},"$preview":{"width":1440,"height":1500}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = this.init(props); }
+  key(P) { return [P.device, P.state].join('|'); }
+  init(P) {
+    const phone = String(P.device || 'Desktop').toLowerCase() === 'phone';
+    return { key: this.key(P), open: phone ? [0] : [0, 1, 2, 3, 4, 5, 6, 7], retried: false };
+  }
+  icons() {
+    return {
+      home: 'M3 10l9-7 9 7v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z', file: 'M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9zM14 3v6h6M8 13h8M8 17h5',
+      bell: 'M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.94 1.94 0 0 0 3.4 0', user: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21a8 8 0 0 1 16 0',
+      back: 'M15 18l-6-6 6-6', down: 'M6 9l6 6 6-6', download: 'M12 3v12M7 10l5 5 5-5M5 21h14',
+      shield: 'M12 3l7 3v5c0 4.5-3 8.3-7 10-4-1.7-7-5.5-7-10V6zM9 12l2 2 4-4',
+      badge: 'M12 2l2.4 1.8 3-.2.9 2.9 2.5 1.7-1 2.8 1 2.8-2.5 1.7-.9 2.9-3-.2L12 22l-2.4-1.8-3 .2-.9-2.9-2.5-1.7 1-2.8-1-2.8 2.5-1.7.9-2.9 3 .2zM8.5 12l2.5 2.5 4.5-5',
+      star: 'M12 3l2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.3 6.4 20.2l1.1-6.2L3 9.6l6.2-.9z', okc: 'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM8 12l3 3 5-6',
+      check: 'M5 12l5 5L20 7', minus: 'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM8 12h8', warn: 'M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0zM12 9v4M12 17h.01',
+      alert: 'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM12 8v4M12 16h.01', clock: 'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM12 7v5l3 2'
+    };
+  }
+  renderVals() {
+    const P = this.props, I = this.icons();
+    if (this.state.key !== this.key(P)) this.state = this.init(P);
+    const st = this.state;
+    const theme = String(P.theme || 'Light').toLowerCase(), device = String(P.device || 'Desktop').toLowerCase();
+    let view = String(P.state || 'Default').toLowerCase();
+    if (view === 'error' && st.retried) view = 'default';
+    const phone = device === 'phone';
+    const pg = (n) => (n.startsWith('#') ? n : n + (phone && ['Assessment', 'AssessmentBSA', 'Attention', 'AttentionBSA', 'AttentionReviewer', 'AttentionTeacher', 'AttentionTeacherBSA', 'AuditLog', 'BillingV5', 'BsaMenus', 'ChangePassword', 'ClassPage', 'CreateSchool', 'DashboardV5', 'EmailLog', 'Grading', 'GradingBSA', 'LearningAreas', 'Login', 'Login_Link', 'MyClass', 'MyClassPrimary', 'ParentSkills', 'Payments', 'PlatformSettings', 'PricingV5', 'PublishV5', 'RatingSheet', 'RatingSheetAssistant', 'SchoolAdmins', 'SchoolAdminsBSA', 'SchoolDetailBSA', 'SchoolDetailV5', 'SchoolPaused', 'SchoolsV5', 'ScoreGridSS', 'ScoreGridV5', 'SheetsV5', 'StudentDetail', 'SuperBillingV5', 'TemplateEditorBSA', 'TemplateEditorV5'].includes(n) ? '_Phone' : '') + '.dc.html');
+    const nav = [['Home', '#home', 'home'], ['Results', '#results', 'file'], ['Notices', '#notices', 'bell'], ['Profile', '#profile', 'user']]
+      .map(([label, href, ic]) => ({ label, href: pg(href), d: I[ic], cls: label === 'Results' ? 'on' : '', cur: label === 'Results' ? 'page' : 'false' }));
+    // Skill rating status colours (brief Section 6): always icon + word + code
+    const SC = {
+      E: ['Excellent', 'b-success', I.star], VG: ['Very good', 'b-success', I.okc], G: ['Good', 'b-info', I.check],
+      F: ['Fair', 'b-warning', I.minus], NI: ['Needs improvement', 'b-danger', I.warn]
+    };
+    const badge = (code) => ({ code, label: SC[code][0] + ' (' + code + ')', cls: SC[code][1], d: SC[code][2] });
+    const A = [
+      ['Number work', [['Counts 1 to 20', 'VG'], ['Recognises shapes', 'E']], 'Counts confidently and names every shape.'],
+      ['Letter work', [['Recognises letters A to Z', 'VG'], ['Writes own name', 'G']], 'Knows most letters. Practise writing her name at home.'],
+      ['Phonics', [['Sounds letters correctly', 'VG']], 'Sounds most letters clearly.'],
+      ['Rhymes and songs', [['Recites rhymes', 'E']], 'Loves rhymes and leads the class in songs.'],
+      ['Creative arts', [['Colours within lines', 'G']], 'Enjoys colouring and is learning to stay within the lines.'],
+      ['Social habits', [['Shares with others', 'VG'], ['Greets politely', 'E']], 'Kind to her friends and always greets politely.'],
+      ['Health habits', [['Washes hands', 'VG']], 'Washes her hands before meals without being reminded.'],
+      ['Physical development', [['Hops on one foot', 'F']], 'Still building her balance. Hopping games at home will help.']
+    ];
+    const open = st.open;
+    const areas = A.map(([name, sk, comment], i) => {
+      const on = open.includes(i);
+      return {
+        name, comment, id: 'area-' + i, exp: on ? 'true' : 'false', open: on, closed: !on,
+        count: sk.length === 1 ? '1 skill' : sk.length + ' skills',
+        skills: sk.map(([n, code]) => ({ name: n, ...badge(code) })),
+        toggle: () => this.setState({ open: on ? open.filter((x) => x !== i) : open.concat(i) })
+      };
+    });
+    const allOpen = open.length === A.length;
+    return {
+      theme, device, ic: I, nav, areas,
+      key: Object.keys(SC).map(badge),
+      allLabel: allOpen ? 'Collapse all' : 'Expand all',
+      toggleAll: () => this.setState({ open: allOpen ? [] : A.map((x, i) => i) }),
+      isDefault: view === 'default', isLoading: view === 'loading', isEmpty: view === 'empty', isError: view === 'error',
+      skelRows: [1, 2, 3, 4, 5],
+      retry: () => this.setState({ retried: true })
+    };
+  }
+}
+</script>
+</body>
+</html>
