@@ -24,7 +24,7 @@ Tools installed locally rather than accounts: Docker Desktop, uv, Bun, GitHub CL
 
 | Service | Detail |
 |---|---|
-| GitHub username | `chidimmamogbo` (repo will be `github.com/chidimmamogbo/<repo-name>`, created in Phase 4) |
+| GitHub username | `chidimmamogbo` (repo `github.com/chidimmamogbo/schoolflow-result-portal`, public, created in Phase 4 on 2026-10-09) |
 | Vercel account | `Chidimma` (Hobby; usage low on 2026-10-09 with 2 other projects) |
 | Sentry organisation | `Meritia` (EU data storage) |
 | Paystack | Business **SchoolFlow** (test mode) under the same login as the live meritiaa business |
