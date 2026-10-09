@@ -1,0 +1,49 @@
+[project]
+name = "schoolflow-api"
+version = "0.1.0"
+description = "SchoolFlow Result Portal API (FastAPI)"
+authors = [
+    { name = "Chidimma Mogbo", email = "288715556+chidimmamogbo@users.noreply.github.com" }
+]
+requires-python = ">=3.14"
+dependencies = [
+    "fastapi[standard]>=0.143.0",
+]
+
+[build-system]
+requires = ["uv_build>=0.12.16,<0.13.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "httpx2>=2.13.1",
+    "pyright>=1.1.414",
+    "pytest>=9.1.1",
+    "pytest-cov>=7.1.0",
+    "ruff>=0.16.10",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+# Any warning fails the run, so deprecations are fixed when they appear.
+filterwarnings = ["error"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py314"
+
+[tool.ruff.lint]
+# E/W style, F real mistakes, I import order, B likely bugs, UP modern syntax,
+# S security (Bandit rules), N naming, SIM simpler code, RUF Ruff's own checks.
+select = ["E", "W", "F", "I", "B", "UP", "S", "N", "SIM", "RUF"]
+
+[tool.ruff.lint.per-file-ignores]
+# Tests use plain `assert`, which is how pytest checks results.
+"tests/**" = ["S101"]
+
+[tool.pyright]
+include = ["src", "tests"]
+pythonVersion = "3.14"
+typeCheckingMode = "strict"
+venvPath = "."
+venv = ".venv"
