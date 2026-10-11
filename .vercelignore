@@ -1,0 +1,22 @@
+# What the Vercel CLI may upload when deploying from a machine (local or CI).
+# Allowlist: ignore everything at the root, then allow only what the build needs.
+/*
+!vercel.json
+!frontend
+!backend
+
+# Never upload secrets, at any depth. Vercel's built-in list skips .env.local
+# but NOT a plain .env, and it also skips .dockerignore, so the backend image
+# would otherwise have no guard against a local backend/.env.
+.env
+.env.*
+
+# Local caches and reports: not needed to build, and can be large.
+.pytest_cache
+.ruff_cache
+.hypothesis
+.coverage
+htmlcov
+coverage
+test-results
+playwright-report
