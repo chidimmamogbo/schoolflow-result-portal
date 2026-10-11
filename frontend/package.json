@@ -12,7 +12,7 @@
     "lint": "eslint",
     "test": "vitest run",
     "test:watch": "vitest",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "next typegen && tsc --noEmit",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "audit": "bun audit --audit-level=high --ignore=GHSA-vfj7-8cjw-p6xm"
