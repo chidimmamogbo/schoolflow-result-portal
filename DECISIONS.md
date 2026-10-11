@@ -555,6 +555,14 @@ Installed on Chidimma's laptop (checked 2026-10-09): Node 24.21.0, npm 11.19.0, 
 ### D-129. Onboarding-day upgrade list
 - Vercel Pro ($20 per developer seat per month; Hobby is non-commercial), Neon Launch (pay as you go, no suspension, 7-day restore), Resend Pro ($20/month, no daily limit), Paystack go-live (business activation), Sentry stays free until errors outgrow 5,000. Kept in `docs/SERVICES.md`.
 
+## Phase 4 decisions
+
+### D-130. Dependency audit in CI ignores one unpatched dev-only advisory (Chidimma's choice, 2026-10-11)
+- CI fails on any high or critical advisory (`uv audit --locked`, `bun run audit` = `bun audit --audit-level=high`), with exactly one exception: **GHSA-vfj7-8cjw-p6xm** (`braces` <= 3.0.3, denial of service through deeply nested glob patterns, published 2026-09-18, no patched version).
+- **Reason:** `braces` comes in only through `eslint-config-next` > `@next/eslint-plugin-next` > `fast-glob` > `micromatch`. It runs at development time on our own file patterns, never on user input, and never ships to the browser or the server.
+- **Remove the ignore** as soon as a patched `braces` (or a dependency path without it) is available; Dependabot alerts will flag it.
+- **Rejected:** letting CI stay red until a fix exists (blocks every merge with no date); report-only audits (new real problems could slip through).
+
 ---
 
 # Stack Summary (one page, for final approval)
