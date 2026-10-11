@@ -26,6 +26,8 @@ Tools installed locally rather than accounts: Docker Desktop, uv, Bun, GitHub CL
 |---|---|
 | GitHub username | `chidimmamogbo` (repo `github.com/chidimmamogbo/schoolflow-result-portal`, public, created in Phase 4 on 2026-10-09) |
 | Vercel account | `Chidimma` (Hobby; usage low on 2026-10-09 with 2 other projects) |
+| Vercel project | `schoolflow-result-portal` (Services: Next.js + FastAPI container, `lhr1`), linked to the GitHub repo on 2026-10-11; production branch `main`; Deployment Protection "all except custom domains" (default). Container image storage: not listed on Usage, "Images Storage" 0 B (checked 2026-10-11); re-check after several deploys (Hobby: 50 images per repository) |
+| Staging domain | `staging.schoolflow.meritiaa.com`: CNAME `82d3345175c9218d.vercel-dns-017.com` (TTL 300) in Namecheap cPanel Zone Editor, added 2026-10-11; HTTPS certificate issued by Vercel after the first alias. Root, MX and nameservers untouched |
 | Sentry organisation | `Meritia` (EU data storage) |
 | Paystack | Business **SchoolFlow** (test mode) under the same login as the live meritiaa business |
 | Resend | Domain `notify.meritiaa.com`, Ireland, verified |
@@ -51,8 +53,8 @@ Planned names (finalised in `.env.example` files during Phase 4). Production and
 | Blob access (OIDC, automatic on Vercel) | Vercel | n/a | Backend file storage | Injected by Vercel; local dev uses the local-folder storage |
 | `SENTRY_DSN`, `NEXT_PUBLIC_SENTRY_DSN` | Sentry | No (still kept in env) | Backend, frontend | Vercel env; local `.env` files |
 | `SENTRY_AUTH_TOKEN` | Sentry | Yes | CI source-map upload | GitHub Actions secrets only |
-| `VERCEL_TOKEN` (with expiry) | Vercel | Yes | CI deploy | GitHub Actions secrets only |
-| `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID` | Vercel | No | CI deploy | GitHub Actions secrets |
+| `VERCEL_TOKEN` (with expiry) | Vercel | Yes | CI deploy | GitHub environment `staging` only (branch `staging`). Token `schoolflow-github-actions`, scoped to the `schoolflow-result-portal` project, created 2026-10-11, **expires 2026-11-10: renew before then** |
+| `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID` | Vercel | No | CI deploy | GitHub environment `staging` (values in local `.vercel/project.json`) |
 | `APP_ENV`, `APP_BASE_URL` | Ours | No | Backend, frontend | Vercel env; local `.env` |
 
 ## Onboarding-day upgrades (D-129)

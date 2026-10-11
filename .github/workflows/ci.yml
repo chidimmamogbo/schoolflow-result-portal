@@ -70,7 +70,7 @@ jobs:
           version: 0.12.16
           working-directory: backend
           enable-cache: true
-          cache-dependency-glob: backend/uv.lock
+          cache-dependency-glob: uv.lock # relative to working-directory above
       # --locked fails if uv.lock does not match pyproject.toml.
       - run: uv sync --locked
       - run: uv run ruff check .
@@ -153,14 +153,25 @@ jobs:
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version-file: .nvmrc
+      # Stops with a clear message if a secret was saved empty (it happened once).
+      - name: Check the deploy secrets are set
+        run: |
+          for name in VERCEL_TOKEN VERCEL_ORG_ID VERCEL_PROJECT_ID; do
+            if [ -z "${!name}" ]; then
+              echo "::error::The $name secret in the GitHub staging environment is empty"
+              exit 1
+            fi
+          done
       - run: npm install --global vercel@63.1.0 # same CLI version as on your machine
       - name: Deploy (preview target) and capture its URL
         run: |
-          url=$(vercel deploy --yes --target=preview --token="$VERCEL_TOKEN")
+          url=$(vercel deploy --yes --target=preview --scope "$VERCEL_ORG_ID" --token="$VERCEL_TOKEN")
           echo "Deployed: $url"
           echo "DEPLOY_URL=$url" >> "$GITHUB_ENV"
       - name: Point the staging address at this deployment
-        run: vercel alias set "$DEPLOY_URL" "$STAGING_DOMAIN" --token="$VERCEL_TOKEN"
+        # --scope names the team, so the project-only token is not asked to
+        # look up the user account (that failed with "User not found").
+        run: vercel alias set "$DEPLOY_URL" "$STAGING_DOMAIN" --scope "$VERCEL_ORG_ID" --token="$VERCEL_TOKEN"
       - name: Staging health check answers {"status":"ok"}
         run: |
           for i in $(seq 1 30); do
