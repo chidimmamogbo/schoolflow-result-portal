@@ -165,13 +165,20 @@ jobs:
       - run: npm install --global vercel@63.1.0 # same CLI version as on your machine
       - name: Deploy (preview target) and capture its URL
         run: |
-          url=$(vercel deploy --yes --target=preview --scope "$VERCEL_ORG_ID" --token="$VERCEL_TOKEN")
+          url=$(vercel deploy --yes --target=preview --token="$VERCEL_TOKEN")
           echo "Deployed: $url"
           echo "DEPLOY_URL=$url" >> "$GITHUB_ENV"
       - name: Point the staging address at this deployment
-        # --scope names the team, so the project-only token is not asked to
-        # look up the user account (that failed with "User not found").
-        run: vercel alias set "$DEPLOY_URL" "$STAGING_DOMAIN" --scope "$VERCEL_ORG_ID" --token="$VERCEL_TOKEN"
+        # Calls Vercel's REST API directly ("Assign an Alias", POST /v2/deployments/{id}/aliases).
+        # The CLI's alias command first looks up the user account, which a token
+        # scoped to one project may not do ("User not found"); this call does not.
+        run: |
+          host="${DEPLOY_URL#https://}"
+          curl --fail-with-body -sS -X POST \
+            "https://api.vercel.com/v2/deployments/$host/aliases?teamId=$VERCEL_ORG_ID" \
+            -H "Authorization: Bearer $VERCEL_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "{\"alias\": \"$STAGING_DOMAIN\"}"
       - name: Staging health check answers {"status":"ok"}
         run: |
           for i in $(seq 1 30); do
