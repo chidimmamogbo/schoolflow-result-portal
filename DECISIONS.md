@@ -563,6 +563,14 @@ Installed on Chidimma's laptop (checked 2026-10-09): Node 24.21.0, npm 11.19.0, 
 - **Remove the ignore** as soon as a patched `braces` (or a dependency path without it) is available; Dependabot alerts will flag it.
 - **Rejected:** letting CI stay red until a fix exists (blocks every merge with no date); report-only audits (new real problems could slip through).
 
+### D-131. Staging deploy: project-scoped token, alias through the REST API (Chidimma's choice, 2026-10-11)
+- The `deploy-staging` job in `.github/workflows/ci.yml` runs only on pushes to `staging`, after all five checks. It reads `VERCEL_TOKEN`, `VERCEL_ORG_ID` and `VERCEL_PROJECT_ID` from the GitHub environment **`staging`**, which only the `staging` branch may use.
+- `VERCEL_TOKEN` is scoped to the **`schoolflow-result-portal` project only**, 30-day expiry (current one expires 2026-11-10), so it cannot reach the two other projects on the account.
+- `vercel deploy --target=preview` (Vercel builds remotely; the `--prebuilt` path is not used because container-service support is unconfirmed), then the alias is assigned with **`POST https://api.vercel.com/v2/deployments/{url}/aliases?teamId=…`** via curl, then `/api/v1/health` on the staging domain must return `{"status":"ok"}`.
+- **Why not the CLI alias:** `vercel alias set` and any command with `--scope` first load the user account, which a project-scoped token may not do ("User not found", tested 2026-10-11).
+- Flow: features merge to `main` by pull request; `staging` is fast-forwarded to `main` (`git merge --ff-only origin/main`) to update staging.
+- **Rejected:** team-wide token (reaches the other live projects); branch-domain assignment (CLI deploys are not full Git deployments per Vercel's guide, unverified).
+
 ---
 
 # Stack Summary (one page, for final approval)

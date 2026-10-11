@@ -6,11 +6,11 @@ The living record of where the project stands. Update it at the end of every ses
 
 | | |
 |---|---|
-| Last updated | 2026-10-09 |
-| Phase | 3 complete; Phase 4 (install and scaffold) next |
-| Current step | Phase 3 done 2026-10-09: all 7 services set up (see `docs/SERVICES.md`). No secrets copied anywhere yet |
-| Next step | Phase 4 step 1: install the missing tools one at a time (GitHub CLI, pre-commit via uv, Vercel CLI) with version checks; then git init, repo, scaffold |
-| Code | None yet. No git repo yet (Phase 4 creates it) |
+| Last updated | 2026-10-11 |
+| Phase | 4 in progress (install, scaffold, CI and staging done) |
+| Current step | Staging live at `https://staging.schoolflow.meritiaa.com` (health OK), deployed by CI on every push to `staging` |
+| Next step | Phase 4 remaining: `.env.example` files (names only), staging noindex header + "Staging" banner (D-121), root `README.md`, `CLAUDE.md`/`AGENT.md` "Stack and commands" section, `CHANGES.md`; then the `production` GitHub environment and main deploy |
+| Code | Monorepo on GitHub `chidimmamogbo/schoolflow-result-portal` (public). `backend/` FastAPI skeleton (health + tests), `frontend/` Next.js 16.4 skeleton (page + tests), CI with 5 required checks + staging deploy |
 
 ## Phase checklist
 
@@ -19,7 +19,7 @@ The living record of where the project stands. Update it at the end of every ses
 - [x] Phase 1: technical research, `docs/RESEARCH_TECH.md`
 - [x] Phase 2: stack decisions, 13 rounds, `DECISIONS.md` and Stack Summary (approved 2026-10-09)
 - [x] Phase 3: services and accounts, `docs/SERVICES.md` (done 2026-10-09)
-- [ ] Phase 4: install, scaffold, CI, staging skeleton
+- [ ] Phase 4: install, scaffold, CI, staging skeleton (tools, repo, scaffold, CI, staging done 2026-10-11; docs and .env.example left)
 - [ ] Phase 5: UI/UX review of the design handoff
 - [ ] Phase 6: `docs/ACCEPTANCE_TESTS.md`
 - [ ] Phase 7: backend, test-first
@@ -65,7 +65,16 @@ Rest of the stack: not decided yet. **Preference stated 2026-10-08: Chidimma pre
 
 ## Facts worth remembering
 
-- Tools already installed (checked 2026-10-09): Node 24.21.0, npm 11.19.0, Bun 1.4.2, Python 3.14.7, uv 0.12.16, Git 2.55.0, Docker 29.8.0, WSL (Ubuntu), VS Code 1.139.1. Not installed: pnpm, `py` launcher. Added in Phase 4 (2026-10-09): GitHub CLI 2.102.0, pre-commit 4.6.2 (via `uv tool`), Vercel CLI 63.1.0 (via `bun add -g`, not logged in yet).
+- **Daily commands.** Backend (in `backend/`): `uv run pytest`, `uv run ruff check .`, `uv run ruff format --check .`, `uv run pyright`. Frontend (in `frontend/`): `bun run test` (never `bun test`), `bun run lint`, `bun run typecheck` (`next typegen && tsc`), `bun run format:check`, `bun run build`, `bun run audit`. Use `bunx`, not `npx`.
+- **Git flow.** `main` is protected: pull request, 5 required checks (GitHub Actions app 15368), up to date, linear, squash only, admins included. Update staging with `git switch staging && git merge --ff-only origin/main && git push`.
+- **Git Bash clipboard trap (2026-10-11):** Windows programs such as `gh` receive nothing from `< /dev/clipboard`. Always pipe: `cat /dev/clipboard | gh secret set NAME --env ENV`, and check the length first with `cat /dev/clipboard | wc -c`.
+- **Git Bash path trap:** commands with an argument starting with `/` (for example `vercel api /v9/...`, `gh api /advisories/...`) get rewritten to `C:/Program Files/Git/...`. Prefix with `MSYS_NO_PATHCONV=1` or drop the leading slash for `gh api`.
+- **Vercel CLI side effects:** `vercel link` appended `.vercel` and `.env*` to the root `.gitignore`, and the trailing `.env*` silently ignored every `.env.example`. Check `.gitignore` after any `vercel link` or `vercel env pull`.
+- **Vercel:** project `schoolflow-result-portal` (team `chidimma2`), Services: Next.js + FastAPI container in `lhr1`. The very first deployment (from a feature branch) was labelled Production; later CLI deploys are Preview. Deployment URLs are behind Vercel Authentication; custom domains are public.
+- **Deploy token** `schoolflow-github-actions`: project-scoped, expires **2026-11-10**, stored only in the GitHub `staging` environment. A project-scoped token cannot use `vercel alias set` or `--scope` ("User not found"); the pipeline uses the REST API instead (D-131).
+- **Dependency audit:** CI ignores only GHSA-vfj7-8cjw-p6xm (`braces`, dev-only via ESLint, no patch yet). Remove the ignore once patched (D-130).
+- **GitHub runners:** `ubuntu-latest` moves to Ubuntu 26 from 2026-10-19; watch the first CI runs after that date.
+- Tools installed (checked 2026-10-09/11): Node 24.21.0, npm 11.19.0, Bun 1.4.2, Python 3.14.7, uv 0.12.16, Git 2.55.0, Docker 29.8.0, WSL (Ubuntu), VS Code 1.139.1. Not installed: pnpm, `py` launcher. Added in Phase 4 (2026-10-09): GitHub CLI 2.102.0, pre-commit 4.6.2 (via `uv tool`), Vercel CLI 63.1.0 (via `bun add -g`, logged in as `chidimmamogbo`, team `chidimma2`).
 - Developer machine: Windows 11 Pro, shell Git Bash. Commands use Git Bash syntax (Python venvs activate with `source .venv/Scripts/activate`).
 - `docs/SPEC.md` and `design/docs/SPEC.md` are identical copies (hash checked 2026-10-08).
 - The design handoff is v0.5 with 110 screen files; BUILD_PROMPT still says "21 screens". Not yet designed: reviewer screens and add-parent screens (`design/README.md`, flows 2 and 7). Handle in Phase 5.
