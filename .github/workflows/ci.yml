@@ -78,6 +78,31 @@ jobs:
       - run: uv run pytest
       - run: uv audit --locked --preview-features audit-command
 
+  backend-image:
+    name: Backend image (Docker build and smoke test)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      # Builds the exact image Vercel will run (D-117), then checks it answers.
+      - run: docker build -f Dockerfile.vercel -t schoolflow-api:ci .
+      - run: docker run -d --name api -p 8000:8000 schoolflow-api:ci
+      - name: Health check answers 200 with {"status":"ok"}
+        run: |
+          for i in $(seq 1 20); do
+            body=$(curl -fsS http://localhost:8000/api/v1/health) && break
+            sleep 1
+          done
+          echo "$body"
+          test "$body" = '{"status":"ok"}'
+      - name: Container runs as a non-root user
+        run: test "$(docker exec api id -u)" != "0"
+      - if: failure()
+        run: docker logs api
+
   frontend:
     name: Frontend (Prettier, ESLint, tsc, Vitest, build, audit)
     runs-on: ubuntu-latest
