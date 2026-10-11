@@ -1,0 +1,103 @@
+# CI: every check that must pass before code reaches main (BUILD_PROMPT Phase 4 step 5).
+# Lint, format check, type check, tests, secret scan and dependency audit,
+# for the backend and the frontend. Playwright joins in Phase 8.
+#
+# Actions are pinned to a full commit SHA (the tag is in the comment), so a
+# changed tag upstream can never swap in different code. Versions checked 2026-10-11.
+
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main, staging]
+  workflow_dispatch:
+
+# A newer push to the same branch cancels the older, now pointless, run.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+# Read-only token by default: CI never needs to change the repo.
+permissions:
+  contents: read
+
+jobs:
+  secrets:
+    name: Secret scan (gitleaks)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0 # full history, so every commit in the push or PR is scanned
+      - uses: gitleaks/gitleaks-action@e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e # v3.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_VERSION: 8.30.1 # same as the local pre-commit hook
+          GITLEAKS_ENABLE_COMMENTS: false # keeps the token read-only
+
+  repo-checks:
+    name: Repo checks (pre-commit)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+        with:
+          version: 0.12.16
+      # Same hooks as on your machine. gitleaks is skipped here because the
+      # secrets job above scans full history, which the commit hook cannot.
+      - run: uvx pre-commit@4.6.2 run --all-files --show-diff-on-failure
+        env:
+          SKIP: gitleaks
+
+  backend:
+    name: Backend (Ruff, Pyright, pytest, audit)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+        with:
+          version: 0.12.16
+          working-directory: backend
+          enable-cache: true
+          cache-dependency-glob: backend/uv.lock
+      # --locked fails if uv.lock does not match pyproject.toml.
+      - run: uv sync --locked
+      - run: uv run ruff check .
+      - run: uv run ruff format --check .
+      - run: uv run pyright
+      - run: uv run pytest
+      - run: uv audit --locked --preview-features audit-command
+
+  frontend:
+    name: Frontend (Prettier, ESLint, tsc, Vitest, build, audit)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc # Node 24 is the runtime (D-107); Bun only installs and runs scripts
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version-file: frontend/package.json # reads "packageManager": "bun@1.4.2"
+      # --frozen-lockfile fails if bun.lock does not match package.json.
+      - run: bun install --frozen-lockfile
+      - run: bun run format:check
+      - run: bun run lint
+      - run: bun run typecheck
+      - run: bun run test
+      - run: bun run build
+      - run: bun run audit # ignores one unpatched dev-only advisory, see D-130
