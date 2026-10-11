@@ -1,6 +1,7 @@
 # CI: every check that must pass before code reaches main (BUILD_PROMPT Phase 4 step 5).
 # Lint, format check, type check, tests, secret scan and dependency audit,
 # for the backend and the frontend. Playwright joins in Phase 8.
+# Pushes to the staging branch then deploy to staging (last job).
 #
 # Actions are pinned to a full commit SHA (the tag is in the comment), so a
 # changed tag upstream can never swap in different code. Versions checked 2026-10-11.
@@ -126,3 +127,45 @@ jobs:
       - run: bun run test
       - run: bun run build
       - run: bun run audit # ignores one unpatched dev-only advisory, see D-130
+
+  # Deploys only after every check above has passed, and only for pushes to the
+  # staging branch (D-123). Vercel builds from the uploaded source (the same build
+  # as its Git integration), then the deployment gets the staging address.
+  # Migrations join here once the database exists (Phase 7).
+  deploy-staging:
+    name: Deploy to staging
+    if: github.event_name == 'push' && github.ref == 'refs/heads/staging'
+    needs: [secrets, repo-checks, backend, backend-image, frontend]
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    # Secrets live in the GitHub "staging" environment, which only the staging
+    # branch may use, so no other branch or pull request can read the token.
+    environment:
+      name: staging
+      url: https://staging.schoolflow.meritiaa.com
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      STAGING_DOMAIN: staging.schoolflow.meritiaa.com
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+      - run: npm install --global vercel@63.1.0 # same CLI version as on your machine
+      - name: Deploy (preview target) and capture its URL
+        run: |
+          url=$(vercel deploy --yes --target=preview --token="$VERCEL_TOKEN")
+          echo "Deployed: $url"
+          echo "DEPLOY_URL=$url" >> "$GITHUB_ENV"
+      - name: Point the staging address at this deployment
+        run: vercel alias set "$DEPLOY_URL" "$STAGING_DOMAIN" --token="$VERCEL_TOKEN"
+      - name: Staging health check answers {"status":"ok"}
+        run: |
+          for i in $(seq 1 30); do
+            body=$(curl -fsS "https://$STAGING_DOMAIN/api/v1/health") && break
+            sleep 2
+          done
+          echo "$body"
+          test "$body" = '{"status":"ok"}'
