@@ -25,9 +25,11 @@ Entry template:
 - `README.md` with the "All rights reserved" notice (D-111), the "Stack and commands" section in `AGENT.md`, and `CHANGES.md` (PR #13).
 - **Phase 4 complete.** Re-reading BUILD_PROMPT: Phase 4 ends at step 7 (CLAUDE.md/AGENT.md). The production deploy job belongs to Phase 11, after the Phase 10 security gate ("We do not deploy to production until every item passes"). Earlier notes listing it as a Phase 4 item were wrong.
 - **Phase 5** (faster pace, 2 or 3 steps per turn): `docs/UI_REVIEW.md` with the route-to-board coverage table (13 demo pages without a board, 6 on one-theme v0.3 boards), decisions D-132 to D-134, all five NAVIGATION section 5 label groups approved with fixes (teacher menu "Result sheets"), role journeys, the Phase 5 checklist and content for the pages without a board. Item 8: no real cards had been given to the designer; online research (`docs/REPORT_CARD_RESEARCH.md`) found the Ogun State and FCT UBEB formats but no six complete real cards; approved CHANGE adds the missing switches and defaults (SPEC v0.5.1, D-135).
+- **Phase 6 complete:** `docs/ACCEPTANCE_TESTS.md`, the 38 demo steps as 128 given/when/then cases (54 denied cases), fixtures, and a table covering all 44 BUILD_PROMPT Phase 6 items. Pass mark label changed to 1 to 99. AGENT.md rule 1 now allows two or three steps per turn.
 
 ### What changed (files)
-- New: `backend/.env.example`, `frontend/.env.example`, `frontend/src/components/staging-banner.tsx` and its test, `README.md`, `CHANGES.md`.
+- New: `backend/.env.example`, `frontend/.env.example`, `frontend/src/components/staging-banner.tsx` and its test, `README.md`, `CHANGES.md`, `docs/UI_REVIEW.md`, `docs/REPORT_CARD_RESEARCH.md`, `docs/ACCEPTANCE_TESTS.md`.
+- Spec v0.5.1 (`docs/SPEC.md`, `design/docs/SPEC.md`), `design/docs/DESIGN_BRIEF.md`, `design/NAVIGATION_AND_SETTINGS.md`, `DECISIONS.md` D-132 to D-135. PRs #11 to #16 merged; Phase 6 is PR #17.
 - Updated: `frontend/src/app/layout.tsx`, `frontend/src/app/globals.css` (two warning tokens from `tokens.css`), `frontend/.gitignore`, `vercel.json`, `.github/workflows/ci.yml`, `AGENT.md` (production deploy moved from "later in Phase 4" to Phase 11), `MEMORY.md`, `LOG.md`.
 
 ### Issues and fixes
@@ -39,13 +41,13 @@ Entry template:
 - CI: 5 checks green on `main`; staging deploy green, including health, noindex header and banner checks. Production (`*.vercel.app`) shows neither banner nor noindex.
 
 ### Next step
-- Phase 6: `docs/ACCEPTANCE_TESTS.md` from the 38-step demo. Optional: real report cards from schools Chidimma knows.
+- New session. Phase 7, step 1: Postgres 17 in Docker, settings, SQLAlchemy and Alembic wiring, database test fixture, then migration 1 (schools, school_features, school_levels, platform_settings), test-first. Optional: real report cards from schools Chidimma knows.
 
 ### Blockers
 - None.
 
 ### Roughly left
-- Phases 1 to 5 done. Left: 6 (acceptance tests), 7 (backend), 8 (frontend), 9 (end to end), 10 (security gate), 11 (production deploy and demo), then build-after-the-core items. Phases 7 and 8 are the bulk.
+- Phases 1 to 6 done. Left: 7 (backend), 8 (frontend), 9 (end to end), 10 (security gate), 11 (production deploy and demo), then build-after-the-core items. Phases 7 and 8 are the bulk.
 - Reminders: renew the Vercel token before 2026-11-10; remove the D-130 ignore once `braces` is patched; watch CI after 2026-10-19 (Ubuntu 26 runners); re-check Vercel image storage after several deploys.
 
 ---

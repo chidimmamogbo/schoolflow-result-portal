@@ -6,11 +6,22 @@ The living record of where the project stands. Update it at the end of every ses
 
 | | |
 |---|---|
-| Last updated | 2026-10-12 |
-| Phase | 5 done except one open item (real report card formats); Phase 6 next |
-| Current step | Phase 4 complete: staging live at `https://staging.schoolflow.meritiaa.com` with banner and noindex, deployed by CI on every push to `staging`; README, `CHANGES.md` and "Stack and commands" in place |
-| Next step | Phase 6: `docs/ACCEPTANCE_TESTS.md` from the 38-step demo (given/when/then). Optional from Phase 5: real report cards from schools Chidimma knows (UI_REVIEW item 8) |
-| Code | Monorepo on GitHub `chidimmamogbo/schoolflow-result-portal` (public). `backend/` FastAPI skeleton (health + tests), `frontend/` Next.js 16.4 skeleton (page, staging banner, tests), CI with 5 required checks + staging deploy. Production deploy job comes in Phase 11, after the Phase 10 security gate |
+| Last updated | 2026-10-12 (end of Session 4) |
+| Phase | 1 to 6 done (all planning and design). **Phase 7 (backend, test-first) starts next session** |
+| Current step | Phase 6 complete: `docs/ACCEPTANCE_TESTS.md` (128 cases, 54 denied, covers all 44 BUILD_PROMPT Phase 6 items) |
+| Next step | **Phase 7, step 1** (BUILD_PROMPT 9.2a core + 9.1 item 1): Postgres 17 in Docker for local dev and tests (`compose.yaml`), pydantic-settings config that fails fast on missing values, SQLAlchemy 2 + psycopg 3 + Alembic wiring, a pytest fixture on the real database with rollback per test, then migration 1 (`schools`, `school_features`, `school_levels`, `platform_settings`) test-first. Each step: tests red, green, commit through a PR |
+| Code | Monorepo on GitHub `chidimmamogbo/schoolflow-result-portal` (public). `backend/` FastAPI skeleton (health + tests), `frontend/` Next.js 16.4 skeleton (page, staging banner, tests), CI with 5 required checks + staging deploy. No database code yet. Production deploy job comes in Phase 11, after the Phase 10 security gate |
+
+## Key documents for building (read before Phase 7 work)
+
+| Need | Where |
+|---|---|
+| What to build, in order | `docs/BUILD_PROMPT.md` section 9 (9.1 database, 9.2 backend modules, 9.3 frontend routes) |
+| Behaviour and rules | `docs/SPEC.md` v0.5.1 (`design/docs/SPEC.md` is an identical copy: copy after every spec edit) |
+| Tests each feature must pass | `docs/ACCEPTANCE_TESTS.md` (IDs `AT-<step>.<n>`; fixtures GMC, BSA, RCS) |
+| Stack choices and why | `DECISIONS.md` D-001 to D-135, Stack Summary at the end |
+| Pages, boards, labels | `docs/UI_REVIEW.md` (route-to-board map, approved label fixes, content for pages without a board) |
+| Services, env names, accounts | `docs/SERVICES.md` |
 
 ## Phase checklist
 
@@ -21,7 +32,7 @@ The living record of where the project stands. Update it at the end of every ses
 - [x] Phase 3: services and accounts, `docs/SERVICES.md` (done 2026-10-09)
 - [x] Phase 4: install, scaffold, CI, staging skeleton (done 2026-10-12, PRs #1 to #13)
 - [x] Phase 5: UI/UX review, `docs/UI_REVIEW.md` (2026-10-12; item 8 open)
-- [ ] Phase 6: `docs/ACCEPTANCE_TESTS.md`
+- [x] Phase 6: `docs/ACCEPTANCE_TESTS.md` (2026-10-12, 128 cases)
 - [ ] Phase 7: backend, test-first
 - [ ] Phase 8: frontend, test-first
 - [ ] Phase 9: end-to-end demo flow (all breakpoints, both themes)
@@ -74,7 +85,9 @@ Rest of the stack: not decided yet. **Preference stated 2026-10-08: Chidimma pre
 - **Deploy token** `schoolflow-github-actions`: project-scoped, expires **2026-11-10**, stored only in the GitHub `staging` environment. A project-scoped token cannot use `vercel alias set` or `--scope` ("User not found"); the pipeline uses the REST API instead (D-131).
 - **Dependency audit:** CI ignores only GHSA-vfj7-8cjw-p6xm (`braces`, dev-only via ESLint, no patch yet). Remove the ignore once patched (D-130).
 - **Spec v0.5.1 (2026-10-12, D-135):** report card additions from `docs/REPORT_CARD_RESEARCH.md`; `design/docs/SPEC.md` is kept identical to `docs/SPEC.md` (copy after every spec edit).
-- **Pace (2026-10-12):** Chidimma asked for 2 or 3 steps per turn instead of one.
+- **Pace (2026-10-12):** Chidimma asked for 2 or 3 steps per turn instead of one, and to move fast into code (AGENT.md rule 1 updated). Still stop for decisions, CHANGE `ok`s, secrets and anything outward-facing.
+- **Not done yet for Phase 7:** Neon roles (`app_user`, `app_platform`, `app_verifier`, owner) and the Neon `staging` branch were planned "in Phase 4" (`docs/SERVICES.md`) but are **not created**; do it when the first migration is ready to run on staging. No Vercel env values for databases exist yet.
+- **Phase 7 first-step tools:** Docker 29.8.0 is installed (Docker Desktop must be running); backend tests run natively on Windows against Postgres in Docker (D-031 area, Round 11/12); PDF tests run in the Linux container.
 - **Labels:** NAVIGATION section 5 approved 2026-10-12 with fixes listed in `docs/UI_REVIEW.md` section 4; teacher menu is "Result sheets", page title "My result sheets".
 - **Change protocol:** every change to something already built (code, CI, config, branch protection, Vercel settings) needs a CHANGE block and Chidimma's `ok` first; it was skipped seven times in Phase 4 (recorded retroactively in `CHANGES.md`).
 - **Reminders:** renew the Vercel token before 2026-11-10; re-check Vercel image storage after several deploys (Hobby: 50 images per repo).

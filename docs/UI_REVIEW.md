@@ -133,7 +133,7 @@ NAVIGATION section 5 lists about 200 labels proposed during design. Until approv
 |---|---|
 | Shared | Approved 2026-10-12. Change password rules reworded for D-036: "At least 15 characters" (students: "At least 10 characters"), "Not a common password", "Different from your temporary password". Teacher menu "Sheets" renamed **"Result sheets"** (it holds score sheets and rating sheets; if it does not fit the phone bar at 320px, the phone bar keeps "Sheets") |
 | Super admin | Approved 2026-10-12, as written |
-| School admin / principal | Approved 2026-10-12 with fixes: "Below {pass mark}%"; "Showing {n} of {total} results across {class}."; "{class} has 2 assistants. Remove one to add another."; "Class teacher of {class}"; "{n} of {total} subjects in {class}" |
+| School admin / principal | Approved 2026-10-12 with fixes: "Below {pass mark}%"; "Showing {n} of {total} results across {class}."; "{class} has 2 assistants. Remove one to add another."; "Class teacher of {class}"; "{n} of {total} subjects in {class}"; "Pass mark must be a whole number from 1 to 99." (was 0 to 100; follows SPEC section 12, Chidimma 2026-10-12) |
 | Teacher | Approved 2026-10-12 with fixes: page title "My result sheets" (was "My score sheets", section 2); cards tagged "Score sheet" or "Rating sheet"; "No result sheets yet."; "Back to my result sheets"; "Submit {learning area}, {class}?" |
 | Print and parent | Approved 2026-10-12 with fixes: "Below pass mark ({pass mark})…" (the value the report was published with); "{name}'s {term} report is not ready yet"; "Head teacher's comment" follows the template's Head's title |
 
