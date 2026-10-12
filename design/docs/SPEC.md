@@ -2,8 +2,8 @@
 
 | | |
 |---|---|
-| Version | 0.5.1 |
-| Date | 2026-10-07 (v0.5); 2026-10-12 (v0.5.1) |
+| Version | 0.5.2 |
+| Date | 2026-10-07 (v0.5); 2026-10-12 (v0.5.1, v0.5.2) |
 | Status | Agreed for build |
 | Owner | Chidimma Merit Mogbo |
 | Product name | SchoolFlow Result Portal (planning name: ResultChain) |
@@ -15,6 +15,7 @@
 > - v0.2: account provisioning by school admins, login-only model, student and teacher registration with assignments, guardian ward linking, notice board, email notifications, SaaS dashboard shell, full responsiveness, dark/light mode.
 > - v0.3: per-school subscription billing with an editable per-student, per-term pricing table and online payment in test mode.
 > - v0.4: product renamed SchoolFlow Result Portal; username login for everyone; student login with school code; password reset rules (no self-service for students, super admin resets school admins); additional school admins; configurable assessment structures per level (any number of CAs); teacher sheet search and filters; form teacher tools (broadsheet, comments, ratings, attendance, preview); Students needing attention list; expanded super admin functions and platform settings; full Create school form with colour picker and set-up emails; more report template styles and block settings; graduated pricing removed, volume pricing with optional cliff protection.
+> - v0.5.2 (2026-10-12, D-138): one parent account across schools. A school that adds a parent whose email already belongs to a SchoolFlow parent account sends a link request instead of creating a second account, and the link is made only when the parent accepts. Parents see all linked children grouped by school; notices and emails always name the school; once an account is linked to more than one school, only the parent manages its login details.
 > - v0.5.1 (2026-10-12, D-135): report card additions from research on Nigerian report cards (`docs/REPORT_CARD_RESEARCH.md`): optional student department and subject categories, three summary switches, written defaults for Secondary grade bands, affective and psychomotor traits and their key, and two more nursery learning areas.
 > - v0.5: nursery and primary report cards; school type (Nursery and Primary, Secondary only, or all) with report card toggles per level controlled by the super admin; each school chooses Scores or Skill ratings per level; Primary A to F grading default; one-step class teacher (teaches all subjects) with class teacher assistants; Skills report card with an Early Years style; head's title per level; flexible session-by-session pace instead of a fixed 14 days; "if time allows" items renamed "build after the core" (nothing dropped).
 
@@ -61,11 +62,12 @@ SchoolFlow Result Portal is a results-first, multi-school platform for Nigerian 
 | Reviewer/HOD | Head of department or reviewer | School admin | Email or username + password | Forgot password by email if they have one; otherwise school admin resets |
 | Teacher (subject teacher, optionally form teacher; called class teacher in Nursery and Primary) | Teacher | School admin | Email or username + password | Same as reviewer |
 | Class teacher assistant | Teacher who helps a class teacher | School admin (assigned per class) | Email or username + password | Same as reviewer |
-| Parent/guardian | Guardian of one or more students | School admin | Email or username + password | Same as reviewer |
+| Parent/guardian | Guardian of one or more students, in one or more schools | School admin (a parent already on SchoolFlow is linked after they accept, F03 rule 8) | Email or username + password | Same as reviewer; once linked to more than one school, only the parent, by Forgot password |
 | Student | Enrolled learner | School admin | School code + username or admission number + password | No self-service. School admin issues a new temporary password |
 
 - **Registration model:** provisioned only. There is no public sign-up or register route for any role.
 - **Tenancy:** many schools on one platform. No school can see another school's data.
+- **One school per account, except parents (D-044, D-138):** the super admin has no school; school admins, reviewers, teachers and students each belong to one school. A parent account can be linked to several schools, one link per school, and only after the parent accepts each school's link request (F03 rule 8). Each school sees only its own link, children and data. Staff who are also parents use a separate parent account in the MVP.
 - **Usernames:** every account has a username. Staff, parent and super admin usernames are unique across the platform. Student usernames and admission numbers are unique within their school. Usernames are 3 to 30 characters (lowercase letters, numbers, dot, underscore, hyphen), cannot contain "@", and are suggested from the person's name (for example `ngozi.okeke`) but editable.
 - **Login details:** passwords are never emailed or stored in plain text. Activation and reset links are single use and expiring. Temporary passwords are shown once (printable credential slip) and force a change at first login.
 - **No impersonation:** nobody, including the super admin, can log in as another user.
@@ -171,6 +173,8 @@ F01 to F26 below.
   5. **Super admin login support for school admins:** change the admin's email, send a reset link, issue a temporary password with a printable slip, resend activation, sign out of all devices, deactivate or reactivate, and make another school admin the principal. The super admin cannot reset teachers, reviewers, parents or students; their school admins do that.
   6. **School admin login support for their people:** resend activation, send a reset link (if the person has an email), issue a temporary password with a printable slip, deactivate or reactivate.
   7. Every provisioning and reset action is audited and never reveals the user's password.
+  8. **Parents already on SchoolFlow (v0.5.2, D-138):** when a school adds a parent whose email already belongs to a SchoolFlow parent account, no second account is created. The parent is emailed a link request from the school and accepts or declines it after signing in; until they accept, the school sees them as waiting and cannot see the account. The school gets the same response whatever email it enters, so it never learns whether someone already uses SchoolFlow. Link requests expire after 14 days and the school can cancel them. An email that belongs to a staff or student account cannot be linked as a parent; that person is emailed and asked to give the school another email.
+  9. **Accounts linked to more than one school:** only the parent changes the email, username and password (Forgot password by verified email). No school can reset the password, issue a temporary password, change the email, sign the account out of all devices or deactivate it; each school can pause or remove its own link instead. These limits are enforced in the database as well as the API.
 - **Acceptance:**
   - AC03.1 Given an additional school admin, when trying to add another school admin, then it is denied.
   - AC03.2 Given a school admin of School A, when creating a user in School B, then it is denied.
@@ -178,6 +182,10 @@ F01 to F26 below.
   - AC03.4 Given the school has reached the additional admin limit, when the principal adds another, then it is refused with a clear message.
   - AC03.5 Given the super admin resets a principal's login, when it completes, then the principal's existing sessions end, the reset is in the platform audit log, and the super admin never sees a password other than a one-time temporary one.
   - AC03.6 Given the super admin, when trying to reset a teacher's password, then it is denied.
+  - AC03.7 Given Ikenna Obi's parent account at GMC, when BSA adds a parent with his email, then no new account is created, he receives a link request, BSA gets the same response it would get for a new email, and BSA cannot see his account until he accepts.
+  - AC03.8 Given a link request, when anyone other than the parent tries to accept it, then it is denied.
+  - AC03.9 Given a parent account linked to GMC and BSA, when either school tries to reset its password, issue a temporary password, change its email, sign it out of all devices or deactivate it, then it is denied; pausing or removing that school's own link works.
+  - AC03.10 Given an email that belongs to a teacher's account, when a school adds a parent with that email, then no link is made and the school gets the same response as for any other email.
 
 ### F04. School structure
 - **Users:** school admins.
@@ -206,7 +214,7 @@ F01 to F26 below.
 
 ### F07. Guardian registration and ward linking
 - **Users:** school admins, parent.
-- **Rules:** create a guardian with relationship and contact details, linked to one or more students at creation; links editable later; a student can have several guardians; access follows links immediately.
+- **Rules:** create a guardian with relationship and contact details, linked to one or more students at creation; links editable later; a student can have several guardians; access follows links immediately. A parent account can hold guardian links in more than one school (F03 rule 8); each school keeps its own guardian record (relationship, contact details) and manages only its own links.
 - **Acceptance:**
   - AC07.1 Given a parent linked to one child, when they request another child's report, then it is not found.
   - AC07.2 Given a link is removed, when the parent refreshes, then the ward is gone from their dashboard.
@@ -286,8 +294,8 @@ F01 to F26 below.
 - **Acceptance:** AC13.1 Given a report was corrected and republished, when the old code is verified, then it shows SUPERSEDED.
 
 ### F14. Parent and student portal
-- **Rules:** parents see linked wards (ward switcher), students see themselves; published results only; low-bandwidth online view; PDF download; report status and revision; correction requests (parents). Nursery pupils usually have no login of their own; their parents see their reports. Students never see the Students needing attention list or other students' results.
-- **Acceptance:** AC14.1 Given a sheet is APPROVED but not PUBLISHED, when a parent views results, then it is not shown.
+- **Rules:** parents see linked wards from every linked school, grouped by school with the school's name, logo and colour (ward switcher), students see themselves; published results only; low-bandwidth online view; PDF download; report status and revision; correction requests (parents). Nursery pupils usually have no login of their own; their parents see their reports. Students never see the Students needing attention list or other students' results.
+- **Acceptance:** AC14.1 Given a sheet is APPROVED but not PUBLISHED, when a parent views results, then it is not shown. AC14.2 Given a parent linked to GMC and BSA, when they open their dashboard, then their GMC and BSA children show grouped by school, and each child's results and reports come from that child's school only.
 
 ### F15. Correction and dispute queue
 - **Users:** parent, teacher, reviewer create; school admins manage.
@@ -300,14 +308,15 @@ F01 to F26 below.
 
 ### F17. Notice board
 - **Users:** all roles read; school admins post. Form teachers do not post in the MVP.
-- **Rules:** audience: everyone, selected roles, optionally selected classes; pin, edit, archive (audited); unread badge and read state; automatic notice on result publication to affected students, their guardians, and relevant teachers and reviewers; automatic notice to school admins when an invoice is paid; school-scoped.
+- **Rules:** audience: everyone, selected roles, optionally selected classes; pin, edit, archive (audited); unread badge and read state; automatic notice on result publication to affected students, their guardians, and relevant teachers and reviewers; automatic notice to school admins when an invoice is paid; school-scoped. A parent linked to more than one school sees each school's notices, every notice labelled with its school's name, with one unread count across them.
 - **Acceptance:**
   - AC17.1 Given a notice for JSS 1 parents, when a JSS 2 parent opens the board, then it is not shown.
   - AC17.2 Given a School A notice, when any School B user opens the board, then it is not shown.
+  - AC17.3 Given a parent linked to GMC and BSA, when they open the board, then notices from both schools show, each labelled with its school, and nothing from a school they are not linked to.
 
 ### F18. Email notifications
-- **Rules:** emails for school set-up (school email), activation (with username and, for school admins, the school code), password reset, password changed, result publication, payment receipts; result emails go to every affected guardian, students with email, and involved staff; no scores or personal results in emails, only a message and a login link; no passwords in any email; outbox with queued/sent/failed status and retries; background sending; free-tier daily limits respected by leaving messages queued; users without email still get the notice.
-- **Acceptance:** AC18.1 Given results are published, when the outbox is inspected, then each intended recipient has exactly one queued message and none contains scores.
+- **Rules:** emails for school set-up (school email), activation (with username and, for school admins, the school code), password reset, password changed, result publication, payment receipts; result emails go to every affected guardian, students with email, and involved staff; no scores or personal results in emails, only a message and a login link; no passwords in any email; outbox with queued/sent/failed status and retries; background sending; free-tier daily limits respected by leaving messages queued; users without email still get the notice. Every school email names the school in the sender name (D-079) and at the start of the subject (wording approved with the email templates).
+- **Acceptance:** AC18.1 Given results are published, when the outbox is inspected, then each intended recipient has exactly one queued message and none contains scores. AC18.2 Given a parent linked to two schools, when both publish results, then each email names its own school in the sender and the subject.
 
 ### F19. School subscription billing
 - **Users:** super admin, school admins.
@@ -462,6 +471,8 @@ Teachers cannot edit in SUBMITTED, REVIEWED, APPROVED or PUBLISHED. Rating sheet
 
 **School:** ACTIVE -> SUSPENDED (super admin; reason) -> ACTIVE.
 
+**Parent school link (v0.5.2):** INVITED (a school adds an email that belongs to an existing parent account) -> ACTIVE (the parent accepts). An invitation ends when the parent declines, the school cancels or 14 days pass. ACTIVE -> PAUSED (school) -> ACTIVE (school). A school can remove its own link at any time; its records are kept.
+
 **Subscription:** FREE_PILOT or ACTIVE -> DUE (invoice issued) -> ACTIVE (paid) or OVERDUE (past due date + grace) -> SUSPENDED (super admin, manual) -> ACTIVE (paid and reactivated).
 
 **Invoice:** UNPAID -> PAID (verified payment or manual record) or VOID (super admin).
@@ -473,9 +484,9 @@ Teachers cannot edit in SUBMITTED, REVIEWED, APPROVED or PUBLISHED. Rating sheet
 | Entity | Key fields | Tenant key | Notes |
 |---|---|---|---|
 | schools, school_features, school_levels | name, email, phone, address, city, state, country, code (unique), colour, logo, status, school_type; per level: enabled (super admin only), assessment_mode, head_title | own ID | code used in student login |
-| users, school_memberships, roles, permissions, role_permissions | username, email, must_change_password, is_active, email_verified_at, is_primary (membership) | membership | staff/parent usernames unique platform-wide; student usernames unique per school |
+| users, school_memberships, roles, permissions, role_permissions | username, email, must_change_password, is_active, email_verified_at; per membership: role, is_primary, status (active, paused); a school's link requests wait in their own records until the parent accepts | membership | staff/parent usernames unique platform-wide; student usernames unique per school; emails unique platform-wide; one school per account except parent accounts, which have one membership per linked school (D-138) |
 | user_sessions | hashed refresh token, device, expires_at, revoked_at | user | supports sign out of all devices |
-| account_tokens | type (activation, reset), hash, expires_at, used_at | school | single use |
+| account_tokens | type (activation, reset), hash, expires_at, used_at | user (through the user's school memberships) | single use; one live link per user and type |
 | platform_settings | key, value, updated_by | platform | audited |
 | academic_sessions, terms | dates, active, next_term_begins | school | term dates drive renewal |
 | classes (arms), departments, subjects | level; subject category (optional) | school | |
@@ -529,6 +540,7 @@ Public: landing, login (Staff and parents, Student), school login link, activate
 | Rating traits and scale | School admins | Default affective and psychomotor traits (F08 rule 6), 1 to 5 with key Excellent, Good, Average, Below average, Unsatisfactory | |
 | Report templates | School admins | Modern | Versioned; report ID, QR, revision and date always shown |
 | Additional school admins | Super admin (limit) | 2 | Principal adds them |
+| Parent link requests | School admins send; only the parent accepts | Expire after 14 days | Same response for every email; staff and student emails cannot be linked (D-138) |
 | Pricing table | Super admin | Basic, Standard, Premium | Volume model, versioned, no overlaps or gaps |
 | Cliff protection | Super admin | On | Invoice records when the cap applied |
 | Grace period | Super admin | 14 days | |
@@ -558,6 +570,7 @@ Public: landing, login (Staff and parents, Student), school login link, activate
 - Published results and audit events immutable at the database level.
 - No plain-text passwords anywhere; no passwords in emails; tokens out of insecure browser storage; password resets end other sessions.
 - No impersonation.
+- A parent account linked to more than one school is managed only by the parent: no school resets it, issues a temporary password, signs it out everywhere or deactivates it; a school's link request needs the parent's acceptance (D-138).
 - Uploaded images (logos, signatures, stamps) validated and stored privately.
 - Payment amounts from server invoices; verified, idempotent webhooks.
 - No sensitive data in QR codes, emails or logs.
@@ -611,9 +624,9 @@ Public: landing, login (Staff and parents, Student), school login link, activate
 28. A student opens the Student tab and sees "Ask your school admin" instead of a forgot password link; the principal issues a new temporary password and prints the slip.
 29. The principal has lost their login: the super admin changes the principal's email and sends a reset link; the principal's other sessions end and the platform audit log records it.
 30. School B's head teacher keeps Nursery on **Skill ratings** (default learning areas and skills, five-point scale) and Primary on **Scores** with the A to F grading bands.
-31. The head teacher assigns a Primary 4A class teacher with **Teaches all subjects** and adds a **class teacher assistant**; the assistant enters some scores, but only the class teacher can submit.
+31. The head teacher assigns a Primary 4A class teacher with **Teaches all subjects** and adds a **class teacher assistant**; the assistant enters some scores, but only the class teacher can submit. The head teacher also adds Ikenna Obi (already a GMC parent) for his daughter Kosi in Primary 4A; he accepts the link request after signing in.
 32. The Nursery 2 class teacher rates each pupil's skills, writes comments and submits; the Primary 4A class teacher finishes and submits; the head teacher approves and publishes both classes.
-33. A Nursery 2 parent opens the **Skills report card** (Early Years style, ratings and key, no scores or positions, "Head teacher's comment"); a Primary 4A parent opens a Score report card with A to F grades.
+33. A Nursery 2 parent opens the **Skills report card** (Early Years style, ratings and key, no scores or positions, "Head teacher's comment"); a Primary 4A parent opens a Score report card with A to F grades. Ikenna Obi sees Kosi's report next to his GMC children, grouped by school.
 34. Students needing attention for School B shows Nursery 2 skills rated Needs improvement and Primary 4A scores below the pass mark.
 35. The super admin edits the pricing table; the price check shows the cliff ranges; cliff protection is on; the change is in the audit log.
 36. The super admin generates next-term invoices; School A's principal sees plan, billable students, amount due and renewal date.
@@ -676,6 +689,8 @@ Public: landing, login (Staff and parents, Student), school login link, activate
 | One teacher for every subject in a class? | Yes, "Teaches all subjects", plus up to 2 class teacher assistants | Decided |
 | Deadline | Flexible, session by session, roughly two weeks | Decided |
 | Store PDFs or regenerate from snapshots? | Decide in the file storage round | Open |
+| One parent account across schools? | Yes: one account per parent, linked to each school after the parent accepts; staff and students stay in one school (D-138) | Decided |
+| Staff who are also parents on one login? | Not in the MVP; possible future upgrade (MEMORY.md) | Later |
 
 ## 20. Glossary
 

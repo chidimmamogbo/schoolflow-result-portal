@@ -111,3 +111,19 @@ These seven changes were made during Phase 4 (2026-10-11 to 2026-10-12). Chidimm
 - What changes: (1) `backend/pyproject.toml` and `uv.lock`: pydantic-settings>=2.15.0, sqlalchemy>=2.1.4, psycopg[binary]>=3.3.6, alembic>=1.20.0 (PyPI, checked 2026-10-12); (2) `.github/workflows/ci.yml` "Backend" job: a `postgres:17.11-trixie` service with a health check and throwaway CI-only env values; (3) `backend/.env.example`: `DATABASE_URL_MIGRATIONS` (owner role, Alembic only, local and CI/deploy, never on Vercel) and `TEST_DATABASE_URL`, comment reworded.
 - After: `uv sync` installs the database stack; `uv run pytest` runs against real Postgres locally and in CI; still five required checks.
 - Proof: `uv run pytest` (settings and database fixture tests, red then green); CI "Backend" job green on the PR.
+
+### CHANGE: Row-level security and least-privilege roles are built with each migration, starting now (Chidimma `ok`, 2026-10-12)
+- Before: BUILD_PROMPT 9.1 puts RLS, the app database role and immutability last (item 12). Migration 1's tables have no RLS; `db.py` has no tenant setting; tests run as the owner (a superuser), which skips RLS.
+- Why it must change: if RLS waits until item 12, every module is written and tested as a role that skips RLS; switching it on at the end would break untested queries and hide missing policies.
+- When: now, before the first accounts table exists.
+- What changes: a new migration creates the roles `app_user`, `app_platform` and `app_verifier`, the `app_current_school_id()` helper, and RLS policies and grants on `schools`, `school_features`, `school_levels` and `platform_settings`; `db.py` gets a per-transaction hook that sets `app.school_id` from the session; `tests/db_support.py` gets a helper to run test queries as `app_user` or `app_platform`. Item 12 becomes the final audit, with a test that fails if any table with `school_id` lacks RLS (D-137).
+- After: every new school table ships with its RLS policies and denied-case tests; a connection with no school sees nothing.
+- Proof: `tests/test_tenant_isolation.py` (role attributes, own school only, no leak between pooled connections, school users cannot write platform data, RLS inventory); `uv run pytest`.
+
+### CHANGE: Parent accounts can be linked to several schools with the parent's consent (amends D-044) (Chidimma `ok`, 2026-10-12, options 2A and 3A)
+- Before: D-044 option A, one school per account. With D-033 (emails unique across the platform), a parent with children in two SchoolFlow schools needs a second account with another email, or none.
+- Why it must change: Chidimma, 2026-10-12: one email and one login per parent, all their children visible across SchoolFlow schools, and every notice and email shows which school sent it.
+- When: now, before the account tables (migration 2) and login (9.2b) are built.
+- What changes: D-138 amends D-044 (parents only, consent, shared-account protections); D-033 stays. SPEC v0.5.2: sections 4, 8, 9, 12, 14, 16 and 19, F03 (rules 8 and 9, AC03.7 to AC03.10), F07, F14 (AC14.2), F17 (AC17.3), F18 (AC18.2); `design/docs/SPEC.md` copied. Acceptance tests AT-31.4 to AT-31.7 and AT-33.4, with Ikenna Obi also linked by BSA to Kosi Obi. Step 2 schema: memberships with a status, one per school per account; non-parents limited to one school; the per-transaction hook also sets `app.user_id`.
+- After: one parent account shows every linked child, grouped by school. Each school sees and manages only its own link. Once an account is shared, only the parent manages its login details.
+- Proof: step 2 database tests run as `app_user` (memberships, consent, shared-account protections, isolation); auth and provisioning API tests later; the new acceptance tests.

@@ -17,6 +17,39 @@ Entry template:
 
 ---
 
+## 2026-10-12 (Session 5)
+
+### What we did
+- **Phase 7 started.** Step 1 (PR #18, merged): PostgreSQL 17.11 in Docker (`compose.yaml`, databases `schoolflow` and `schoolflow_test`), fail-fast settings (D-020), SQLAlchemy 2.1 + psycopg 3 engine with hidden SQL parameters, Alembic (pyproject template), a test fixture that rebuilds the test database from the migrations and rolls back every test, and migration 1 (`schools`, `school_features`, `school_levels`, `platform_settings`, D-136 four level rows).
+- Chidimma chose: Claude runs branch, commit, push and PR, and stops before merge and staging.
+- **D-137** (CHANGE approved): RLS and least-privilege roles arrive with every migration. Migration 2: roles `app_user`, `app_platform`, `app_verifier` (no BYPASSRLS, checked by the migration), `app_current_school_id()` and `app_current_user_id()`, RLS on migration 1's tables, `db.use_context()` setting the school and user at the start of every transaction.
+- **D-138** (Chidimma's idea, CHANGE approved with 2A and 3A): one parent account across schools, linked only after the parent accepts; schools get the same response for every email; shared accounts managed only by the parent; school name on notices and emails. SPEC v0.5.2, acceptance tests AT-31.4 to AT-31.7 and AT-33.4 (133 cases, 57 denied). Option 3B (staff who are also parents) kept in MEMORY as a future upgrade.
+- Migration 3: `users` and `school_memberships` with the trigger rules (super admin has no school, pupils in their own school, staff or parent, consent), the shared-account check, RLS for each role and column grants.
+
+### What changed (files)
+- New: `compose.yaml`, `backend/docker/initdb/`, `backend/alembic.ini`, `backend/migrations/` (3 migrations), `backend/src/schoolflow_api/{settings,db,models}.py`, `schools/`, `platform/`, `accounts/` models, `backend/tests/{conftest,db_support,factories}.py` and tests for settings, database, migrations, schools, tenant isolation and accounts.
+- Updated: `backend/pyproject.toml`, `uv.lock`, `backend/.env.example`, `.github/workflows/ci.yml` (Postgres service), `docs/SPEC.md` and its design copy (v0.5.2), `docs/ACCEPTANCE_TESTS.md`, `DECISIONS.md` (D-136 to D-138, D-044 amended), `CHANGES.md` (three blocks), `MEMORY.md`.
+
+### Issues and fixes
+- PostgreSQL error text can quote values; `hide_parameters` only hides SQLAlchemy's part. The 9.2a error handler must never log raw database errors (MEMORY).
+- A reused connection returns `''` (not NULL) for the school setting after a transaction; `''::uuid` would crash. The helpers use `nullif`, proven by a test that fails without it.
+- Consent rule first fired for staff too; the migration round-trip test caught a wrong drop order; `Result.tuples()` deprecation. All fixed before commit.
+- Long inline scripts in the shell failed to parse; scripts now go in a file first.
+
+### Tests
+- Backend: 152 passed on Postgres 17.11; Ruff, format and strict Pyright clean; deliberate breaks of each security rule (7 in total) each made tests fail. CI green on PR #18.
+
+### Next step
+- After `merge`: the rest of 9.1 item 2: `user_sessions`, `account_tokens`, then roles and permissions seeded from one file compared with SPEC section 5.
+
+### Blockers
+- None.
+
+### Roughly left
+- Phase 7: 9.1 items 2 (rest) to 12, then the 9.2 modules (auth, platform, school admin, results, reports, verification, portal, notices, billing). Then Phases 8 to 11.
+
+---
+
 ## 2026-10-12 (Session 4)
 
 ### What we did
