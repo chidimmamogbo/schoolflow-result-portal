@@ -101,3 +101,13 @@ These seven changes were made during Phase 4 (2026-10-11 to 2026-10-12). Chidimm
 - What changes: `docs/UI_REVIEW.md` section 4; `docs/ACCEPTANCE_TESTS.md` AT-07.5.
 - After: "Pass mark must be a whole number from 1 to 99."
 - Proof: AT-07.5 (Phase 7 API test).
+
+## Phase 7
+
+### CHANGE: Backend gets database libraries, CI gets a Postgres 17 service, env names for migrations and tests (Chidimma `ok`, 2026-10-12)
+- Before: `backend/pyproject.toml` depends only on `fastapi[standard]`; the CI "Backend" job runs pytest with no database; `backend/.env.example` lists `DATABASE_URL`, `DATABASE_URL_PLATFORM`, `DATABASE_URL_VERIFIER` and says migration credentials live only in GitHub secrets.
+- Why it must change: Phase 7 step 1 needs fail-fast settings (D-020), SQLAlchemy 2 + psycopg 3 (D-017), Alembic (D-023) and tests on real Postgres in CI (D-030). Without a database in CI the first database test fails every pull request.
+- When: now, the first database code.
+- What changes: (1) `backend/pyproject.toml` and `uv.lock`: pydantic-settings>=2.15.0, sqlalchemy>=2.1.4, psycopg[binary]>=3.3.6, alembic>=1.20.0 (PyPI, checked 2026-10-12); (2) `.github/workflows/ci.yml` "Backend" job: a `postgres:17.11-trixie` service with a health check and throwaway CI-only env values; (3) `backend/.env.example`: `DATABASE_URL_MIGRATIONS` (owner role, Alembic only, local and CI/deploy, never on Vercel) and `TEST_DATABASE_URL`, comment reworded.
+- After: `uv sync` installs the database stack; `uv run pytest` runs against real Postgres locally and in CI; still five required checks.
+- Proof: `uv run pytest` (settings and database fixture tests, red then green); CI "Backend" job green on the PR.

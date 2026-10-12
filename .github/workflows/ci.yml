@@ -63,6 +63,30 @@ jobs:
     defaults:
       run:
         working-directory: backend
+    # The same PostgreSQL as compose.yaml (D-030), so tests run on a real
+    # database. It lives only for this job and is thrown away afterwards.
+    services:
+      postgres:
+        image: postgres:17.11-trixie
+        env:
+          POSTGRES_USER: schoolflow_owner
+          POSTGRES_PASSWORD: ci_only
+          POSTGRES_DB: schoolflow_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U schoolflow_owner -d schoolflow_test"
+          --health-interval 2s
+          --health-timeout 3s
+          --health-retries 30
+    # Throwaway values for this job only; nothing here is a real secret.
+    env:
+      APP_ENV: local
+      APP_BASE_URL: http://localhost:3000
+      APP_SECRET_KEY: ci-only-not-a-secret-ci-only-not-a-secret
+      DATABASE_URL: postgresql+psycopg://schoolflow_owner:ci_only@localhost:5432/schoolflow_test
+      DATABASE_URL_MIGRATIONS: postgresql+psycopg://schoolflow_owner:ci_only@localhost:5432/schoolflow_test
+      TEST_DATABASE_URL: postgresql+psycopg://schoolflow_owner:ci_only@localhost:5432/schoolflow_test
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
