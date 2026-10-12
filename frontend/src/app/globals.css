@@ -1,1 +1,17 @@
 @import "tailwindcss";
+
+/*
+ * The warning colours from design/design-system/tokens.css, copied value for
+ * value for the staging banner. The full token set (with next-themes for dark
+ * mode) is wired in during the design build; these lines are replaced then.
+ */
+:root,
+[data-theme="light"] {
+  --warning-ink: #8a5a10;
+  --warning-soft: #fdf3e3;
+}
+
+[data-theme="dark"] {
+  --warning-ink: #f6ad55;
+  --warning-soft: #2b2010;
+}
