@@ -104,6 +104,6 @@ Full reasoning in `DECISIONS.md` (Stack Summary at the end). Commands below are 
 | Audit | `bun run audit` (one documented ignore, D-130) |
 | Run locally | `bun run dev` |
 
-**Git and deploys.** `main` is protected: every change goes through a branch and a pull request, five required checks, squash merge. To update staging: `git switch staging && git merge --ff-only origin/main && git push`; CI then deploys and checks `https://staging.schoolflow.meritiaa.com` (D-131). Production deploys come later in Phase 4.
+**Git and deploys.** `main` is protected: every change goes through a branch and a pull request, five required checks, squash merge. To update staging: `git switch staging && git merge --ff-only origin/main && git push`; CI then deploys and checks `https://staging.schoolflow.meritiaa.com` (D-131). The production deploy job comes in Phase 11, after the Phase 10 security gate.
 
 **Windows gotchas.** Pipe the clipboard into Windows programs (`cat /dev/clipboard | gh ...`, never `< /dev/clipboard`). Prefix API paths that start with `/` with `MSYS_NO_PATHCONV=1`. Check `.gitignore` after any `vercel link` or `vercel env pull`.
