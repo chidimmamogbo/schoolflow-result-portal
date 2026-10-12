@@ -26,7 +26,8 @@ Entry template:
 - **D-138** (Chidimma's idea, CHANGE approved with 2A and 3A): one parent account across schools, linked only after the parent accepts; schools get the same response for every email; shared accounts managed only by the parent; school name on notices and emails. SPEC v0.5.2, acceptance tests AT-31.4 to AT-31.7 and AT-33.4 (133 cases, 57 denied). Option 3B (staff who are also parents) kept in MEMORY as a future upgrade.
 - Migration 3: `users` and `school_memberships` with the trigger rules (super admin has no school, pupils in their own school, staff or parent, consent), the shared-account check, RLS for each role and column grants. PR #19 merged.
 - Migration 4: `user_sessions` and `account_tokens` (32-byte hashes only, one live link per account and purpose, used or cancelled, never deleted by the app); a school ends sessions and issues links only for its own, unshared people; the platform only for school admins.
-- Migration 5: `roles`, `permissions`, `role_permissions` (45 permissions, 66 rows) from `authz/permissions.py`, which a test compares with the SPEC section 5 table and with the database. BUILD_PROMPT 9.1 item 2 complete.
+- Migration 5: `roles`, `permissions`, `role_permissions` (45 permissions, 66 rows) from `authz/permissions.py`, which a test compares with the SPEC section 5 table and with the database. BUILD_PROMPT 9.1 item 2 complete. PR #20 merged.
+- Migration 6 (9.1 item 3): `academic_sessions` (named like 2026/2027), `terms` (three per session, one active per school, AC04.1), `classes` (a trigger refuses a level that is switched off, AC04.2, AC25.3; existing classes stay, AT-04.3), `class_arms`, `departments`, `subjects` (optional category), `arm_subjects`. Every child row repeats `school_id` with a two-column foreign key, so it can only point at its own school's rows. The platform reads sessions and terms only (billing).
 
 ### What changed (files)
 - New: `compose.yaml`, `backend/docker/initdb/`, `backend/alembic.ini`, `backend/migrations/` (3 migrations), `backend/src/schoolflow_api/{settings,db,models}.py`, `schools/`, `platform/`, `accounts/` models, `backend/tests/{conftest,db_support,factories}.py` and tests for settings, database, migrations, schools, tenant isolation and accounts.
@@ -39,16 +40,16 @@ Entry template:
 - Long inline scripts in the shell failed to parse; scripts now go in a file first.
 
 ### Tests
-- Backend: 218 passed on Postgres 17.11; Ruff, format and strict Pyright clean; deliberate breaks of each security rule (13 in total) each made tests fail. CI green on PRs #18 and #19.
+- Backend: 279 passed on Postgres 17.11; Ruff, format and strict Pyright clean; deliberate breaks of each security rule (16 in total) each made tests fail. CI green on PRs #18 to #20.
 
 ### Next step
-- After `merge`: BUILD_PROMPT 9.1 item 3 (`academic_sessions`, `terms`, `classes` with arms and level, `departments`, `subjects`) with RLS from the start.
+- After `merge`: BUILD_PROMPT 9.1 item 4 (students, guardians with the D-138 link request, guardian links, enrolments, student subjects, teacher assignments, class assistants, reviewer scopes).
 
 ### Blockers
 - None.
 
 ### Roughly left
-- Phase 7: 9.1 items 3 to 12, then the 9.2 modules (auth, platform, school admin, results, reports, verification, portal, notices, billing). Then Phases 8 to 11.
+- Phase 7: 9.1 items 4 to 12, then the 9.2 modules (auth, platform, school admin, results, reports, verification, portal, notices, billing). Then Phases 8 to 11.
 
 ---
 
