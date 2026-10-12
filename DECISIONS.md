@@ -588,6 +588,14 @@ Installed on Chidimma's laptop (checked 2026-10-09): Node 24.21.0, npm 11.19.0, 
 - Added (SPEC v0.5.1): optional student Department (Senior Secondary) and subject category, with report switches "Department" and "Group subjects by category"; summary switches "Marks obtainable", "Highest average in class", "Lowest average in class" (all off by default); written defaults for Secondary A1 to F9 bands, affective and psychomotor traits and the 1 to 5 key; nursery learning areas Pre-science and Handwriting.
 - **Left out:** health block (sensitive data), next term fees (fee collection is roadmap), CA 30 and exam 70 as default (default stays CA1 20, CA2 20, Exam 60, editable). Cumulative third-term style stays after the core.
 
+## Phase 7 decisions
+
+### D-136. School levels: four rows per school, one Secondary toggle (option A, Chidimma, 2026-10-12)
+- `school_levels` holds four rows per school (`nursery`, `primary`, `junior_secondary`, `senior_secondary`), each with its own `enabled`, `assessment_mode` and `head_title`. The single "Secondary report cards" toggle (F25) switches junior and senior secondary together.
+- The database enforces it with a deferred constraint trigger checked at commit: all four rows exist, junior and senior secondary are on or off together, at least one level is on (AC25.5). Allowed values are text columns with CHECK rules built from Python `StrEnum`s (no PostgreSQL enum types, which are harder to change in later migrations).
+- **Reason:** classes, assessment structures and grading bands later point at an exact level (a JSS class) without special cases.
+- **Rejected:** three rows, one per toggle (JSS and SSS would share one assessment mode and head's title, and every later table would need another way to tell them apart).
+
 ---
 
 # Stack Summary (one page, for final approval)

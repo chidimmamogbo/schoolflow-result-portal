@@ -6,8 +6,13 @@ instead of opening a new one for every query. Sessions (one per request, or
 one per test) borrow a connection from it.
 """
 
-from sqlalchemy import Engine, MetaData, create_engine
-from sqlalchemy.orm import DeclarativeBase
+import uuid
+from collections.abc import Iterable
+from datetime import datetime
+from enum import StrEnum
+
+from sqlalchemy import DateTime, Engine, MetaData, Text, create_engine, func, text
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 # Every constraint and index gets a predictable name, so migrations can find
 # and change them later (Alembic cannot alter a constraint it cannot name).
@@ -25,6 +30,10 @@ class Base(DeclarativeBase):
     but the table's columns and rules are written once, here in Python."""
 
     metadata = MetaData(naming_convention=NAMING_CONVENTION)
+    # Python str columns become PostgreSQL text (no fixed length); lengths and
+    # formats are checked by CHECK rules and the API's Pydantic schemas.
+    # (SQLAlchemy reads this class attribute by name, as its docs show.)
+    type_annotation_map = {str: Text()}  # noqa: RUF012
 
 
 def make_engine(url: str) -> Engine:
@@ -37,3 +46,26 @@ def make_engine(url: str) -> Engine:
         # messages, and so out of logs and Sentry (D-021).
         hide_parameters=True,
     )
+
+
+class IdMixin:
+    """A random UUID primary key, made by PostgreSQL (D-028): ids cannot be guessed."""
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        primary_key=True,
+        server_default=text("gen_random_uuid()"),
+        sort_order=-1,  # first column in the table, before the model's own columns
+    )
+
+
+class TimestampMixin:
+    """created_at and updated_at; a database trigger keeps updated_at current."""
+
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+def one_of(column: str, allowed: Iterable[StrEnum]) -> str:
+    """SQL for a CHECK rule: the column must hold one of these values."""
+    values = ", ".join(f"'{value}'" for value in allowed)
+    return f"{column} in ({values})"
