@@ -571,6 +571,18 @@ Installed on Chidimma's laptop (checked 2026-10-09): Node 24.21.0, npm 11.19.0, 
 - Flow: features merge to `main` by pull request; `staging` is fast-forwarded to `main` (`git merge --ff-only origin/main`) to update staging.
 - **Rejected:** team-wide token (reaches the other live projects); branch-domain assignment (CLI deploys are not full Git deployments per Vercel's guide, unverified).
 
+## Phase 5 decisions
+
+### D-132. Pages with no design are built from existing patterns (Chidimma's choice, 2026-10-12)
+- The 13 demo pages without a board (activate; students list, add, import; teachers; parents; school audit; notices list and composer; notice board; notice bell; review queue; review sheet; child results) and the P2/P3 pages without one are built from the v0.5 pieces in `design/screens/sf.css` (shell, tables that become cards, dialogs, badges, the 4-step import pattern, the read-only score grid) and the content in design brief section 9. Chidimma reviews each in the browser in Phase 8. List in `docs/UI_REVIEW.md`.
+- **Rejected:** a design-tool follow-up first (adds design time); text wireframes first (extra approval round).
+
+### D-133. v0.3 boards get both themes from the tokens (Chidimma's choice, 2026-10-12)
+- Verify, Approvals, Corrections, Parent home, Report view and Parent correction keep their approved layouts and get light and dark from the design tokens and the v0.5 shell. No redesign.
+
+### D-134. Change password rule text follows D-036 (Chidimma's choice, 2026-10-12)
+- The `ChangePassword` board shows "At least 8 characters" and "A letter and a number". The build shows the D-036 rules instead: at least 15 characters (10 on student accounts), no composition rules, common passwords blocked. Exact wording is settled with the section 5 labels. Recorded as an approved difference from the design.
+
 ---
 
 # Stack Summary (one page, for final approval)

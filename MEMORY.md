@@ -7,9 +7,9 @@ The living record of where the project stands. Update it at the end of every ses
 | | |
 |---|---|
 | Last updated | 2026-10-12 |
-| Phase | 4 done; Phase 5 next |
+| Phase | 5 done except one open item (real report card formats); Phase 6 next |
 | Current step | Phase 4 complete: staging live at `https://staging.schoolflow.meritiaa.com` with banner and noindex, deployed by CI on every push to `staging`; README, `CHANGES.md` and "Stack and commands" in place |
-| Next step | Phase 5, step 1: UI/UX review of the design handoff; list every SPEC 9.3 screen without a v0.5 design (known: reviewer screens, add-parent screens), then role journeys |
+| Next step | Phase 6: `docs/ACCEPTANCE_TESTS.md` from the 38-step demo (given/when/then). Open from Phase 5: confirm whether two real Nigerian report cards were given to the designer (UI_REVIEW item 8) |
 | Code | Monorepo on GitHub `chidimmamogbo/schoolflow-result-portal` (public). `backend/` FastAPI skeleton (health + tests), `frontend/` Next.js 16.4 skeleton (page, staging banner, tests), CI with 5 required checks + staging deploy. Production deploy job comes in Phase 11, after the Phase 10 security gate |
 
 ## Phase checklist
@@ -20,7 +20,7 @@ The living record of where the project stands. Update it at the end of every ses
 - [x] Phase 2: stack decisions, 13 rounds, `DECISIONS.md` and Stack Summary (approved 2026-10-09)
 - [x] Phase 3: services and accounts, `docs/SERVICES.md` (done 2026-10-09)
 - [x] Phase 4: install, scaffold, CI, staging skeleton (done 2026-10-12, PRs #1 to #13)
-- [ ] Phase 5: UI/UX review of the design handoff
+- [x] Phase 5: UI/UX review, `docs/UI_REVIEW.md` (2026-10-12; item 8 open)
 - [ ] Phase 6: `docs/ACCEPTANCE_TESTS.md`
 - [ ] Phase 7: backend, test-first
 - [ ] Phase 8: frontend, test-first
@@ -73,6 +73,8 @@ Rest of the stack: not decided yet. **Preference stated 2026-10-08: Chidimma pre
 - **Vercel:** project `schoolflow-result-portal` (team `chidimma2`), Services: Next.js + FastAPI container in `lhr1`. The very first deployment (from a feature branch) was labelled Production; later CLI deploys are Preview. Deployment URLs are behind Vercel Authentication; custom domains are public.
 - **Deploy token** `schoolflow-github-actions`: project-scoped, expires **2026-11-10**, stored only in the GitHub `staging` environment. A project-scoped token cannot use `vercel alias set` or `--scope` ("User not found"); the pipeline uses the REST API instead (D-131).
 - **Dependency audit:** CI ignores only GHSA-vfj7-8cjw-p6xm (`braces`, dev-only via ESLint, no patch yet). Remove the ignore once patched (D-130).
+- **Pace (2026-10-12):** Chidimma asked for 2 or 3 steps per turn instead of one.
+- **Labels:** NAVIGATION section 5 approved 2026-10-12 with fixes listed in `docs/UI_REVIEW.md` section 4; teacher menu is "Result sheets", page title "My result sheets".
 - **Change protocol:** every change to something already built (code, CI, config, branch protection, Vercel settings) needs a CHANGE block and Chidimma's `ok` first; it was skipped seven times in Phase 4 (recorded retroactively in `CHANGES.md`).
 - **Reminders:** renew the Vercel token before 2026-11-10; re-check Vercel image storage after several deploys (Hobby: 50 images per repo).
 - **GitHub runners:** `ubuntu-latest` moves to Ubuntu 26 from 2026-10-19; watch the first CI runs after that date.
@@ -89,6 +91,8 @@ Rest of the stack: not decided yet. **Preference stated 2026-10-08: Chidimma pre
 ## Approved differences from the design (list them when each screen is built)
 
 - Verify and VerifyAfter: verification code is 12 characters (`7KQ4-M2XD-P9QA`) instead of the designed 8 (D-072).
+- ChangePassword: rule text follows D-036 (15 characters, 10 for students, no letter-and-number rule) instead of "At least 8 characters" (D-134).
+- Pages with no board are built from v0.5 patterns (D-132); v0.3 boards get both themes from tokens (D-133).
 
 ## Open questions
 
