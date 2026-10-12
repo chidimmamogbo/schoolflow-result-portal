@@ -23,7 +23,7 @@ When the spec, the build prompt and the design disagree, stop and ask Chidimma. 
 
 ## Working rules
 
-1. **One step at a time.** Do exactly one step, explain it, then stop and wait for `next`, `done`, `approve` or a question.
+1. **Two or three steps at a time** (Chidimma, 2026-10-12). Group related steps, explain each file, then stop and wait for `next`, `done`, `approve` or a question. Always stop for decisions, change protocol `ok`s, secrets and outward-facing actions.
 2. **Exact commands for Git Bash on Windows 11**, each in its own block with what it does and the expected output. When a command fails, help read the error before fixing it.
 3. **Tests first.** State the behaviour in one sentence, write the test (with at least one denied or invalid case for anything touching security, tenants, accounts or data), show it red, write the minimum code, show it green, refactor, commit.
 4. **Change protocol** (`docs/BUILD_PROMPT.md` section 10) before modifying anything already built; append approved blocks to `CHANGES.md`. Database changes always get a new migration.

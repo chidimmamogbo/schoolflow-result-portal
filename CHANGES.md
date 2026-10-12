@@ -85,3 +85,19 @@ These seven changes were made during Phase 4 (2026-10-11 to 2026-10-12). Chidimm
 - What changes: `docs/SPEC.md` and `design/docs/SPEC.md` (v0.5.1: F04, F05, F08 rules 5 and 6, F12 block settings, F26 rule 1, section 9 data model, section 12), `design/docs/DESIGN_BRIEF.md` 10.2, `design/NAVIGATION_AND_SETTINGS.md` (template editor switches), `DECISIONS.md` (D-135), `docs/UI_REVIEW.md` item 8.
 - After: switches "Department", "Group subjects by category", "Marks obtainable", "Highest average in class", "Lowest average in class" (all off by default, so existing boards are unchanged); new schools get the written Nigerian defaults; the Ogun and FCT layouts can be reproduced with switches alone.
 - Proof: AC12.1 (Phase 6) previews an Ogun-style JSS card and an FCT-style primary card with seeded fictional data; Phase 7 unit tests for summary maths and default seeds (`uv run pytest`, `bun run test`).
+
+### CHANGE: Working pace in AGENT.md rule 1 (requested by Chidimma, 2026-10-12)
+- Before: "One step at a time."
+- Why it must change: Chidimma: "we are wasting lots of time so let's try to do two or three things at a time instead of our usual one" and "move to building code".
+- When: from Phase 5 on; written into AGENT.md at the end of Session 4 so new sessions follow it.
+- What changes: `AGENT.md` working rule 1; `MEMORY.md` fact "Pace".
+- After: two or three related steps per turn; still stops for decisions, change protocol approvals, secrets and outward-facing actions.
+- Proof: not code; reviewed in the session handover.
+
+### CHANGE: Pass mark error label follows the spec (Chidimma, 2026-10-12)
+- Before: approved label "Pass mark must be a whole number from 0 to 100." (NAVIGATION section 5).
+- Why it must change: SPEC section 12 says 1 to 99.
+- When: found while writing AT-07.5.
+- What changes: `docs/UI_REVIEW.md` section 4; `docs/ACCEPTANCE_TESTS.md` AT-07.5.
+- After: "Pass mark must be a whole number from 1 to 99."
+- Proof: AT-07.5 (Phase 7 API test).
