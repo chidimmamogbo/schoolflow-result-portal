@@ -583,6 +583,11 @@ Installed on Chidimma's laptop (checked 2026-10-09): Node 24.21.0, npm 11.19.0, 
 ### D-134. Change password rule text follows D-036 (Chidimma's choice, 2026-10-12)
 - The `ChangePassword` board shows "At least 8 characters" and "A letter and a number". The build shows the D-036 rules instead: at least 15 characters (10 on student accounts), no composition rules, common passwords blocked. Exact wording is settled with the section 5 labels. Recorded as an approved difference from the design.
 
+### D-135. Report card gaps from Nigerian report card research (Chidimma, 2026-10-12)
+- Research in `docs/REPORT_CARD_RESEARCH.md` (Ogun State CA report sheet, FCT UBEB termly report, two real school cards in summary, vendor and curriculum sources). Six complete real cards were not publicly available; real cards from known schools, with names covered, would complete UI_REVIEW item 8.
+- Added (SPEC v0.5.1): optional student Department (Senior Secondary) and subject category, with report switches "Department" and "Group subjects by category"; summary switches "Marks obtainable", "Highest average in class", "Lowest average in class" (all off by default); written defaults for Secondary A1 to F9 bands, affective and psychomotor traits and the 1 to 5 key; nursery learning areas Pre-science and Handwriting.
+- **Left out:** health block (sensitive data), next term fees (fee collection is roadmap), CA 30 and exam 70 as default (default stays CA1 20, CA2 20, Exam 60, editable). Cumulative third-term style stays after the core.
+
 ---
 
 # Stack Summary (one page, for final approval)

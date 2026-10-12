@@ -235,9 +235,9 @@ Adds "Pass mark" (default 40) with helper text "Results below this mark appear i
 
 - Block settings (switches unless a choice is listed; default in brackets):
   - School header: Logo (on), Logo position: Left, Centre, Right (Left), School motto (on), Address (on), Phone and email (on), Report title (text, "Student Report Card"), Session and term line (on).
-  - Student details: Photo (off), Admission number (on), Gender (on), Age (off), Date of birth (off), Class and arm (on), House (off), Form teacher's name (on).
-  - Subject table: one switch per assessment column (on), CA and exam breakdown (on), Total (on), Grade (on), Remark (on), Position in each subject (on), Class average per subject (on), Highest in class (off), Lowest in class (off), Subject teacher's initials (off), Highlight scores below pass mark (off), Row shading (on).
-  - Summary: Total score (on), Total average (on), Overall class position (optional) (on), Number in class (on), Class average (off), Number of subjects (off), Promotion result (off).
+  - Student details: Photo (off), Admission number (on), Gender (on), Age (off), Date of birth (off), Class and arm (on), House (off), Form teacher's name (on), Department (off; Senior Secondary only) **(v0.5.1)**.
+  - Subject table: one switch per assessment column (on), CA and exam breakdown (on), Total (on), Grade (on), Remark (on), Position in each subject (on), Class average per subject (on), Highest in class (off), Lowest in class (off), Subject teacher's initials (off), Highlight scores below pass mark (off), Row shading (on), Group subjects by category (off) **(v0.5.1)**.
+  - Summary: Total score (on), Total average (on), Overall class position (optional) (on), Number in class (on), Class average (off), Number of subjects (off), Promotion result (off), Marks obtainable (off), Highest average in class (off), Lowest average in class (off) **(v0.5.1)**.
   - Affective and psychomotor: Affective (on), Psychomotor (on), Rating key (on), Layout: Side by side, Stacked (Side by side).
   - Attendance: Times school opened (on), Times present (on), Times absent (on).
   - Comments: Form teacher's comment (on), Principal's comment (on), Show names (on).

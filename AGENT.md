@@ -12,7 +12,7 @@ The owner is Chidimma, a WordPress developer learning TypeScript, Next.js, React
 
 | Question | Source |
 |---|---|
-| Behaviour (features, roles, permissions, state machines, data model, 38-step demo) | `docs/SPEC.md` (v0.5) |
+| Behaviour (features, roles, permissions, state machines, data model, 38-step demo) | `docs/SPEC.md` (v0.5.1) |
 | Process, phases, build inventory, security gate | `docs/BUILD_PROMPT.md` |
 | Why the MVP looks like this | `docs/Revised_Two_Week_Results_Trust_Chain_MVP.md` |
 | Long-term vision | `docs/School_Management_Platform_Capstone_Proposal.md` |

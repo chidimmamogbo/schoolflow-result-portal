@@ -2,8 +2,8 @@
 
 | | |
 |---|---|
-| Version | 0.5 |
-| Date | 2026-10-07 |
+| Version | 0.5.1 |
+| Date | 2026-10-07 (v0.5); 2026-10-12 (v0.5.1) |
 | Status | Agreed for build |
 | Owner | Chidimma Merit Mogbo |
 | Product name | SchoolFlow Result Portal (planning name: ResultChain) |
@@ -15,6 +15,7 @@
 > - v0.2: account provisioning by school admins, login-only model, student and teacher registration with assignments, guardian ward linking, notice board, email notifications, SaaS dashboard shell, full responsiveness, dark/light mode.
 > - v0.3: per-school subscription billing with an editable per-student, per-term pricing table and online payment in test mode.
 > - v0.4: product renamed SchoolFlow Result Portal; username login for everyone; student login with school code; password reset rules (no self-service for students, super admin resets school admins); additional school admins; configurable assessment structures per level (any number of CAs); teacher sheet search and filters; form teacher tools (broadsheet, comments, ratings, attendance, preview); Students needing attention list; expanded super admin functions and platform settings; full Create school form with colour picker and set-up emails; more report template styles and block settings; graduated pricing removed, volume pricing with optional cliff protection.
+> - v0.5.1 (2026-10-12, D-135): report card additions from research on Nigerian report cards (`docs/REPORT_CARD_RESEARCH.md`): optional student department and subject categories, three summary switches, written defaults for Secondary grade bands, affective and psychomotor traits and their key, and two more nursery learning areas.
 > - v0.5: nursery and primary report cards; school type (Nursery and Primary, Secondary only, or all) with report card toggles per level controlled by the super admin; each school chooses Scores or Skill ratings per level; Primary A to F grading default; one-step class teacher (teaches all subjects) with class teacher assistants; Skills report card with an Early Years style; head's title per level; flexible session-by-session pace instead of a fixed 14 days; "if time allows" items renamed "build after the core" (nothing dropped).
 
 ## 1. Summary
@@ -180,14 +181,14 @@ F01 to F26 below.
 
 ### F04. School structure
 - **Users:** school admins.
-- **Rules:** academic sessions and terms (one active pair, with start and end dates used for billing renewal and "next term begins" on report cards), school levels (Nursery, Primary, Junior Secondary, Senior Secondary, limited to the levels switched on for the school in F25), classes and arms linked to a level, departments, subjects; branding (logo, colour, address, contacts).
+- **Rules:** academic sessions and terms (one active pair, with start and end dates used for billing renewal and "next term begins" on report cards), school levels (Nursery, Primary, Junior Secondary, Senior Secondary, limited to the levels switched on for the school in F25), classes and arms linked to a level, departments, subjects (each with an optional category, for example General, Science and Mathematics, Humanities, Business, Technology, Trade); branding (logo, colour, address, contacts).
 - **Acceptance:**
   - AC04.1 Given an active term, when another term is activated, then the previous one is deactivated.
   - AC04.2 Given Secondary report cards are off for a school, when its admin creates a JSS 1 class, then it is rejected.
 
 ### F05. Student registration, enrolment and subjects
 - **Users:** school admins.
-- **Rules:** create one student or bulk import by CSV (preview, row errors, all-or-nothing); admission number and username unique per school; optional house; enrol into a class/arm for the active session; subjects default to the class's subjects and can be adjusted per student; moving arms keeps history.
+- **Rules:** create one student or bulk import by CSV (preview, row errors, all-or-nothing); admission number and username unique per school; optional house; optional department for Senior Secondary students (for example Science, Arts, Commercial; the school's own list); enrol into a class/arm for the active session; subjects default to the class's subjects and can be adjusted per student; moving arms keeps history.
 - **Acceptance:**
   - AC05.1 Given a CSV with one duplicate admission number, when committing, then nothing is saved and the row error is shown.
   - AC05.2 Given a student without a subject, when a teacher opens that subject's sheet, then the student is not listed.
@@ -218,8 +219,8 @@ F01 to F26 below.
   2. Different levels can use different structures (for example Primary: CA1, CA2, Exam; Senior Secondary: CA1, CA2, CA3, Project, Exam). New schools start from the platform default (CA1 20, CA2 20, Exam 60).
   3. Once any score exists for a term at a level, that level's structure is locked for the term. Changes apply from the next term. The structure used is stored with each result.
   4. Pass mark per school (default 40), used for the Students needing attention list and the "below pass mark" highlight.
-  5. Editable grading bands per level. Defaults: Junior and Senior Secondary use A1 to F9 (not presented as official WAEC mappings); Nursery (in Scores mode) and Primary use A to F: A 70 to 100 Excellent, B 60 to 69 Very good, C 50 to 59 Good, D 45 to 49 Fair, E 40 to 44 Pass, F 0 to 39 Fail. Remark bands per level.
-  6. Rating traits for affective and psychomotor domains, editable per school with defaults, and a rating scale of 1 to 5 with a key.
+  5. Editable grading bands per level. Defaults: Junior and Senior Secondary use A1 to F9 (not presented as official WAEC mappings): A1 75 to 100 Excellent, B2 70 to 74 Very good, B3 65 to 69 Good, C4 60 to 64 Credit, C5 55 to 59 Credit, C6 50 to 54 Credit, D7 45 to 49 Pass, E8 40 to 44 Pass, F9 0 to 39 Fail; Nursery (in Scores mode) and Primary use A to F: A 70 to 100 Excellent, B 60 to 69 Very good, C 50 to 59 Good, D 45 to 49 Fair, E 40 to 44 Pass, F 0 to 39 Fail. Remark bands per level.
+  6. Rating traits for affective and psychomotor domains, editable per school with defaults, and a rating scale of 1 to 5 with a key. Default affective traits: Punctuality, Neatness, Politeness, Honesty, Self-control, Attentiveness, Leadership. Default psychomotor traits: Handwriting, Games and sports, Verbal fluency, Handling of tools, Drawing and painting, Crafts. Default key: 5 Excellent, 4 Good, 3 Average, 2 Below average, 1 Unsatisfactory.
   7. Raw scores stored separately from derived totals; subject and class averages; subject and overall positions with ties ("1st, 1st, 3rd"); calculation version stored with each computed result.
 - **Acceptance:**
   - AC08.1 Given two students tie on total, when positions are computed, then both share the position and the next is skipped.
@@ -263,9 +264,9 @@ F01 to F26 below.
   2. **Blocks**, in default order: School header, Student details, Subject table, Summary, Affective and psychomotor, Attendance, Comments, Signatures, Footer with QR and report ID. Each block can be shown or hidden and moved up or down, except the footer, which is always shown and always last.
   3. **Block settings:**
      - School header: Logo, Logo position (Left, Centre, Right), School motto, Address, Phone and email, Report title (editable, default "Student Report Card"), Session and term line.
-     - Student details: Photo, Admission number, Gender, Age, Date of birth, Class and arm, House, Form teacher's name.
-     - Subject table: a switch per assessment component column, Total, Grade, Remark, Position in each subject, Class average per subject, Highest in class, Lowest in class, Subject teacher's initials, Highlight scores below pass mark, Row shading.
-     - Summary: Total score, Total average, Overall class position (optional), Number in class, Class average, Number of subjects, Promotion result. When Overall class position is off, the summary shows Number in class.
+     - Student details: Photo, Admission number, Gender, Age, Date of birth, Class and arm, House, Form teacher's name, Department (Senior Secondary).
+     - Subject table: a switch per assessment component column, Total, Grade, Remark, Position in each subject, Class average per subject, Highest in class, Lowest in class, Subject teacher's initials, Highlight scores below pass mark, Row shading, Group subjects by category.
+     - Summary: Total score, Total average, Overall class position (optional), Number in class, Class average, Number of subjects, Promotion result, Marks obtainable, Highest average in class, Lowest average in class. When Overall class position is off, the summary shows Number in class.
      - Affective and psychomotor: Affective, Psychomotor, Rating key, Layout (Side by side, Stacked).
      - Attendance: Times school opened, Times present, Times absent.
      - Comments: Form teacher's comment, Principal's comment, Show names.
@@ -420,7 +421,7 @@ F01 to F26 below.
 ### F26. Skill ratings and the Skills report card
 - **Users:** school admins (configure), class teachers and assistants (enter), reviewers, parents.
 - **Rules:**
-  1. For a level in Skill ratings mode, school admins set up **learning areas** (for example Number work, Letter work, Phonics, Rhymes and songs, Creative arts, Social habits, Health habits, Physical development) and the **skills** under each (for example "Counts 1 to 20", "Recognises letters A to Z"). Default areas and skills are provided and editable. Areas can be assigned to classes like subjects.
+  1. For a level in Skill ratings mode, school admins set up **learning areas** (for example Number work, Letter work, Phonics, Rhymes and songs, Pre-science, Handwriting, Creative arts, Social habits, Health habits, Physical development) and the **skills** under each (for example "Counts 1 to 20", "Recognises letters A to Z"). Default areas and skills are provided and editable. Areas can be assigned to classes like subjects.
   2. **Rating scale** per school, editable: name, short code and description per point. Default five points: Excellent (E), Very good (VG), Good (G), Fair (F), Needs improvement (NI). The **attention rating** (default Needs improvement) feeds F23.
   3. **Rating sheets:** one per learning area per class/arm, assigned like subjects (usually to the class teacher). Each pupil gets a rating per skill and an optional short comment per area. Missing ratings are flagged; submission needs every skill rated.
   4. Rating sheets use the same workflow, review, approval, revisions, audit, corrections and verification as score sheets.
@@ -477,8 +478,8 @@ Teachers cannot edit in SUBMITTED, REVIEWED, APPROVED or PUBLISHED. Rating sheet
 | account_tokens | type (activation, reset), hash, expires_at, used_at | school | single use |
 | platform_settings | key, value, updated_by | platform | audited |
 | academic_sessions, terms | dates, active, next_term_begins | school | term dates drive renewal |
-| classes (arms), departments, subjects | level | school | |
-| students, guardians, guardian_students, enrolments, student_subjects | admission_number, username, house | school | children's data |
+| classes (arms), departments, subjects | level; subject category (optional) | school | |
+| students, guardians, guardian_students, enrolments, student_subjects | admission_number, username, house, department (optional, Senior Secondary) | school | children's data |
 | teacher_assignments (form_teacher flag, teaches_all_subjects flag), class_assistants, reviewer_scopes | | school | at most 2 assistants per arm |
 | assessment_structures, assessment_components | level, term, locked_at; name, label, max_score, order | school | maximums add up to 100 |
 | grading_scales (per level), remark_bands, pass_mark, rating_traits | | school | versioned with results |
@@ -525,7 +526,7 @@ Public: landing, login (Staff and parents, Student), school login link, activate
 | Assessment structure per level | School admins | CA1 20, CA2 20, Exam 60 | 1 to 8 components, maximums add up to 100, locked per term once scores exist |
 | Pass mark | School admins | 40 | Whole number 1 to 99 |
 | Grading bands, remark bands (per level) | School admins | Secondary A1 to F9; Nursery and Primary A to F | No overlaps or gaps |
-| Rating traits and scale | School admins | Default affective and psychomotor traits, 1 to 5 | |
+| Rating traits and scale | School admins | Default affective and psychomotor traits (F08 rule 6), 1 to 5 with key Excellent, Good, Average, Below average, Unsatisfactory | |
 | Report templates | School admins | Modern | Versioned; report ID, QR, revision and date always shown |
 | Additional school admins | Super admin (limit) | 2 | Principal adds them |
 | Pricing table | Super admin | Basic, Standard, Premium | Volume model, versioned, no overlaps or gaps |
