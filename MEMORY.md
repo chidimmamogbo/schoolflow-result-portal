@@ -6,11 +6,11 @@ The living record of where the project stands. Update it at the end of every ses
 
 | | |
 |---|---|
-| Last updated | 2026-10-12 (end of Session 4) |
-| Phase | 1 to 6 done (all planning and design). **Phase 7 (backend, test-first) starts next session** |
-| Current step | Phase 6 complete: `docs/ACCEPTANCE_TESTS.md` (128 cases, 54 denied, covers all 44 BUILD_PROMPT Phase 6 items) |
-| Next step | **Phase 7, step 1** (BUILD_PROMPT 9.2a core + 9.1 item 1): Postgres 17 in Docker for local dev and tests (`compose.yaml`), pydantic-settings config that fails fast on missing values, SQLAlchemy 2 + psycopg 3 + Alembic wiring, a pytest fixture on the real database with rollback per test, then migration 1 (`schools`, `school_features`, `school_levels`, `platform_settings`) test-first. Each step: tests red, green, commit through a PR |
-| Code | Monorepo on GitHub `chidimmamogbo/schoolflow-result-portal` (public). `backend/` FastAPI skeleton (health + tests), `frontend/` Next.js 16.4 skeleton (page, staging banner, tests), CI with 5 required checks + staging deploy. No database code yet. Production deploy job comes in Phase 11, after the Phase 10 security gate |
+| Last updated | 2026-10-12 (Session 5, in progress) |
+| Phase | **Phase 7 (backend, test-first) in progress.** Phases 1 to 6 done |
+| Current step | Migration 3 (`users`, `school_memberships`) with RLS on branch `feat/phase7-rls-accounts` (PR open, waiting for Chidimma's `merge`). Merged before it: PR #18 (Docker Postgres, settings, Alembic, test fixture, migration 1) |
+| Next step | **Rest of BUILD_PROMPT 9.1 item 2**, test-first: `user_sessions` and `account_tokens` (hashed tokens, one live link per user and purpose, no school can sign out or reset a shared account), then `roles`, `permissions`, `role_permissions` seeded from one Python file with a test that compares it to SPEC section 5 (D-046) |
+| Code | Monorepo `chidimmamogbo/schoolflow-result-portal` (public). `backend/`: settings (fail fast), SQLAlchemy 2.1 + psycopg 3, Alembic with 3 migrations (schools; roles and RLS; accounts), `use_context()` per-transaction tenant setting, 152 tests on real Postgres 17 (rollback per test). `frontend/`: Next.js 16.4 skeleton. CI: 5 required checks (Backend job has a Postgres 17.11 service) + staging deploy. Production deploy in Phase 11 |
 
 ## Key documents for building (read before Phase 7 work)
 
@@ -33,7 +33,7 @@ The living record of where the project stands. Update it at the end of every ses
 - [x] Phase 4: install, scaffold, CI, staging skeleton (done 2026-10-12, PRs #1 to #13)
 - [x] Phase 5: UI/UX review, `docs/UI_REVIEW.md` (2026-10-12; item 8 open)
 - [x] Phase 6: `docs/ACCEPTANCE_TESTS.md` (2026-10-12, 128 cases)
-- [ ] Phase 7: backend, test-first
+- [ ] Phase 7: backend, test-first (in progress: 9.1 items 1 and 2 first part done)
 - [ ] Phase 8: frontend, test-first
 - [ ] Phase 9: end-to-end demo flow (all breakpoints, both themes)
 - [ ] Phase 10: security gate, `docs/SECURITY_AUDIT.md`
@@ -68,6 +68,8 @@ Testing (Round 11, approved 2026-10-09): pytest + TestClient + pytest-cov + Hypo
 
 Dev tools (Round 12, approved 2026-10-09): Node 24 LTS; **Bun 1.4.2 as package manager and script runner** (Node stays the runtime; tests via Vitest with `bun run test`, never `bun test`); Python 3.14 via uv; monorepo frontend/ backend/ design/ docs/; **public GitHub repo** with branch protection, secret scanning, push protection; Postgres in Docker, backend native, PDF tests in Linux container; Ruff + Pyright, ESLint + Prettier + tsc; pre-commit with gitleaks; GitHub Actions incl. Playwright every push.
 
+Phase 7 (2026-10-12): D-136 four level rows per school (one Secondary toggle); D-137 RLS and the app roles arrive with every migration (item 12 becomes the final audit); **D-138 one parent account across schools** (amends D-044): link only after the parent accepts, same response to the school for every email (2A), parents only (3A; staff who are also parents is a future upgrade), shared accounts managed only by the parent. SPEC v0.5.2.
+
 Deployment and monitoring (Round 13, approved 2026-10-09): environments local / staging / previews / production with separate secrets; Paystack test webhook on staging until the demo; GitHub Actions does CI → migrations → Vercel CLI deploy for main and staging; no keep-alive pinging; Sentry Developer with scrubbing; `/health` + `/health/ready`; manual pg_dump backups (never GitHub artifacts). Full Stack Summary at the end of DECISIONS.md.
 
 **Budget rule (D-00A, Chidimma 2026-10-09): free tiers only (Vercel Hobby incl. cron, Neon Free, Resend Free, Blob Free, Paystack test). Upgrade only when onboarding real schools.** Every recommendation must fit free limits.
@@ -86,7 +88,10 @@ Rest of the stack: not decided yet. **Preference stated 2026-10-08: Chidimma pre
 - **Dependency audit:** CI ignores only GHSA-vfj7-8cjw-p6xm (`braces`, dev-only via ESLint, no patch yet). Remove the ignore once patched (D-130).
 - **Spec v0.5.1 (2026-10-12, D-135):** report card additions from `docs/REPORT_CARD_RESEARCH.md`; `design/docs/SPEC.md` is kept identical to `docs/SPEC.md` (copy after every spec edit).
 - **Pace (2026-10-12):** Chidimma asked for 2 or 3 steps per turn instead of one, and to move fast into code (AGENT.md rule 1 updated). Still stop for decisions, CHANGE `ok`s, secrets and anything outward-facing.
-- **Not done yet for Phase 7:** Neon roles (`app_user`, `app_platform`, `app_verifier`, owner) and the Neon `staging` branch were planned "in Phase 4" (`docs/SERVICES.md`) but are **not created**; do it when the first migration is ready to run on staging. No Vercel env values for databases exist yet.
+- **Not done yet for Phase 7:** the Neon `staging` branch and database env values on Vercel. The app roles (`app_user`, `app_platform`, `app_verifier`) are now **created by migration 2 with SQL**, never in the Neon Console (Console roles join `neon_superuser`, which has BYPASSRLS; D-137). Before migrations run on staging: give each role LOGIN and a password with at least 60 bits of entropy (Neon rule) outside git, and point `DATABASE_URL*` at them. Locally `backend/.env` still uses the owner for `DATABASE_URL`; switch to `app_user` when the app first reads the database (auth module).
+- **RLS and new rows (2026-10-12):** a new `users` row is invisible to its school until its `school_memberships` row exists, so an `INSERT ... RETURNING` on `users` fails. The app makes user ids in Python (`uuid.uuid4()`) and inserts the membership in the same transaction (test `test_a_school_creates_an_account_then_links_it`).
+- **SQLAlchemy 2.1:** `Result.tuples()` is deprecated, and with warnings as errors it fails the tests; iterate rows directly.
+- **Vercel preview check:** fails with `git_info_fail` since PR #17 (not a required check; staging deploys through the CI job, not this path). Look into it when convenient.
 - **Database error text can contain data (found 2026-10-12, Phase 7 step 1):** PostgreSQL's own messages quote values (`invalid input syntax ... "value"`, unique violation `Key (email)=(...)`). `hide_parameters=True` on the engine only hides SQLAlchemy's parameter list. The 9.2a error handler and log redaction must never log or return raw database error text (log the SQLSTATE code instead). Test it there.
 - **Phase 7 first-step tools:** Docker 29.8.0 is installed (Docker Desktop must be running); backend tests run natively on Windows against Postgres in Docker (D-031 area, Round 11/12); PDF tests run in the Linux container.
 - **Labels:** NAVIGATION section 5 approved 2026-10-12 with fixes listed in `docs/UI_REVIEW.md` section 4; teacher menu is "Result sheets", page title "My result sheets".
@@ -115,4 +120,4 @@ Rest of the stack: not decided yet. **Preference stated 2026-10-08: Chidimma pre
 
 ## Open questions
 
-- None blocking right now.
+- **For the provisioning step (F03, with migration 4):** under 2A a school must get the same response for every parent email. A temporary password slip cannot be printed for an email that already has an account, so offering slips to parents *with* an email would reveal whether the email existed. Proposal to put to Chidimma then: parents with an email get the link request (activation) only; temporary password slips only for parents without an email.
