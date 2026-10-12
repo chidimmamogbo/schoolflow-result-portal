@@ -38,7 +38,7 @@ Tools installed locally rather than accounts: Docker Desktop, uv, Bun, GitHub CL
 
 Filled in as each service is registered. Values live only in: local git-ignored `.env` files, Vercel environment settings (per environment), GitHub Actions secrets.
 
-Planned names (finalised in `.env.example` files during Phase 4). Production and Preview (staging) always get **different values**.
+Names finalised on 2026-10-12 in `backend/.env.example` and `frontend/.env.example` (names only, no values). Production and Preview (staging) always get **different values**.
 
 | Credential (name only) | Service | Secret? | Used by | Stored in |
 |---|---|---|---|---|
