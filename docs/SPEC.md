@@ -484,7 +484,7 @@ Teachers cannot edit in SUBMITTED, REVIEWED, APPROVED or PUBLISHED. Rating sheet
 | Entity | Key fields | Tenant key | Notes |
 |---|---|---|---|
 | schools, school_features, school_levels | name, email, phone, address, city, state, country, code (unique), colour, logo, status, school_type; per level: enabled (super admin only), assessment_mode, head_title | own ID | code used in student login |
-| users, school_memberships, roles, permissions, role_permissions | username, email, must_change_password, is_active, email_verified_at; per membership: role, is_primary, status (invited, active, paused) | membership | staff/parent usernames unique platform-wide; student usernames unique per school; emails unique platform-wide; one school per account except parent accounts, which have one membership per linked school (D-138) |
+| users, school_memberships, roles, permissions, role_permissions | username, email, must_change_password, is_active, email_verified_at; per membership: role, is_primary, status (active, paused); a school's link requests wait in their own records until the parent accepts | membership | staff/parent usernames unique platform-wide; student usernames unique per school; emails unique platform-wide; one school per account except parent accounts, which have one membership per linked school (D-138) |
 | user_sessions | hashed refresh token, device, expires_at, revoked_at | user | supports sign out of all devices |
 | account_tokens | type (activation, reset), hash, expires_at, used_at | user (through the user's school memberships) | single use; one live link per user and type |
 | platform_settings | key, value, updated_by | platform | audited |

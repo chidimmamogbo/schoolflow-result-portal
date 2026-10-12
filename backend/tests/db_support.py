@@ -18,7 +18,7 @@ import pytest
 from alembic import command
 from alembic.config import Config
 from sqlalchemy import Connection, Engine, text
-from sqlalchemy.exc import DBAPIError
+from sqlalchemy.exc import DBAPIError, IntegrityError
 from sqlalchemy.orm import Session
 
 from schoolflow_api.db import use_context
@@ -96,3 +96,17 @@ def refused(session: Session, sqlstate: str = INSUFFICIENT_PRIVILEGE) -> Generat
     original = error.value.orig
     assert isinstance(original, psycopg.Error)
     assert original.sqlstate == sqlstate, original
+
+
+@contextmanager
+def violates(session: Session, constraint: str) -> Generator[None]:
+    """Expect the database to refuse the block because of this named rule.
+
+    Works for constraints (unique, check, foreign key) and for trigger rules
+    that name themselves with RAISE ... USING CONSTRAINT. Runs in a savepoint.
+    """
+    with pytest.raises(IntegrityError) as error, session.begin_nested():
+        yield
+    original = error.value.orig
+    assert isinstance(original, psycopg.Error)
+    assert original.diag.constraint_name == constraint, original

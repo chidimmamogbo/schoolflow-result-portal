@@ -11,6 +11,7 @@ from typing import Any
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
+from schoolflow_api.db import use_context
 from schoolflow_api.schools.models import AssessmentMode, Feature, Level
 
 # Report card levels each school type switches on (SPEC F25 rule 2).
@@ -76,3 +77,67 @@ def create_school(
             },
         )
     return school_id
+
+
+def create_user(
+    session: Session,
+    *,
+    username: str,
+    full_name: str,
+    email: str | None = None,
+    is_super_admin: bool = False,
+    student_school_id: uuid.UUID | None = None,
+) -> uuid.UUID:
+    """Insert an account (no school link yet); return its id."""
+    user_id: uuid.UUID = session.scalar(
+        text(
+            "insert into users (username, full_name, email, is_super_admin, student_school_id)"
+            " values (:username, :full_name, :email, :is_super_admin, :student_school_id)"
+            " returning id"
+        ),
+        {
+            "username": username,
+            "full_name": full_name,
+            "email": email,
+            "is_super_admin": is_super_admin,
+            "student_school_id": student_school_id,
+        },
+    )
+    return user_id
+
+
+def add_membership(
+    session: Session,
+    user_id: uuid.UUID,
+    school_id: uuid.UUID,
+    role: str,
+    *,
+    is_primary: bool = False,
+) -> uuid.UUID:
+    """Link an account to a school with one role; return the membership id.
+
+    is_primary is only named when making a principal: school users have no
+    permission on that column at all (only the platform names a principal).
+    """
+    values = {"user_id": user_id, "school_id": school_id, "role": role}
+    statement = (
+        "insert into school_memberships (user_id, school_id, role, is_primary)"
+        " values (:user_id, :school_id, :role, true) returning id"
+        if is_primary
+        else "insert into school_memberships (user_id, school_id, role)"
+        " values (:user_id, :school_id, :role) returning id"
+    )
+    membership_id: uuid.UUID = session.scalar(text(statement), values)
+    return membership_id
+
+
+def parent_accepts_link(session: Session, parent_id: uuid.UUID, school_id: uuid.UUID) -> uuid.UUID:
+    """The parent links their existing account to another school (D-138).
+
+    Only the parent can do this, so the database must know the parent is the
+    one acting: the membership is added with the parent as the signed-in user.
+    """
+    use_context(session, user_id=parent_id)
+    membership_id = add_membership(session, parent_id, school_id, "parent")
+    use_context(session)
+    return membership_id
