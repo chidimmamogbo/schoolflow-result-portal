@@ -66,4 +66,44 @@ Read `design/README.md` (section "Rules that must carry into the build") before 
 
 ## Stack and commands
 
-Not chosen yet. Stack decisions are made in Phase 2 and recorded in `DECISIONS.md`; this section gets the agreed stack, repo layout and run/test commands once Phase 4 scaffolds the repo.
+Full reasoning in `DECISIONS.md` (Stack Summary at the end). Commands below are for Git Bash on Windows.
+
+**Architecture.** One Vercel project with Services (D-119): Next.js frontend at `/`, FastAPI container at `/api` (REST under `/api/v1`), same domain, region `lhr1`. PostgreSQL 17 on Neon (London) with row-level security; Vercel Blob for files; Resend for email; Paystack in test mode.
+
+**Repo layout.**
+
+| Path | What |
+|---|---|
+| `backend/` | FastAPI app (uv, Python 3.14). Code in `src/schoolflow_api/`, tests in `tests/`, container in `Dockerfile.vercel` |
+| `frontend/` | Next.js App Router (Bun, Node 24, TypeScript strict, Tailwind). Code in `src/app/` and `src/components/`, tests in `__tests__/` folders |
+| `design/` | UI handoff (tokens, screens, exact labels). Read-only reference |
+| `docs/` | Spec, build prompt, research, services |
+| `vercel.json` | Services, rewrites, staging noindex header, which branches auto-deploy |
+| `.github/workflows/ci.yml` | Five required checks, then the staging deploy |
+
+**Backend** (run inside `backend/`):
+
+| Task | Command |
+|---|---|
+| Install | `uv sync` |
+| Tests | `uv run pytest` (warnings are errors) |
+| Lint, format | `uv run ruff check .` and `uv run ruff format --check .` |
+| Types | `uv run pyright` (strict) |
+| Audit | `uv audit --locked --preview-features audit-command` |
+| Run locally | `uv run uvicorn schoolflow_api.main:app --reload` |
+| Container | `docker build -f Dockerfile.vercel -t schoolflow-api:local .` |
+
+**Frontend** (run inside `frontend/`; use `bunx`, not `npx`):
+
+| Task | Command |
+|---|---|
+| Install | `bun install` |
+| Tests | `bun run test` (Vitest; never `bun test`) |
+| Lint, format, types | `bun run lint`, `bun run format:check`, `bun run typecheck` |
+| Build | `bun run build` |
+| Audit | `bun run audit` (one documented ignore, D-130) |
+| Run locally | `bun run dev` |
+
+**Git and deploys.** `main` is protected: every change goes through a branch and a pull request, five required checks, squash merge. To update staging: `git switch staging && git merge --ff-only origin/main && git push`; CI then deploys and checks `https://staging.schoolflow.meritiaa.com` (D-131). Production deploys come later in Phase 4.
+
+**Windows gotchas.** Pipe the clipboard into Windows programs (`cat /dev/clipboard | gh ...`, never `< /dev/clipboard`). Prefix API paths that start with `/` with `MSYS_NO_PATHCONV=1`. Check `.gitignore` after any `vercel link` or `vercel env pull`.
