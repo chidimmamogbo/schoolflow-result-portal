@@ -6,7 +6,25 @@ instead of opening a new one for every query. Sessions (one per request, or
 one per test) borrow a connection from it.
 """
 
-from sqlalchemy import Engine, create_engine
+from sqlalchemy import Engine, MetaData, create_engine
+from sqlalchemy.orm import DeclarativeBase
+
+# Every constraint and index gets a predictable name, so migrations can find
+# and change them later (Alembic cannot alter a constraint it cannot name).
+NAMING_CONVENTION = {
+    "pk": "pk_%(table_name)s",
+    "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
+    "uq": "uq_%(table_name)s_%(column_0_N_name)s",
+    "ix": "ix_%(table_name)s_%(column_0_N_name)s",
+    "ck": "ck_%(table_name)s_%(constraint_name)s",
+}
+
+
+class Base(DeclarativeBase):
+    """Parent of every table class. Like registering a custom table in WordPress,
+    but the table's columns and rules are written once, here in Python."""
+
+    metadata = MetaData(naming_convention=NAMING_CONVENTION)
 
 
 def make_engine(url: str) -> Engine:

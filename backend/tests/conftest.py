@@ -16,6 +16,7 @@ from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm import Session
 
 from schoolflow_api.db import make_engine
+from tests.db_support import reset_and_migrate
 
 # The local Docker test database from compose.yaml (a local-only password).
 # CI sets TEST_DATABASE_URL to its own throwaway service database.
@@ -26,7 +27,7 @@ LOCAL_TEST_DATABASE_URL = (
 
 @pytest.fixture(scope="session")
 def db_engine() -> Iterator[Engine]:
-    """One connection pool for the whole test run."""
+    """One connection pool for the whole test run, on a freshly migrated schema."""
     engine = make_engine(os.environ.get("TEST_DATABASE_URL", LOCAL_TEST_DATABASE_URL))
     try:
         engine.connect().close()
@@ -36,6 +37,7 @@ def db_engine() -> Iterator[Engine]:
             "docker compose up -d --wait",
             pytrace=False,
         )
+    reset_and_migrate(engine)
     yield engine
     engine.dispose()
 

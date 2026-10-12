@@ -51,3 +51,24 @@ pythonVersion = "3.14"
 typeCheckingMode = "strict"
 venvPath = "."
 venv = ".venv"
+
+
+# Alembic migrations (D-023). Generated with `alembic init --template pyproject`
+# (Alembic 1.20.0, 2026-10-12), then trimmed. Logging settings are in alembic.ini.
+[tool.alembic]
+script_location = "%(here)s/migrations"
+# File names start with the date, so migrations list in the order they were made.
+file_template = "%%(year)d_%%(month).2d_%%(day).2d_%%(hour).2d%%(minute).2d-%%(rev)s_%%(slug)s"
+
+# New migration files are formatted and lint-fixed by Ruff as they are written.
+[[tool.alembic.post_write_hooks]]
+name = "ruff_format"
+type = "module"
+module = "ruff"
+options = "format REVISION_SCRIPT_FILENAME"
+
+[[tool.alembic.post_write_hooks]]
+name = "ruff_check"
+type = "module"
+module = "ruff"
+options = "check --fix REVISION_SCRIPT_FILENAME"

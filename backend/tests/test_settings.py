@@ -11,7 +11,7 @@ Each test builds its own environment with `monkeypatch` and passes
 import pytest
 from pydantic import ValidationError
 
-from schoolflow_api.settings import Settings, load_settings
+from schoolflow_api.settings import Settings, load_migration_settings, load_settings
 
 VALID_ENV = {
     "APP_ENV": "local",
@@ -96,3 +96,19 @@ def test_secrets_are_hidden_when_printed(env: pytest.MonkeyPatch) -> None:
     assert "test_pw_123" not in shown
     # The real values are still there for the code that needs them.
     assert settings.database_url.get_secret_value().endswith("/schoolflow")
+
+
+def test_migrations_need_only_their_own_url(env: pytest.MonkeyPatch) -> None:
+    env.delenv("APP_SECRET_KEY")  # not needed to run migrations
+    env.setenv("DATABASE_URL_MIGRATIONS", "postgresql+psycopg://owner:pw@localhost/schoolflow")
+
+    assert load_migration_settings(env_file=None).database_url_migrations
+
+
+@pytest.mark.parametrize("url", [None, "sqlite:///schoolflow.db"])
+def test_migrations_refuse_a_missing_or_wrong_url(env: pytest.MonkeyPatch, url: str | None) -> None:
+    if url is not None:
+        env.setenv("DATABASE_URL_MIGRATIONS", url)
+
+    with pytest.raises(ValidationError):
+        load_migration_settings(env_file=None)
