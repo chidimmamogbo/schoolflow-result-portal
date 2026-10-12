@@ -24,7 +24,9 @@ Entry template:
 - Chidimma chose: Claude runs branch, commit, push and PR, and stops before merge and staging.
 - **D-137** (CHANGE approved): RLS and least-privilege roles arrive with every migration. Migration 2: roles `app_user`, `app_platform`, `app_verifier` (no BYPASSRLS, checked by the migration), `app_current_school_id()` and `app_current_user_id()`, RLS on migration 1's tables, `db.use_context()` setting the school and user at the start of every transaction.
 - **D-138** (Chidimma's idea, CHANGE approved with 2A and 3A): one parent account across schools, linked only after the parent accepts; schools get the same response for every email; shared accounts managed only by the parent; school name on notices and emails. SPEC v0.5.2, acceptance tests AT-31.4 to AT-31.7 and AT-33.4 (133 cases, 57 denied). Option 3B (staff who are also parents) kept in MEMORY as a future upgrade.
-- Migration 3: `users` and `school_memberships` with the trigger rules (super admin has no school, pupils in their own school, staff or parent, consent), the shared-account check, RLS for each role and column grants.
+- Migration 3: `users` and `school_memberships` with the trigger rules (super admin has no school, pupils in their own school, staff or parent, consent), the shared-account check, RLS for each role and column grants. PR #19 merged.
+- Migration 4: `user_sessions` and `account_tokens` (32-byte hashes only, one live link per account and purpose, used or cancelled, never deleted by the app); a school ends sessions and issues links only for its own, unshared people; the platform only for school admins.
+- Migration 5: `roles`, `permissions`, `role_permissions` (45 permissions, 66 rows) from `authz/permissions.py`, which a test compares with the SPEC section 5 table and with the database. BUILD_PROMPT 9.1 item 2 complete.
 
 ### What changed (files)
 - New: `compose.yaml`, `backend/docker/initdb/`, `backend/alembic.ini`, `backend/migrations/` (3 migrations), `backend/src/schoolflow_api/{settings,db,models}.py`, `schools/`, `platform/`, `accounts/` models, `backend/tests/{conftest,db_support,factories}.py` and tests for settings, database, migrations, schools, tenant isolation and accounts.
@@ -37,16 +39,16 @@ Entry template:
 - Long inline scripts in the shell failed to parse; scripts now go in a file first.
 
 ### Tests
-- Backend: 152 passed on Postgres 17.11; Ruff, format and strict Pyright clean; deliberate breaks of each security rule (7 in total) each made tests fail. CI green on PR #18.
+- Backend: 218 passed on Postgres 17.11; Ruff, format and strict Pyright clean; deliberate breaks of each security rule (13 in total) each made tests fail. CI green on PRs #18 and #19.
 
 ### Next step
-- After `merge`: the rest of 9.1 item 2: `user_sessions`, `account_tokens`, then roles and permissions seeded from one file compared with SPEC section 5.
+- After `merge`: BUILD_PROMPT 9.1 item 3 (`academic_sessions`, `terms`, `classes` with arms and level, `departments`, `subjects`) with RLS from the start.
 
 ### Blockers
 - None.
 
 ### Roughly left
-- Phase 7: 9.1 items 2 (rest) to 12, then the 9.2 modules (auth, platform, school admin, results, reports, verification, portal, notices, billing). Then Phases 8 to 11.
+- Phase 7: 9.1 items 3 to 12, then the 9.2 modules (auth, platform, school admin, results, reports, verification, portal, notices, billing). Then Phases 8 to 11.
 
 ---
 

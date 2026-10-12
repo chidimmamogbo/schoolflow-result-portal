@@ -243,6 +243,7 @@ Sources checked 2026-10-09: OWASP Authentication, Password Storage, Session Mana
 
 ### D-046. Permission names and seeding
 - `area.action` names from spec section 5 (for example `scores.enter`, `sheets.approve`, `results.publish`, `attention.view`, `report_card_levels.toggle`, `school_admins.manage`). Seeded by migration from one Python file mirroring the spec matrix; a test compares the file with the spec. Admin management needs `school_admin` plus `is_primary`.
+- **Built (2026-10-12):** names follow the SPEC section 5 rows exactly, so admin management is four names (`school_admins.create`, `.remove`, `.reset_login`, `.sign_out_all`) rather than the example `school_admins.manage`; a part without a dot takes the area before it (`sheets.review / return` gives `sheets.return`). 45 permissions in `backend/src/schoolflow_api/authz/permissions.py`. Migration 5 seeds a written-out copy (a migration must never change after it has run), and `tests/test_permissions.py` checks the file against the SPEC table and against the database, so a change needs SPEC, file and a new migration together.
 
 ### D-047. Nine-step check chain on every request
 - Signed in; password change pending; school active; feature on; level on; permission; ownership or scope; workflow state; separation of duties. Other schools' and out-of-scope records return 404; a missing permission returns 403; a disabled feature returns 404 with a clear code.
