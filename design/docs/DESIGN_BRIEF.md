@@ -315,9 +315,9 @@ Blocks: school header (logo, name, address, motto), student details, session/ter
 
 **Block settings (NEW and CHANGED), all switches unless noted:**
 - School header: Logo, Logo position (Left, Centre, Right), School motto, Address, Phone and email, Report title (text, default "Student Report Card"), Session and term line.
-- Student details: Photo, Admission number, Gender, Age, Date of birth, Class and arm, House, Form teacher's name.
-- Subject table: one switch per assessment column, CA and exam breakdown, Total, Grade, Remark, Position in each subject, Class average per subject, Highest in class, Lowest in class, Subject teacher's initials, Highlight scores below pass mark, Row shading.
-- Summary: Total score, Total average, Overall class position (optional), Number in class, Class average, Number of subjects, Promotion result.
+- Student details: Photo, Admission number, Gender, Age, Date of birth, Class and arm, House, Form teacher's name, Department (Senior Secondary).
+- Subject table: one switch per assessment column, CA and exam breakdown, Total, Grade, Remark, Position in each subject, Class average per subject, Highest in class, Lowest in class, Subject teacher's initials, Highlight scores below pass mark, Row shading, Group subjects by category.
+- Summary: Total score, Total average, Overall class position (optional), Number in class, Class average, Number of subjects, Promotion result, Marks obtainable, Highest average in class, Lowest average in class.
 - Affective and psychomotor: Affective, Psychomotor, Rating key, Layout (Side by side, Stacked).
 - Attendance: Times school opened, Times present, Times absent.
 - Comments: Form teacher's comment, Principal's comment, Show names.

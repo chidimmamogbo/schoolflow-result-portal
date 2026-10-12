@@ -24,7 +24,7 @@ Entry template:
 - Staging marked as staging (D-121), test-first: `StagingBanner` component ("Staging site: test data only", wording chosen by Chidimma), shown only when `APP_ENV` is exactly `staging`; `X-Robots-Tag: noindex, nofollow` header for the staging host only in `vercel.json`; Vercel env `APP_ENV` (Preview `staging`, Production `production`); CI checks both on live staging (PR #12).
 - `README.md` with the "All rights reserved" notice (D-111), the "Stack and commands" section in `AGENT.md`, and `CHANGES.md` (PR #13).
 - **Phase 4 complete.** Re-reading BUILD_PROMPT: Phase 4 ends at step 7 (CLAUDE.md/AGENT.md). The production deploy job belongs to Phase 11, after the Phase 10 security gate ("We do not deploy to production until every item passes"). Earlier notes listing it as a Phase 4 item were wrong.
-- **Phase 5** (faster pace, 2 or 3 steps per turn): `docs/UI_REVIEW.md` with the route-to-board coverage table (13 demo pages without a board, 6 on one-theme v0.3 boards), decisions D-132 to D-134, all five NAVIGATION section 5 label groups approved with fixes (teacher menu "Result sheets"), role journeys, the Phase 5 checklist and content for the pages without a board. Open: item 8, real report card formats.
+- **Phase 5** (faster pace, 2 or 3 steps per turn): `docs/UI_REVIEW.md` with the route-to-board coverage table (13 demo pages without a board, 6 on one-theme v0.3 boards), decisions D-132 to D-134, all five NAVIGATION section 5 label groups approved with fixes (teacher menu "Result sheets"), role journeys, the Phase 5 checklist and content for the pages without a board. Item 8: no real cards had been given to the designer; online research (`docs/REPORT_CARD_RESEARCH.md`) found the Ogun State and FCT UBEB formats but no six complete real cards; approved CHANGE adds the missing switches and defaults (SPEC v0.5.1, D-135).
 
 ### What changed (files)
 - New: `backend/.env.example`, `frontend/.env.example`, `frontend/src/components/staging-banner.tsx` and its test, `README.md`, `CHANGES.md`.
@@ -39,7 +39,7 @@ Entry template:
 - CI: 5 checks green on `main`; staging deploy green, including health, noindex header and banner checks. Production (`*.vercel.app`) shows neither banner nor noindex.
 
 ### Next step
-- Phase 6: `docs/ACCEPTANCE_TESTS.md` from the 38-step demo. Confirm UI_REVIEW item 8 (real report cards).
+- Phase 6: `docs/ACCEPTANCE_TESTS.md` from the 38-step demo. Optional: real report cards from schools Chidimma knows.
 
 ### Blockers
 - None.

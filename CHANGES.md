@@ -73,3 +73,15 @@ These seven changes were made during Phase 4 (2026-10-11 to 2026-10-12). Chidimm
 - What changes: new `frontend/src/components/staging-banner.tsx`; `frontend/src/app/layout.tsx` renders it; `frontend/src/app/globals.css` gains the two warning colour tokens; `vercel.json` gains an `X-Robots-Tag: noindex, nofollow` header for the staging host only; `ci.yml` checks both on live staging; Vercel env `APP_ENV` (Preview `staging`, Production `production`).
 - After: staging shows "Staging site: test data only" (wording approved 2026-10-12) and is not indexed; production shows neither.
 - Proof: `bun run test` (4 banner tests incl. never in production); CI step "Staging is marked as staging".
+
+---
+
+## 2026-10-12
+
+### CHANGE: Report card template: gaps from the Nigerian report card research (approved by Chidimma, `ok`)
+- Before: no Department for SSS students and no subject grouping on the report card; no Marks obtainable or highest and lowest average in class in the summary; default grade bands, affective and psychomotor traits and the trait key described but not written down; default nursery learning areas without Pre-science and Handwriting.
+- Why it must change: the Ogun State and FCT UBEB formats and the vendor templates show these items; Phase 5 item 8 and AC12.1 need real formats to be reproducible (`docs/REPORT_CARD_RESEARCH.md`).
+- When: before Phase 6 acceptance tests and the Phase 7 data model, so no migration is needed later.
+- What changes: `docs/SPEC.md` and `design/docs/SPEC.md` (v0.5.1: F04, F05, F08 rules 5 and 6, F12 block settings, F26 rule 1, section 9 data model, section 12), `design/docs/DESIGN_BRIEF.md` 10.2, `design/NAVIGATION_AND_SETTINGS.md` (template editor switches), `DECISIONS.md` (D-135), `docs/UI_REVIEW.md` item 8.
+- After: switches "Department", "Group subjects by category", "Marks obtainable", "Highest average in class", "Lowest average in class" (all off by default, so existing boards are unchanged); new schools get the written Nigerian defaults; the Ogun and FCT layouts can be reproduced with switches alone.
+- Proof: AC12.1 (Phase 6) previews an Ogun-style JSS card and an FCT-style primary card with seeded fictional data; Phase 7 unit tests for summary maths and default seeds (`uv run pytest`, `bun run test`).

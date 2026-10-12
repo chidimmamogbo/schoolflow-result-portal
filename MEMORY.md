@@ -9,7 +9,7 @@ The living record of where the project stands. Update it at the end of every ses
 | Last updated | 2026-10-12 |
 | Phase | 5 done except one open item (real report card formats); Phase 6 next |
 | Current step | Phase 4 complete: staging live at `https://staging.schoolflow.meritiaa.com` with banner and noindex, deployed by CI on every push to `staging`; README, `CHANGES.md` and "Stack and commands" in place |
-| Next step | Phase 6: `docs/ACCEPTANCE_TESTS.md` from the 38-step demo (given/when/then). Open from Phase 5: confirm whether two real Nigerian report cards were given to the designer (UI_REVIEW item 8) |
+| Next step | Phase 6: `docs/ACCEPTANCE_TESTS.md` from the 38-step demo (given/when/then). Optional from Phase 5: real report cards from schools Chidimma knows (UI_REVIEW item 8) |
 | Code | Monorepo on GitHub `chidimmamogbo/schoolflow-result-portal` (public). `backend/` FastAPI skeleton (health + tests), `frontend/` Next.js 16.4 skeleton (page, staging banner, tests), CI with 5 required checks + staging deploy. Production deploy job comes in Phase 11, after the Phase 10 security gate |
 
 ## Phase checklist
@@ -73,6 +73,7 @@ Rest of the stack: not decided yet. **Preference stated 2026-10-08: Chidimma pre
 - **Vercel:** project `schoolflow-result-portal` (team `chidimma2`), Services: Next.js + FastAPI container in `lhr1`. The very first deployment (from a feature branch) was labelled Production; later CLI deploys are Preview. Deployment URLs are behind Vercel Authentication; custom domains are public.
 - **Deploy token** `schoolflow-github-actions`: project-scoped, expires **2026-11-10**, stored only in the GitHub `staging` environment. A project-scoped token cannot use `vercel alias set` or `--scope` ("User not found"); the pipeline uses the REST API instead (D-131).
 - **Dependency audit:** CI ignores only GHSA-vfj7-8cjw-p6xm (`braces`, dev-only via ESLint, no patch yet). Remove the ignore once patched (D-130).
+- **Spec v0.5.1 (2026-10-12, D-135):** report card additions from `docs/REPORT_CARD_RESEARCH.md`; `design/docs/SPEC.md` is kept identical to `docs/SPEC.md` (copy after every spec edit).
 - **Pace (2026-10-12):** Chidimma asked for 2 or 3 steps per turn instead of one.
 - **Labels:** NAVIGATION section 5 approved 2026-10-12 with fixes listed in `docs/UI_REVIEW.md` section 4; teacher menu is "Result sheets", page title "My result sheets".
 - **Change protocol:** every change to something already built (code, CI, config, branch protection, Vercel settings) needs a CHANGE block and Chidimma's `ok` first; it was skipped seven times in Phase 4 (recorded retroactively in `CHANGES.md`).
