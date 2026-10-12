@@ -187,3 +187,8 @@ jobs:
           done
           echo "$body"
           test "$body" = '{"status":"ok"}'
+      - name: Staging is marked as staging (noindex header and banner, D-121)
+        run: |
+          headers=$(curl -fsSI "https://$STAGING_DOMAIN/")
+          echo "$headers" | grep -i '^x-robots-tag: noindex'
+          curl -fsS "https://$STAGING_DOMAIN/" | grep -o 'Staging site: test data only'
