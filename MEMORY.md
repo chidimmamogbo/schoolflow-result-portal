@@ -8,9 +8,9 @@ The living record of where the project stands. Update it at the end of every ses
 |---|---|
 | Last updated | 2026-10-12 (Session 5, in progress) |
 | Phase | **Phase 7 (backend, test-first) in progress.** Phases 1 to 6 done |
-| Current step | Migration 3 (`users`, `school_memberships`) with RLS on branch `feat/phase7-rls-accounts` (PR open, waiting for Chidimma's `merge`). Merged before it: PR #18 (Docker Postgres, settings, Alembic, test fixture, migration 1) |
-| Next step | **Rest of BUILD_PROMPT 9.1 item 2**, test-first: `user_sessions` and `account_tokens` (hashed tokens, one live link per user and purpose, no school can sign out or reset a shared account), then `roles`, `permissions`, `role_permissions` seeded from one Python file with a test that compares it to SPEC section 5 (D-046) |
-| Code | Monorepo `chidimmamogbo/schoolflow-result-portal` (public). `backend/`: settings (fail fast), SQLAlchemy 2.1 + psycopg 3, Alembic with 3 migrations (schools; roles and RLS; accounts), `use_context()` per-transaction tenant setting, 152 tests on real Postgres 17 (rollback per test). `frontend/`: Next.js 16.4 skeleton. CI: 5 required checks (Backend job has a Postgres 17.11 service) + staging deploy. Production deploy in Phase 11 |
+| Current step | **BUILD_PROMPT 9.1 item 2 complete** on branch `feat/phase7-sessions-permissions` (PR open, waiting for Chidimma's `merge`): migration 4 (`user_sessions`, `account_tokens`) and migration 5 (`roles`, `permissions`, `role_permissions`). Merged before it: PR #18 (foundation, migration 1) and PR #19 (RLS, accounts, D-137, D-138) |
+| Next step | **BUILD_PROMPT 9.1 item 3**, test-first: `academic_sessions`, `terms` (one active pair, next term begins), `classes` with arms and level (a level that is off is refused, AC04.2, AC25.3), `departments`, `subjects` (optional category), all with RLS from the start (D-137) |
+| Code | Monorepo `chidimmamogbo/schoolflow-result-portal` (public). `backend/`: settings (fail fast), SQLAlchemy 2.1 + psycopg 3, Alembic with 5 migrations (schools; roles and RLS; accounts; sessions and links; permissions), `use_context()` per-transaction tenant setting, the permission matrix in `authz/permissions.py`, 218 tests on real Postgres 17 (rollback per test). `frontend/`: Next.js 16.4 skeleton. CI: 5 required checks (Backend job has a Postgres 17.11 service) + staging deploy. Production deploy in Phase 11 |
 
 ## Key documents for building (read before Phase 7 work)
 
@@ -33,7 +33,7 @@ The living record of where the project stands. Update it at the end of every ses
 - [x] Phase 4: install, scaffold, CI, staging skeleton (done 2026-10-12, PRs #1 to #13)
 - [x] Phase 5: UI/UX review, `docs/UI_REVIEW.md` (2026-10-12; item 8 open)
 - [x] Phase 6: `docs/ACCEPTANCE_TESTS.md` (2026-10-12, 128 cases)
-- [ ] Phase 7: backend, test-first (in progress: 9.1 items 1 and 2 first part done)
+- [ ] Phase 7: backend, test-first (in progress: 9.1 items 1 and 2 done)
 - [ ] Phase 8: frontend, test-first
 - [ ] Phase 9: end-to-end demo flow (all breakpoints, both themes)
 - [ ] Phase 10: security gate, `docs/SECURITY_AUDIT.md`
@@ -91,7 +91,7 @@ Rest of the stack: not decided yet. **Preference stated 2026-10-08: Chidimma pre
 - **Not done yet for Phase 7:** the Neon `staging` branch and database env values on Vercel. The app roles (`app_user`, `app_platform`, `app_verifier`) are now **created by migration 2 with SQL**, never in the Neon Console (Console roles join `neon_superuser`, which has BYPASSRLS; D-137). Before migrations run on staging: give each role LOGIN and a password with at least 60 bits of entropy (Neon rule) outside git, and point `DATABASE_URL*` at them. Locally `backend/.env` still uses the owner for `DATABASE_URL`; switch to `app_user` when the app first reads the database (auth module).
 - **RLS and new rows (2026-10-12):** a new `users` row is invisible to its school until its `school_memberships` row exists, so an `INSERT ... RETURNING` on `users` fails. The app makes user ids in Python (`uuid.uuid4()`) and inserts the membership in the same transaction (test `test_a_school_creates_an_account_then_links_it`).
 - **SQLAlchemy 2.1:** `Result.tuples()` is deprecated, and with warnings as errors it fails the tests; iterate rows directly.
-- **Vercel preview check:** fails with `git_info_fail` since PR #17 (not a required check; staging deploys through the CI job, not this path). Look into it when convenient.
+- **Vercel preview check:** failed with `git_info_fail` on PRs #17 and #18 and passed again on PR #19, so it looks like a passing Vercel glitch (not a required check; staging deploys through the CI job).
 - **Database error text can contain data (found 2026-10-12, Phase 7 step 1):** PostgreSQL's own messages quote values (`invalid input syntax ... "value"`, unique violation `Key (email)=(...)`). `hide_parameters=True` on the engine only hides SQLAlchemy's parameter list. The 9.2a error handler and log redaction must never log or return raw database error text (log the SQLSTATE code instead). Test it there.
 - **Phase 7 first-step tools:** Docker 29.8.0 is installed (Docker Desktop must be running); backend tests run natively on Windows against Postgres in Docker (D-031 area, Round 11/12); PDF tests run in the Linux container.
 - **Labels:** NAVIGATION section 5 approved 2026-10-12 with fixes listed in `docs/UI_REVIEW.md` section 4; teacher menu is "Result sheets", page title "My result sheets".
