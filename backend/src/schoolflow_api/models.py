@@ -10,6 +10,7 @@ from schoolflow_api.authz import models as authz_models
 from schoolflow_api.db import Base
 from schoolflow_api.platform import models as platform_models
 from schoolflow_api.schools import models as schools_models
+from schoolflow_api.structure import models as structure_models
 
 __all__ = [
     "Base",
@@ -18,4 +19,5 @@ __all__ = [
     "authz_models",
     "platform_models",
     "schools_models",
+    "structure_models",
 ]

@@ -141,3 +141,116 @@ def parent_accepts_link(session: Session, parent_id: uuid.UUID, school_id: uuid.
     membership_id = add_membership(session, parent_id, school_id, "parent")
     use_context(session)
     return membership_id
+
+
+# --- school structure (BUILD_PROMPT 9.1 item 3) ---------------------------------
+
+
+def create_session(session: Session, school_id: uuid.UUID, name: str = "2026/2027") -> uuid.UUID:
+    """An academic session from September to July."""
+    # Bad names are allowed in, so tests can check the database refuses them.
+    first_year = int(name[:4]) if name[:4].isdigit() else 2026
+    session_id: uuid.UUID = session.scalar(
+        text(
+            "insert into academic_sessions (school_id, name, starts_on, ends_on)"
+            " values (:school_id, :name, make_date(:year, 9, 1), make_date(:year + 1, 7, 31))"
+            " returning id"
+        ),
+        {"school_id": school_id, "name": name, "year": first_year},
+    )
+    return session_id
+
+
+def create_term(
+    session: Session,
+    school_id: uuid.UUID,
+    session_id: uuid.UUID,
+    term_number: int = 1,
+    *,
+    is_active: bool = False,
+) -> uuid.UUID:
+    """First Term 8 Sep to 11 Dec 2026, next term begins 5 Jan 2027 (design brief section 12)."""
+    term_id: uuid.UUID = session.scalar(
+        text(
+            "insert into terms (school_id, session_id, term_number, starts_on, ends_on,"
+            " next_term_begins, is_active) values (:school_id, :session_id, :term_number,"
+            " date '2026-09-08' + (:term_number - 1) * 120, date '2026-12-11'"
+            " + (:term_number - 1) * 120, date '2027-01-05' + (:term_number - 1) * 120,"
+            " :is_active) returning id"
+        ),
+        {
+            "school_id": school_id,
+            "session_id": session_id,
+            "term_number": term_number,
+            "is_active": is_active,
+        },
+    )
+    return term_id
+
+
+def create_class(session: Session, school_id: uuid.UUID, level: str, name: str) -> uuid.UUID:
+    class_id: uuid.UUID = session.scalar(
+        text(
+            "insert into classes (school_id, level, name) values (:school_id, :level, :name)"
+            " returning id"
+        ),
+        {"school_id": school_id, "level": level, "name": name},
+    )
+    return class_id
+
+
+def create_arm(
+    session: Session, school_id: uuid.UUID, class_id: uuid.UUID, name: str = "A"
+) -> uuid.UUID:
+    arm_id: uuid.UUID = session.scalar(
+        text(
+            "insert into class_arms (school_id, class_id, name)"
+            " values (:school_id, :class_id, :name) returning id"
+        ),
+        {"school_id": school_id, "class_id": class_id, "name": name},
+    )
+    return arm_id
+
+
+def create_department(session: Session, school_id: uuid.UUID, name: str) -> uuid.UUID:
+    department_id: uuid.UUID = session.scalar(
+        text("insert into departments (school_id, name) values (:school_id, :name) returning id"),
+        {"school_id": school_id, "name": name},
+    )
+    return department_id
+
+
+def create_subject(
+    session: Session,
+    school_id: uuid.UUID,
+    name: str,
+    *,
+    department_id: uuid.UUID | None = None,
+    category: str | None = None,
+) -> uuid.UUID:
+    subject_id: uuid.UUID = session.scalar(
+        text(
+            "insert into subjects (school_id, name, department_id, category)"
+            " values (:school_id, :name, :department_id, :category) returning id"
+        ),
+        {
+            "school_id": school_id,
+            "name": name,
+            "department_id": department_id,
+            "category": category,
+        },
+    )
+    return subject_id
+
+
+def add_arm_subject(
+    session: Session, school_id: uuid.UUID, arm_id: uuid.UUID, subject_id: uuid.UUID
+) -> uuid.UUID:
+    link_id: uuid.UUID = session.scalar(
+        text(
+            "insert into arm_subjects (school_id, arm_id, subject_id)"
+            " values (:school_id, :arm_id, :subject_id) returning id"
+        ),
+        {"school_id": school_id, "arm_id": arm_id, "subject_id": subject_id},
+    )
+    return link_id
