@@ -1,0 +1,39 @@
+# Local PostgreSQL 17 for development and tests (D-030, D-112).
+#
+# Start:  docker compose up -d --wait
+# Stop:   docker compose down          (keeps the data)
+# Reset:  docker compose down -v       (deletes the data volume, starts empty)
+#
+# Two databases live in this one server:
+#   schoolflow       for `uv run uvicorn ...` (your local app)
+#   schoolflow_test  for `uv run pytest` (each test rolls back, so it stays empty)
+#
+# The password below is for this local container only. The port is bound to
+# 127.0.0.1, so nothing outside this computer can reach it. Real passwords
+# (Neon staging and production) never appear in git.
+#
+# Image version checked on Docker Hub, 2026-10-12: postgres 17.11 (Debian trixie).
+
+name: schoolflow
+
+services:
+  db:
+    image: postgres:17.11-trixie
+    environment:
+      POSTGRES_USER: schoolflow_owner
+      POSTGRES_PASSWORD: local_dev_only
+      POSTGRES_DB: schoolflow
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      # Scripts here run once, the first time the volume is created.
+      - ./backend/docker/initdb:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U schoolflow_owner -d schoolflow"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+volumes:
+  pgdata:
