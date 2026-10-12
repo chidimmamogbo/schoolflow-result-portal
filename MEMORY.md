@@ -103,6 +103,10 @@ Rest of the stack: not decided yet. **Preference stated 2026-10-08: Chidimma pre
 - GitHub: username `chidimmamogbo`; commits must use `288715556+chidimmamogbo@users.noreply.github.com` (public repo; keep the personal email out of history).
 - Domain `meritiaa.com`: DNS in Namecheap shared hosting cPanel Zone Editor (nameservers `dns1/dns2.namecheaphosting.com`); existing website and Namecheap-hosted email in use. Only ever add subdomain records; never touch nameservers, root SPF, MX or root A. `mail.meritiaa.com` is cPanel's mail host: leave it alone. Confirmed names: `schoolflow.meritiaa.com`, `staging.schoolflow.meritiaa.com`, `notify.meritiaa.com` (email).
 
+## Future upgrades worth considering (not in the MVP)
+
+- **Staff who are also parents on one login (option 3B, Chidimma 2026-10-12):** one account with a switch between "School work" and "My children", so a teacher whose child attends the same or another SchoolFlow school needs no second parent account. The MVP chose 3A (parents only, D-138). The schema already allows it: one non-parent membership per account plus parent memberships. Switching it on means one migration that drops the "parent or staff" database rule, a role switch in the session and `/auth/me`, and designed screens for the switch.
+
 ## Approved differences from the design (list them when each screen is built)
 
 - Verify and VerifyAfter: verification code is 12 characters (`7KQ4-M2XD-P9QA`) instead of the designed 8 (D-072).

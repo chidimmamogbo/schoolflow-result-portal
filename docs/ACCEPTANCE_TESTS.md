@@ -21,7 +21,7 @@ Phase 6 of `docs/BUILD_PROMPT.md`. Each of the 38 demo steps in `docs/SPEC.md` s
 | GMC departments | Sciences: Mathematics, Basic Science, Basic Technology, Agricultural Science, Computer Studies |
 | GMC people | Principal Ngozi Okeke (`ngozi.okeke`); vice principal Chukwudi Eze (`chukwudi.eze`); reviewer Emeka Nwosu (Sciences); teacher Tunde Adebayo (`tunde.adebayo`, Mathematics JSS 1A and 1B, form teacher JSS 1A); parent Ikenna Obi (wards Chukwuemeka Obi JSS 1A, Adaeze Obi JSS 3A) |
 | GMC students | JSS 1A list in design brief section 12; Chukwuemeka Obi is GMC/2026/014 |
-| BSA people | Head teacher Chiamaka Nwafor; Primary 4A class teacher Ifeoma Chukwu, assistant Ngozi Ani; Nursery 2 class teacher Amaka Udeh |
+| BSA people | Head teacher Chiamaka Nwafor; Primary 4A class teacher Ifeoma Chukwu, assistant Ngozi Ani; Nursery 2 class teacher Amaka Udeh; parent Ikenna Obi (also a GMC parent), linked to his daughter Kosi Obi in Primary 4A after he accepts (D-138) |
 | Shared admission number | One BSA pupil is also given admission number 2026/014, to prove the two schools never mix (AC02.6) |
 
 ---
@@ -730,6 +730,30 @@ Phase 6 of `docs/BUILD_PROMPT.md`. Each of the 38 demo steps in `docs/SPEC.md` s
 - Then it is refused with "Primary 4A has 2 assistants. Remove one to add another."
 - Covers: F06 rule 3
 
+**AT-31.4 Link an existing parent (one account, two schools)**
+- Given Ikenna Obi has a GMC parent account with a verified email
+- When Chiamaka Nwafor (BSA) adds a parent with his email for Kosi Obi in Primary 4A
+- Then no new account is created; BSA gets the same response as for a new email and shows him as waiting; he receives a link request email naming Bright Stars Academy; after signing in he accepts, and BSA then sees him linked to Kosi
+- Covers: F03 rule 8, AC03.7, D-138
+
+**AT-31.5 (denied) No link without the parent**
+- Given BSA's link request to Ikenna Obi is waiting
+- When BSA, or anyone other than Ikenna, tries to make the link active (screen, API, or the database as the app role)
+- Then it is denied, and BSA still cannot see his account
+- Covers: AC03.8, D-138
+
+**AT-31.6 (denied) A shared account is the parent's to manage**
+- Given Ikenna Obi is linked to GMC and BSA
+- When either school tries to reset his password, issue a temporary password, change his email, sign him out of all devices or deactivate his account
+- Then each is denied; BSA can pause or remove its own link, and GMC's link is untouched
+- Covers: AC03.9, D-138
+
+**AT-31.7 (denied) A staff email cannot become a parent link**
+- Given Tunde Adebayo's teacher account at GMC
+- When BSA adds a parent with Tunde's email
+- Then no link is made, BSA gets the same response as for any email, and Tunde is emailed to give BSA another email
+- Covers: AC03.10, D-138 (staff who are also parents: possible future upgrade)
+
 ### Step 32. Nursery and Primary results are published
 
 **AT-32.1 (denied) Unrated skill blocks submission**
@@ -763,6 +787,12 @@ Phase 6 of `docs/BUILD_PROMPT.md`. Each of the 38 demo steps in `docs/SPEC.md` s
 - When Chidera's published report is opened
 - Then it still shows "Fair"
 - Covers: AC26.4
+
+**AT-33.4 One parent, two schools**
+- Given Ikenna Obi is linked to GMC and BSA and both have published results
+- When he opens his dashboard and the notice board
+- Then Chukwuemeka and Adaeze show under Greenfield Model College and Kosi under Bright Stars Academy, each with its school's name, logo and colour; every notice is labelled with its school; each result email names its school in the sender and the subject; neither school sees the other's children
+- Covers: AC14.2, AC17.3, AC18.2, D-138
 
 ### Step 34. Students needing attention at Bright Stars
 
@@ -922,4 +952,8 @@ Every item in BUILD_PROMPT Phase 6, with the cases that prove it.
 | Billing off: no invoices or prompts | AT-36.5 |
 | Demo passes at phone, tablet and desktop, light and dark | AT-X.1 |
 
-All 44 items are covered. Totals: 128 cases, 54 of them denied cases.
+All 44 items are covered.
+
+Added with SPEC v0.5.2 (D-138, not a BUILD_PROMPT item): one parent account across schools, with the parent's consent and shared-account protections: AT-31.4 to AT-31.7 and AT-33.4.
+
+Totals: 133 cases, 57 of them denied cases.

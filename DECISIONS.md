@@ -232,6 +232,7 @@ Sources checked 2026-10-09: OWASP Authentication, Password Storage, Session Mana
 ### D-044. Accounts and schools: option A (Chidimma, 2026-10-09)
 - **One school per account** in the MVP. A parent with wards in two SchoolFlow schools gets a separate account from each school (with different usernames, since usernames are platform-wide). The super admin has a platform role with no school.
 - **Rejected for now:** one account across several schools with a school switcher (later, if needed).
+- **Amended by D-138 (2026-10-12):** parent accounts can be linked to several schools, with the parent's consent.
 
 ---
 
@@ -595,6 +596,22 @@ Installed on Chidimma's laptop (checked 2026-10-09): Node 24.21.0, npm 11.19.0, 
 - The database enforces it with a deferred constraint trigger checked at commit: all four rows exist, junior and senior secondary are on or off together, at least one level is on (AC25.5). Allowed values are text columns with CHECK rules built from Python `StrEnum`s (no PostgreSQL enum types, which are harder to change in later migrations).
 - **Reason:** classes, assessment structures and grading bands later point at an exact level (a JSS class) without special cases.
 - **Rejected:** three rows, one per toggle (JSS and SSS would share one assessment mode and head's title, and every later table would need another way to tell them apart).
+
+### D-137. Row-level security and database roles arrive with each migration (Chidimma `ok`, 2026-10-12)
+- Every migration that adds a school-owned table also adds its RLS policies, its grants for `app_user`, `app_platform` and `app_verifier`, and denied-case tests run as those roles. BUILD_PROMPT 9.1 item 12 becomes the final audit; a test already fails if any table with `school_id` lacks RLS or if any table grants anything to PUBLIC.
+- The three roles are created by a migration with SQL (`NOLOGIN`, no superuser, no BYPASSRLS), and the migration refuses to run if any of them can bypass RLS. On Neon they must never be created in the Console: Console roles join `neon_superuser`, which has BYPASSRLS (Neon "Manage roles" docs, checked 2026-10-12). Login and passwords are added per environment, outside git.
+- Each transaction sets `app.school_id` and `app.user_id` with `set_config(..., true)` from the signed-in session (D-027). Policies read them through `app_current_school_id()` and `app_current_user_id()`, which turn the empty string a reused connection returns into NULL (tested on PostgreSQL 17.11, 2026-10-12), so a connection without context sees nothing instead of failing.
+- **Reason:** writing every module as a role that skips RLS and switching RLS on at the end would hide missing policies until the security gate.
+- **Rejected:** RLS added only at item 12.
+
+### D-138. One parent account across schools, with the parent's consent (Chidimma, 2026-10-12; amends D-044)
+- A parent account can be linked to several schools, one membership per school. Every other account stays in one school at most: the super admin in none; school admins, reviewers, teachers and students in one.
+- **Link request (option 2A):** when a school adds a parent whose email already belongs to a parent account, no second account is made. The membership starts as `invited` and the parent accepts or declines after signing in. The school gets the same response for every email, so it never learns whether someone already uses SchoolFlow, and it cannot see the account until the parent accepts. Requests expire after 14 days. The database lets only the parent turn `invited` into `active`, and a parent membership for an account already linked elsewhere must start as `invited`.
+- **Shared accounts:** once an account has active or paused links in more than one school, only the parent changes its email, username and password (Forgot password). No school can reset it, issue a temporary password, sign it out of all devices or deactivate it; each school can pause or remove its own link. Enforced in the database as well as the API.
+- **Each school sees only its own part:** RLS stays one school per transaction; the parent's pages read each linked school in turn and group children by school. Per-school guardian details (relationship, phone) live in each school's guardian record.
+- **Notices and emails name the school:** a school label on every notice; the school name as sender (D-079) and at the start of the subject.
+- **Staff who are also parents (option 3A):** not in the MVP. An email that belongs to a staff or student account cannot be linked as a parent. The schema allows switching it on later without moving data (one non-parent membership per account; the "parent or staff" rule is one database trigger). Kept in MEMORY.md as a possible future upgrade (option 3B).
+- **Rejected:** telling a school "this email already has an account" (option 2B: any school could check whether a person, and so their children, uses another SchoolFlow school); one account across schools for every role with a school switcher (more work and new screens).
 
 ---
 
