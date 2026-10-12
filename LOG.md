@@ -17,6 +17,38 @@ Entry template:
 
 ---
 
+## 2026-10-12 (Session 4)
+
+### What we did
+- `backend/.env.example` and `frontend/.env.example` with setting names only (PR #11).
+- Staging marked as staging (D-121), test-first: `StagingBanner` component ("Staging site: test data only", wording chosen by Chidimma), shown only when `APP_ENV` is exactly `staging`; `X-Robots-Tag: noindex, nofollow` header for the staging host only in `vercel.json`; Vercel env `APP_ENV` (Preview `staging`, Production `production`); CI checks both on live staging (PR #12).
+- `README.md` with the "All rights reserved" notice (D-111), the "Stack and commands" section in `AGENT.md`, and `CHANGES.md` (PR #13).
+- **Phase 4 complete.** Re-reading BUILD_PROMPT: Phase 4 ends at step 7 (CLAUDE.md/AGENT.md). The production deploy job belongs to Phase 11, after the Phase 10 security gate ("We do not deploy to production until every item passes"). Earlier notes listing it as a Phase 4 item were wrong.
+
+### What changed (files)
+- New: `backend/.env.example`, `frontend/.env.example`, `frontend/src/components/staging-banner.tsx` and its test, `README.md`, `CHANGES.md`.
+- Updated: `frontend/src/app/layout.tsx`, `frontend/src/app/globals.css` (two warning tokens from `tokens.css`), `frontend/.gitignore`, `vercel.json`, `.github/workflows/ci.yml`, `AGENT.md` (production deploy moved from "later in Phase 4" to Phase 11), `MEMORY.md`, `LOG.md`.
+
+### Issues and fixes
+- **Change protocol skipped seven times in Phase 4** (CI, branch protection and staging changes were approved step by step in the session, but no CHANGE block was written first). Fix: recorded retroactively in `CHANGES.md`; every change to something already built now gets its block and Chidimma's `ok` first.
+- **`vercel env add` asks Secret or Config:** `APP_ENV` is not secret, so Config.
+
+### Tests
+- Backend: 2 passed. Frontend: 6 passed (page 2, banner 4). Lint, format, types and audits clean.
+- CI: 5 checks green on `main`; staging deploy green, including health, noindex header and banner checks. Production (`*.vercel.app`) shows neither banner nor noindex.
+
+### Next step
+- Phase 5, step 1: UI/UX review of the design handoff. List every screen in SPEC section 9.3 that has no v0.5 design yet (known gaps: reviewer screens, add-parent screens), then role journeys.
+
+### Blockers
+- None.
+
+### Roughly left
+- Phases 1 to 4 done. Left: 5 (UI review), 6 (acceptance tests), 7 (backend), 8 (frontend), 9 (end to end), 10 (security gate), 11 (production deploy and demo), then build-after-the-core items. Phases 7 and 8 are the bulk.
+- Reminders: renew the Vercel token before 2026-11-10; remove the D-130 ignore once `braces` is patched; watch CI after 2026-10-19 (Ubuntu 26 runners); re-check Vercel image storage after several deploys.
+
+---
+
 ## 2026-10-09 to 2026-10-11 (Session 3)
 
 ### What we did
