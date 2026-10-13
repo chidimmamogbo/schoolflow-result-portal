@@ -135,3 +135,11 @@ These seven changes were made during Phase 4 (2026-10-11 to 2026-10-12). Chidimm
 - What changes: SPEC v0.5.3 (F03 rule 4, F05, section 9) and its design copy; DECISIONS D-139 and D-140; MEMORY lists the Add student form as an approved difference from the design; the `students` table gets `surname`, `first_name`, `other_names`.
 - After: pupils have three name fields; a parent with an email is always added through the link request, and slips are only for parents without an email.
 - Proof: `tests/test_pupils_and_parents.py` (name fields, link requests); provisioning API tests when F03 is built.
+
+### CHANGE: The test database connection gives up after 10 seconds (Chidimma `ok`, 2026-10-13)
+- Before: `tests/conftest.py` connected to the test database with no time limit; with Docker Desktop's engine stopped, `uv run pytest` hung for minutes.
+- Why it must change: a stopped database should fail at once with the existing message ("Start it from the repo root with: docker compose up -d --wait").
+- When: 2026-10-13, after the engine stopped overnight; done at the start of step 4b.
+- What changes: `tests/conftest.py` only: the test connection gets `connect_timeout=10`.
+- After: with the database unreachable, pytest stops after about 20 seconds (libpq tries twice) and prints how to start it.
+- Proof: a run against an unreachable address printed the message after 22 seconds; the normal suite stays green.
