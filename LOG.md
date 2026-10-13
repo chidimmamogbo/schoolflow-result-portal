@@ -29,7 +29,9 @@ Entry template:
 - Migration 5: `roles`, `permissions`, `role_permissions` (45 permissions, 66 rows) from `authz/permissions.py`, which a test compares with the SPEC section 5 table and with the database. BUILD_PROMPT 9.1 item 2 complete. PR #20 merged.
 - Migration 6 (9.1 item 3): `academic_sessions` (named like 2026/2027), `terms` (three per session, one active per school, AC04.1), `classes` (a trigger refuses a level that is switched off, AC04.2, AC25.3; existing classes stay, AT-04.3), `class_arms`, `departments`, `subjects` (optional category), `arm_subjects`. Every child row repeats `school_id` with a two-column foreign key, so it can only point at its own school's rows. The platform reads sessions and terms only (billing). PR #21 merged.
 - 2026-10-13: Chidimma chose three name fields for pupils (D-139) and the link request as the only method for parents with an email (D-140); SPEC v0.5.3.
-- Migration 7 (9.1 item 4, first part): `students`, `guardians`, `guardian_students`, `parent_link_requests`, `enrolments`, `student_subjects`. A reusable `check_member_role()` trigger makes sure a pupil's or parent's login really is a pupil or parent of that school; a pupil only takes subjects their arm offers; moving arms adds an enrolment (the arm cannot be edited); link requests are never deleted; the platform and verification roles see no children's records.
+- Migration 7 (9.1 item 4, first part): `students`, `guardians`, `guardian_students`, `parent_link_requests`, `enrolments`, `student_subjects`. A reusable `check_member_role()` trigger makes sure a pupil's or parent's login really is a pupil or parent of that school; a pupil only takes subjects their arm offers; moving arms adds an enrolment (the arm cannot be edited); link requests are never deleted; the platform and verification roles see no children's records. PR #22 merged.
+- Approved CHANGE: the test database connection gives up after 10 seconds.
+- Migration 8 (9.1 item 4, second part): `teacher_assignments` (one teacher per subject in an arm, only subjects the arm takes; one form teacher per arm; form teacher of one arm at most), `class_assistants` (at most two per arm, locked against two admins adding at once), `reviewer_scopes` (a department, or subjects and classes), and the `teacher_subjects` view for "Teaches all subjects" (subjects added later included, AC06.2; a specialist keeps their subject). BUILD_PROMPT 9.1 item 4 complete.
 
 ### What changed (files)
 - New: `compose.yaml`, `backend/docker/initdb/`, `backend/alembic.ini`, `backend/migrations/` (3 migrations), `backend/src/schoolflow_api/{settings,db,models}.py`, `schools/`, `platform/`, `accounts/` models, `backend/tests/{conftest,db_support,factories}.py` and tests for settings, database, migrations, schools, tenant isolation and accounts.
@@ -43,16 +45,16 @@ Entry template:
 - 2026-10-13: the test run hung because Docker Desktop's engine had stopped overnight. `docker desktop restart` brought it back; the database volume was intact (still on migration 6).
 
 ### Tests
-- Backend: 347 passed on Postgres 17.11; Ruff, format and strict Pyright clean; deliberate breaks of each security rule (20 in total) each made tests fail. CI green on PRs #18 to #21.
+- Backend: 382 passed on Postgres 17.11; Ruff, format and strict Pyright clean; deliberate breaks of each security rule (24 in total) each made tests fail. CI green on PRs #18 to #22.
 
 ### Next step
-- After `merge`: BUILD_PROMPT 9.1 item 4, second part (teacher assignments, class assistants, reviewer scopes).
+- After `merge`: BUILD_PROMPT 9.1 item 5 (grading scales, assessment structures and components, remark bands, rating traits, pass mark).
 
 ### Blockers
 - None.
 
 ### Roughly left
-- Phase 7: 9.1 items 4 to 12, then the 9.2 modules (auth, platform, school admin, results, reports, verification, portal, notices, billing). Then Phases 8 to 11.
+- Phase 7: 9.1 items 5 to 12, then the 9.2 modules (auth, platform, school admin, results, reports, verification, portal, notices, billing). Then Phases 8 to 11.
 
 ---
 
