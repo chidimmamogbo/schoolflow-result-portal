@@ -17,7 +17,7 @@ Entry template:
 
 ---
 
-## 2026-10-12 (Session 5)
+## 2026-10-12 to 2026-10-13 (Session 5)
 
 ### What we did
 - **Phase 7 started.** Step 1 (PR #18, merged): PostgreSQL 17.11 in Docker (`compose.yaml`, databases `schoolflow` and `schoolflow_test`), fail-fast settings (D-020), SQLAlchemy 2.1 + psycopg 3 engine with hidden SQL parameters, Alembic (pyproject template), a test fixture that rebuilds the test database from the migrations and rolls back every test, and migration 1 (`schools`, `school_features`, `school_levels`, `platform_settings`, D-136 four level rows).
@@ -27,7 +27,9 @@ Entry template:
 - Migration 3: `users` and `school_memberships` with the trigger rules (super admin has no school, pupils in their own school, staff or parent, consent), the shared-account check, RLS for each role and column grants. PR #19 merged.
 - Migration 4: `user_sessions` and `account_tokens` (32-byte hashes only, one live link per account and purpose, used or cancelled, never deleted by the app); a school ends sessions and issues links only for its own, unshared people; the platform only for school admins.
 - Migration 5: `roles`, `permissions`, `role_permissions` (45 permissions, 66 rows) from `authz/permissions.py`, which a test compares with the SPEC section 5 table and with the database. BUILD_PROMPT 9.1 item 2 complete. PR #20 merged.
-- Migration 6 (9.1 item 3): `academic_sessions` (named like 2026/2027), `terms` (three per session, one active per school, AC04.1), `classes` (a trigger refuses a level that is switched off, AC04.2, AC25.3; existing classes stay, AT-04.3), `class_arms`, `departments`, `subjects` (optional category), `arm_subjects`. Every child row repeats `school_id` with a two-column foreign key, so it can only point at its own school's rows. The platform reads sessions and terms only (billing).
+- Migration 6 (9.1 item 3): `academic_sessions` (named like 2026/2027), `terms` (three per session, one active per school, AC04.1), `classes` (a trigger refuses a level that is switched off, AC04.2, AC25.3; existing classes stay, AT-04.3), `class_arms`, `departments`, `subjects` (optional category), `arm_subjects`. Every child row repeats `school_id` with a two-column foreign key, so it can only point at its own school's rows. The platform reads sessions and terms only (billing). PR #21 merged.
+- 2026-10-13: Chidimma chose three name fields for pupils (D-139) and the link request as the only method for parents with an email (D-140); SPEC v0.5.3.
+- Migration 7 (9.1 item 4, first part): `students`, `guardians`, `guardian_students`, `parent_link_requests`, `enrolments`, `student_subjects`. A reusable `check_member_role()` trigger makes sure a pupil's or parent's login really is a pupil or parent of that school; a pupil only takes subjects their arm offers; moving arms adds an enrolment (the arm cannot be edited); link requests are never deleted; the platform and verification roles see no children's records.
 
 ### What changed (files)
 - New: `compose.yaml`, `backend/docker/initdb/`, `backend/alembic.ini`, `backend/migrations/` (3 migrations), `backend/src/schoolflow_api/{settings,db,models}.py`, `schools/`, `platform/`, `accounts/` models, `backend/tests/{conftest,db_support,factories}.py` and tests for settings, database, migrations, schools, tenant isolation and accounts.
@@ -38,12 +40,13 @@ Entry template:
 - A reused connection returns `''` (not NULL) for the school setting after a transaction; `''::uuid` would crash. The helpers use `nullif`, proven by a test that fails without it.
 - Consent rule first fired for staff too; the migration round-trip test caught a wrong drop order; `Result.tuples()` deprecation. All fixed before commit.
 - Long inline scripts in the shell failed to parse; scripts now go in a file first.
+- 2026-10-13: the test run hung because Docker Desktop's engine had stopped overnight. `docker desktop restart` brought it back; the database volume was intact (still on migration 6).
 
 ### Tests
-- Backend: 279 passed on Postgres 17.11; Ruff, format and strict Pyright clean; deliberate breaks of each security rule (16 in total) each made tests fail. CI green on PRs #18 to #20.
+- Backend: 347 passed on Postgres 17.11; Ruff, format and strict Pyright clean; deliberate breaks of each security rule (20 in total) each made tests fail. CI green on PRs #18 to #21.
 
 ### Next step
-- After `merge`: BUILD_PROMPT 9.1 item 4 (students, guardians with the D-138 link request, guardian links, enrolments, student subjects, teacher assignments, class assistants, reviewer scopes).
+- After `merge`: BUILD_PROMPT 9.1 item 4, second part (teacher assignments, class assistants, reviewer scopes).
 
 ### Blockers
 - None.
