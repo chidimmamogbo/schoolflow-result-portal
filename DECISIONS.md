@@ -253,6 +253,7 @@ Sources checked 2026-10-09: OWASP Authentication, Password Storage, Session Mana
 
 ### D-049. Ownership and scope
 - Teachers: `teacher_assignments` per subject and arm; "teaches all subjects" is one row with a flag worked out at query time (covers subjects added later). Form teachers: own form arm only. Assistants: enter and save on their arm, never submit; every entry records its author. Reviewers: `reviewer_scopes`. Parents: `guardian_students` links, effective on the next request. Students: self, published only. Students needing attention: one scope function per role; parents and students refused.
+- **Built (2026-10-13, migration 8):** the `teacher_subjects` view (security_invoker, so the caller's row-level security applies) lists every (teacher, arm, subject): subject rows plus, for a form teacher with "Teaches all subjects", every subject of the arm except one given to a specialist teacher (a specialist's assignment wins; one teacher per subject per arm). Assignments describe who teaches now, not per session; result sheets will record their own teacher, and changes go to the audit trail.
 
 ### D-050. Report card levels
 - Only the super admin toggles levels; no school-side endpoint changes them; every level-bound endpoint (classes, templates, structures, sheets) refuses a level that is off; published reports of a level that is off stay readable and verifiable.

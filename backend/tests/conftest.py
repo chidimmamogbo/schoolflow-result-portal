@@ -11,7 +11,7 @@ from collections.abc import Callable, Generator, Iterator
 from contextlib import AbstractContextManager, contextmanager
 
 import pytest
-from sqlalchemy import Engine
+from sqlalchemy import Engine, make_url
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm import Session
 
@@ -25,10 +25,20 @@ LOCAL_TEST_DATABASE_URL = (
 )
 
 
+def test_database_url() -> str:
+    """The test database address, giving up after 10 seconds instead of hanging.
+
+    (CHANGE 2026-10-13: when Docker Desktop's engine had stopped, the test run
+    waited for minutes; now it fails fast with the message below.)
+    """
+    url = make_url(os.environ.get("TEST_DATABASE_URL", LOCAL_TEST_DATABASE_URL))
+    return url.update_query_dict({"connect_timeout": "10"}).render_as_string(hide_password=False)
+
+
 @pytest.fixture(scope="session")
 def db_engine() -> Iterator[Engine]:
     """One connection pool for the whole test run, on a freshly migrated schema."""
-    engine = make_engine(os.environ.get("TEST_DATABASE_URL", LOCAL_TEST_DATABASE_URL))
+    engine = make_engine(test_database_url())
     try:
         engine.connect().close()
     except OperationalError:

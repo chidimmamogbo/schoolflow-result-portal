@@ -5,6 +5,7 @@ must see every model. Each feature module's models.py is imported here.
 """
 
 from schoolflow_api.accounts import models as accounts_models
+from schoolflow_api.assignments import models as assignments_models
 from schoolflow_api.auth import models as auth_models
 from schoolflow_api.authz import models as authz_models
 from schoolflow_api.db import Base
@@ -17,6 +18,7 @@ from schoolflow_api.students import models as students_models
 __all__ = [
     "Base",
     "accounts_models",
+    "assignments_models",
     "auth_models",
     "authz_models",
     "guardians_models",
