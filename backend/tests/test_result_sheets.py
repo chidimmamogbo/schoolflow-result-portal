@@ -8,7 +8,9 @@ structure for the arm's level. Scores stay within each column's maximum,
 only for pupils who take the subject, each with its author; the first score
 locks the structure for the term. Scores change only while a sheet is a
 draft or returned for correction, with a reason once the sheet has been
-submitted (D-143). The status moves only along SPEC section 8: only the
+submitted (D-143); each change brings its own reason, and a reason is never
+edited on its own (approved CHANGE, 2026-10-13). A class with sheets keeps
+its level. The status moves only along SPEC section 8: only the
 assigned teacher submits, with every score present; a return needs a
 comment; a submitter never reviews or approves (D-052); a sheet a reviewer
 covers must be reviewed (D-142); a reopen needs a reason and starts a new
@@ -207,6 +209,33 @@ def change_ca2(session: Session, r: Results, value: int, reason: str | None = No
     )
 
 
+# The same cell, changed without naming the reason, or with only the reason changed.
+CHANGE_CA2_VALUE_ONLY = text(
+    "update scores set value = :value"
+    " where sheet_id = :sheet and enrolment_id = :enrolment and component_id = :component"
+)
+REWRITE_CA2_REASON = text(
+    "update scores set change_reason = :reason"
+    " where sheet_id = :sheet and enrolment_id = :enrolment and component_id = :component"
+)
+CA2_REASON = text(
+    "select change_reason from scores"
+    " where sheet_id = :sheet and enrolment_id = :enrolment and component_id = :component"
+)
+
+
+def musa_ca2(r: Results) -> dict[str, uuid.UUID]:
+    return {"sheet": r.maths_1a, "enrolment": r.musa, "component": r.components["CA2"]}
+
+
+def return_maths(session: Session, r: Results) -> None:
+    """Emeka returns Tunde's submitted sheet; Tunde is then signed in to correct it."""
+    submit_maths(session, r)
+    as_user(session, r, r.emeka)
+    move_sheet(session, r.maths_1a, "returned_for_correction", comment="Please check Musa's CA2.")
+    as_user(session, r, r.tunde)
+
+
 # --- sheets ---------------------------------------------------------------------
 
 
@@ -260,6 +289,18 @@ def test_a_sheet_subject_is_one_the_arm_takes(results: Results, db_session: Sess
             results.jss1a,
             results.jss_structure,
             basic_science,
+        )
+
+
+def test_a_class_with_sheets_keeps_its_level(results: Results, db_session: Session) -> None:
+    # Approved CHANGE (2026-10-13): JSS 1 has sheets, so it cannot become a Senior Secondary class.
+    with violates(db_session, "classes_level_fixed_once_used"):
+        db_session.execute(
+            text(
+                "update classes set level = 'senior_secondary'"
+                " where id = (select class_id from class_arms where id = :arm)"
+            ),
+            {"arm": results.jss1a},
         )
 
 
@@ -389,6 +430,38 @@ def test_changes_after_a_return_need_a_reason(results: Results, db_session: Sess
         },
     ).one()
     assert (value, reason, by) == (14, "Corrected transcription error", results.tunde)
+
+
+def test_each_change_brings_its_own_reason(results: Results, db_session: Session) -> None:
+    # Approved CHANGE (2026-10-13): the reason already on a score never counts for another
+    # change, whether the change leaves it out or repeats it word for word.
+    return_maths(db_session, results)
+    change_ca2(db_session, results, 14, "Corrected transcription error")
+
+    with violates(db_session, "scores_change_needs_reason"):
+        db_session.execute(CHANGE_CA2_VALUE_ONLY, {"value": 15, **musa_ca2(results)})
+    with violates(db_session, "scores_change_needs_reason"):
+        change_ca2(db_session, results, 15, "Corrected transcription error")
+    change_ca2(db_session, results, 15, "Checked the script a second time")
+
+
+def test_a_reason_is_never_rewritten_on_its_own(results: Results, db_session: Session) -> None:
+    # Approved CHANGE (2026-10-13): a reason is given with a change, not edited afterwards.
+    return_maths(db_session, results)
+    change_ca2(db_session, results, 14, "Corrected transcription error")
+
+    with violates(db_session, "scores_reason_comes_with_a_change"):
+        db_session.execute(REWRITE_CA2_REASON, {"reason": "Rewritten later", **musa_ca2(results)})
+
+
+def test_an_old_reason_never_stays_with_a_new_change(results: Results, db_session: Session) -> None:
+    # First draft: no reason is needed, so a change that gives none leaves none on the score.
+    complete_maths(db_session, results)
+    change_ca2(db_session, results, 13, "Typed 31 by mistake")
+
+    db_session.execute(CHANGE_CA2_VALUE_ONLY, {"value": 12, **musa_ca2(results)})
+
+    assert db_session.scalar(CA2_REASON, musa_ca2(results)) is None
 
 
 def test_scores_are_removed_only_in_the_first_draft(results: Results, db_session: Session) -> None:

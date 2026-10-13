@@ -11,9 +11,11 @@ with its author, and may get one comment of up to 300 characters.
 "Teaches all subjects" also covers the class's learning areas, except an
 area given to a specialist. Only the assigned teacher submits (assistants
 never), and only when every skill is rated. Ratings and comments are locked
-once submitted; after a return or a reopen, a changed rating needs a reason.
-Rating sheets follow the same workflow, review rules and history as score
-sheets. All data is fictional (Bright Stars Academy, Nursery 2).
+once submitted; after a return or a reopen, a changed rating needs a reason
+of its own, and a reason is never edited on its own. A class with learning
+areas keeps its level. Rating sheets follow the same workflow, review rules
+and history as score sheets. All data is fictional (Bright Stars Academy,
+Nursery 2).
 """
 
 import uuid
@@ -224,6 +226,21 @@ def change_hauwas_counting(
     )
 
 
+# The same rating, changed without naming the reason, or with only the reason changed.
+CHANGE_POINT_ONLY = text(
+    "update skill_ratings set point_id = :point"
+    " where sheet_id = :sheet and enrolment_id = :enrolment and skill_id = :skill"
+)
+REWRITE_REASON = text(
+    "update skill_ratings set change_reason = :reason"
+    " where sheet_id = :sheet and enrolment_id = :enrolment and skill_id = :skill"
+)
+
+
+def hauwas_counting_key(n: Nursery) -> dict[str, uuid.UUID]:
+    return {"sheet": n.number_work, "enrolment": n.hauwa, "skill": n.skills["Counts 1 to 20"]}
+
+
 def hauwas_counting(session: Session, n: Nursery) -> tuple[str, str | None, uuid.UUID | None]:
     code, reason, updated_by = session.execute(
         HAUWAS_COUNTING,
@@ -315,6 +332,30 @@ def test_an_area_in_use_stays_with_the_class(nursery: Nursery, db_session: Sessi
     db_session.execute(
         REMOVE_AREA, {"class": nursery.nursery2, "area": nursery.areas["Rhymes and songs"]}
     )
+
+
+MOVE_CLASS = text("update classes set level = :level where id = :id returning level")
+
+
+def test_a_class_with_learning_areas_keeps_its_level(nursery: Nursery, db_session: Session) -> None:
+    # Approved CHANGE (2026-10-13): Nursery 1 rates Number work (no sheets yet), so it stays
+    # a Nursery class.
+    nursery1 = create_class(db_session, nursery.bsa, "nursery", "Nursery 1")
+    assign_area_to_class(db_session, nursery.bsa, nursery1, nursery.areas["Number work"])
+
+    with violates(db_session, "classes_level_fixed_once_used"):
+        db_session.execute(MOVE_CLASS, {"level": "primary", "id": nursery1})
+
+
+def test_a_class_set_up_on_the_wrong_level_can_be_fixed(
+    nursery: Nursery, db_session: Session
+) -> None:
+    # Nursery 3 was created under Primary by mistake; nothing uses it yet.
+    nursery3 = create_class(db_session, nursery.bsa, "primary", "Nursery 3")
+
+    level = db_session.scalar(MOVE_CLASS, {"level": "nursery", "id": nursery3})
+
+    assert level == "nursery"
 
 
 def test_skill_names_are_unique_per_area(nursery: Nursery, db_session: Session) -> None:
@@ -787,6 +828,46 @@ def test_rating_changes_after_a_return_need_a_reason(nursery: Nursery, db_sessio
         "Counted to 20 on a second try",
         nursery.amaka,
     )
+
+
+def test_each_rating_change_brings_its_own_reason(nursery: Nursery, db_session: Session) -> None:
+    # Approved CHANGE (2026-10-13): the reason already on a rating never counts for another
+    # change, whether the change leaves it out or repeats it word for word.
+    return_number_work(db_session, nursery)
+    change_hauwas_counting(db_session, nursery, "F", "Counted to 20 on a second try")
+
+    with violates(db_session, "skill_ratings_change_needs_reason"):
+        db_session.execute(
+            CHANGE_POINT_ONLY, {"point": nursery.points["G"], **hauwas_counting_key(nursery)}
+        )
+    with violates(db_session, "skill_ratings_change_needs_reason"):
+        change_hauwas_counting(db_session, nursery, "G", "Counted to 20 on a second try")
+    change_hauwas_counting(db_session, nursery, "G", "Counted to 20 on a third try")
+
+
+def test_a_rating_reason_is_never_rewritten_on_its_own(
+    nursery: Nursery, db_session: Session
+) -> None:
+    # Approved CHANGE (2026-10-13): a reason is given with a change, not edited afterwards.
+    return_number_work(db_session, nursery)
+    change_hauwas_counting(db_session, nursery, "F", "Counted to 20 on a second try")
+
+    with violates(db_session, "skill_ratings_reason_comes_with_a_change"):
+        db_session.execute(
+            REWRITE_REASON, {"reason": "Rewritten later", **hauwas_counting_key(nursery)}
+        )
+
+
+def test_an_old_reason_never_stays_with_a_new_rating(nursery: Nursery, db_session: Session) -> None:
+    # First draft: no reason is needed, so a change that gives none leaves none on the rating.
+    rate_number_work(db_session, nursery)
+    change_hauwas_counting(db_session, nursery, "F", "Clicked the wrong button")
+
+    db_session.execute(
+        CHANGE_POINT_ONLY, {"point": nursery.points["NI"], **hauwas_counting_key(nursery)}
+    )
+
+    assert hauwas_counting(db_session, nursery) == ("NI", None, nursery.amaka)
 
 
 def test_ratings_are_removed_only_in_the_first_draft(nursery: Nursery, db_session: Session) -> None:
