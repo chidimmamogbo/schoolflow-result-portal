@@ -1,10 +1,11 @@
 """Tables for result sheets, scores and their workflow (SPEC F09, F10, F11, section 8).
 
-result_sheets: one per subject (or, from item 6a, per learning area) per arm
-per term. It records the assessment structure it uses (the structure used is
-stored with each result, F08 rule 3), its workflow status and its current
-revision. The status moves only along SPEC section 8; triggers in migration
-11 check every move (who, comments, separation of duties, completeness).
+result_sheets: one per subject (a score sheet) or per learning area of the
+arm's class (a rating sheet, item 6a) per arm per term. It records the
+assessment structure it uses (the structure used is stored with each
+result, F08 rule 3), its workflow status and its current revision. The
+status moves only along SPEC section 8; triggers in migrations 11 and 12
+check every move (who, comments, separation of duties, completeness).
 scores: raw component scores (totals, grades and positions are worked out by
 the results engine, never stored here), each with its author.
 result_revisions and approval_actions: the sheet's history, written only by
@@ -57,6 +58,10 @@ class ResultSheet(IdMixin, TimestampMixin, Base):
         ForeignKeyConstraint(
             ["arm_id", "subject_id"], ["arm_subjects.arm_id", "arm_subjects.subject_id"]
         ),
+        # A rating sheet's area must also be one of the arm's class (a trigger, migration 12).
+        ForeignKeyConstraint(
+            ["learning_area_id", "school_id"], ["learning_areas.id", "learning_areas.school_id"]
+        ),
         Index(
             "ix_result_sheets_one_score_sheet",
             "term_id",
@@ -75,7 +80,7 @@ class ResultSheet(IdMixin, TimestampMixin, Base):
         ),
         CheckConstraint(one_of("status", SheetStatus), name="status_allowed"),
         CheckConstraint("revision >= 1", name="revision_positive"),
-        # A score sheet (subject) or, from item 6a, a rating sheet (learning area).
+        # A score sheet (subject) or a rating sheet (learning area).
         CheckConstraint(
             "(subject_id IS NULL) <> (learning_area_id IS NULL)", name="subject_or_learning_area"
         ),
@@ -90,7 +95,6 @@ class ResultSheet(IdMixin, TimestampMixin, Base):
     arm_id: Mapped[uuid.UUID]
     structure_id: Mapped[uuid.UUID]
     subject_id: Mapped[uuid.UUID | None]
-    # Its link to learning_areas arrives with item 6a (skill ratings).
     learning_area_id: Mapped[uuid.UUID | None]
     status: Mapped[str] = mapped_column(server_default=SheetStatus.DRAFT.value)
     revision: Mapped[int] = mapped_column(SmallInteger, server_default=text("1"))

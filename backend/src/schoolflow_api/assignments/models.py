@@ -1,12 +1,13 @@
 """Who teaches, assists and reviews what (SPEC F06; D-049).
 
-teacher_assignments: two kinds of row. A subject row says "this teacher
-teaches Mathematics in JSS 1A". A form teacher row (no subject) says "this
-teacher is JSS 1A's form teacher" (called class teacher in Nursery and
-Primary); with teaches_all_subjects it also covers every subject of the arm,
-including subjects added later, worked out when asked through the
-teacher_subjects view (migration 8). A subject given to a specialist stays
-with the specialist.
+teacher_assignments: three kinds of row. A subject row says "this teacher
+teaches Mathematics in JSS 1A". A learning area row (item 6a) says "this
+teacher rates Letter work in Nursery 2". A form teacher row (neither) says
+"this teacher is JSS 1A's form teacher" (called class teacher in Nursery and
+Primary); with teaches_all_subjects it also covers every subject of the arm
+and every learning area of its class, including ones added later, worked out
+when asked through the teacher_subjects view (migrations 8 and 12). A
+subject or area given to a specialist stays with the specialist.
 class_assistants: up to two class teacher assistants per arm, who enter but
 never submit (F06 rule 3).
 reviewer_scopes: what an HOD or reviewer may review: a department, or
@@ -48,6 +49,17 @@ class TeacherAssignment(IdMixin, TimestampMixin, Base):
             unique=True,
             postgresql_where=text("subject_id IS NOT NULL"),
         ),
+        # A learning area row must name an area of the arm's class (a trigger, migration 12).
+        ForeignKeyConstraint(
+            ["learning_area_id", "school_id"], ["learning_areas.id", "learning_areas.school_id"]
+        ),
+        Index(
+            "ix_teacher_assignments_one_teacher_per_area",
+            "arm_id",
+            "learning_area_id",
+            unique=True,
+            postgresql_where=text("learning_area_id IS NOT NULL"),
+        ),
         Index(
             "ix_teacher_assignments_one_form_teacher_per_arm",
             "arm_id",
@@ -61,7 +73,11 @@ class TeacherAssignment(IdMixin, TimestampMixin, Base):
             postgresql_where=text("is_form_teacher"),
         ),
         Index("ix_teacher_assignments_teacher_id", "teacher_id"),
-        CheckConstraint("(subject_id IS NULL) = is_form_teacher", name="subject_or_form_teacher"),
+        # Exactly one kind: a subject, a learning area, or the form teacher row.
+        CheckConstraint(
+            "num_nonnulls(subject_id, learning_area_id) + is_form_teacher::int = 1",
+            name="one_kind",
+        ),
         CheckConstraint(
             "NOT teaches_all_subjects OR is_form_teacher", name="teaches_all_needs_form_teacher"
         ),
@@ -71,6 +87,7 @@ class TeacherAssignment(IdMixin, TimestampMixin, Base):
     teacher_id: Mapped[uuid.UUID]
     arm_id: Mapped[uuid.UUID]
     subject_id: Mapped[uuid.UUID | None]
+    learning_area_id: Mapped[uuid.UUID | None]
     is_form_teacher: Mapped[bool] = mapped_column(server_default=text("false"))
     teaches_all_subjects: Mapped[bool] = mapped_column(server_default=text("false"))
 
