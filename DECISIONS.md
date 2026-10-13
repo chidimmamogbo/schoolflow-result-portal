@@ -632,6 +632,19 @@ Installed on Chidimma's laptop (checked 2026-10-09): Node 24.21.0, npm 11.19.0, 
 - `school_settings`: a new one-row-per-school table for the pass mark (1 to 99, default 40) and later school-level settings, so the built `schools` table is not changed. A value like 40.5 is refused by the API's whole-number check (the database column would round it).
 - Defaults from SPEC F08 live in `backend/src/schoolflow_api/grading/defaults.py`; a new school gets a copy during set-up (service layer, later).
 
+### D-142. Approving a sheet nobody reviewed (Chidimma, 2026-10-13)
+- A school admin (not the submitter) may approve a Submitted or Resubmitted sheet directly only when no reviewer's scope covers it (department, subject or class). Where a reviewer exists, review is never skipped. Fits small schools such as BSA (demo step 32) that have no HODs.
+- **Rejected:** admins may always skip review; admins must mark reviewed first (two clicks for the same effect).
+
+### D-143. When a changed score needs a reason (Chidimma, 2026-10-13)
+- While a sheet is a first draft, teachers fix their own entries freely; the audit trail still keeps old and new values. Once the sheet has been submitted at least once (Returned for correction) or is a reopened revision, every change to a saved score needs a reason.
+- **Rejected:** a reason for every change of a saved score, even in the first draft (many reasons for routine typing).
+
+### D-144. Staff who also teach: teaching comes from assignments (Chidimma, 2026-10-13)
+- School admins and reviewers can also be given teacher assignments: subjects in an arm, a form class (with "Teaches all subjects") or a class assistant place. On those sheets they act as teachers; they have no power over other sheets. Separation of duties still applies (D-052), which is what AT-14.3 tests.
+- Built as a CHANGE: the login rule for `teacher_assignments` and `class_assistants` accepts the roles teacher, school admin and reviewer; permission checks for teaching actions (9.2) use assignments, not only the teacher role.
+- **Rejected:** strict roles, where a principal or HOD who teaches needs a separate teacher account.
+
 ---
 
 # Stack Summary (one page, for final approval)

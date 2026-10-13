@@ -572,3 +572,85 @@ def add_trait_key(session: Session, school_id: uuid.UUID) -> None:
             ),
             {"school_id": school_id, "value": value, "label": label},
         )
+
+
+# --- result sheets and scores (BUILD_PROMPT 9.1 item 6) -------------------------------
+
+
+def create_sheet(
+    session: Session,
+    school_id: uuid.UUID,
+    term_id: uuid.UUID,
+    arm_id: uuid.UUID,
+    structure_id: uuid.UUID,
+    subject_id: uuid.UUID,
+) -> uuid.UUID:
+    """A score sheet for one subject in one arm for one term (it starts as a draft)."""
+    sheet_id: uuid.UUID = session.scalar(
+        text(
+            "insert into result_sheets (school_id, term_id, arm_id, structure_id, subject_id)"
+            " values (:school_id, :term_id, :arm_id, :structure_id, :subject_id) returning id"
+        ),
+        {
+            "school_id": school_id,
+            "term_id": term_id,
+            "arm_id": arm_id,
+            "structure_id": structure_id,
+            "subject_id": subject_id,
+        },
+    )
+    return sheet_id
+
+
+def component_ids(session: Session, structure_id: uuid.UUID) -> dict[str, uuid.UUID]:
+    """The structure's components by label, for example {"CA1": ..., "Exam": ...}."""
+    return {
+        label: component_id
+        for label, component_id in session.execute(
+            text("select label, id from assessment_components where structure_id = :id"),
+            {"id": structure_id},
+        )
+    }
+
+
+def enter_score(
+    session: Session,
+    school_id: uuid.UUID,
+    sheet_id: uuid.UUID,
+    enrolment_id: uuid.UUID,
+    component_id: uuid.UUID,
+    value: int,
+) -> uuid.UUID:
+    """Save one score; the signed-in user (use_context) is recorded as its author."""
+    score_id: uuid.UUID = session.scalar(
+        text(
+            "insert into scores (school_id, sheet_id, enrolment_id, component_id, value)"
+            " values (:school_id, :sheet_id, :enrolment_id, :component_id, :value) returning id"
+        ),
+        {
+            "school_id": school_id,
+            "sheet_id": sheet_id,
+            "enrolment_id": enrolment_id,
+            "component_id": component_id,
+            "value": value,
+        },
+    )
+    return score_id
+
+
+def move_sheet(
+    session: Session,
+    sheet_id: uuid.UUID,
+    status: str,
+    *,
+    comment: str | None = None,
+    reopen: bool = False,
+) -> None:
+    """Move a sheet along its workflow as the signed-in user (use_context)."""
+    session.execute(
+        text(
+            "update result_sheets set status = :status, status_comment = :comment,"
+            " revision = revision + :step where id = :id"
+        ),
+        {"status": status, "comment": comment, "step": 1 if reopen else 0, "id": sheet_id},
+    )

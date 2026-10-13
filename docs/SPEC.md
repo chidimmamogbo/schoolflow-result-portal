@@ -2,8 +2,8 @@
 
 | | |
 |---|---|
-| Version | 0.5.3 |
-| Date | 2026-10-07 (v0.5); 2026-10-12 (v0.5.1, v0.5.2); 2026-10-13 (v0.5.3) |
+| Version | 0.5.4 |
+| Date | 2026-10-07 (v0.5); 2026-10-12 (v0.5.1, v0.5.2); 2026-10-13 (v0.5.3, v0.5.4) |
 | Status | Agreed for build |
 | Owner | Chidimma Merit Mogbo |
 | Product name | SchoolFlow Result Portal (planning name: ResultChain) |
@@ -15,6 +15,7 @@
 > - v0.2: account provisioning by school admins, login-only model, student and teacher registration with assignments, guardian ward linking, notice board, email notifications, SaaS dashboard shell, full responsiveness, dark/light mode.
 > - v0.3: per-school subscription billing with an editable per-student, per-term pricing table and online payment in test mode.
 > - v0.4: product renamed SchoolFlow Result Portal; username login for everyone; student login with school code; password reset rules (no self-service for students, super admin resets school admins); additional school admins; configurable assessment structures per level (any number of CAs); teacher sheet search and filters; form teacher tools (broadsheet, comments, ratings, attendance, preview); Students needing attention list; expanded super admin functions and platform settings; full Create school form with colour picker and set-up emails; more report template styles and block settings; graduated pricing removed, volume pricing with optional cliff protection.
+> - v0.5.4 (2026-10-13, D-142, D-143, D-144): a school admin may approve a sheet nobody reviewed only when no reviewer's scope covers it; a reviewer may return a resubmitted sheet again; changing a saved score needs a reason once the sheet has been submitted at least once (or is a reopened revision); school admins and reviewers who also teach get teacher assignments and act as teachers on those sheets only.
 > - v0.5.3 (2026-10-13, D-139, D-140): pupils' names are stored as surname, first name and other names; a parent with an email is always added by link request (temporary password slips only for parents without an email), so a school never learns whether an email already uses SchoolFlow.
 > - v0.5.2 (2026-10-12, D-138): one parent account across schools. A school that adds a parent whose email already belongs to a SchoolFlow parent account sends a link request instead of creating a second account, and the link is made only when the parent accepts. Parents see all linked children grouped by school; notices and emails always name the school; once an account is linked to more than one school, only the parent manages its login details.
 > - v0.5.1 (2026-10-12, D-135): report card additions from research on Nigerian report cards (`docs/REPORT_CARD_RESEARCH.md`): optional student department and subject categories, three summary switches, written defaults for Secondary grade bands, affective and psychomotor traits and their key, and two more nursery learning areas.
@@ -108,6 +109,8 @@ SchoolFlow Result Portal is a results-first, multi-school platform for Nigerian 
 | billing.view / invoices.pay | Platform view | Own school | Own school | No | No | No | No |
 
 **Ownership rules:** "Assigned" means a teacher_assignment for that subject and class/arm. A class teacher who "teaches all subjects" is assigned every subject of that arm. A class teacher assistant can enter scores, ratings, comments and attendance for the class they assist, but cannot submit anything. "Own form class" means the arm where the teacher is the form teacher. "Scope" means the reviewer's department or listed subjects/classes. "Linked wards" means guardian_students links. Separation of duties: whoever submitted a sheet cannot review or approve it.
+
+**Staff who also teach (v0.5.4, D-144):** a school admin or reviewer can also be given teacher assignments (subjects, a form class or an assistant place). On their assigned sheets they act as teachers (enter, save, submit, form class entries); a "No" in the scores and sheets rows means no power over anyone else's sheets. Separation of duties still applies: whoever submitted a sheet cannot review or approve it.
 
 ## 6. Scope
 
@@ -205,7 +208,7 @@ F01 to F26 below.
 ### F06. Teacher and reviewer registration and assignment
 - **Users:** school admins.
 - **Rules:**
-  1. Teachers get subject + class/arm assignments and optionally become form teacher of one arm. Reviewers/HODs get a department or subject/class scope. Teachers and reviewers see only their assignments or scope.
+  1. Teachers get subject + class/arm assignments and optionally become form teacher of one arm. Reviewers/HODs get a department or subject/class scope. Teachers and reviewers see only their assignments or scope. School admins and reviewers who also teach can be given assignments too (D-144).
   2. **Class teacher in one step:** when assigning a teacher to an arm, the admin can tick "Teaches all subjects". The teacher is then assigned every subject (or learning area) of that arm, now and when subjects are added later, and becomes its class teacher. This is the usual set-up in Nursery and Primary, and it works at any level.
   3. **Class teacher assistants:** the admin can add up to 2 assistants to an arm. An assistant sees the class's sheets and My class, and can enter scores, ratings, comments and attendance, but cannot submit sheets or class sections; the class teacher submits. Every entry records who made it.
 - **Acceptance:**
@@ -245,7 +248,7 @@ F01 to F26 below.
   1. One score sheet per subject per class/arm assigned to the teacher. The teacher's sheets page groups sheets by class, shows status and progress, and filters by class, subject and status.
   2. Inside a sheet: search by name or admission number to jump to a student; filter All, Missing, Errors.
   3. Columns come from the level's assessment structure.
-  4. Phone-friendly grid (one card per student on phones) with immediate validation (missing, over the maximum, duplicate); save draft; changing a saved score needs a reason; submit only when validation passes.
+  4. Phone-friendly grid (one card per student on phones) with immediate validation (missing, over the maximum, duplicate); save draft; changing a saved score needs a reason once the sheet has been submitted at least once or is a reopened revision (while a sheet is a first draft, teachers fix their own entries freely and the audit trail keeps old and new values; v0.5.4, D-143); submit only when validation passes.
   5. CSV template built from the structure, preview, row errors with download, all-or-nothing commit; export the sheet as CSV.
   6. Levels in Skill ratings mode use rating sheets instead (F26), with the same sheets page, search, filters and workflow.
 - **Acceptance:**
@@ -449,10 +452,11 @@ F01 to F26 below.
 **Result sheet**
 ```text
 DRAFT -> SUBMITTED (assigned teacher; validation passes)
-SUBMITTED -> RETURNED_FOR_CORRECTION (reviewer in scope; comment required)
+SUBMITTED or RESUBMITTED -> RETURNED_FOR_CORRECTION (reviewer in scope; comment required)
 RETURNED_FOR_CORRECTION -> RESUBMITTED (teacher; changed scores need reasons)
 SUBMITTED or RESUBMITTED -> REVIEWED (reviewer in scope, not the submitter)
 REVIEWED -> APPROVED (school admin, not the submitter)
+SUBMITTED or RESUBMITTED -> APPROVED (school admin, not the submitter), only when no reviewer's scope covers the sheet (v0.5.4, D-142)
 APPROVED -> PUBLISHED (school admin, via class + term publication)
 PUBLISHED -> reopened as a new revision in DRAFT (school admin; reason; optional correction ticket)
 ```
@@ -691,6 +695,9 @@ Public: landing, login (Staff and parents, Student), school login link, activate
 | Deadline | Flexible, session by session, roughly two weeks | Decided |
 | Store PDFs or regenerate from snapshots? | Decide in the file storage round | Open |
 | One parent account across schools? | Yes: one account per parent, linked to each school after the parent accepts; staff and students stay in one school (D-138) | Decided |
+| Approve a sheet nobody reviewed? | Only when no reviewer's scope covers it (D-142) | Decided |
+| When does a changed score need a reason? | Once the sheet has been submitted at least once, or in a reopened revision (D-143) | Decided |
+| Can school admins and HODs also teach? | Yes, through teacher assignments; teacher powers on their assigned sheets only (D-144) | Decided |
 | Staff who are also parents on one login? | Not in the MVP; possible future upgrade (MEMORY.md) | Later |
 
 ## 20. Glossary

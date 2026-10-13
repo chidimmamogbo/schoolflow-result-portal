@@ -141,8 +141,14 @@ def staff(db_session: Session) -> Staff:
 
 
 def new_teacher(session: Session, school_id: uuid.UUID, username: str) -> uuid.UUID:
-    user = create_user(session, username=username, full_name="Test Teacher")
-    add_membership(session, user, school_id, "teacher")
+    return new_member(session, school_id, username, "teacher")
+
+
+def new_member(
+    session: Session, school_id: uuid.UUID, username: str, role: str, *, principal: bool = False
+) -> uuid.UUID:
+    user = create_user(session, username=username, full_name="Test Person")
+    add_membership(session, user, school_id, role, is_primary=principal)
     return user
 
 
@@ -199,10 +205,20 @@ def test_teaches_all_subjects_belongs_to_the_form_teacher(
         )
 
 
-def test_only_teachers_are_assigned(staff: Staff, db_session: Session) -> None:
-    # Denied: a reviewer has no teaching assignments (D-052: reviewers never edit scores).
-    with violates(db_session, "teacher_assignments_teacher_id_is_teacher"):
-        assign_teacher(db_session, staff.gmc, staff.emeka, staff.jss1b, staff.english)
+def test_staff_who_also_teach_can_be_assigned(staff: Staff, db_session: Session) -> None:
+    # D-144 and AT-14.3: a principal or an HOD who also teaches gets teacher assignments.
+    ngozi = new_member(db_session, staff.gmc, "ngozi.okeke", "school_admin", principal=True)
+
+    assign_teacher(db_session, staff.gmc, ngozi, staff.jss1b, staff.english)
+    assign_teacher(db_session, staff.gmc, staff.emeka, staff.jss1b, form_teacher=True)
+
+
+def test_only_staff_are_assigned(staff: Staff, db_session: Session) -> None:
+    # Denied: a parent's or pupil's login never gets teaching assignments.
+    funke = new_member(db_session, staff.gmc, "funke.adeyemi", "parent")
+
+    with violates(db_session, "teacher_assignments_teacher_id_is_staff"):
+        assign_teacher(db_session, staff.gmc, funke, staff.jss1b, staff.english)
 
 
 def test_an_assignment_stays_in_its_school(staff: Staff, db_session: Session) -> None:
@@ -283,9 +299,16 @@ def test_an_assistant_is_added_once_per_arm(staff: Staff, db_session: Session) -
         add_assistant(db_session, staff.bsa, staff.primary4a, staff.ngozi_ani)
 
 
-def test_only_teachers_are_assistants(staff: Staff, db_session: Session) -> None:
-    with violates(db_session, "class_assistants_assistant_id_is_teacher"):
-        add_assistant(db_session, staff.bsa, staff.primary4a, staff.obinna)
+def test_staff_who_also_teach_can_be_assistants(staff: Staff, db_session: Session) -> None:
+    # D-144: BSA's reviewer helps in Primary 4A as its second assistant.
+    add_assistant(db_session, staff.bsa, staff.primary4a, staff.obinna)
+
+
+def test_only_staff_are_assistants(staff: Staff, db_session: Session) -> None:
+    ada = new_member(db_session, staff.bsa, "ada.eze", "parent")
+
+    with violates(db_session, "class_assistants_assistant_id_is_staff"):
+        add_assistant(db_session, staff.bsa, staff.primary4a, ada)
 
 
 # --- reviewer scopes -----------------------------------------------------------------
@@ -361,10 +384,10 @@ def test_a_school_manages_its_own_assignments(staff: Staff, db_session: Session)
 
 
 def test_a_school_cannot_assign_another_schools_teacher(staff: Staff, db_session: Session) -> None:
-    # Denied: GMC cannot see BSA's staff at all, so to GMC Ifeoma is not a teacher.
+    # Denied: GMC cannot see BSA's staff at all, so to GMC Ifeoma is not staff.
     with (
         acting_as(db_session, "app_user", school_id=staff.gmc),
-        violates(db_session, "teacher_assignments_teacher_id_is_teacher"),
+        violates(db_session, "teacher_assignments_teacher_id_is_staff"),
     ):
         assign_teacher(db_session, staff.bsa, staff.ifeoma, staff.primary4a, staff.bsa_english)
 

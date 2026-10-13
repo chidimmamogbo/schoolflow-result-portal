@@ -32,7 +32,10 @@ Entry template:
 - Migration 7 (9.1 item 4, first part): `students`, `guardians`, `guardian_students`, `parent_link_requests`, `enrolments`, `student_subjects`. A reusable `check_member_role()` trigger makes sure a pupil's or parent's login really is a pupil or parent of that school; a pupil only takes subjects their arm offers; moving arms adds an enrolment (the arm cannot be edited); link requests are never deleted; the platform and verification roles see no children's records. PR #22 merged.
 - Approved CHANGE: the test database connection gives up after 10 seconds.
 - Migration 8 (9.1 item 4, second part): `teacher_assignments` (one teacher per subject in an arm, only subjects the arm takes; one form teacher per arm; form teacher of one arm at most), `class_assistants` (at most two per arm, locked against two admins adding at once), `reviewer_scopes` (a department, or subjects and classes), and the `teacher_subjects` view for "Teaches all subjects" (subjects added later included, AC06.2; a specialist keeps their subject). BUILD_PROMPT 9.1 item 4 complete. PR #23 merged.
-- Migration 9 (9.1 item 5): `grade_bands` and `remark_bands` (cover 0 to 100, checked at commit), `assessment_structures` per level and term with the mode and the lock (AC08.3, AC08.6), `assessment_components` (1 to 8, adding up to 100; none for Skill ratings; no structure for a level that is off, AT-04.2), `rating_traits` with the 1 to 5 key, `school_settings` with the pass mark (1 to 99). Spec defaults in `grading/defaults.py`. D-141 records how F08 was read.
+- Migration 9 (9.1 item 5): `grade_bands` and `remark_bands` (cover 0 to 100, checked at commit), `assessment_structures` per level and term with the mode and the lock (AC08.3, AC08.6), `assessment_components` (1 to 8, adding up to 100; none for Skill ratings; no structure for a level that is off, AT-04.2), `rating_traits` with the 1 to 5 key, `school_settings` with the pass mark (1 to 99). Spec defaults in `grading/defaults.py`. D-141 records how F08 was read. PR #24 merged.
+- Chidimma decided D-142 (approve without review only when no reviewer covers the sheet), D-143 (reasons once a sheet has been submitted) and D-144 (staff who also teach get assignments; approved CHANGE). SPEC v0.5.4.
+- Migration 10: `check_member_role()` accepts several roles; assignments and assistant places accept teachers, school admins and reviewers.
+- Migration 11 (9.1 item 6, score sheets): `result_sheets`, `scores`, `result_revisions`, `approval_actions`. The SPEC section 8 workflow, separation of duties, completeness on submit, reasons, the structure lock on the first score and published immutability are all enforced in the database; the history tables are written only by triggers and never change.
 
 ### What changed (files)
 - New: `compose.yaml`, `backend/docker/initdb/`, `backend/alembic.ini`, `backend/migrations/` (3 migrations), `backend/src/schoolflow_api/{settings,db,models}.py`, `schools/`, `platform/`, `accounts/` models, `backend/tests/{conftest,db_support,factories}.py` and tests for settings, database, migrations, schools, tenant isolation and accounts.
@@ -46,10 +49,10 @@ Entry template:
 - 2026-10-13: the test run hung because Docker Desktop's engine had stopped overnight. `docker desktop restart` brought it back; the database volume was intact (still on migration 6).
 
 ### Tests
-- Backend: 456 passed on Postgres 17.11 (about 4 minutes locally); Ruff, format and strict Pyright clean; deliberate breaks of each rule (28 in total) each made tests fail. CI green on PRs #18 to #23.
+- Backend: 513 passed on Postgres 17.11 (about 6 minutes locally); Ruff, format and strict Pyright clean; deliberate breaks of each rule (35 in total) each made tests fail. CI green on PRs #18 to #24.
 
 ### Next step
-- After `merge`: BUILD_PROMPT 9.1 item 6 (result sheets, scores, revisions, approval actions), then 6a and 6b.
+- After `merge`: BUILD_PROMPT 9.1 item 6a (learning areas, skills, rating scales, skill ratings, area comments; rating sheets on `result_sheets`), then 6b.
 
 ### Blockers
 - None.
