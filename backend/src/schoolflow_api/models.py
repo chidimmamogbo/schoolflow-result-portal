@@ -8,16 +8,20 @@ from schoolflow_api.accounts import models as accounts_models
 from schoolflow_api.auth import models as auth_models
 from schoolflow_api.authz import models as authz_models
 from schoolflow_api.db import Base
+from schoolflow_api.guardians import models as guardians_models
 from schoolflow_api.platform import models as platform_models
 from schoolflow_api.schools import models as schools_models
 from schoolflow_api.structure import models as structure_models
+from schoolflow_api.students import models as students_models
 
 __all__ = [
     "Base",
     "accounts_models",
     "auth_models",
     "authz_models",
+    "guardians_models",
     "platform_models",
     "schools_models",
     "structure_models",
+    "students_models",
 ]

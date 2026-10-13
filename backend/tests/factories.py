@@ -5,6 +5,7 @@ checking something, these functions insert a complete, valid record so each
 test can focus on the one rule it checks. All names and codes are fictional.
 """
 
+import secrets
 import uuid
 from typing import Any
 
@@ -252,5 +253,135 @@ def add_arm_subject(
             " values (:school_id, :arm_id, :subject_id) returning id"
         ),
         {"school_id": school_id, "arm_id": arm_id, "subject_id": subject_id},
+    )
+    return link_id
+
+
+# --- pupils and parents (BUILD_PROMPT 9.1 item 4) --------------------------------
+
+
+def create_student(
+    session: Session,
+    school_id: uuid.UUID,
+    admission_number: str,
+    surname: str,
+    first_name: str,
+    *,
+    gender: str = "male",
+    user_id: uuid.UUID | None = None,
+) -> uuid.UUID:
+    student_id: uuid.UUID = session.scalar(
+        text(
+            "insert into students (school_id, admission_number, surname, first_name, gender,"
+            " user_id) values (:school_id, :admission_number, :surname, :first_name, :gender,"
+            " :user_id) returning id"
+        ),
+        {
+            "school_id": school_id,
+            "admission_number": admission_number,
+            "surname": surname,
+            "first_name": first_name,
+            "gender": gender,
+            "user_id": user_id,
+        },
+    )
+    return student_id
+
+
+def create_guardian(
+    session: Session,
+    school_id: uuid.UUID,
+    full_name: str,
+    *,
+    email: str | None = None,
+    user_id: uuid.UUID | None = None,
+) -> uuid.UUID:
+    guardian_id: uuid.UUID = session.scalar(
+        text(
+            "insert into guardians (school_id, full_name, email, user_id)"
+            " values (:school_id, :full_name, :email, :user_id) returning id"
+        ),
+        {"school_id": school_id, "full_name": full_name, "email": email, "user_id": user_id},
+    )
+    return guardian_id
+
+
+def link_ward(
+    session: Session,
+    school_id: uuid.UUID,
+    guardian_id: uuid.UUID,
+    student_id: uuid.UUID,
+    relationship: str = "Father",
+) -> uuid.UUID:
+    link_id: uuid.UUID = session.scalar(
+        text(
+            "insert into guardian_students (school_id, guardian_id, student_id, relationship)"
+            " values (:school_id, :guardian_id, :student_id, :relationship) returning id"
+        ),
+        {
+            "school_id": school_id,
+            "guardian_id": guardian_id,
+            "student_id": student_id,
+            "relationship": relationship,
+        },
+    )
+    return link_id
+
+
+def create_link_request(
+    session: Session,
+    school_id: uuid.UUID,
+    guardian_id: uuid.UUID,
+    email: str,
+    token_hash: bytes | None = None,
+) -> uuid.UUID:
+    """A school's request for a parent to link their account (D-138, D-140), 14 days."""
+    request_id: uuid.UUID = session.scalar(
+        text(
+            "insert into parent_link_requests (school_id, guardian_id, email, token_hash,"
+            " expires_at) values (:school_id, :guardian_id, :email, :token_hash,"
+            " now() + interval '14 days') returning id"
+        ),
+        {
+            "school_id": school_id,
+            "guardian_id": guardian_id,
+            "email": email,
+            "token_hash": secrets.token_bytes(32) if token_hash is None else token_hash,
+        },
+    )
+    return request_id
+
+
+def enrol(
+    session: Session,
+    school_id: uuid.UUID,
+    student_id: uuid.UUID,
+    session_id: uuid.UUID,
+    arm_id: uuid.UUID,
+) -> uuid.UUID:
+    enrolment_id: uuid.UUID = session.scalar(
+        text(
+            "insert into enrolments (school_id, student_id, session_id, arm_id)"
+            " values (:school_id, :student_id, :session_id, :arm_id) returning id"
+        ),
+        {
+            "school_id": school_id,
+            "student_id": student_id,
+            "session_id": session_id,
+            "arm_id": arm_id,
+        },
+    )
+    return enrolment_id
+
+
+def add_student_subject(
+    session: Session, school_id: uuid.UUID, enrolment_id: uuid.UUID, subject_id: uuid.UUID
+) -> uuid.UUID:
+    link_id: uuid.UUID = session.scalar(
+        text(
+            "insert into student_subjects (school_id, enrolment_id, subject_id)"
+            " values (:school_id, :enrolment_id, :subject_id) returning id"
+        ),
+        {"school_id": school_id, "enrolment_id": enrolment_id, "subject_id": subject_id},
     )
     return link_id
