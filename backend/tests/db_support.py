@@ -110,3 +110,14 @@ def violates(session: Session, constraint: str) -> Generator[None]:
     original = error.value.orig
     assert isinstance(original, psycopg.Error)
     assert original.diag.constraint_name == constraint, original
+
+
+def run_commit_checks(session: Session) -> None:
+    """Run now the rules PostgreSQL normally checks at COMMIT ("deferred").
+
+    Tests never really commit (everything is rolled back), so this asks the
+    database to check them immediately, then puts them back to "at commit",
+    as a real commit would leave things.
+    """
+    session.execute(text("set constraints all immediate"))
+    session.execute(text("set constraints all deferred"))

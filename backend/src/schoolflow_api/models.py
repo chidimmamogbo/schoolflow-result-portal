@@ -9,6 +9,7 @@ from schoolflow_api.assignments import models as assignments_models
 from schoolflow_api.auth import models as auth_models
 from schoolflow_api.authz import models as authz_models
 from schoolflow_api.db import Base
+from schoolflow_api.grading import models as grading_models
 from schoolflow_api.guardians import models as guardians_models
 from schoolflow_api.platform import models as platform_models
 from schoolflow_api.schools import models as schools_models
@@ -21,6 +22,7 @@ __all__ = [
     "assignments_models",
     "auth_models",
     "authz_models",
+    "grading_models",
     "guardians_models",
     "platform_models",
     "schools_models",
