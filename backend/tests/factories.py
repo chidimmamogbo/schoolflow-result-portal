@@ -20,6 +20,7 @@ from schoolflow_api.grading.defaults import (
     Component,
     GradeBand,
 )
+from schoolflow_api.ratings.defaults import ATTENTION_POINT, RATING_SCALE
 from schoolflow_api.schools.models import AssessmentMode, Feature, Level
 
 # Report card levels each school type switches on (SPEC F25 rule 2).
@@ -654,3 +655,140 @@ def move_sheet(
         ),
         {"status": status, "comment": comment, "step": 1 if reopen else 0, "id": sheet_id},
     )
+
+
+# --- skill ratings (BUILD_PROMPT 9.1 item 6a) -------------------------------------
+
+
+def create_learning_area(
+    session: Session, school_id: uuid.UUID, level: str, name: str, position: int = 1
+) -> uuid.UUID:
+    area_id: uuid.UUID = session.scalar(
+        text(
+            "insert into learning_areas (school_id, level, name, position)"
+            " values (:school_id, :level, :name, :position) returning id"
+        ),
+        {"school_id": school_id, "level": level, "name": name, "position": position},
+    )
+    return area_id
+
+
+def assign_area_to_class(
+    session: Session, school_id: uuid.UUID, class_id: uuid.UUID, area_id: uuid.UUID
+) -> uuid.UUID:
+    link_id: uuid.UUID = session.scalar(
+        text(
+            "insert into class_learning_areas (school_id, class_id, learning_area_id)"
+            " values (:school_id, :class_id, :area_id) returning id"
+        ),
+        {"school_id": school_id, "class_id": class_id, "area_id": area_id},
+    )
+    return link_id
+
+
+def create_skill(
+    session: Session, school_id: uuid.UUID, area_id: uuid.UUID, name: str, position: int = 1
+) -> uuid.UUID:
+    skill_id: uuid.UUID = session.scalar(
+        text(
+            "insert into skills (school_id, learning_area_id, name, position)"
+            " values (:school_id, :area_id, :name, :position) returning id"
+        ),
+        {"school_id": school_id, "area_id": area_id, "name": name, "position": position},
+    )
+    return skill_id
+
+
+def create_rating_scale(session: Session, school_id: uuid.UUID) -> dict[str, uuid.UUID]:
+    """The default five-point scale, best first, with Needs improvement as the attention point."""
+    scale_id: uuid.UUID = session.scalar(
+        text("insert into rating_scales (school_id) values (:school_id) returning id"),
+        {"school_id": school_id},
+    )
+    points: dict[str, uuid.UUID] = {}
+    for position, point in enumerate(RATING_SCALE, start=1):
+        points[point.code] = session.scalar(
+            text(
+                "insert into rating_scale_points (school_id, scale_id, position, name, code,"
+                " is_attention) values (:school_id, :scale_id, :position, :name, :code,"
+                " :is_attention) returning id"
+            ),
+            {
+                "school_id": school_id,
+                "scale_id": scale_id,
+                "position": position,
+                "name": point.name,
+                "code": point.code,
+                "is_attention": point.code == ATTENTION_POINT,
+            },
+        )
+    return points
+
+
+def create_rating_sheet(
+    session: Session,
+    school_id: uuid.UUID,
+    term_id: uuid.UUID,
+    arm_id: uuid.UUID,
+    structure_id: uuid.UUID,
+    area_id: uuid.UUID,
+) -> uuid.UUID:
+    """A rating sheet for one learning area in one arm for one term (F26 rule 3)."""
+    sheet_id: uuid.UUID = session.scalar(
+        text(
+            "insert into result_sheets (school_id, term_id, arm_id, structure_id,"
+            " learning_area_id) values (:school_id, :term_id, :arm_id, :structure_id,"
+            " :area_id) returning id"
+        ),
+        {
+            "school_id": school_id,
+            "term_id": term_id,
+            "arm_id": arm_id,
+            "structure_id": structure_id,
+            "area_id": area_id,
+        },
+    )
+    return sheet_id
+
+
+def rate(
+    session: Session,
+    school_id: uuid.UUID,
+    sheet_id: uuid.UUID,
+    enrolment_id: uuid.UUID,
+    skill_id: uuid.UUID,
+    point_id: uuid.UUID,
+) -> uuid.UUID:
+    """Save one skill rating; the signed-in user (use_context) is its author."""
+    rating_id: uuid.UUID = session.scalar(
+        text(
+            "insert into skill_ratings (school_id, sheet_id, enrolment_id, skill_id, point_id)"
+            " values (:school_id, :sheet_id, :enrolment_id, :skill_id, :point_id) returning id"
+        ),
+        {
+            "school_id": school_id,
+            "sheet_id": sheet_id,
+            "enrolment_id": enrolment_id,
+            "skill_id": skill_id,
+            "point_id": point_id,
+        },
+    )
+    return rating_id
+
+
+def assign_area_teacher(
+    session: Session,
+    school_id: uuid.UUID,
+    teacher_id: uuid.UUID,
+    arm_id: uuid.UUID,
+    area_id: uuid.UUID,
+) -> uuid.UUID:
+    """A specialist teacher for one learning area in one arm."""
+    assignment_id: uuid.UUID = session.scalar(
+        text(
+            "insert into teacher_assignments (school_id, teacher_id, arm_id, learning_area_id)"
+            " values (:school_id, :teacher_id, :arm_id, :area_id) returning id"
+        ),
+        {"school_id": school_id, "teacher_id": teacher_id, "arm_id": arm_id, "area_id": area_id},
+    )
+    return assignment_id

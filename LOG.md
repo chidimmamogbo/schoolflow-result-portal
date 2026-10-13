@@ -52,7 +52,8 @@ Entry template:
 - Backend: 513 passed on Postgres 17.11 (about 6 minutes locally); Ruff, format and strict Pyright clean; deliberate breaks of each rule (35 in total) each made tests fail. CI green on PRs #18 to #24.
 
 ### Next step
-- After `merge`: BUILD_PROMPT 9.1 item 6a (learning areas, skills, rating scales, skill ratings, area comments; rating sheets on `result_sheets`), then 6b.
+- PR #25 merged. Item 6a started on `feat/phase7-skill-ratings`: CHANGE approved and recorded; defaults and test builders written; stopped at the usage limit before the tests and migration 12.
+- Resume item 6a: tests first in `tests/test_skill_ratings.py` covering: area names unique per level; areas only for classes of the same level; skills unique per area; one scale per school with exactly one attention point (checked at commit); teaches-all covers the class's areas except a specialist's; one teacher per area per arm; rating sheets only for areas of the arm's class; ratings within the sheet's area and arm, with an author; AC26.2 every skill rated before submit; assistants never submit; ratings locked once submitted and reasons after a return; area comments (300 characters, locked once submitted); a class-scope reviewer must review; RLS and no platform or verifier access. Then the models and migration 12 as in MEMORY.md, then 6b.
 
 ### Blockers
 - None.
