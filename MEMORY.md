@@ -117,9 +117,10 @@ Rest of the stack: not decided yet. **Preference stated 2026-10-08: Chidimma pre
 ## Approved differences from the design (list them when each screen is built)
 
 - Verify and VerifyAfter: verification code is 12 characters (`7KQ4-M2XD-P9QA`) instead of the designed 8 (D-072).
+- Add student (and the CSV template): three name fields, Surname, First name, Other names, instead of one "Name" box (D-139).
 - ChangePassword: rule text follows D-036 (15 characters, 10 for students, no letter-and-number rule) instead of "At least 8 characters" (D-134).
 - Pages with no board are built from v0.5 patterns (D-132); v0.3 boards get both themes from tokens (D-133).
 
 ## Open questions
 
-- **For the provisioning step (F03, with migration 4):** under 2A a school must get the same response for every parent email. A temporary password slip cannot be printed for an email that already has an account, so offering slips to parents *with* an email would reveal whether the email existed. Proposal to put to Chidimma then: parents with an email get the link request (activation) only; temporary password slips only for parents without an email.
+- None blocking right now. (Parent login method decided 2026-10-13: D-140.)

@@ -643,3 +643,13 @@ Installed on Chidimma's laptop (checked 2026-10-09): Node 24.21.0, npm 11.19.0, 
 | Backups | Manual `pg_dump` + restore test; Neon Launch on onboarding day | D-031, D-127 |
 
 **Status:** approved by Chidimma on 2026-10-09. Phase 2 complete; Phase 3 (services and accounts) started.
+
+### D-139. Pupils' names: surname, first name, other names (Chidimma, 2026-10-13)
+- The `students` table stores `surname`, `first_name` and `other_names` (optional). Class lists and broadsheets sort by surname, report cards can print the surname first, the verify page masks reliably ("Chuk*** O." from first name and surname), and it matches how Nigerian schools and WAEC/NECO record pupils. The CSV import template gets three name columns.
+- Staff and parent accounts keep one `full_name` (the design's "Full name").
+- **Rejected:** one "Name" box for pupils, as the Add student design shows (sorting and masking would have to guess the surname). Listed under approved differences from the design.
+
+### D-140. Parents with an email are always added by link request (Chidimma, 2026-10-13; completes D-138 option 2A)
+- When a school adds a parent with an email, the only login method is the link request: an existing account accepts after signing in, and a new person sets a password from the same emailed link. The school sees "Waiting for the parent" either way. A temporary password slip is offered only for parents without an email.
+- **Reason:** a slip cannot be made for an email that already has an account, so offering slips to parents with an email would tell the school whether the email already uses SchoolFlow, which D-138 option 2A rules out.
+- **Rejected:** slips for parents with an email.
