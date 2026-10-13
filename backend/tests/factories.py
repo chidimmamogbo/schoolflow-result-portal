@@ -792,3 +792,26 @@ def assign_area_teacher(
         {"school_id": school_id, "teacher_id": teacher_id, "arm_id": arm_id, "area_id": area_id},
     )
     return assignment_id
+
+
+def comment_on_area(
+    session: Session,
+    school_id: uuid.UUID,
+    sheet_id: uuid.UUID,
+    enrolment_id: uuid.UUID,
+    comment: str,
+) -> uuid.UUID:
+    """The optional comment on one pupil's learning area; the signed-in user is its author."""
+    comment_id: uuid.UUID = session.scalar(
+        text(
+            "insert into area_comments (school_id, sheet_id, enrolment_id, comment)"
+            " values (:school_id, :sheet_id, :enrolment_id, :comment) returning id"
+        ),
+        {
+            "school_id": school_id,
+            "sheet_id": sheet_id,
+            "enrolment_id": enrolment_id,
+            "comment": comment,
+        },
+    )
+    return comment_id

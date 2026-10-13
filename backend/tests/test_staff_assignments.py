@@ -181,11 +181,12 @@ def test_a_teacher_is_form_teacher_of_one_arm_at_most(staff: Staff, db_session: 
     ("with_subject", "form_teacher"),
     [(True, True), (False, False)],
 )
-def test_a_row_is_either_a_subject_or_the_form_teacher(
+def test_a_row_is_exactly_one_kind(
     staff: Staff, db_session: Session, with_subject: bool, form_teacher: bool
 ) -> None:
+    # A subject, a learning area (item 6a) or the form teacher row: never two, never none.
     subject = staff.mathematics if with_subject else None
-    with violates(db_session, "ck_teacher_assignments_subject_or_form_teacher"):
+    with violates(db_session, "ck_teacher_assignments_one_kind"):
         assign_teacher(
             db_session, staff.gmc, staff.grace, staff.jss1b, subject, form_teacher=form_teacher
         )
