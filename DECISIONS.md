@@ -625,6 +625,13 @@ Installed on Chidimma's laptop (checked 2026-10-09): Node 24.21.0, npm 11.19.0, 
 - **Reason:** a slip cannot be made for an email that already has an account, so offering slips to parents with an email would tell the school whether the email already uses SchoolFlow, which D-138 option 2A rules out.
 - **Rejected:** slips for parents with an email.
 
+### D-141. How the grading set-up is stored (2026-10-13; reading of SPEC F08)
+- `grade_bands` (BUILD_PROMPT's "grading_scales"): one row per band per level (grade, minimum, maximum, remark). A level's bands cover 0 to 100 with no gaps or overlaps, checked at commit so a school can replace all bands in one save.
+- `remark_bands`: suggested class teacher comments for an average range (F22 rule 3), per level, 1 to 3 comments per band ("2 or 3 suggestion chips"), also covering 0 to 100. The spec gives no default wording, so schools write their own until Chidimma approves defaults.
+- `assessment_structures`: one per level per term, holding the assessment mode as well as `locked_at`, because AC08.6 makes a mode change wait for the next term like a structure change. Once locked (first score or rating saved), mode, components and the lock itself cannot change. `school_levels.assessment_mode` stays the school's choice for future terms.
+- `school_settings`: a new one-row-per-school table for the pass mark (1 to 99, default 40) and later school-level settings, so the built `schools` table is not changed. A value like 40.5 is refused by the API's whole-number check (the database column would round it).
+- Defaults from SPEC F08 live in `backend/src/schoolflow_api/grading/defaults.py`; a new school gets a copy during set-up (service layer, later).
+
 ---
 
 # Stack Summary (one page, for final approval)
