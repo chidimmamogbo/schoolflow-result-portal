@@ -36,6 +36,8 @@ Entry template:
 - Chidimma decided D-142 (approve without review only when no reviewer covers the sheet), D-143 (reasons once a sheet has been submitted) and D-144 (staff who also teach get assignments; approved CHANGE). SPEC v0.5.4.
 - Migration 10: `check_member_role()` accepts several roles; assignments and assistant places accept teachers, school admins and reviewers.
 - Migration 11 (9.1 item 6, score sheets): `result_sheets`, `scores`, `result_revisions`, `approval_actions`. The SPEC section 8 workflow, separation of duties, completeness on submit, reasons, the structure lock on the first score and published immutability are all enforced in the database; the history tables are written only by triggers and never change.
+- PR #25 merged. Chidimma approved the CHANGE "Rating sheets join the sheet workflow".
+- Migration 12 (9.1 item 6a, skill ratings): `learning_areas`, `class_learning_areas`, `skills`, `rating_scales`, `rating_scale_points`, `skill_ratings`, `area_comments`. Rating sheets reuse `result_sheets` and the same workflow; a learning area row joins `teacher_assignments` (one kind per row); "Teaches all subjects" covers the class's learning areas except a specialist's; submitting needs every active skill rated (AC26.2); ratings follow the score rules (locks, reasons, authors); a scale has exactly one attention point, checked at commit. D-145 records how F26 was read.
 
 ### What changed (files)
 - New: `compose.yaml`, `backend/docker/initdb/`, `backend/alembic.ini`, `backend/migrations/` (3 migrations), `backend/src/schoolflow_api/{settings,db,models}.py`, `schools/`, `platform/`, `accounts/` models, `backend/tests/{conftest,db_support,factories}.py` and tests for settings, database, migrations, schools, tenant isolation and accounts.
@@ -49,11 +51,11 @@ Entry template:
 - 2026-10-13: the test run hung because Docker Desktop's engine had stopped overnight. `docker desktop restart` brought it back; the database volume was intact (still on migration 6).
 
 ### Tests
-- Backend: 513 passed on Postgres 17.11 (about 6 minutes locally); Ruff, format and strict Pyright clean; deliberate breaks of each rule (35 in total) each made tests fail. CI green on PRs #18 to #24.
+- Backend: 598 passed on Postgres 17.11 (about 7 minutes locally); Ruff, format and strict Pyright clean; `alembic check` finds no drift; deliberate breaks of each rule (58 in total) each made tests fail. CI green on PRs #18 to #25.
 
 ### Next step
-- PR #25 merged. Item 6a started on `feat/phase7-skill-ratings`: CHANGE approved and recorded; defaults and test builders written; stopped at the usage limit before the tests and migration 12.
-- Resume item 6a: tests first in `tests/test_skill_ratings.py` covering: area names unique per level; areas only for classes of the same level; skills unique per area; one scale per school with exactly one attention point (checked at commit); teaches-all covers the class's areas except a specialist's; one teacher per area per arm; rating sheets only for areas of the arm's class; ratings within the sheet's area and arm, with an author; AC26.2 every skill rated before submit; assistants never submit; ratings locked once submitted and reasons after a return; area comments (300 characters, locked once submitted); a class-scope reviewer must review; RLS and no platform or verifier access. Then the models and migration 12 as in MEMORY.md, then 6b.
+- Item 6a done on `feat/phase7-skill-ratings`; PR open, waiting for `merge`.
+- After `merge`: raise the two findings in MEMORY's Open questions (stale change reasons; class level changes), then BUILD_PROMPT 9.1 item 6b (`class_report_sections`, `student_term_entries`, `attention_entries`), test-first.
 
 ### Blockers
 - None.

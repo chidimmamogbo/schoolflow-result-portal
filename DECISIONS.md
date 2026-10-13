@@ -645,6 +645,15 @@ Installed on Chidimma's laptop (checked 2026-10-09): Node 24.21.0, npm 11.19.0, 
 - Built as a CHANGE: the login rule for `teacher_assignments` and `class_assistants` accepts the roles teacher, school admin and reviewer; permission checks for teaching actions (9.2) use assignments, not only the teacher role.
 - **Rejected:** strict roles, where a principal or HOD who teaches needs a separate teacher account.
 
+### D-145. How skill ratings are stored (2026-10-13; reading of SPEC F26 and the approved CHANGE "Rating sheets join the sheet workflow")
+- `learning_areas` per level (a name once per level, only for levels that are on) and `skills` per area (a name once per area, optional description, retired rather than deleted). Defaults live in `backend/src/schoolflow_api/ratings/defaults.py` and follow SPEC F26 rule 1 and AT-30.1: ten areas, including Pre-science and Handwriting. `design/NAVIGATION_AND_SETTINGS.md` lists eight; on behaviour the spec wins. No document gives sample skills for Pre-science or Handwriting, so schools add their own until Chidimma approves defaults.
+- Areas are given to classes (`class_learning_areas`, the design's "Assign to classes"), only to classes of the area's level. An area stays with a class while the class has a rating sheet or a teacher for it, as a subject stays with an arm.
+- One `rating_scales` row per school with its `rating_scale_points`, best point first, each with a word, a code shaped like a grade code (E, VG, NI) and an optional description. Exactly one point is the attention point, checked at commit so a school can move it in one save; "at or below" means that point and every point after it.
+- Rating sheets are `result_sheets` rows for a learning area: one per area per arm per term, only for an area of the arm's class, on a Skill ratings structure. A teacher gets an area through a learning area row in `teacher_assignments`, or through "Teaches all subjects", which covers every area of the class except one given to a specialist.
+- `skill_ratings` follow the score rules: locked once submitted, a reason after a return or reopen (D-143), removed only in the first draft, an author on each. Only active skills are rated, and submitting needs every pupil of the arm rated on every active skill of the area (AC26.2). The first rating locks the level's structure for the term (AT-30.2).
+- `area_comments`: one optional comment per pupil per rating sheet, up to 300 characters, locked once submitted; no reason is asked for before then.
+- Review: a reviewer scope that names only a class covers that class's rating sheets; department and subject scopes cover score sheets only. D-142 applies unchanged.
+
 ---
 
 # Stack Summary (one page, for final approval)

@@ -8,18 +8,18 @@ The living record of where the project stands. Update it at the end of every ses
 |---|---|
 | Last updated | 2026-10-13 (Session 5, in progress) |
 | Phase | **Phase 7 (backend, test-first) in progress.** Phases 1 to 6 done |
-| Current step | **Item 6a (skill ratings) started** on branch `feat/phase7-skill-ratings` (pushed, no PR yet). Done: the CHANGE "Rating sheets join the sheet workflow" is approved and recorded in CHANGES.md; `ratings/defaults.py` (10 areas, sample skills, E/VG/G/F/NI scale, NI as attention point; no invented descriptions); skill rating builders in `tests/factories.py`. Merged: PRs #18 to #25 (migrations 1 to 11) |
-| Next step | Resume item 6a test-first: write `tests/test_skill_ratings.py` (plan in LOG.md Session 5), then `ratings/models.py` (`learning_areas`, `class_learning_areas`, `skills`, `rating_scales`, `rating_scale_points`, `skill_ratings`, `area_comments`), add `learning_area_id` to `TeacherAssignment` and the learning-area link to `ResultSheet`, then migration 12: new tables, rule `ck_teacher_assignments_one_kind` (rename the expectation in `test_staff_assignments.py` at the same time), `teacher_subjects` view with `learning_area_id`, `check_result_sheet()` and `check_sheet_transition()` extended for rating sheets (`result_sheets_area_in_class`, `result_sheets_ratings_missing`), rating and comment rules like scores, RLS. Then 6b |
-| Code | Monorepo `chidimmamogbo/schoolflow-result-portal` (public). `backend/`: settings (fail fast), SQLAlchemy 2.1 + psycopg 3, Alembic with 11 migrations (schools; roles and RLS; accounts; sessions and links; permissions; school structure; pupils, parents and enrolment; staff assignments; grading set-up; staff who also teach; result sheets and scores), `use_context()` per-transaction tenant setting, the permission matrix in `authz/permissions.py`, grading defaults in `grading/defaults.py`, the result-sheet workflow enforced by triggers, 513 tests on real Postgres 17 (rollback per test, about 6 minutes locally, under a minute in CI). `frontend/`: Next.js 16.4 skeleton. CI: 5 required checks (Backend job has a Postgres 17.11 service) + staging deploy. Production deploy in Phase 11 |
+| Current step | **BUILD_PROMPT 9.1 item 6a (skill ratings) complete** on branch `feat/phase7-skill-ratings` (PR open, waiting for Chidimma's `merge`): migration 12 (`learning_areas`, `class_learning_areas`, `skills`, `rating_scales`, `rating_scale_points`, `skill_ratings`, `area_comments`; rating sheets on `result_sheets`; learning area rows in `teacher_assignments`; D-145). Merged: PRs #18 to #25 (migrations 1 to 11) |
+| Next step | First raise the two findings under Open questions with Chidimma (each needs a CHANGE). Then **BUILD_PROMPT 9.1 item 6b**, test-first: `class_report_sections` (form teacher status per class and term: OPEN, SUBMITTED, RETURNED, SPEC section 8), `student_term_entries` (form teacher comment, head's comment, trait ratings, times school opened, times present), `attention_entries` (generated on publication, F23). Then items 7 to 12 |
+| Code | Monorepo `chidimmamogbo/schoolflow-result-portal` (public). `backend/`: settings (fail fast), SQLAlchemy 2.1 + psycopg 3, Alembic with 12 migrations (schools; roles and RLS; accounts; sessions and links; permissions; school structure; pupils, parents and enrolment; staff assignments; grading set-up; staff who also teach; result sheets and scores; skill ratings), `use_context()` per-transaction tenant setting, the permission matrix in `authz/permissions.py`, grading and rating defaults in `grading/defaults.py` and `ratings/defaults.py`, the result-sheet workflow (score and rating sheets) enforced by triggers, 598 tests on real Postgres 17 (rollback per test, about 7 minutes locally, about a minute in CI). `frontend/`: Next.js 16.4 skeleton. CI: 5 required checks (Backend job has a Postgres 17.11 service) + staging deploy. Production deploy in Phase 11 |
 
 ## Key documents for building (read before Phase 7 work)
 
 | Need | Where |
 |---|---|
 | What to build, in order | `docs/BUILD_PROMPT.md` section 9 (9.1 database, 9.2 backend modules, 9.3 frontend routes) |
-| Behaviour and rules | `docs/SPEC.md` v0.5.1 (`design/docs/SPEC.md` is an identical copy: copy after every spec edit) |
+| Behaviour and rules | `docs/SPEC.md` v0.5.4 (`design/docs/SPEC.md` is an identical copy: copy after every spec edit) |
 | Tests each feature must pass | `docs/ACCEPTANCE_TESTS.md` (IDs `AT-<step>.<n>`; fixtures GMC, BSA, RCS) |
-| Stack choices and why | `DECISIONS.md` D-001 to D-135, Stack Summary at the end |
+| Stack choices and why | `DECISIONS.md` D-001 to D-135, Stack Summary at the end; Phase 7 decisions D-136 to D-145 |
 | Pages, boards, labels | `docs/UI_REVIEW.md` (route-to-board map, approved label fixes, content for pages without a board) |
 | Services, env names, accounts | `docs/SERVICES.md` |
 
@@ -33,7 +33,7 @@ The living record of where the project stands. Update it at the end of every ses
 - [x] Phase 4: install, scaffold, CI, staging skeleton (done 2026-10-12, PRs #1 to #13)
 - [x] Phase 5: UI/UX review, `docs/UI_REVIEW.md` (2026-10-12; item 8 open)
 - [x] Phase 6: `docs/ACCEPTANCE_TESTS.md` (2026-10-12, 128 cases)
-- [ ] Phase 7: backend, test-first (in progress: 9.1 items 1 to 5 done)
+- [ ] Phase 7: backend, test-first (in progress: 9.1 items 1 to 6 merged, 6a in review)
 - [ ] Phase 8: frontend, test-first
 - [ ] Phase 9: end-to-end demo flow (all breakpoints, both themes)
 - [ ] Phase 10: security gate, `docs/SECURITY_AUDIT.md`
@@ -94,9 +94,11 @@ Rest of the stack: not decided yet. **Preference stated 2026-10-08: Chidimma pre
 - **Structure choices (2026-10-12):** one `departments` list per school serves HOD subject groups and the SSS student department; `arm_subjects` (not in BUILD_PROMPT's list) records which subjects each arm takes; an arm name may be empty for a single-arm class (Nursery 2). Term overlap checks belong in the service layer, not the database.
 - **If the tests hang (2026-10-13):** Docker Desktop's engine may have stopped (after sleep or overnight). Check with `docker desktop status`; fix with `docker desktop restart`, then `docker compose up -d --wait`. The data volume survives. The test database connection now gives up after 10 seconds (libpq tries twice, so about 20 seconds) with the "start the database" message.
 - **Reusable database rules (migration 7):** `check_member_role('<login column>', '<role>')` makes a login column accept only a member of the row's school with that role; reuse it for teachers and reviewers.
-- **Test speed (2026-10-13):** the full local run takes about 6 minutes (each test builds its own schools; Docker Desktop on Windows adds time per query). Proposal for a CHANGE: run test files in parallel (pytest-xdist) with one test database per worker. Worth speeding up before it grows much more, for example shared read-only fixtures per module or running test files in parallel against separate test databases.
+- **Test speed (2026-10-13):** the full local run takes about 7 minutes for 598 tests (each test builds its own schools; Docker Desktop on Windows adds time per query). Proposal for a CHANGE: run test files in parallel (pytest-xdist) with one test database per worker. Worth speeding up before it grows much more, for example shared read-only fixtures per module or running test files in parallel against separate test databases.
 - **Staff who also teach (D-144):** teaching powers come from assignments. School admins and reviewers can hold teacher assignments, form classes and assistant places; the authz layer (9.2) must treat teaching actions (enter, save, submit, form class entries) as assignment-based, not role-based.
 - **Workflow in the database (migration 11):** status moves, separation of duties (D-052), approval without review only when no reviewer covers the sheet (D-142), reasons (D-143), completeness on submit, structure lock on the first score and published immutability are triggers. The app moves a sheet with `update result_sheets set status = ..., status_comment = ..., revision = ...` as the signed-in user (`use_context(user_id=...)`); the triggers write `approval_actions` and `result_revisions` (the app role has no write access to them).
+- **Rating sheets (migration 12, D-145):** a rating sheet is a `result_sheets` row with `learning_area_id`, moved by the same workflow triggers. The app saves a rating with `insert into skill_ratings (..., point_id)` and changes it with `update skill_ratings set point_id = ..., change_reason = ...` as the signed-in user; comments go in `area_comments`. "Teaches all subjects" covers the class's learning areas through the `teacher_subjects` view (new column `learning_area_id`), except an area given to a specialist.
+- **Alembic and CHECK names (2026-10-13):** `op.create_check_constraint()` and `op.drop_constraint()` apply the naming convention to a plain name, so `ck_teacher_assignments_one_kind` would become `ck_teacher_assignments_ck_teacher_assignments_one_kind`. Pass full names through `op.f()`, as autogenerated code does.
 - **Rules checked at commit:** cross-row rules (bands cover 0 to 100, structures add up to 100, school levels) are deferred constraint triggers; tests call `run_commit_checks()` from `tests/db_support.py` to run them before the rollback.
 - **Views and row-level security:** create every view `with (security_invoker = true)`; otherwise it reads with the owner's rights and skips row-level security (migration 8 has a test that fails without it).
 - **SQLAlchemy 2.1:** `Result.tuples()` is deprecated, and with warnings as errors it fails the tests; iterate rows directly.
@@ -130,4 +132,7 @@ Rest of the stack: not decided yet. **Preference stated 2026-10-08: Chidimma pre
 
 ## Open questions
 
-- None blocking right now. (Parent login method decided 2026-10-13: D-140.)
+- Nothing blocking. Found while building item 6a; raise with Chidimma before item 6b (each fix needs a CHANGE):
+  - **A change reason can be reused by mistake.** The score and rating rules (D-143) check that a changed row has a reason, but when the app updates only the value, the reason from an earlier change is still on the row and passes the check, so the audit trail would show an old reason for a new change. Fix idea: a reason counts only when it comes with the change, as a sheet comment does (`result_sheets_comment_comes_with_a_move`).
+  - **A class's level can still change** after it has sheets or learning areas (`classes` allows updating `level`); the structure and learning area rules are checked only when rows are added. Fix idea: refuse a level change once the class has sheets, assignments or learning areas.
+- Wording still to come from Chidimma (the documents give none): default remark band comments (D-141) and sample skills for Pre-science and Handwriting (D-145).
