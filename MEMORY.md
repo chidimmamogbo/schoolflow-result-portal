@@ -8,9 +8,9 @@ The living record of where the project stands. Update it at the end of every ses
 |---|---|
 | Last updated | 2026-10-13 (Session 5, in progress) |
 | Phase | **Phase 7 (backend, test-first) in progress.** Phases 1 to 6 done |
-| Current step | **BUILD_PROMPT 9.1 item 4 complete** on branch `feat/phase7-staff-assignments` (PR open, waiting for Chidimma's `merge`): migration 8 (`teacher_assignments`, `class_assistants`, `reviewer_scopes`, the `teacher_subjects` view) and the 10-second test database timeout (approved CHANGE). Merged: PRs #18 to #22 (migrations 1 to 7, SPEC v0.5.3) |
-| Next step | **BUILD_PROMPT 9.1 item 5**, test-first: `grading_scales` (bands per level: A1 to F9 for Secondary, A to F for Nursery in Scores mode and Primary; no overlaps or gaps), `assessment_structures` (school, level, term, `locked_at`) and `assessment_components` (name, label, maximum, order; 1 to 8 components adding up to 100; locked once scores exist, AC08.3), `remark_bands`, `rating_traits` (affective and psychomotor), and the pass mark (1 to 99) on school settings; RLS from the start |
-| Code | Monorepo `chidimmamogbo/schoolflow-result-portal` (public). `backend/`: settings (fail fast), SQLAlchemy 2.1 + psycopg 3, Alembic with 8 migrations (schools; roles and RLS; accounts; sessions and links; permissions; school structure; pupils, parents and enrolment; staff assignments), `use_context()` per-transaction tenant setting, the permission matrix in `authz/permissions.py`, 382 tests on real Postgres 17 (rollback per test, under 3 minutes locally). `frontend/`: Next.js 16.4 skeleton. CI: 5 required checks (Backend job has a Postgres 17.11 service) + staging deploy. Production deploy in Phase 11 |
+| Current step | **BUILD_PROMPT 9.1 item 5 complete** on branch `feat/phase7-grading-assessment` (PR open, waiting for Chidimma's `merge`): migration 9 (`grade_bands`, `remark_bands`, `assessment_structures`, `assessment_components`, `rating_traits`, `trait_scale_points`, `school_settings`; D-141). Merged: PRs #18 to #23 (migrations 1 to 8) |
+| Next step | **BUILD_PROMPT 9.1 item 6**, test-first: `result_sheets` (score or rating sheets per subject and arm and term, with the structure used and the status DRAFT to PUBLISHED from SPEC section 8), `scores` (raw component scores, the author of each entry; the first one locks the level's structure for the term), `result_revisions`, `approval_actions` (separation of duties, D-052). Then 6a (skill ratings) and 6b (form teacher sections, attention entries). RLS from the start |
+| Code | Monorepo `chidimmamogbo/schoolflow-result-portal` (public). `backend/`: settings (fail fast), SQLAlchemy 2.1 + psycopg 3, Alembic with 9 migrations (schools; roles and RLS; accounts; sessions and links; permissions; school structure; pupils, parents and enrolment; staff assignments; grading set-up), `use_context()` per-transaction tenant setting, the permission matrix in `authz/permissions.py`, grading defaults in `grading/defaults.py`, 456 tests on real Postgres 17 (rollback per test, about 4 minutes locally). `frontend/`: Next.js 16.4 skeleton. CI: 5 required checks (Backend job has a Postgres 17.11 service) + staging deploy. Production deploy in Phase 11 |
 
 ## Key documents for building (read before Phase 7 work)
 
@@ -33,7 +33,7 @@ The living record of where the project stands. Update it at the end of every ses
 - [x] Phase 4: install, scaffold, CI, staging skeleton (done 2026-10-12, PRs #1 to #13)
 - [x] Phase 5: UI/UX review, `docs/UI_REVIEW.md` (2026-10-12; item 8 open)
 - [x] Phase 6: `docs/ACCEPTANCE_TESTS.md` (2026-10-12, 128 cases)
-- [ ] Phase 7: backend, test-first (in progress: 9.1 items 1 to 4 done)
+- [ ] Phase 7: backend, test-first (in progress: 9.1 items 1 to 5 done)
 - [ ] Phase 8: frontend, test-first
 - [ ] Phase 9: end-to-end demo flow (all breakpoints, both themes)
 - [ ] Phase 10: security gate, `docs/SECURITY_AUDIT.md`
@@ -94,6 +94,8 @@ Rest of the stack: not decided yet. **Preference stated 2026-10-08: Chidimma pre
 - **Structure choices (2026-10-12):** one `departments` list per school serves HOD subject groups and the SSS student department; `arm_subjects` (not in BUILD_PROMPT's list) records which subjects each arm takes; an arm name may be empty for a single-arm class (Nursery 2). Term overlap checks belong in the service layer, not the database.
 - **If the tests hang (2026-10-13):** Docker Desktop's engine may have stopped (after sleep or overnight). Check with `docker desktop status`; fix with `docker desktop restart`, then `docker compose up -d --wait`. The data volume survives. The test database connection now gives up after 10 seconds (libpq tries twice, so about 20 seconds) with the "start the database" message.
 - **Reusable database rules (migration 7):** `check_member_role('<login column>', '<role>')` makes a login column accept only a member of the row's school with that role; reuse it for teachers and reviewers.
+- **Test speed (2026-10-13):** the full local run takes about 4 minutes (each test builds its own schools). Worth speeding up before it grows much more, for example shared read-only fixtures per module or running test files in parallel against separate test databases.
+- **Rules checked at commit:** cross-row rules (bands cover 0 to 100, structures add up to 100, school levels) are deferred constraint triggers; tests call `run_commit_checks()` from `tests/db_support.py` to run them before the rollback.
 - **Views and row-level security:** create every view `with (security_invoker = true)`; otherwise it reads with the owner's rights and skips row-level security (migration 8 has a test that fails without it).
 - **SQLAlchemy 2.1:** `Result.tuples()` is deprecated, and with warnings as errors it fails the tests; iterate rows directly.
 - **Vercel preview check:** failed with `git_info_fail` on PRs #17 and #18 and passed again on PR #19, so it looks like a passing Vercel glitch (not a required check; staging deploys through the CI job).

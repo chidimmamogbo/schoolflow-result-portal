@@ -31,7 +31,8 @@ Entry template:
 - 2026-10-13: Chidimma chose three name fields for pupils (D-139) and the link request as the only method for parents with an email (D-140); SPEC v0.5.3.
 - Migration 7 (9.1 item 4, first part): `students`, `guardians`, `guardian_students`, `parent_link_requests`, `enrolments`, `student_subjects`. A reusable `check_member_role()` trigger makes sure a pupil's or parent's login really is a pupil or parent of that school; a pupil only takes subjects their arm offers; moving arms adds an enrolment (the arm cannot be edited); link requests are never deleted; the platform and verification roles see no children's records. PR #22 merged.
 - Approved CHANGE: the test database connection gives up after 10 seconds.
-- Migration 8 (9.1 item 4, second part): `teacher_assignments` (one teacher per subject in an arm, only subjects the arm takes; one form teacher per arm; form teacher of one arm at most), `class_assistants` (at most two per arm, locked against two admins adding at once), `reviewer_scopes` (a department, or subjects and classes), and the `teacher_subjects` view for "Teaches all subjects" (subjects added later included, AC06.2; a specialist keeps their subject). BUILD_PROMPT 9.1 item 4 complete.
+- Migration 8 (9.1 item 4, second part): `teacher_assignments` (one teacher per subject in an arm, only subjects the arm takes; one form teacher per arm; form teacher of one arm at most), `class_assistants` (at most two per arm, locked against two admins adding at once), `reviewer_scopes` (a department, or subjects and classes), and the `teacher_subjects` view for "Teaches all subjects" (subjects added later included, AC06.2; a specialist keeps their subject). BUILD_PROMPT 9.1 item 4 complete. PR #23 merged.
+- Migration 9 (9.1 item 5): `grade_bands` and `remark_bands` (cover 0 to 100, checked at commit), `assessment_structures` per level and term with the mode and the lock (AC08.3, AC08.6), `assessment_components` (1 to 8, adding up to 100; none for Skill ratings; no structure for a level that is off, AT-04.2), `rating_traits` with the 1 to 5 key, `school_settings` with the pass mark (1 to 99). Spec defaults in `grading/defaults.py`. D-141 records how F08 was read.
 
 ### What changed (files)
 - New: `compose.yaml`, `backend/docker/initdb/`, `backend/alembic.ini`, `backend/migrations/` (3 migrations), `backend/src/schoolflow_api/{settings,db,models}.py`, `schools/`, `platform/`, `accounts/` models, `backend/tests/{conftest,db_support,factories}.py` and tests for settings, database, migrations, schools, tenant isolation and accounts.
@@ -45,16 +46,16 @@ Entry template:
 - 2026-10-13: the test run hung because Docker Desktop's engine had stopped overnight. `docker desktop restart` brought it back; the database volume was intact (still on migration 6).
 
 ### Tests
-- Backend: 382 passed on Postgres 17.11; Ruff, format and strict Pyright clean; deliberate breaks of each security rule (24 in total) each made tests fail. CI green on PRs #18 to #22.
+- Backend: 456 passed on Postgres 17.11 (about 4 minutes locally); Ruff, format and strict Pyright clean; deliberate breaks of each rule (28 in total) each made tests fail. CI green on PRs #18 to #23.
 
 ### Next step
-- After `merge`: BUILD_PROMPT 9.1 item 5 (grading scales, assessment structures and components, remark bands, rating traits, pass mark).
+- After `merge`: BUILD_PROMPT 9.1 item 6 (result sheets, scores, revisions, approval actions), then 6a and 6b.
 
 ### Blockers
 - None.
 
 ### Roughly left
-- Phase 7: 9.1 items 5 to 12, then the 9.2 modules (auth, platform, school admin, results, reports, verification, portal, notices, billing). Then Phases 8 to 11.
+- Phase 7: 9.1 items 6 to 12, then the 9.2 modules (auth, platform, school admin, results, reports, verification, portal, notices, billing). Then Phases 8 to 11.
 
 ---
 

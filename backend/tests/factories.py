@@ -7,12 +7,19 @@ test can focus on the one rule it checks. All names and codes are fictional.
 
 import secrets
 import uuid
+from collections.abc import Iterable
 from typing import Any
 
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from schoolflow_api.db import use_context
+from schoolflow_api.grading.defaults import (
+    DEFAULT_COMPONENTS,
+    TRAIT_KEY,
+    Component,
+    GradeBand,
+)
 from schoolflow_api.schools.models import AssessmentMode, Feature, Level
 
 # Report card levels each school type switches on (SPEC F25 rule 2).
@@ -456,3 +463,112 @@ def add_reviewer_scope(
         },
     )
     return scope_id
+
+
+# --- grading and assessment set-up (BUILD_PROMPT 9.1 item 5) ---------------------
+
+
+def add_grade_bands(
+    session: Session, school_id: uuid.UUID, level: str, bands: Iterable[GradeBand]
+) -> None:
+    for band in bands:
+        session.execute(
+            text(
+                "insert into grade_bands (school_id, level, grade, min_score, max_score, remark)"
+                " values (:school_id, :level, :grade, :min_score, :max_score, :remark)"
+            ),
+            {"school_id": school_id, "level": level, **band._asdict()},
+        )
+
+
+def add_remark_band(
+    session: Session,
+    school_id: uuid.UUID,
+    level: str,
+    min_score: int,
+    max_score: int,
+    comments: list[str],
+) -> uuid.UUID:
+    band_id: uuid.UUID = session.scalar(
+        text(
+            "insert into remark_bands (school_id, level, min_score, max_score, comments)"
+            " values (:school_id, :level, :min_score, :max_score, :comments) returning id"
+        ),
+        {
+            "school_id": school_id,
+            "level": level,
+            "min_score": min_score,
+            "max_score": max_score,
+            "comments": comments,
+        },
+    )
+    return band_id
+
+
+def create_structure(
+    session: Session,
+    school_id: uuid.UUID,
+    level: str,
+    term_id: uuid.UUID,
+    components: Iterable[Component] = DEFAULT_COMPONENTS,
+    *,
+    mode: str = "scores",
+) -> uuid.UUID:
+    """An assessment structure for a level and term, with its components in order."""
+    structure_id: uuid.UUID = session.scalar(
+        text(
+            "insert into assessment_structures (school_id, level, term_id, assessment_mode)"
+            " values (:school_id, :level, :term_id, :mode) returning id"
+        ),
+        {"school_id": school_id, "level": level, "term_id": term_id, "mode": mode},
+    )
+    for position, component in enumerate(components, start=1):
+        add_component(session, school_id, structure_id, position, component)
+    return structure_id
+
+
+def add_component(
+    session: Session,
+    school_id: uuid.UUID,
+    structure_id: uuid.UUID,
+    position: int,
+    component: Component,
+) -> uuid.UUID:
+    component_id: uuid.UUID = session.scalar(
+        text(
+            "insert into assessment_components (school_id, structure_id, position, name, label,"
+            " max_score) values (:school_id, :structure_id, :position, :name, :label,"
+            " :max_score) returning id"
+        ),
+        {
+            "school_id": school_id,
+            "structure_id": structure_id,
+            "position": position,
+            **component._asdict(),
+        },
+    )
+    return component_id
+
+
+def add_trait(
+    session: Session, school_id: uuid.UUID, domain: str, name: str, position: int
+) -> uuid.UUID:
+    trait_id: uuid.UUID = session.scalar(
+        text(
+            "insert into rating_traits (school_id, domain, name, position)"
+            " values (:school_id, :domain, :name, :position) returning id"
+        ),
+        {"school_id": school_id, "domain": domain, "name": name, "position": position},
+    )
+    return trait_id
+
+
+def add_trait_key(session: Session, school_id: uuid.UUID) -> None:
+    for value, label in TRAIT_KEY.items():
+        session.execute(
+            text(
+                "insert into trait_scale_points (school_id, value, label)"
+                " values (:school_id, :value, :label)"
+            ),
+            {"school_id": school_id, "value": value, "label": label},
+        )
