@@ -385,3 +385,74 @@ def add_student_subject(
         {"school_id": school_id, "enrolment_id": enrolment_id, "subject_id": subject_id},
     )
     return link_id
+
+
+# --- staff assignments (BUILD_PROMPT 9.1 item 4) ---------------------------------
+
+
+def assign_teacher(
+    session: Session,
+    school_id: uuid.UUID,
+    teacher_id: uuid.UUID,
+    arm_id: uuid.UUID,
+    subject_id: uuid.UUID | None = None,
+    *,
+    form_teacher: bool = False,
+    teaches_all_subjects: bool = False,
+) -> uuid.UUID:
+    """A subject in an arm, or (with no subject) the arm's form or class teacher."""
+    assignment_id: uuid.UUID = session.scalar(
+        text(
+            "insert into teacher_assignments (school_id, teacher_id, arm_id, subject_id,"
+            " is_form_teacher, teaches_all_subjects) values (:school_id, :teacher_id, :arm_id,"
+            " :subject_id, :form_teacher, :teaches_all) returning id"
+        ),
+        {
+            "school_id": school_id,
+            "teacher_id": teacher_id,
+            "arm_id": arm_id,
+            "subject_id": subject_id,
+            "form_teacher": form_teacher,
+            "teaches_all": teaches_all_subjects,
+        },
+    )
+    return assignment_id
+
+
+def add_assistant(
+    session: Session, school_id: uuid.UUID, arm_id: uuid.UUID, assistant_id: uuid.UUID
+) -> uuid.UUID:
+    link_id: uuid.UUID = session.scalar(
+        text(
+            "insert into class_assistants (school_id, arm_id, assistant_id)"
+            " values (:school_id, :arm_id, :assistant_id) returning id"
+        ),
+        {"school_id": school_id, "arm_id": arm_id, "assistant_id": assistant_id},
+    )
+    return link_id
+
+
+def add_reviewer_scope(
+    session: Session,
+    school_id: uuid.UUID,
+    reviewer_id: uuid.UUID,
+    *,
+    department_id: uuid.UUID | None = None,
+    subject_id: uuid.UUID | None = None,
+    class_id: uuid.UUID | None = None,
+) -> uuid.UUID:
+    scope_id: uuid.UUID = session.scalar(
+        text(
+            "insert into reviewer_scopes (school_id, reviewer_id, department_id, subject_id,"
+            " class_id) values (:school_id, :reviewer_id, :department_id, :subject_id,"
+            " :class_id) returning id"
+        ),
+        {
+            "school_id": school_id,
+            "reviewer_id": reviewer_id,
+            "department_id": department_id,
+            "subject_id": subject_id,
+            "class_id": class_id,
+        },
+    )
+    return scope_id
