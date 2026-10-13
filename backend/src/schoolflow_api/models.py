@@ -12,6 +12,7 @@ from schoolflow_api.db import Base
 from schoolflow_api.grading import models as grading_models
 from schoolflow_api.guardians import models as guardians_models
 from schoolflow_api.platform import models as platform_models
+from schoolflow_api.results import models as results_models
 from schoolflow_api.schools import models as schools_models
 from schoolflow_api.structure import models as structure_models
 from schoolflow_api.students import models as students_models
@@ -25,6 +26,7 @@ __all__ = [
     "grading_models",
     "guardians_models",
     "platform_models",
+    "results_models",
     "schools_models",
     "structure_models",
     "students_models",
