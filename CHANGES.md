@@ -143,3 +143,11 @@ These seven changes were made during Phase 4 (2026-10-11 to 2026-10-12). Chidimm
 - What changes: `tests/conftest.py` only: the test connection gets `connect_timeout=10`.
 - After: with the database unreachable, pytest stops after about 20 seconds (libpq tries twice) and prints how to start it.
 - Proof: a run against an unreachable address printed the message after 22 seconds; the normal suite stays green.
+
+### CHANGE: Staff who also teach, approving without a reviewer, and when a score change needs a reason (Chidimma, 2026-10-13, D-142 to D-144)
+- Before: only accounts with the teacher role could hold teacher assignments or assistant places (migration 8); SPEC section 8 let a school admin approve only Reviewed sheets; F09 rule 4 asked for a reason for every change of a saved score.
+- Why it must change: principals, vice principals and HODs often teach (AT-14.3 expects "a school admin who also teaches"); BSA has no reviewers yet demo step 32 has its head teacher approve submitted sheets; a reason for every draft edit is heavy for teachers entering marks over several days.
+- When: now, before result sheets and scores are built (BUILD_PROMPT 9.1 item 6).
+- What changes: a new migration lets `check_member_role()` accept a list of roles and makes the assignment and assistant login rules accept teacher, school admin and reviewer (constraint names `teacher_assignments_teacher_id_is_staff`, `class_assistants_assistant_id_is_staff`); `tests/test_staff_assignments.py` updated to match (denied cases now use a parent's login); SPEC v0.5.4 (section 5 note, F06 rule 1, F09 rule 4, section 8, section 19) and its design copy; DECISIONS D-142 to D-144.
+- After: school admins and reviewers can be given subjects, form classes or assistant places and act as teachers on those sheets only; separation of duties still stops them reviewing or approving what they submitted; a sheet no reviewer covers can be approved straight from Submitted; reasons are required once a sheet has been submitted at least once.
+- Proof: updated `tests/test_staff_assignments.py`; new tests for result sheets and scores (approval without review, separation of duties, reasons).
