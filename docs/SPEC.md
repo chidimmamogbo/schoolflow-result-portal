@@ -2,8 +2,8 @@
 
 | | |
 |---|---|
-| Version | 0.5.2 |
-| Date | 2026-10-07 (v0.5); 2026-10-12 (v0.5.1, v0.5.2) |
+| Version | 0.5.3 |
+| Date | 2026-10-07 (v0.5); 2026-10-12 (v0.5.1, v0.5.2); 2026-10-13 (v0.5.3) |
 | Status | Agreed for build |
 | Owner | Chidimma Merit Mogbo |
 | Product name | SchoolFlow Result Portal (planning name: ResultChain) |
@@ -15,6 +15,7 @@
 > - v0.2: account provisioning by school admins, login-only model, student and teacher registration with assignments, guardian ward linking, notice board, email notifications, SaaS dashboard shell, full responsiveness, dark/light mode.
 > - v0.3: per-school subscription billing with an editable per-student, per-term pricing table and online payment in test mode.
 > - v0.4: product renamed SchoolFlow Result Portal; username login for everyone; student login with school code; password reset rules (no self-service for students, super admin resets school admins); additional school admins; configurable assessment structures per level (any number of CAs); teacher sheet search and filters; form teacher tools (broadsheet, comments, ratings, attendance, preview); Students needing attention list; expanded super admin functions and platform settings; full Create school form with colour picker and set-up emails; more report template styles and block settings; graduated pricing removed, volume pricing with optional cliff protection.
+> - v0.5.3 (2026-10-13, D-139, D-140): pupils' names are stored as surname, first name and other names; a parent with an email is always added by link request (temporary password slips only for parents without an email), so a school never learns whether an email already uses SchoolFlow.
 > - v0.5.2 (2026-10-12, D-138): one parent account across schools. A school that adds a parent whose email already belongs to a SchoolFlow parent account sends a link request instead of creating a second account, and the link is made only when the parent accepts. Parents see all linked children grouped by school; notices and emails always name the school; once an account is linked to more than one school, only the parent manages its login details.
 > - v0.5.1 (2026-10-12, D-135): report card additions from research on Nigerian report cards (`docs/REPORT_CARD_RESEARCH.md`): optional student department and subject categories, three summary switches, written defaults for Secondary grade bands, affective and psychomotor traits and their key, and two more nursery learning areas.
 > - v0.5: nursery and primary report cards; school type (Nursery and Primary, Secondary only, or all) with report card toggles per level controlled by the super admin; each school chooses Scores or Skill ratings per level; Primary A to F grading default; one-step class teacher (teaches all subjects) with class teacher assistants; Skills report card with an Early Years style; head's title per level; flexible session-by-session pace instead of a fixed 14 days; "if time allows" items renamed "build after the core" (nothing dropped).
@@ -169,7 +170,7 @@ F01 to F26 below.
   1. Super admin creates schools and each school's principal (the primary school admin).
   2. The principal can add **additional school admins** (for example a vice principal), up to the platform limit (default 2). Additional admins have the same school permissions as the principal, except that they cannot add, remove or reset other school admins.
   3. School admins create reviewers, teachers, parents and students in their own school only. Nobody creates a role above their own.
-  4. Every create form asks for a username (suggested from the name, checked for availability) and a login method: activation email or temporary password.
+  4. Every create form asks for a username (suggested from the name, checked for availability) and a login method: activation email or temporary password. For a parent with an email the method is always the link request (rule 8), which covers both a new and an existing account; a temporary password slip is only for parents without an email (v0.5.3, D-140).
   5. **Super admin login support for school admins:** change the admin's email, send a reset link, issue a temporary password with a printable slip, resend activation, sign out of all devices, deactivate or reactivate, and make another school admin the principal. The super admin cannot reset teachers, reviewers, parents or students; their school admins do that.
   6. **School admin login support for their people:** resend activation, send a reset link (if the person has an email), issue a temporary password with a printable slip, deactivate or reactivate.
   7. Every provisioning and reset action is audited and never reveals the user's password.
@@ -196,7 +197,7 @@ F01 to F26 below.
 
 ### F05. Student registration, enrolment and subjects
 - **Users:** school admins.
-- **Rules:** create one student or bulk import by CSV (preview, row errors, all-or-nothing); admission number and username unique per school; optional house; optional department for Senior Secondary students (for example Science, Arts, Commercial; the school's own list); enrol into a class/arm for the active session; subjects default to the class's subjects and can be adjusted per student; moving arms keeps history.
+- **Rules:** create one student or bulk import by CSV (preview, row errors, all-or-nothing); names as surname, first name and other names (v0.5.3, D-139); admission number and username unique per school; a login is optional (nursery pupils usually have none, F14); optional house; optional department for Senior Secondary students (for example Science, Arts, Commercial; the school's own list); enrol into a class/arm for the active session; subjects default to the class's subjects and can be adjusted per student; moving arms keeps history.
 - **Acceptance:**
   - AC05.1 Given a CSV with one duplicate admission number, when committing, then nothing is saved and the row error is shown.
   - AC05.2 Given a student without a subject, when a teacher opens that subject's sheet, then the student is not listed.
@@ -490,7 +491,7 @@ Teachers cannot edit in SUBMITTED, REVIEWED, APPROVED or PUBLISHED. Rating sheet
 | platform_settings | key, value, updated_by | platform | audited |
 | academic_sessions, terms | dates, active, next_term_begins | school | term dates drive renewal |
 | classes (arms), departments, subjects | level; subject category (optional) | school | |
-| students, guardians, guardian_students, enrolments, student_subjects | admission_number, username, house, department (optional, Senior Secondary) | school | children's data |
+| students, guardians, guardian_students, enrolments, student_subjects, parent link requests | admission_number, surname, first_name, other_names, gender, date_of_birth, house, department (optional, Senior Secondary), status; guardian relationship and consent; link request email (D-138) | school | children's data |
 | teacher_assignments (form_teacher flag, teaches_all_subjects flag), class_assistants, reviewer_scopes | | school | at most 2 assistants per arm |
 | assessment_structures, assessment_components | level, term, locked_at; name, label, max_score, order | school | maximums add up to 100 |
 | grading_scales (per level), remark_bands, pass_mark, rating_traits | | school | versioned with results |

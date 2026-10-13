@@ -614,6 +614,16 @@ Installed on Chidimma's laptop (checked 2026-10-09): Node 24.21.0, npm 11.19.0, 
 - **Staff who are also parents (option 3A):** not in the MVP. An email that belongs to a staff or student account cannot be linked as a parent. The schema allows switching it on later without moving data (one non-parent membership per account; the "parent or staff" rule is one database trigger). Kept in MEMORY.md as a possible future upgrade (option 3B).
 - **Rejected:** telling a school "this email already has an account" (option 2B: any school could check whether a person, and so their children, uses another SchoolFlow school); one account across schools for every role with a school switcher (more work and new screens).
 
+### D-139. Pupils' names: surname, first name, other names (Chidimma, 2026-10-13)
+- The `students` table stores `surname`, `first_name` and `other_names` (optional). Class lists and broadsheets sort by surname, report cards can print the surname first, the verify page masks reliably ("Chuk*** O." from first name and surname), and it matches how Nigerian schools and WAEC/NECO record pupils. The CSV import template gets three name columns.
+- Staff and parent accounts keep one `full_name` (the design's "Full name").
+- **Rejected:** one "Name" box for pupils, as the Add student design shows (sorting and masking would have to guess the surname). Listed under approved differences from the design.
+
+### D-140. Parents with an email are always added by link request (Chidimma, 2026-10-13; completes D-138 option 2A)
+- When a school adds a parent with an email, the only login method is the link request: an existing account accepts after signing in, and a new person sets a password from the same emailed link. The school sees "Waiting for the parent" either way. A temporary password slip is offered only for parents without an email.
+- **Reason:** a slip cannot be made for an email that already has an account, so offering slips to parents with an email would tell the school whether the email already uses SchoolFlow, which D-138 option 2A rules out.
+- **Rejected:** slips for parents with an email.
+
 ---
 
 # Stack Summary (one page, for final approval)

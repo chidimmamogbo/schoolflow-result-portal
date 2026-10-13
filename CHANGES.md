@@ -127,3 +127,11 @@ These seven changes were made during Phase 4 (2026-10-11 to 2026-10-12). Chidimm
 - What changes: D-138 amends D-044 (parents only, consent, shared-account protections); D-033 stays. SPEC v0.5.2: sections 4, 8, 9, 12, 14, 16 and 19, F03 (rules 8 and 9, AC03.7 to AC03.10), F07, F14 (AC14.2), F17 (AC17.3), F18 (AC18.2); `design/docs/SPEC.md` copied. Acceptance tests AT-31.4 to AT-31.7 and AT-33.4, with Ikenna Obi also linked by BSA to Kosi Obi. Step 2 schema: memberships with a status, one per school per account; non-parents limited to one school; the per-transaction hook also sets `app.user_id`.
 - After: one parent account shows every linked child, grouped by school. Each school sees and manages only its own link. Once an account is shared, only the parent manages its login details.
 - Proof: step 2 database tests run as `app_user` (memberships, consent, shared-account protections, isolation); auth and provisioning API tests later; the new acceptance tests.
+
+### CHANGE: Pupil name fields and the parent login method (Chidimma, 2026-10-13, D-139 and D-140)
+- Before: the Add student design has one "Name" box; SPEC F03 rule 4 lets every create form offer an activation email or a temporary password, parents included.
+- Why it must change: Nigerian records sort by surname and the verify page masks the first name and surname separately (D-139); under D-138 option 2A a slip for a parent with an email would reveal whether that email already uses SchoolFlow (D-140).
+- When: now, before the `students` and `guardians` tables are built (BUILD_PROMPT 9.1 item 4).
+- What changes: SPEC v0.5.3 (F03 rule 4, F05, section 9) and its design copy; DECISIONS D-139 and D-140; MEMORY lists the Add student form as an approved difference from the design; the `students` table gets `surname`, `first_name`, `other_names`.
+- After: pupils have three name fields; a parent with an email is always added through the link request, and slips are only for parents without an email.
+- Proof: `tests/test_pupils_and_parents.py` (name fields, link requests); provisioning API tests when F03 is built.
