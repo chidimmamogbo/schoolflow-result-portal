@@ -681,6 +681,16 @@ Installed on Chidimma's laptop (checked 2026-10-09): Node 24.21.0, npm 11.19.0, 
 - `attention_entries`: written in the publish transaction, never changed: one row per finding, linked to the report revision it came from: a subject below the pass mark (score, grade, pass mark, subject teacher), a skill at or below the attention point (the rating word at publication), and one summary row per pupil (number failed, average) for the By student view. Lists read only the rows of each pupil's current Valid report, so a republish replaces them without deleting history (AT-23.1).
 - The report ID rule (AT-16.2 shows `GMC-2627-T1-JSS1A-014`) is set with publication in 9.2; the database only checks its shape and keeps it the same across revisions.
 
+### D-151. A correction ticket links to the report revision that fixed it (Chidimma, 2026-10-14)
+- When the school resolves a ticket after a correction, the ticket links the pupil's newer report revision for that term, which is what the parent sees ("Revision 2 ... new code") and what AC15.1 asks the ticket to show. The reopen of the subject sheet stays as built; its reason can name the ticket ("Raised by parent in CR-0012", as the design shows).
+- **Rejected:** also storing the ticket on the reopened sheet and its revision rows (a CHANGE to the item 6 tables for little gain).
+
+### D-152. How correction requests and uploaded files are stored (2026-10-14; reading of SPEC F15, section 8, D-055 to D-057 and the Corrections and ReportView designs)
+- `files` (D-057): one row per uploaded file with its school, purpose (logo, signature, stamp, correction attachment), type (PNG, JPEG or WebP; PDF only for attachments; never SVG), size (up to 1 MB for images, 4 MB for attachments), SHA-256, random storage path under `schools/{school_id}/`, original name (a label only) and uploader. Rows never change. Content checks (magic bytes, Pillow re-save) belong to the upload code. The platform role can store and read logos only (school creation sets the logo), never other files.
+- `correction_requests`: numbered per school (shown as CR-0012), about one Valid published report and optionally one subject or learning area on it (none means the whole report), with an issue type (A score looks wrong, A name or detail is wrong, Something else) and an explanation. The requester is the signed-in user with a role the permission matrix allows (school admins, reviewers, teachers, parents; never students); a parent only for their own linked wards. Refused when the school's Correction queue is off.
+- Statuses follow SPEC section 8: Open, Investigating, then Resolved, Rejected or Needs more information, which goes back to Investigating when the requester replies (only the requester). Rejecting, asking for more information, resolving and replying each need a message, which comes with the move and is never edited afterwards. Resolving may link the pupil's newer, Valid report revision (D-151). `correction_events` keeps the timeline and is written only by the database.
+- `correction_attachments`: one optional attachment per request (F15: "optional attachment"), added by the requester while the request is Open or Needs more information; never changed, so the evidence stays as sent.
+
 ---
 
 # Stack Summary (one page, for final approval)

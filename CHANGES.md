@@ -183,3 +183,11 @@ These seven changes were made during Phase 4 (2026-10-11 to 2026-10-12). Chidimm
 - What changes: migration 14 adds `UNIQUE (id, school_id)` to `rating_traits` (and the same line in `grading/models.py`); nothing else.
 - After: no change in behaviour (ids were already unique); trait ratings can only point at their own school's traits.
 - Proof: `tests/test_class_sections.py` (a rating that points at another school's trait is refused); `tests/test_grading_and_assessment.py` stays green.
+
+### CHANGE: The school logo links to the files table (Chidimma `ok`, 2026-10-14, item 8)
+- Before: `schools.logo_file_id` (migration 1) had no link; its comment said the files table and its link would arrive with file storage.
+- Why it must change: a logo must point at a real file of the same school, never another school's file.
+- When: now, as the `files` table arrives (BUILD_PROMPT 9.1 item 8, D-057).
+- What changes: migration 16 adds a foreign key from `(logo_file_id, id)` to `files(id, school_id)` (and the same line in `schools/models.py`); nothing else.
+- After: a school's logo can only be one of that school's own files, and a file in use as a logo cannot be deleted.
+- Proof: `tests/test_corrections.py` (a school pointing its logo at another school's file is refused); `tests/test_schools_schema.py` stays green.
