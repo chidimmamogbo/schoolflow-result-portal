@@ -26,7 +26,7 @@ from schoolflow_api.db import use_context
 BACKEND_DIR = Path(__file__).resolve().parent.parent
 
 # The roles the app logs in as (D-026, D-051). Never the owner, which skips RLS.
-APP_ROLES = ("app_platform", "app_user", "app_verifier")
+APP_ROLES = ("app_platform", "app_sender", "app_user", "app_verifier")
 _SET_ROLE = {role: text(f"set local role {role}") for role in APP_ROLES}
 
 # PostgreSQL's code for "permission denied", used for missing grants and for
