@@ -8,7 +8,7 @@ PostgreSQL itself. The migration in migrations/versions creates them.
 import uuid
 from enum import StrEnum
 
-from sqlalchemy import CheckConstraint, ForeignKey, UniqueConstraint
+from sqlalchemy import CheckConstraint, ForeignKey, ForeignKeyConstraint, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 
 from schoolflow_api.db import Base, IdMixin, TimestampMixin, one_of
@@ -58,6 +58,11 @@ class School(IdMixin, TimestampMixin, Base):
     __tablename__ = "schools"
     __table_args__ = (
         UniqueConstraint("code"),
+        # The logo is one of the school's own files (approved CHANGE, item 8). Files also
+        # point back at schools, so this link is added after both tables exist (use_alter).
+        ForeignKeyConstraint(
+            ["logo_file_id", "id"], ["files.id", "files.school_id"], use_alter=True
+        ),
         CheckConstraint("code ~ '^[A-Z0-9]{3,10}$'", name="code_format"),
         CheckConstraint("colour ~ '^#[0-9A-Fa-f]{6}$'", name="colour_hex"),
         CheckConstraint("btrim(name) <> ''", name="name_not_blank"),
@@ -76,7 +81,7 @@ class School(IdMixin, TimestampMixin, Base):
     # Students log in with this code (F02); changing it stops the old one working.
     code: Mapped[str]
     colour: Mapped[str]
-    # The uploaded logo; the files table and its link arrive with file storage.
+    # The uploaded logo, a row of the files table (migration 16).
     logo_file_id: Mapped[uuid.UUID | None]
     status: Mapped[str] = mapped_column(server_default=SchoolStatus.ACTIVE.value)
     school_type: Mapped[str]
