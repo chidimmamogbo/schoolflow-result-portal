@@ -1003,3 +1003,99 @@ def add_attention_entry(
         },
     )
     return entry_id
+
+
+# --- uploaded files and correction requests (BUILD_PROMPT 9.1 item 8) --------------
+
+
+def store_file(
+    session: Session,
+    school_id: uuid.UUID,
+    *,
+    purpose: str = "correction_attachment",
+    content_type: str = "image/jpeg",
+    size_bytes: int = 250_000,
+    storage_key: str | None = None,
+    original_name: str = "exam-script.jpg",
+) -> uuid.UUID:
+    """Record one uploaded file (the bytes live in storage); the signed-in user uploaded it."""
+    file_id: uuid.UUID = session.scalar(
+        text(
+            "insert into files (school_id, purpose, storage_key, content_type, size_bytes,"
+            " sha256, original_name) values (:school_id, :purpose, :storage_key,"
+            " :content_type, :size_bytes, :sha256, :original_name) returning id"
+        ),
+        {
+            "school_id": school_id,
+            "purpose": purpose,
+            "storage_key": storage_key or f"schools/{school_id}/{purpose}/{uuid.uuid4().hex}",
+            "content_type": content_type,
+            "size_bytes": size_bytes,
+            "sha256": secrets.token_bytes(32),
+            "original_name": original_name,
+        },
+    )
+    return file_id
+
+
+def create_correction_request(
+    session: Session,
+    school_id: uuid.UUID,
+    report_id: uuid.UUID,
+    *,
+    subject_id: uuid.UUID | None = None,
+    issue_type: str = "score",
+    explanation: str = "His Mathematics exam script shows 51, not 47.",
+) -> uuid.UUID:
+    """A "Report a problem" request on a published report; the signed-in user sends it."""
+    request_id: uuid.UUID = session.scalar(
+        text(
+            "insert into correction_requests (school_id, report_document_id, subject_id,"
+            " issue_type, explanation) values (:school_id, :report_id, :subject_id,"
+            " :issue_type, :explanation) returning id"
+        ),
+        {
+            "school_id": school_id,
+            "report_id": report_id,
+            "subject_id": subject_id,
+            "issue_type": issue_type,
+            "explanation": explanation,
+        },
+    )
+    return request_id
+
+
+def move_correction(
+    session: Session,
+    request_id: uuid.UUID,
+    status: str,
+    *,
+    message: str | None = None,
+    corrected_report_id: uuid.UUID | None = None,
+) -> None:
+    """Move a correction request along its workflow as the signed-in user."""
+    session.execute(
+        text(
+            "update correction_requests set status = :status, status_message = :message,"
+            " corrected_report_id = :corrected where id = :id"
+        ),
+        {
+            "status": status,
+            "message": message,
+            "corrected": corrected_report_id,
+            "id": request_id,
+        },
+    )
+
+
+def attach_file(
+    session: Session, school_id: uuid.UUID, request_id: uuid.UUID, file_id: uuid.UUID
+) -> uuid.UUID:
+    attachment_id: uuid.UUID = session.scalar(
+        text(
+            "insert into correction_attachments (school_id, request_id, file_id)"
+            " values (:school_id, :request_id, :file_id) returning id"
+        ),
+        {"school_id": school_id, "request_id": request_id, "file_id": file_id},
+    )
+    return attachment_id
