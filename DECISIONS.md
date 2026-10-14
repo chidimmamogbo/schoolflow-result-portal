@@ -655,6 +655,20 @@ Installed on Chidimma's laptop (checked 2026-10-09): Node 24.21.0, npm 11.19.0, 
 - `area_comments`: one optional comment per pupil per rating sheet, up to 300 characters, locked once submitted; no reason is asked for before then.
 - Review: a reviewer scope that names only a class covers that class's rating sheets; department and subject scopes cover score sheets only. D-142 applies unchanged.
 
+### D-146. Class sections after publication work like score sheets (Chidimma, 2026-10-14; SPEC v0.5.5)
+- A class's form teacher sections become Published when the class is published. To correct them, a school admin reopens them with a reason, which starts a new revision; the form teacher edits and submits again, as with a reopened sheet. Every move (submit, return, publish, reopen) is kept in a history that never changes.
+- **Rejected:** publication only locks the sections, with corrections designed later with the correction queue (item 8).
+
+### D-147. Students needing attention entries are built with publication (Chidimma, 2026-10-14)
+- `attention_entries` moves from BUILD_PROMPT 9.1 item 6b to item 7, next to `report_documents`: both are written inside the publish and republish transaction from the same snapshot (BUILD_PROMPT 9.2 j2), with the results engine's totals, grades and averages.
+- **Rejected:** creating the table in 6b and filling it later (its shape depends on the snapshot that item 7 defines).
+
+### D-148. How the form teacher's class sections are stored (2026-10-14; reading of SPEC F22, F10 and section 8)
+- `class_report_sections`: one row per arm per term with the status (Open, Submitted, Returned, Published), the revision, the comment that came with the last move, and times school opened (once for the class, 1 to 366). Only the arm's form or class teacher submits, never an assistant; a return needs a comment; a reopen needs a reason. `class_section_actions` keeps every move and is written only by the database.
+- `student_term_entries`: one row per pupil (enrolment) per section with the form or class teacher's comment, the head's comment (each up to 300 characters) and times present, which never exceeds times school opened (checked from both sides). Teacher fields change only while the sections are Open or Returned; the head's comment, entered on the publish screen (F10), changes until the class is published. Entries are never deleted; a field is cleared instead.
+- `student_trait_ratings`: one rating per pupil per trait, linked to the school's own trait (new ratings only for active traits) and to its 1 to 5 key; locked with the teacher fields.
+- Whether every pupil is complete depends on the blocks the active template shows (F10), so that check comes with templates (item 7) and the publish step. The database checks who moves the sections, the locks and the numbers, and records the author of every entry and rating from the signed-in user.
+
 ---
 
 # Stack Summary (one page, for final approval)

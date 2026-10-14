@@ -2,8 +2,8 @@
 
 | | |
 |---|---|
-| Version | 0.5.4 |
-| Date | 2026-10-07 (v0.5); 2026-10-12 (v0.5.1, v0.5.2); 2026-10-13 (v0.5.3, v0.5.4) |
+| Version | 0.5.5 |
+| Date | 2026-10-07 (v0.5); 2026-10-12 (v0.5.1, v0.5.2); 2026-10-13 (v0.5.3, v0.5.4); 2026-10-14 (v0.5.5) |
 | Status | Agreed for build |
 | Owner | Chidimma Merit Mogbo |
 | Product name | SchoolFlow Result Portal (planning name: ResultChain) |
@@ -15,6 +15,7 @@
 > - v0.2: account provisioning by school admins, login-only model, student and teacher registration with assignments, guardian ward linking, notice board, email notifications, SaaS dashboard shell, full responsiveness, dark/light mode.
 > - v0.3: per-school subscription billing with an editable per-student, per-term pricing table and online payment in test mode.
 > - v0.4: product renamed SchoolFlow Result Portal; username login for everyone; student login with school code; password reset rules (no self-service for students, super admin resets school admins); additional school admins; configurable assessment structures per level (any number of CAs); teacher sheet search and filters; form teacher tools (broadsheet, comments, ratings, attendance, preview); Students needing attention list; expanded super admin functions and platform settings; full Create school form with colour picker and set-up emails; more report template styles and block settings; graduated pricing removed, volume pricing with optional cliff protection.
+> - v0.5.5 (2026-10-14, D-146): form teacher class sections follow the result sheet pattern after publication: they become Published with the class, and a school admin reopens them with a reason as a new revision when a correction is needed.
 > - v0.5.4 (2026-10-13, D-142, D-143, D-144): a school admin may approve a sheet nobody reviewed only when no reviewer's scope covers it; a reviewer may return a resubmitted sheet again; changing a saved score needs a reason once the sheet has been submitted at least once (or is a reopened revision); school admins and reviewers who also teach get teacher assignments and act as teachers on those sheets only.
 > - v0.5.3 (2026-10-13, D-139, D-140): pupils' names are stored as surname, first name and other names; a parent with an email is always added by link request (temporary password slips only for parents without an email), so a school never learns whether an email already uses SchoolFlow.
 > - v0.5.2 (2026-10-12, D-138): one parent account across schools. A school that adds a parent whose email already belongs to a SchoolFlow parent account sends a link request instead of creating a second account, and the link is made only when the parent accepts. Parents see all linked children grouped by school; notices and emails always name the school; once an account is linked to more than one school, only the parent manages its login details.
@@ -462,7 +463,7 @@ PUBLISHED -> reopened as a new revision in DRAFT (school admin; reason; optional
 ```
 Teachers cannot edit in SUBMITTED, REVIEWED, APPROVED or PUBLISHED. Rating sheets (F26) follow the same state machine.
 
-**Form teacher class sections:** OPEN -> SUBMITTED (form teacher) -> RETURNED (school admin; comment) -> SUBMITTED. Locked once the class is published; later changes use the correction and revision flow.
+**Form teacher class sections:** OPEN -> SUBMITTED (form teacher) -> RETURNED (school admin; comment) -> SUBMITTED. SUBMITTED -> PUBLISHED (with the class). PUBLISHED -> reopened as a new revision in OPEN (school admin; reason; optional correction ticket), as for a result sheet (v0.5.5, D-146). Teachers cannot edit in SUBMITTED or PUBLISHED.
 
 **Publication of a class:** allowed only when every subject sheet is APPROVED and the class sections required by the template are SUBMITTED.
 

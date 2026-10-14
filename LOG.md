@@ -17,7 +17,7 @@ Entry template:
 
 ---
 
-## 2026-10-12 to 2026-10-13 (Session 5)
+## 2026-10-12 to 2026-10-14 (Session 5)
 
 ### What we did
 - **Phase 7 started.** Step 1 (PR #18, merged): PostgreSQL 17.11 in Docker (`compose.yaml`, databases `schoolflow` and `schoolflow_test`), fail-fast settings (D-020), SQLAlchemy 2.1 + psycopg 3 engine with hidden SQL parameters, Alembic (pyproject template), a test fixture that rebuilds the test database from the migrations and rolls back every test, and migration 1 (`schools`, `school_features`, `school_levels`, `platform_settings`, D-136 four level rows).
@@ -39,6 +39,8 @@ Entry template:
 - PR #25 merged. Chidimma approved the CHANGE "Rating sheets join the sheet workflow".
 - Migration 12 (9.1 item 6a, skill ratings): `learning_areas`, `class_learning_areas`, `skills`, `rating_scales`, `rating_scale_points`, `skill_ratings`, `area_comments`. Rating sheets reuse `result_sheets` and the same workflow; a learning area row joins `teacher_assignments` (one kind per row); "Teaches all subjects" covers the class's learning areas except a specialist's; submitting needs every active skill rated (AC26.2); ratings follow the score rules (locks, reasons, authors); a scale has exactly one attention point, checked at commit. D-145 records how F26 was read.
 - PR #26 merged. A probe confirmed two problems found while building 6a: a second score change was accepted under the previous change's reason, a reason could be rewritten on its own, and JSS 1 moved to Senior Secondary while it had 3 JSS sheets. Chidimma approved both CHANGEs. Migration 13: each score or rating change brings its own reason (never edited on its own), and a class keeps its level once it has sheets or learning areas.
+- 2026-10-14: PR #27 merged. Chidimma decided D-146 (class sections after publication work like score sheets: Published, then reopened with a reason as a new revision; SPEC v0.5.5) and D-147 (`attention_entries` move to item 7, with publication), and approved the CHANGE giving `rating_traits` a same-school key.
+- Migration 14 (9.1 item 6b): `class_report_sections` (status, revision, times school opened), `class_section_actions` (written only by the database), `student_term_entries` (form teacher's and head's comments, times present) and `student_trait_ratings`. Only the form teacher submits; returns need a comment; teacher entries lock while submitted; the head's comment can be written until publication; times present never exceeds times opened. D-148 records how F22 is stored.
 
 ### What changed (files)
 - New: `compose.yaml`, `backend/docker/initdb/`, `backend/alembic.ini`, `backend/migrations/` (3 migrations), `backend/src/schoolflow_api/{settings,db,models}.py`, `schools/`, `platform/`, `accounts/` models, `backend/tests/{conftest,db_support,factories}.py` and tests for settings, database, migrations, schools, tenant isolation and accounts.
@@ -52,11 +54,11 @@ Entry template:
 - 2026-10-13: the test run hung because Docker Desktop's engine had stopped overnight. `docker desktop restart` brought it back; the database volume was intact (still on migration 6).
 
 ### Tests
-- Backend: 607 passed on Postgres 17.11 (about 7 minutes locally); Ruff, format and strict Pyright clean; `alembic check` finds no drift; deliberate breaks of each rule (64 in total) each made tests fail. CI green on PRs #18 to #26.
+- Backend: 660 passed on Postgres 17.11 (about 9 minutes locally); Ruff, format and strict Pyright clean; `alembic check` finds no drift; deliberate breaks of each rule (82 in total) each made tests fail. CI green on PRs #18 to #27.
 
 ### Next step
-- The two CHANGEs (migration 13) are on `fix/phase7-reasons-and-class-levels`; PR open, waiting for `merge`.
-- After `merge`: BUILD_PROMPT 9.1 item 6b (`class_report_sections`, `student_term_entries`, `attention_entries`), test-first.
+- Item 6b is on `feat/phase7-class-sections`; PR open, waiting for `merge`.
+- After `merge`: BUILD_PROMPT 9.1 item 7 (`report_templates`, `report_documents`, `verification_tokens`, and `attention_entries` from D-147), test-first.
 
 ### Blockers
 - None.

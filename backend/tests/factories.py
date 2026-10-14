@@ -815,3 +815,90 @@ def comment_on_area(
         },
     )
     return comment_id
+
+
+# --- form teacher class sections (BUILD_PROMPT 9.1 item 6b) -------------------------
+
+
+def create_class_section(
+    session: Session,
+    school_id: uuid.UUID,
+    term_id: uuid.UUID,
+    arm_id: uuid.UUID,
+    times_school_opened: int | None = None,
+) -> uuid.UUID:
+    """The form teacher's class sections for one arm and term (they start Open)."""
+    section_id: uuid.UUID = session.scalar(
+        text(
+            "insert into class_report_sections (school_id, term_id, arm_id, times_school_opened)"
+            " values (:school_id, :term_id, :arm_id, :opened) returning id"
+        ),
+        {
+            "school_id": school_id,
+            "term_id": term_id,
+            "arm_id": arm_id,
+            "opened": times_school_opened,
+        },
+    )
+    return section_id
+
+
+def move_section(
+    session: Session,
+    section_id: uuid.UUID,
+    status: str,
+    *,
+    comment: str | None = None,
+    reopen: bool = False,
+) -> None:
+    """Move the class sections along their workflow as the signed-in user (use_context)."""
+    session.execute(
+        text(
+            "update class_report_sections set status = :status, status_comment = :comment,"
+            " revision = revision + :step where id = :id"
+        ),
+        {"status": status, "comment": comment, "step": 1 if reopen else 0, "id": section_id},
+    )
+
+
+def write_term_entry(
+    session: Session,
+    school_id: uuid.UUID,
+    section_id: uuid.UUID,
+    enrolment_id: uuid.UUID,
+    *,
+    comment: str | None = None,
+    times_present: int | None = None,
+    head_comment: str | None = None,
+) -> uuid.UUID:
+    """One pupil's term entry; the signed-in user (use_context) is recorded as its author."""
+    entry_id: uuid.UUID = session.scalar(
+        text(
+            "insert into student_term_entries (school_id, section_id, enrolment_id,"
+            " form_teacher_comment, times_present, head_comment) values (:school_id,"
+            " :section_id, :enrolment_id, :comment, :present, :head_comment) returning id"
+        ),
+        {
+            "school_id": school_id,
+            "section_id": section_id,
+            "enrolment_id": enrolment_id,
+            "comment": comment,
+            "present": times_present,
+            "head_comment": head_comment,
+        },
+    )
+    return entry_id
+
+
+def rate_trait(
+    session: Session, school_id: uuid.UUID, entry_id: uuid.UUID, trait_id: uuid.UUID, value: int
+) -> uuid.UUID:
+    """One affective or psychomotor rating (1 to 5) on a pupil's term entry."""
+    rating_id: uuid.UUID = session.scalar(
+        text(
+            "insert into student_trait_ratings (school_id, entry_id, trait_id, value)"
+            " values (:school_id, :entry_id, :trait_id, :value) returning id"
+        ),
+        {"school_id": school_id, "entry_id": entry_id, "trait_id": trait_id, "value": value},
+    )
+    return rating_id

@@ -130,6 +130,8 @@ class AssessmentComponent(IdMixin, TimestampMixin, Base):
 class RatingTrait(IdMixin, TimestampMixin, Base):
     __tablename__ = "rating_traits"
     __table_args__ = (
+        # For same-school links from pupils' trait ratings (approved CHANGE, item 6b).
+        UniqueConstraint("id", "school_id"),
         Index(
             "ix_rating_traits_unique_name",
             "school_id",
