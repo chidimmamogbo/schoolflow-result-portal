@@ -175,3 +175,11 @@ These seven changes were made during Phase 4 (2026-10-11 to 2026-10-12). Chidimm
 - What changes: migration 13 adds a trigger on `classes`, rule `classes_level_fixed_once_used`: the level can change only while no arm of the class has a result sheet and the class has no learning areas.
 - After: JSS 1 cannot move once it has a sheet; Nursery 2 cannot move once it has a learning area; a class set up on the wrong level can still be fixed before results work starts.
 - Proof: new tests in `tests/test_result_sheets.py` (a class with sheets keeps its level) and `tests/test_skill_ratings.py` (a class with learning areas keeps its level; a class nothing uses can still move), red first; same command as above.
+
+### CHANGE: Rating traits get a same-school key (Chidimma `ok`, 2026-10-14, item 6b)
+- Before: `rating_traits` (migration 9) had no `UNIQUE (id, school_id)`, so other tables could link to a trait only by its id.
+- Why it must change: a pupil's trait ratings must point at a trait of the same school; the project's pattern is the two-column link `(trait_id, school_id)`, which needs that unique pair.
+- When: now, with the trait ratings table (BUILD_PROMPT 9.1 item 6b).
+- What changes: migration 14 adds `UNIQUE (id, school_id)` to `rating_traits` (and the same line in `grading/models.py`); nothing else.
+- After: no change in behaviour (ids were already unique); trait ratings can only point at their own school's traits.
+- Proof: `tests/test_class_sections.py` (a rating that points at another school's trait is refused); `tests/test_grading_and_assessment.py` stays green.
