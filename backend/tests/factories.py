@@ -5,9 +5,11 @@ checking something, these functions insert a complete, valid record so each
 test can focus on the one rule it checks. All names and codes are fictional.
 """
 
+import json
 import secrets
 import uuid
 from collections.abc import Iterable
+from decimal import Decimal
 from typing import Any
 
 from sqlalchemy import text
@@ -902,3 +904,102 @@ def rate_trait(
         {"school_id": school_id, "entry_id": entry_id, "trait_id": trait_id, "value": value},
     )
     return rating_id
+
+
+# --- report templates, report documents and attention entries (9.1 item 7) ---------
+
+
+def create_template(
+    session: Session,
+    school_id: uuid.UUID,
+    level: str,
+    *,
+    style: str = "modern",
+    settings: Any = None,
+) -> uuid.UUID:
+    """Save a report template for a level; the database numbers the version."""
+    template_id: uuid.UUID = session.scalar(
+        text(
+            "insert into report_templates (school_id, level, style, settings)"
+            " values (:school_id, :level, :style, cast(:settings as jsonb)) returning id"
+        ),
+        {
+            "school_id": school_id,
+            "level": level,
+            "style": style,
+            "settings": json.dumps({} if settings is None else settings),
+        },
+    )
+    return template_id
+
+
+def publish_report(
+    session: Session,
+    school_id: uuid.UUID,
+    term_id: uuid.UUID,
+    arm_id: uuid.UUID,
+    enrolment_id: uuid.UUID,
+    template_id: uuid.UUID,
+    *,
+    report_code: str,
+    verification_code: str,
+    snapshot: dict[str, Any] | None = None,
+) -> uuid.UUID:
+    """Store one pupil's published report; the signed-in user (use_context) publishes it."""
+    report_id: uuid.UUID = session.scalar(
+        text(
+            "insert into report_documents (school_id, term_id, arm_id, enrolment_id,"
+            " template_id, report_code, verification_code, snapshot, calculation_version)"
+            " values (:school_id, :term_id, :arm_id, :enrolment_id, :template_id, :report_code,"
+            " :verification_code, cast(:snapshot as jsonb), '1') returning id"
+        ),
+        {
+            "school_id": school_id,
+            "term_id": term_id,
+            "arm_id": arm_id,
+            "enrolment_id": enrolment_id,
+            "template_id": template_id,
+            "report_code": report_code,
+            "verification_code": verification_code,
+            "snapshot": json.dumps(snapshot or {"fictional": True}),
+        },
+    )
+    return report_id
+
+
+def add_attention_entry(
+    session: Session,
+    school_id: uuid.UUID,
+    report_id: uuid.UUID,
+    kind: str,
+    *,
+    subject_id: uuid.UUID | None = None,
+    teacher_id: uuid.UUID | None = None,
+    score: int | None = None,
+    grade: str | None = None,
+    pass_mark: int | None = None,
+    failed_count: int | None = None,
+    average: Decimal | None = None,
+) -> uuid.UUID:
+    """One Students needing attention finding from a published report (F23)."""
+    entry_id: uuid.UUID = session.scalar(
+        text(
+            "insert into attention_entries (school_id, report_document_id, kind, subject_id,"
+            " teacher_id, score, grade, pass_mark, failed_count, average) values (:school_id,"
+            " :report_id, :kind, :subject_id, :teacher_id, :score, :grade, :pass_mark,"
+            " :failed_count, :average) returning id"
+        ),
+        {
+            "school_id": school_id,
+            "report_id": report_id,
+            "kind": kind,
+            "subject_id": subject_id,
+            "teacher_id": teacher_id,
+            "score": score,
+            "grade": grade,
+            "pass_mark": pass_mark,
+            "failed_count": failed_count,
+            "average": average,
+        },
+    )
+    return entry_id
