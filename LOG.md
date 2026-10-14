@@ -38,6 +38,7 @@ Entry template:
 - Migration 11 (9.1 item 6, score sheets): `result_sheets`, `scores`, `result_revisions`, `approval_actions`. The SPEC section 8 workflow, separation of duties, completeness on submit, reasons, the structure lock on the first score and published immutability are all enforced in the database; the history tables are written only by triggers and never change.
 - PR #25 merged. Chidimma approved the CHANGE "Rating sheets join the sheet workflow".
 - Migration 12 (9.1 item 6a, skill ratings): `learning_areas`, `class_learning_areas`, `skills`, `rating_scales`, `rating_scale_points`, `skill_ratings`, `area_comments`. Rating sheets reuse `result_sheets` and the same workflow; a learning area row joins `teacher_assignments` (one kind per row); "Teaches all subjects" covers the class's learning areas except a specialist's; submitting needs every active skill rated (AC26.2); ratings follow the score rules (locks, reasons, authors); a scale has exactly one attention point, checked at commit. D-145 records how F26 was read.
+- PR #26 merged. A probe confirmed two problems found while building 6a: a second score change was accepted under the previous change's reason, a reason could be rewritten on its own, and JSS 1 moved to Senior Secondary while it had 3 JSS sheets. Chidimma approved both CHANGEs. Migration 13: each score or rating change brings its own reason (never edited on its own), and a class keeps its level once it has sheets or learning areas.
 
 ### What changed (files)
 - New: `compose.yaml`, `backend/docker/initdb/`, `backend/alembic.ini`, `backend/migrations/` (3 migrations), `backend/src/schoolflow_api/{settings,db,models}.py`, `schools/`, `platform/`, `accounts/` models, `backend/tests/{conftest,db_support,factories}.py` and tests for settings, database, migrations, schools, tenant isolation and accounts.
@@ -51,11 +52,11 @@ Entry template:
 - 2026-10-13: the test run hung because Docker Desktop's engine had stopped overnight. `docker desktop restart` brought it back; the database volume was intact (still on migration 6).
 
 ### Tests
-- Backend: 598 passed on Postgres 17.11 (about 7 minutes locally); Ruff, format and strict Pyright clean; `alembic check` finds no drift; deliberate breaks of each rule (58 in total) each made tests fail. CI green on PRs #18 to #25.
+- Backend: 607 passed on Postgres 17.11 (about 7 minutes locally); Ruff, format and strict Pyright clean; `alembic check` finds no drift; deliberate breaks of each rule (64 in total) each made tests fail. CI green on PRs #18 to #26.
 
 ### Next step
-- Item 6a done on `feat/phase7-skill-ratings`; PR open, waiting for `merge`.
-- After `merge`: raise the two findings in MEMORY's Open questions (stale change reasons; class level changes), then BUILD_PROMPT 9.1 item 6b (`class_report_sections`, `student_term_entries`, `attention_entries`), test-first.
+- The two CHANGEs (migration 13) are on `fix/phase7-reasons-and-class-levels`; PR open, waiting for `merge`.
+- After `merge`: BUILD_PROMPT 9.1 item 6b (`class_report_sections`, `student_term_entries`, `attention_entries`), test-first.
 
 ### Blockers
 - None.

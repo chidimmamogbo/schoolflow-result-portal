@@ -639,6 +639,7 @@ Installed on Chidimma's laptop (checked 2026-10-09): Node 24.21.0, npm 11.19.0, 
 ### D-143. When a changed score needs a reason (Chidimma, 2026-10-13)
 - While a sheet is a first draft, teachers fix their own entries freely; the audit trail still keeps old and new values. Once the sheet has been submitted at least once (Returned for correction) or is a reopened revision, every change to a saved score needs a reason.
 - **Rejected:** a reason for every change of a saved score, even in the first draft (many reasons for routine typing).
+- **Built (migrations 11 to 13; approved CHANGE 2026-10-13):** the same rule applies to skill ratings. A reason counts only when the change gives it: the reason already stored, left out or repeated word for word, counts as none. A reason is never edited on its own, without a change.
 
 ### D-144. Staff who also teach: teaching comes from assignments (Chidimma, 2026-10-13)
 - School admins and reviewers can also be given teacher assignments: subjects in an arm, a form class (with "Teaches all subjects") or a class assistant place. On those sheets they act as teachers; they have no power over other sheets. Separation of duties still applies (D-052), which is what AT-14.3 tests.
