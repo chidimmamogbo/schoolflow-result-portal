@@ -1099,3 +1099,104 @@ def attach_file(
         {"school_id": school_id, "request_id": request_id, "file_id": file_id},
     )
     return attachment_id
+
+
+# --- notices and the email outbox (BUILD_PROMPT 9.1 item 9) -------------------------
+
+
+def post_notice(
+    session: Session,
+    school_id: uuid.UUID,
+    *,
+    title: str = "Mid-term break",
+    body: str = "School closes on Friday 30 October and reopens on Monday 2 November.",
+    kind: str = "manual",
+    pinned: bool = False,
+) -> uuid.UUID:
+    """A notice on the school's board; the signed-in user is its author."""
+    notice_id: uuid.UUID = session.scalar(
+        text(
+            "insert into notices (school_id, title, body, kind, pinned)"
+            " values (:school_id, :title, :body, :kind, :pinned) returning id"
+        ),
+        {"school_id": school_id, "title": title, "body": body, "kind": kind, "pinned": pinned},
+    )
+    return notice_id
+
+
+def add_notice_audience(
+    session: Session,
+    school_id: uuid.UUID,
+    notice_id: uuid.UUID,
+    *,
+    role: str | None = None,
+    class_id: uuid.UUID | None = None,
+) -> uuid.UUID:
+    """What the admin chose: everyone (no role, no class), a role, a class, or both."""
+    audience_id: uuid.UUID = session.scalar(
+        text(
+            "insert into notice_audiences (school_id, notice_id, role, class_id)"
+            " values (:school_id, :notice_id, :role, :class_id) returning id"
+        ),
+        {"school_id": school_id, "notice_id": notice_id, "role": role, "class_id": class_id},
+    )
+    return audience_id
+
+
+def add_notice_recipient(
+    session: Session, school_id: uuid.UUID, notice_id: uuid.UUID, user_id: uuid.UUID
+) -> uuid.UUID:
+    recipient_id: uuid.UUID = session.scalar(
+        text(
+            "insert into notice_recipients (school_id, notice_id, user_id)"
+            " values (:school_id, :notice_id, :user_id) returning id"
+        ),
+        {"school_id": school_id, "notice_id": notice_id, "user_id": user_id},
+    )
+    return recipient_id
+
+
+def mark_notice_read(
+    session: Session, school_id: uuid.UUID, notice_id: uuid.UUID, user_id: uuid.UUID
+) -> uuid.UUID:
+    read_id: uuid.UUID = session.scalar(
+        text(
+            "insert into notice_reads (school_id, notice_id, user_id)"
+            " values (:school_id, :notice_id, :user_id) returning id"
+        ),
+        {"school_id": school_id, "notice_id": notice_id, "user_id": user_id},
+    )
+    return read_id
+
+
+def queue_email(
+    session: Session,
+    school_id: uuid.UUID | None,
+    *,
+    to_address: str = "ikenna.obi@example.com",
+    email_type: str = "results_published",
+    template: str = "results_published",
+    template_data: dict[str, Any] | None = None,
+    priority: int = 5,
+    idempotency_key: str | None = None,
+) -> uuid.UUID:
+    """One email waiting in the outbox (D-080)."""
+    email_id: uuid.UUID = session.scalar(
+        text(
+            "insert into email_outbox (school_id, type, to_address, template, template_data,"
+            " priority, idempotency_key) values (:school_id, :type, :to_address, :template,"
+            " cast(:data as jsonb), :priority, :key) returning id"
+        ),
+        {
+            "school_id": school_id,
+            "type": email_type,
+            "template": template,
+            "to_address": to_address,
+            "data": json.dumps(
+                template_data or {"school_name": "Greenfield Model College", "term": "First Term"}
+            ),
+            "priority": priority,
+            "key": idempotency_key or f"{email_type}:{uuid.uuid4()}",
+        },
+    )
+    return email_id
