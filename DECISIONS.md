@@ -691,6 +691,15 @@ Installed on Chidimma's laptop (checked 2026-10-09): Node 24.21.0, npm 11.19.0, 
 - Statuses follow SPEC section 8: Open, Investigating, then Resolved, Rejected or Needs more information, which goes back to Investigating when the requester replies (only the requester). Rejecting, asking for more information, resolving and replying each need a message, which comes with the move and is never edited afterwards. Resolving may link the pupil's newer, Valid report revision (D-151). `correction_events` keeps the timeline and is written only by the database.
 - `correction_attachments`: one optional attachment per request (F15: "optional attachment"), added by the requester while the request is Open or Needs more information; never changed, so the evidence stays as sent.
 
+### D-153. A fourth database role, app_sender, sends the emails (Chidimma, 2026-10-14; adds to D-137)
+- The background email sender logs in as `app_sender`, made by migration with SQL like the other three (no RLS bypass, checked). It reads the email outbox of every school, including the template data it needs to write each email, and marks emails sent, retried or failed. It reads no other table.
+- **Rejected:** sending as `app_platform` (the platform role would then read every email's template data, which it otherwise never needs).
+
+### D-154. How notices and the email outbox are stored (2026-10-14; reading of SPEC F17, F18, D-080 to D-086)
+- `notices`: school, title, plain-text body, kind (manual or system), pinned, status (Published, Archived), author. Only a school admin posts or edits a manual notice; system notices (results published, invoice paid) may have no signed-in author (a payment webhook) and their text never changes; archiving is final. `notice_audiences` keeps what the admin chose (everyone, roles, classes); `notice_recipients` the people worked out at posting, each a member of the notice's school (AC17.2); `notice_reads` one mark per person, made only by that person. Audiences, recipients and reads never change.
+- `email_outbox`: type, address, template, template data (no password, token, secret link or score keys, checked by the database), priority, status (Queued, Sent, Failed), up to 5 attempts, next attempt, cleaned last error, a unique idempotency key (one email per recipient per event, AC18.1), provider message id. Queued becomes Sent (with proof), is retried (one more attempt) or Failed; Failed can be queued again (the super admin's Retry); Sent is final; the content never changes. School users queue their school's emails and see status only; the platform queues platform emails and sees every email's status; only `app_sender` reads template data. `school_id` is empty for platform emails.
+- The 95-a-day limit and the order of sending (priority, then oldest) belong to the sender (9.2); the database keeps each email's state honest.
+
 ---
 
 # Stack Summary (one page, for final approval)
