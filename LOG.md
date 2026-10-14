@@ -41,6 +41,8 @@ Entry template:
 - PR #26 merged. A probe confirmed two problems found while building 6a: a second score change was accepted under the previous change's reason, a reason could be rewritten on its own, and JSS 1 moved to Senior Secondary while it had 3 JSS sheets. Chidimma approved both CHANGEs. Migration 13: each score or rating change brings its own reason (never edited on its own), and a class keeps its level once it has sheets or learning areas.
 - 2026-10-14: PR #27 merged. Chidimma decided D-146 (class sections after publication work like score sheets: Published, then reopened with a reason as a new revision; SPEC v0.5.5) and D-147 (`attention_entries` move to item 7, with publication), and approved the CHANGE giving `rating_traits` a same-school key.
 - Migration 14 (9.1 item 6b): `class_report_sections` (status, revision, times school opened), `class_section_actions` (written only by the database), `student_term_entries` (form teacher's and head's comments, times present) and `student_trait_ratings`. Only the form teacher submits; returns need a comment; teacher entries lock while submitted; the head's comment can be written until publication; times present never exceeds times opened. D-148 records how F22 is stored.
+- PR #28 merged. Chidimma decided D-149: the plain verification code is kept on the report document (school-only), so PDFs regenerated from the snapshot print the same QR; the verification table keeps only hashes.
+- Migration 15 (9.1 item 7, with `attention_entries` from D-147): `report_templates` (versions numbered by the database, never changed), `report_documents` (snapshot, hash and masked name worked out by the database; only when every sheet of the class is published; a new revision supersedes the last; revoke needs a reason; never changed or deleted), `verification_tokens` (hashes only, written by the database) with `verify_report()`, the only thing the verification role can use, and `attention_entries` (only for a Valid report, never changed). D-150 records how these are stored.
 
 ### What changed (files)
 - New: `compose.yaml`, `backend/docker/initdb/`, `backend/alembic.ini`, `backend/migrations/` (3 migrations), `backend/src/schoolflow_api/{settings,db,models}.py`, `schools/`, `platform/`, `accounts/` models, `backend/tests/{conftest,db_support,factories}.py` and tests for settings, database, migrations, schools, tenant isolation and accounts.
@@ -54,11 +56,11 @@ Entry template:
 - 2026-10-13: the test run hung because Docker Desktop's engine had stopped overnight. `docker desktop restart` brought it back; the database volume was intact (still on migration 6).
 
 ### Tests
-- Backend: 660 passed on Postgres 17.11 (about 9 minutes locally); Ruff, format and strict Pyright clean; `alembic check` finds no drift; deliberate breaks of each rule (82 in total) each made tests fail. CI green on PRs #18 to #27.
+- Backend: 729 passed on Postgres 17.11 (about 10 minutes locally); Ruff, format and strict Pyright clean; `alembic check` finds no drift; deliberate breaks of each rule (103 in total) each made tests fail. CI green on PRs #18 to #28.
 
 ### Next step
-- Item 6b is on `feat/phase7-class-sections`; PR open, waiting for `merge`.
-- After `merge`: BUILD_PROMPT 9.1 item 7 (`report_templates`, `report_documents`, `verification_tokens`, and `attention_entries` from D-147), test-first.
+- Item 7 is on `feat/phase7-report-documents`; PR open, waiting for `merge`.
+- After `merge`: BUILD_PROMPT 9.1 item 8 (`correction_requests`, `correction_attachments`), test-first.
 
 ### Blockers
 - None.
