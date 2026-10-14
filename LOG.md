@@ -43,6 +43,8 @@ Entry template:
 - Migration 14 (9.1 item 6b): `class_report_sections` (status, revision, times school opened), `class_section_actions` (written only by the database), `student_term_entries` (form teacher's and head's comments, times present) and `student_trait_ratings`. Only the form teacher submits; returns need a comment; teacher entries lock while submitted; the head's comment can be written until publication; times present never exceeds times opened. D-148 records how F22 is stored.
 - PR #28 merged. Chidimma decided D-149: the plain verification code is kept on the report document (school-only), so PDFs regenerated from the snapshot print the same QR; the verification table keeps only hashes.
 - Migration 15 (9.1 item 7, with `attention_entries` from D-147): `report_templates` (versions numbered by the database, never changed), `report_documents` (snapshot, hash and masked name worked out by the database; only when every sheet of the class is published; a new revision supersedes the last; revoke needs a reason; never changed or deleted), `verification_tokens` (hashes only, written by the database) with `verify_report()`, the only thing the verification role can use, and `attention_entries` (only for a Valid report, never changed). D-150 records how these are stored.
+- PR #29 merged. Chidimma decided D-151 (a correction ticket links the pupil's newer report revision when it is resolved) and approved the CHANGE linking `schools.logo_file_id` to the new `files` table.
+- Migration 16 (9.1 item 8): `files` (D-057: allowed types and sizes per purpose, storage paths inside the school's folder, never changed; the platform role handles logos only), `correction_requests` (numbered per school; only while the Correction queue is on; requester a school admin, reviewer, teacher or parent, a parent only for their own ward; section 8 moves with messages; only the requester replies), `correction_events` (the timeline, written only by the database) and `correction_attachments` (one per request, by the requester while open). D-152 records how these are stored.
 
 ### What changed (files)
 - New: `compose.yaml`, `backend/docker/initdb/`, `backend/alembic.ini`, `backend/migrations/` (3 migrations), `backend/src/schoolflow_api/{settings,db,models}.py`, `schools/`, `platform/`, `accounts/` models, `backend/tests/{conftest,db_support,factories}.py` and tests for settings, database, migrations, schools, tenant isolation and accounts.
@@ -56,11 +58,11 @@ Entry template:
 - 2026-10-13: the test run hung because Docker Desktop's engine had stopped overnight. `docker desktop restart` brought it back; the database volume was intact (still on migration 6).
 
 ### Tests
-- Backend: 729 passed on Postgres 17.11 (about 10 minutes locally); Ruff, format and strict Pyright clean; `alembic check` finds no drift; deliberate breaks of each rule (103 in total) each made tests fail. CI green on PRs #18 to #28.
+- Backend: 796 passed on Postgres 17.11 (about 10 minutes locally); Ruff, format and strict Pyright clean; `alembic check` finds no drift; deliberate breaks of each rule (126 in total) each made tests fail. CI green on PRs #18 to #29.
 
 ### Next step
-- Item 7 is on `feat/phase7-report-documents`; PR open, waiting for `merge`.
-- After `merge`: BUILD_PROMPT 9.1 item 8 (`correction_requests`, `correction_attachments`), test-first.
+- Item 8 is on `feat/phase7-corrections`; PR open, waiting for `merge`.
+- After `merge`: BUILD_PROMPT 9.1 item 9 (`notices`, `notice_reads`, `email_outbox`), test-first.
 
 ### Blockers
 - None.
