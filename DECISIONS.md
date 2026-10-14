@@ -347,6 +347,7 @@ Sources checked 2026-10-09: OWASP Authentication, Password Storage, Session Mana
 
 ### D-073. Code storage
 - Only the SHA-256 hash of each code is stored in `verification_tokens`; each published revision gets its own code; publishing a new revision marks the previous one SUPERSEDED.
+- **Note (2026-10-14, D-149):** the plain code is also kept on the report document itself, readable only by the school, so regenerated PDFs (D-058) can print the same QR code.
 
 ### D-074. Public page content (as designed)
 - Status word and line, school, masked student name (first 4 letters of the first name + `***` + surname initial, for example `Chuk*** O.`), term, report ID (for example `GMC-2627-T1-JSS1A-014`), revision and date. Never scores or the full name.
@@ -668,6 +669,17 @@ Installed on Chidimma's laptop (checked 2026-10-09): Node 24.21.0, npm 11.19.0, 
 - `student_term_entries`: one row per pupil (enrolment) per section with the form or class teacher's comment, the head's comment (each up to 300 characters) and times present, which never exceeds times school opened (checked from both sides). Teacher fields change only while the sections are Open or Returned; the head's comment, entered on the publish screen (F10), changes until the class is published. Entries are never deleted; a field is cleared instead.
 - `student_trait_ratings`: one rating per pupil per trait, linked to the school's own trait (new ratings only for active traits) and to its 1 to 5 key; locked with the teacher fields.
 - Whether every pupil is complete depends on the blocks the active template shows (F10), so that check comes with templates (item 7) and the publish step. The database checks who moves the sections, the locks and the numbers, and records the author of every entry and rating from the signed-in user.
+
+### D-149. A report's QR code is kept on the report document (Chidimma, 2026-10-14)
+- PDFs are regenerated from the snapshot (D-058) and must print the same QR code each time, which its hash alone cannot give back. So the plain code is stored on the report document, which only that school's users can read (it is printed on the card anyway). `verification_tokens` keeps only the SHA-256 hash (D-073), and the verification role can only call the lookup function, never read the tables.
+- **Rejected:** deriving the code from the server's secret key (never stored, but changing that key would make newly printed QR codes fail unless every old key were kept).
+
+### D-150. How report templates, report documents, verification and attention entries are stored (2026-10-14; reading of SPEC F11 to F13, F23, D-058, D-061, D-071 to D-077, D-147)
+- `report_templates`: each save is a new version for its level, numbered by the database; versions are never changed or deleted, so a published report keeps the version it was issued with; the newest version is the one in use. The style and the settings (JSON, checked against the API's schema, D-061) are stored per version; no templates for a level that is off.
+- `report_documents`: one row per pupil (enrolment) per term per revision, with the snapshot (JSON), its SHA-256 hash (worked out by the database from the stored snapshot, so it always matches), the template version, the calculation version, the report ID, the verification code (D-149), the masked name for the verify page (D-074, worked out by the database from the pupil's names) and the status. A report is made only when every sheet of the class is published and its template is for the pupil's level. A new revision keeps the report ID and marks the previous Valid revision Superseded; revoking needs a reason; nothing else ever changes, and reports are never deleted (AC11.1).
+- `verification_tokens`: written only by the database when a report is published: the code's SHA-256 hash, one per revision. `verify_report()` takes the code as typed (lowercase, spaces and missing dashes accepted, D-072) and returns only school, masked name, session, term, status, revision, report ID, publication date and whether a newer revision exists; it ignores level switches and school suspension (D-075). It is the only thing the verification role can use.
+- `attention_entries`: written in the publish transaction, never changed: one row per finding, linked to the report revision it came from: a subject below the pass mark (score, grade, pass mark, subject teacher), a skill at or below the attention point (the rating word at publication), and one summary row per pupil (number failed, average) for the By student view. Lists read only the rows of each pupil's current Valid report, so a republish replaces them without deleting history (AT-23.1).
+- The report ID rule (AT-16.2 shows `GMC-2627-T1-JSS1A-014`) is set with publication in 9.2; the database only checks its shape and keeps it the same across revisions.
 
 ---
 
