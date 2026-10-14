@@ -11,10 +11,12 @@ from schoolflow_api.auth import models as auth_models
 from schoolflow_api.authz import models as authz_models
 from schoolflow_api.corrections import models as corrections_models
 from schoolflow_api.db import Base
+from schoolflow_api.emails import models as emails_models
 from schoolflow_api.files import models as files_models
 from schoolflow_api.form_class import models as form_class_models
 from schoolflow_api.grading import models as grading_models
 from schoolflow_api.guardians import models as guardians_models
+from schoolflow_api.notices import models as notices_models
 from schoolflow_api.platform import models as platform_models
 from schoolflow_api.ratings import models as ratings_models
 from schoolflow_api.reports import models as reports_models
@@ -31,10 +33,12 @@ __all__ = [
     "auth_models",
     "authz_models",
     "corrections_models",
+    "emails_models",
     "files_models",
     "form_class_models",
     "grading_models",
     "guardians_models",
+    "notices_models",
     "platform_models",
     "ratings_models",
     "reports_models",
