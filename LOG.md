@@ -45,6 +45,8 @@ Entry template:
 - Migration 15 (9.1 item 7, with `attention_entries` from D-147): `report_templates` (versions numbered by the database, never changed), `report_documents` (snapshot, hash and masked name worked out by the database; only when every sheet of the class is published; a new revision supersedes the last; revoke needs a reason; never changed or deleted), `verification_tokens` (hashes only, written by the database) with `verify_report()`, the only thing the verification role can use, and `attention_entries` (only for a Valid report, never changed). D-150 records how these are stored.
 - PR #29 merged. Chidimma decided D-151 (a correction ticket links the pupil's newer report revision when it is resolved) and approved the CHANGE linking `schools.logo_file_id` to the new `files` table.
 - Migration 16 (9.1 item 8): `files` (D-057: allowed types and sizes per purpose, storage paths inside the school's folder, never changed; the platform role handles logos only), `correction_requests` (numbered per school; only while the Correction queue is on; requester a school admin, reviewer, teacher or parent, a parent only for their own ward; section 8 moves with messages; only the requester replies), `correction_events` (the timeline, written only by the database) and `correction_attachments` (one per request, by the requester while open). D-152 records how these are stored.
+- PR #30 merged (a `use_alter` fix on the logo link cleared a SQLAlchemy warning about the schools, files and users loop). Chidimma decided D-153: a fourth database role, `app_sender`, sends the emails.
+- Migration 17 (9.1 item 9): `notices` (only school admins post or edit; system notices may have no author and keep their text; archiving is final), `notice_audiences`, `notice_recipients` (members of the school only), `notice_reads` (people mark only their own), all never changed, and `email_outbox` (one email per recipient per event; no password, token or score keys; Queued to Sent, Failed or another attempt, at most 5; content never changes). D-154 records how these are stored.
 
 ### What changed (files)
 - New: `compose.yaml`, `backend/docker/initdb/`, `backend/alembic.ini`, `backend/migrations/` (3 migrations), `backend/src/schoolflow_api/{settings,db,models}.py`, `schools/`, `platform/`, `accounts/` models, `backend/tests/{conftest,db_support,factories}.py` and tests for settings, database, migrations, schools, tenant isolation and accounts.
@@ -58,11 +60,11 @@ Entry template:
 - 2026-10-13: the test run hung because Docker Desktop's engine had stopped overnight. `docker desktop restart` brought it back; the database volume was intact (still on migration 6).
 
 ### Tests
-- Backend: 796 passed on Postgres 17.11 (about 10 minutes locally); Ruff, format and strict Pyright clean; `alembic check` finds no drift; deliberate breaks of each rule (126 in total) each made tests fail. CI green on PRs #18 to #29.
+- Backend: 857 passed on Postgres 17.11 (about 8 minutes locally); Ruff, format and strict Pyright clean; `alembic check` finds no drift; deliberate breaks of each rule (139 in total) each made tests fail. CI green on PRs #18 to #30.
 
 ### Next step
-- Item 8 is on `feat/phase7-corrections`; PR open, waiting for `merge`.
-- After `merge`: BUILD_PROMPT 9.1 item 9 (`notices`, `notice_reads`, `email_outbox`), test-first.
+- Item 9 is on `feat/phase7-notices-and-email`; PR open, waiting for `merge`.
+- After `merge`: BUILD_PROMPT 9.1 item 10 (pricing, subscriptions, invoices, payments, payment events), test-first.
 
 ### Blockers
 - None.
