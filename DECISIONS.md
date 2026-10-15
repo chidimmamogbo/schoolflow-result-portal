@@ -711,6 +711,15 @@ Installed on Chidimma's laptop (checked 2026-10-09): Node 24.21.0, npm 11.19.0, 
 - `audit_events`: actor, role at the time, action (`area.action`), target table and id, old and new values, reason, revision and time; school events carry the school, platform events none. Rows are written by the app in the same transaction as the change and never change or get deleted, even by the owner; they never hold password, token or hash keys.
 - Item 12 is a test file that checks the whole database: every table has row-level security except the listed platform-level tables, no app role owns or can create tables, every function that runs as the owner fixes its search path and is not open to everyone, and no app role can delete from or rewrite the history and snapshot tables.
 
+### D-157. Billing and audit defaults chosen while building migration 18 (2026-10-15; Chidimma asked for defaults instead of questions)
+- A voided term invoice frees its term, so the super admin can issue a corrected one; only one live term invoice per school per term.
+- An invoice's plan and rate must be a plan of the pricing version it names (same name and price), so a typo cannot invent a price.
+- Receipt numbers are platform-wide and numbered by the database: `SF-RCPT-000001`. Our payment reference is 6 to 64 letters, digits or dashes; Paystack is the only gateway in the MVP.
+- Subscriptions are written only by the platform role (grants), with the five SPEC statuses.
+- `app_current_user_is_super_admin()` runs as the owner (search path fixed, not open to everyone) so the rules can read the super admin flag whatever the caller can see.
+- Audit roles are the six membership roles plus `super_admin` and `system` (webhooks, scheduled jobs). Rows cannot be truncated either.
+- `platform_settings` joins the pricing tables and the permission tables on the short list of platform-level tables without row-level security: they hold no school rows and grants keep them read-only for schools.
+
 ---
 
 # Stack Summary (one page, for final approval)

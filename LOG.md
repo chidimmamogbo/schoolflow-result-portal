@@ -17,7 +17,7 @@ Entry template:
 
 ---
 
-## 2026-10-12 to 2026-10-14 (Session 5)
+## 2026-10-12 to 2026-10-15 (Session 5)
 
 ### What we did
 - **Phase 7 started.** Step 1 (PR #18, merged): PostgreSQL 17.11 in Docker (`compose.yaml`, databases `schoolflow` and `schoolflow_test`), fail-fast settings (D-020), SQLAlchemy 2.1 + psycopg 3 engine with hidden SQL parameters, Alembic (pyproject template), a test fixture that rebuilds the test database from the migrations and rolls back every test, and migration 1 (`schools`, `school_features`, `school_levels`, `platform_settings`, D-136 four level rows).
@@ -47,6 +47,9 @@ Entry template:
 - Migration 16 (9.1 item 8): `files` (D-057: allowed types and sizes per purpose, storage paths inside the school's folder, never changed; the platform role handles logos only), `correction_requests` (numbered per school; only while the Correction queue is on; requester a school admin, reviewer, teacher or parent, a parent only for their own ward; section 8 moves with messages; only the requester replies), `correction_events` (the timeline, written only by the database) and `correction_attachments` (one per request, by the requester while open). D-152 records how these are stored.
 - PR #30 merged (a `use_alter` fix on the logo link cleared a SQLAlchemy warning about the schools, files and users loop). Chidimma decided D-153: a fourth database role, `app_sender`, sends the emails.
 - Migration 17 (9.1 item 9): `notices` (only school admins post or edit; system notices may have no author and keep their text; archiving is final), `notice_audiences`, `notice_recipients` (members of the school only), `notice_reads` (people mark only their own), all never changed, and `email_outbox` (one email per recipient per event; no password, token or score keys; Queued to Sent, Failed or another attempt, at most 5; content never changes). D-154 records how these are stored.
+- 2026-10-15: PR #31 merged. Chidimma asked to go faster: the last three database items in one branch and PR, with defaults recorded as decisions (D-155 to D-157) instead of questions.
+- Migration 18 (9.1 items 10 and 11): `pricing_versions` and `pricing_tiers` (super admin only, numbered by the database, plans cover every count once, never changed), `school_subscriptions`, `invoices` (super admin only; arithmetic and cliff cap checked; rate from the version; Unpaid to Paid only with a succeeded payment of the exact amount, or Void with a reason; snapshot never changes), `payments` (school admin starts one for an unpaid invoice; amount copied from the invoice in NGN; one success per invoice with a numbered receipt that marks the invoice paid), `payment_events` (one row per gateway event) and `audit_events` (never changed, deleted or emptied, even by the owner; no secret keys).
+- Item 12: `tests/test_audit_and_security.py` audits the whole database (RLS on every table except a short platform-level list, no app role owns anything, owner-run functions locked down, no app role can delete or empty history tables). It found one table without RLS, `platform_settings`, which is platform-level by design (migration 2) and is now on the list (D-157).
 
 ### What changed (files)
 - New: `compose.yaml`, `backend/docker/initdb/`, `backend/alembic.ini`, `backend/migrations/` (3 migrations), `backend/src/schoolflow_api/{settings,db,models}.py`, `schools/`, `platform/`, `accounts/` models, `backend/tests/{conftest,db_support,factories}.py` and tests for settings, database, migrations, schools, tenant isolation and accounts.
@@ -60,17 +63,17 @@ Entry template:
 - 2026-10-13: the test run hung because Docker Desktop's engine had stopped overnight. `docker desktop restart` brought it back; the database volume was intact (still on migration 6).
 
 ### Tests
-- Backend: 857 passed on Postgres 17.11 (about 8 minutes locally); Ruff, format and strict Pyright clean; `alembic check` finds no drift; deliberate breaks of each rule (139 in total) each made tests fail. CI green on PRs #18 to #30.
+- Backend: 997 passed on Postgres 17.11 (about 16 minutes locally); Ruff, format and strict Pyright clean; `alembic check` finds no drift; deliberate breaks of each rule (158 in total) each made tests fail. CI green on PRs #18 to #31.
 
 ### Next step
-- Item 9 is on `feat/phase7-notices-and-email`; PR open, waiting for `merge`.
-- After `merge`: BUILD_PROMPT 9.1 item 10 (pricing, subscriptions, invoices, payments, payment events), test-first.
+- Items 10 to 12 are on `feat/phase7-billing-audit-security`; PR open, waiting for `merge`. That completes BUILD_PROMPT 9.1 (the database).
+- After `merge`: BUILD_PROMPT 9.2, the backend modules and endpoints, test-first, in big batches (9.2a skeleton first).
 
 ### Blockers
 - None.
 
 ### Roughly left
-- Phase 7: 9.1 items 6 to 12, then the 9.2 modules (auth, platform, school admin, results, reports, verification, portal, notices, billing). Then Phases 8 to 11.
+- Phase 7: the 9.2 modules (auth, platform, school admin, results, reports, verification, portal, notices, billing). Then Phases 8 to 11.
 
 ---
 
