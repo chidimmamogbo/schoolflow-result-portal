@@ -1200,3 +1200,157 @@ def queue_email(
         },
     )
     return email_id
+
+
+# --- billing and the audit log (BUILD_PROMPT 9.1 items 10 and 11) -------------------
+
+# F19 defaults: (name, minimum, maximum or None for open-ended, price per student in kobo).
+DEFAULT_TIERS = (
+    ("Basic", 1, 499, 100_000),
+    ("Standard", 500, 1000, 50_000),
+    ("Premium", 1001, None, 30_000),
+)
+
+
+def create_pricing_version(
+    session: Session, tiers: Iterable[tuple[str, int, int | None, int]] = DEFAULT_TIERS
+) -> uuid.UUID:
+    """Save the pricing table as a new version; the signed-in super admin saves it."""
+    version_id: uuid.UUID = session.scalar(
+        text("insert into pricing_versions default values returning id")
+    )
+    for position, (name, minimum, maximum, price) in enumerate(tiers, start=1):
+        session.execute(
+            text(
+                "insert into pricing_tiers (version_id, position, name, min_students,"
+                " max_students, price_kobo) values (:version, :position, :name, :minimum,"
+                " :maximum, :price)"
+            ),
+            {
+                "version": version_id,
+                "position": position,
+                "name": name,
+                "minimum": minimum,
+                "maximum": maximum,
+                "price": price,
+            },
+        )
+    return version_id
+
+
+def set_subscription(
+    session: Session, school_id: uuid.UUID, *, billing_enabled: bool = True, status: str = "active"
+) -> uuid.UUID:
+    subscription_id: uuid.UUID = session.scalar(
+        text(
+            "insert into school_subscriptions (school_id, billing_enabled, status)"
+            " values (:school_id, :enabled, :status) returning id"
+        ),
+        {"school_id": school_id, "enabled": billing_enabled, "status": status},
+    )
+    return subscription_id
+
+
+def issue_invoice(
+    session: Session,
+    school_id: uuid.UUID,
+    term_id: uuid.UUID,
+    version_id: uuid.UUID,
+    *,
+    students: int = 580,
+    tier: str = "Standard",
+    rate_kobo: int = 50_000,
+    amount_kobo: int | None = None,
+    cliff_cap_applied: bool = False,
+    kind: str = "term",
+) -> uuid.UUID:
+    """An invoice snapshot (D-091); the signed-in super admin issues it."""
+    invoice_id: uuid.UUID = session.scalar(
+        text(
+            "insert into invoices (school_id, term_id, kind, billable_students, pricing_version_id,"
+            " tier_name, rate_kobo, amount_kobo, cliff_cap_applied, due_on) values (:school_id,"
+            " :term_id, :kind, :students, :version, :tier, :rate, :amount, :cliff,"
+            " date '2027-01-05') returning id"
+        ),
+        {
+            "school_id": school_id,
+            "term_id": term_id,
+            "kind": kind,
+            "students": students,
+            "version": version_id,
+            "tier": tier,
+            "rate": rate_kobo,
+            "amount": students * rate_kobo if amount_kobo is None else amount_kobo,
+            "cliff": cliff_cap_applied,
+        },
+    )
+    return invoice_id
+
+
+def start_payment(
+    session: Session,
+    school_id: uuid.UUID,
+    invoice_id: uuid.UUID,
+    reference: str,
+    *,
+    gateway: str = "paystack",
+) -> uuid.UUID:
+    """A payment attempt; the database copies the amount from the invoice (D-093)."""
+    payment_id: uuid.UUID = session.scalar(
+        text(
+            "insert into payments (school_id, invoice_id, reference, gateway)"
+            " values (:school_id, :invoice_id, :reference, :gateway) returning id"
+        ),
+        {
+            "school_id": school_id,
+            "invoice_id": invoice_id,
+            "reference": reference,
+            "gateway": gateway,
+        },
+    )
+    return payment_id
+
+
+def record_payment_event(
+    session: Session, event_id: str, event_type: str = "charge.success"
+) -> uuid.UUID:
+    """One signature-verified webhook event (D-094)."""
+    row_id: uuid.UUID = session.scalar(
+        text(
+            "insert into payment_events (provider, event_id, event_type, payload)"
+            " values ('paystack', :event_id, :event_type, cast(:payload as jsonb)) returning id"
+        ),
+        {
+            "event_id": event_id,
+            "event_type": event_type,
+            "payload": json.dumps({"event": event_type, "data": {"reference": "SF-PAY-1"}}),
+        },
+    )
+    return row_id
+
+
+def write_audit_event(
+    session: Session,
+    school_id: uuid.UUID | None,
+    action: str = "scores.update",
+    *,
+    old: dict[str, Any] | None = None,
+    new: dict[str, Any] | None = None,
+    reason: str | None = None,
+) -> uuid.UUID:
+    """One audit event (F11); the signed-in user is the actor."""
+    event_id: uuid.UUID = session.scalar(
+        text(
+            "insert into audit_events (school_id, actor_role, action, target_table, target_id,"
+            " old_values, new_values, reason) values (:school_id, 'teacher', :action, 'scores',"
+            " gen_random_uuid(), cast(:old as jsonb), cast(:new as jsonb), :reason) returning id"
+        ),
+        {
+            "school_id": school_id,
+            "action": action,
+            "old": json.dumps(old if old is not None else {"value": 12}),
+            "new": json.dumps(new if new is not None else {"value": 14}),
+            "reason": reason,
+        },
+    )
+    return event_id
