@@ -7,8 +7,10 @@ must see every model. Each feature module's models.py is imported here.
 from schoolflow_api.accounts import models as accounts_models
 from schoolflow_api.assignments import models as assignments_models
 from schoolflow_api.attention import models as attention_models
+from schoolflow_api.audit import models as audit_models
 from schoolflow_api.auth import models as auth_models
 from schoolflow_api.authz import models as authz_models
+from schoolflow_api.billing import models as billing_models
 from schoolflow_api.corrections import models as corrections_models
 from schoolflow_api.db import Base
 from schoolflow_api.emails import models as emails_models
@@ -30,8 +32,10 @@ __all__ = [
     "accounts_models",
     "assignments_models",
     "attention_models",
+    "audit_models",
     "auth_models",
     "authz_models",
+    "billing_models",
     "corrections_models",
     "emails_models",
     "files_models",
