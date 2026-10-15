@@ -11,6 +11,7 @@ from schoolflow_api.audit import models as audit_models
 from schoolflow_api.auth import models as auth_models
 from schoolflow_api.authz import models as authz_models
 from schoolflow_api.billing import models as billing_models
+from schoolflow_api.core import models as core_models
 from schoolflow_api.corrections import models as corrections_models
 from schoolflow_api.db import Base
 from schoolflow_api.emails import models as emails_models
@@ -36,6 +37,7 @@ __all__ = [
     "auth_models",
     "authz_models",
     "billing_models",
+    "core_models",
     "corrections_models",
     "emails_models",
     "files_models",
