@@ -700,6 +700,17 @@ Installed on Chidimma's laptop (checked 2026-10-09): Node 24.21.0, npm 11.19.0, 
 - `email_outbox`: type, address, template, template data (no password, token, secret link or score keys, checked by the database), priority, status (Queued, Sent, Failed), up to 5 attempts, next attempt, cleaned last error, a unique idempotency key (one email per recipient per event, AC18.1), provider message id. Queued becomes Sent (with proof), is retried (one more attempt) or Failed; Failed can be queued again (the super admin's Retry); Sent is final; the content never changes. School users queue their school's emails and see status only; the platform queues platform emails and sees every email's status; only `app_sender` reads template data. `school_id` is empty for platform emails.
 - The 95-a-day limit and the order of sending (priority, then oldest) belong to the sender (9.2); the database keeps each email's state honest.
 
+### D-155. How billing is stored (2026-10-15; reading of SPEC F19, D-087 to D-097)
+- `pricing_versions` and `pricing_tiers`: each save of the pricing table is a new version, numbered by the database, with its tiers (name, minimum, maximum or open-ended, price in kobo). At commit a version's tiers start at 1, follow on with no gaps or overlaps, and only the last is open-ended (AC19.1). Versions and tiers never change (AC19.5). Only the platform writes them; school users may read them (projected next-term cost).
+- `school_subscriptions`: one per school: billing on or off (free pilot) and the status (Free pilot, Active, Due, Overdue, Suspended), written by the platform.
+- `invoices`: one term invoice per school per term (plus adjustment invoices), with the snapshot of D-091 in kobo. The database checks the arithmetic: the amount is students times rate, or less exactly when the cliff cap applied. Only the status moves: Unpaid to Paid (only with a succeeded payment of exactly the invoice amount) or Void (with a reason); Paid and Void are final; nothing else changes.
+- `payments`: a school admin starts a payment for an unpaid invoice of their school; the database copies the amount from the invoice (never from the request) and fixes the currency at NGN. Only the platform's worker marks it Succeeded (with the verified time and gateway reference, or a note for a manual payment) or Failed; one succeeded payment per invoice; a numbered receipt goes with success.
+- `payment_events`: the raw log of signature-verified webhook events, one row per gateway event id (duplicates refused, AC19.7), platform only; only its processing columns change.
+
+### D-156. The audit log and the final database audit (2026-10-15; reading of SPEC F11, BUILD_PROMPT 9.1 items 11 and 12)
+- `audit_events`: actor, role at the time, action (`area.action`), target table and id, old and new values, reason, revision and time; school events carry the school, platform events none. Rows are written by the app in the same transaction as the change and never change or get deleted, even by the owner; they never hold password, token or hash keys.
+- Item 12 is a test file that checks the whole database: every table has row-level security except the listed platform-level tables, no app role owns or can create tables, every function that runs as the owner fixes its search path and is not open to everyone, and no app role can delete from or rewrite the history and snapshot tables.
+
 ---
 
 # Stack Summary (one page, for final approval)
