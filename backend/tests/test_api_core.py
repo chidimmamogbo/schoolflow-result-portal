@@ -12,6 +12,8 @@ function the app roles can call but no role can read, per client IP taken
 only from Vercel's own header outside local development. All data is fictional.
 """
 
+import hashlib
+import hmac
 import json
 import logging
 import uuid
@@ -324,12 +326,11 @@ def test_the_limit_starts_again_after_the_window(db_session: Session) -> None:
 
 
 def test_keys_are_stored_only_as_keyed_hashes(db_session: Session) -> None:
-    RateLimiter.for_session(db_session).hit("login:id:ada@example.com", 5, 60)
+    key = "login:id:ada@example.com"
+    RateLimiter.for_session(db_session, b"fictional-test-secret").hit(key, 5, 60)
 
-    stored = db_session.scalar(text("select encode(key_hash, 'hex') from rate_limit_buckets"))
-    assert stored is not None
-    assert "ada" not in stored
-    assert len(stored) == 64
+    stored = db_session.scalar(text("select key_hash from rate_limit_buckets"))
+    assert stored == hmac.new(b"fictional-test-secret", key.encode(), hashlib.sha256).digest()
 
 
 @pytest.mark.parametrize("role", ["app_user", "app_platform", "app_verifier"])
