@@ -50,6 +50,8 @@ Entry template:
 - 2026-10-15: PR #31 merged. Chidimma asked to go faster: the last three database items in one branch and PR, with defaults recorded as decisions (D-155 to D-157) instead of questions.
 - Migration 18 (9.1 items 10 and 11): `pricing_versions` and `pricing_tiers` (super admin only, numbered by the database, plans cover every count once, never changed), `school_subscriptions`, `invoices` (super admin only; arithmetic and cliff cap checked; rate from the version; Unpaid to Paid only with a succeeded payment of the exact amount, or Void with a reason; snapshot never changes), `payments` (school admin starts one for an unpaid invoice; amount copied from the invoice in NGN; one success per invoice with a numbered receipt that marks the invoice paid), `payment_events` (one row per gateway event) and `audit_events` (never changed, deleted or emptied, even by the owner; no secret keys).
 - Item 12: `tests/test_audit_and_security.py` audits the whole database (RLS on every table except a short platform-level list, no app role owns anything, owner-run functions locked down, no app role can delete or empty history tables). It found one table without RLS, `platform_settings`, which is platform-level by design (migration 2) and is now on the list (D-157).
+- PR #32 merged: BUILD_PROMPT 9.1 (the database) is complete.
+- 9.2a, the API core (D-158): RFC 9457 errors that never echo input or quote the database, a fresh request ID per request, security headers, no CORS, docs only locally, JSON logs with redaction and route templates, a per-request database session committed before the response, `/health/ready`, and rate limits in PostgreSQL (migration 19: `rate_limit_buckets`, `rate_limit_hit()` on an HMAC of the key; client IP only from Vercel's own header). Deliberate breaks: 11, all caught after one test was strengthened (a validation error on the password itself).
 
 ### What changed (files)
 - New: `compose.yaml`, `backend/docker/initdb/`, `backend/alembic.ini`, `backend/migrations/` (3 migrations), `backend/src/schoolflow_api/{settings,db,models}.py`, `schools/`, `platform/`, `accounts/` models, `backend/tests/{conftest,db_support,factories}.py` and tests for settings, database, migrations, schools, tenant isolation and accounts.
@@ -63,11 +65,11 @@ Entry template:
 - 2026-10-13: the test run hung because Docker Desktop's engine had stopped overnight. `docker desktop restart` brought it back; the database volume was intact (still on migration 6).
 
 ### Tests
-- Backend: 997 passed on Postgres 17.11 (about 16 minutes locally); Ruff, format and strict Pyright clean; `alembic check` finds no drift; deliberate breaks of each rule (158 in total) each made tests fail. CI green on PRs #18 to #31.
+- Backend: 1026 passed on Postgres 17.11 (about 11 minutes locally); Ruff, format and strict Pyright clean; `alembic check` finds no drift; deliberate breaks of each rule (169 in total) each made tests fail. CI green on PRs #18 to #32.
 
 ### Next step
-- Items 10 to 12 are on `feat/phase7-billing-audit-security`; PR open, waiting for `merge`. That completes BUILD_PROMPT 9.1 (the database).
-- After `merge`: BUILD_PROMPT 9.2, the backend modules and endpoints, test-first, in big batches (9.2a skeleton first).
+- 9.2a is on `feat/phase7-api-skeleton`; PR open, waiting for `merge`.
+- After `merge`: 9.2b (auth) and 9.2c (authorization chain) in one batch, test-first.
 
 ### Blockers
 - None.

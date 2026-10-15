@@ -720,6 +720,14 @@ Installed on Chidimma's laptop (checked 2026-10-09): Node 24.21.0, npm 11.19.0, 
 - Audit roles are the six membership roles plus `super_admin` and `system` (webhooks, scheduled jobs). Rows cannot be truncated either.
 - `platform_settings` joins the pricing tables and the permission tables on the short list of platform-level tables without row-level security: they hold no school rows and grants keep them read-only for schools.
 
+### D-158. The API core (2026-10-15; reading of BUILD_PROMPT 9.2a, D-015, D-016, D-020, D-021, D-042, D-124, D-126)
+- Errors: RFC 9457 `application/problem+json` with `type`, `title`, `status`, `request_id`, and `detail`, `code` or `errors` when useful. Validation errors list only where and why (never the values sent). Database refusals log only the SQLSTATE and our rule name and answer 409 with that name as `code` (403 for a permission refusal, 503 when the database is unreachable, 500 otherwise). A crash answers a plain 500.
+- Every request gets a fresh request ID (a caller's `X-Request-ID` is ignored). Headers on every response: `nosniff`, `DENY` framing, `no-referrer`, a `default-src 'none'` content security policy, same-origin resource policy, `no-store`, and HSTS outside local. No CORS at all (same domain, D-015).
+- `/api/v1/docs` and `/api/v1/openapi.json` exist only when `APP_ENV=local`. If the settings cannot be read, the app treats itself as production (no docs, HSTS on) rather than crash at import; database routes then fail at request time. (The Docker smoke test starts the image without settings; making start-up fail fast there needs a CHANGE to CI, proposed separately.)
+- Logs: one JSON line per event on standard output; keys for passwords, tokens, cookies, sessions, emails, phones, names and scores are redacted, emails inside text become `[email]`; exceptions are logged by type and stack, never by message; the access log records the route template, never the real path or query.
+- Database session per request: one transaction, committed before the response (`Depends(get_db, scope="function")`, FastAPI docs checked 2026-10-15), rolled back on error.
+- Rate limits: fixed windows counted by `rate_limit_hit()` (migration 19) on an HMAC of the key, each hit in its own short transaction so a failed request still counts; 429 with `Retry-After`. The client IP comes only from `x-vercel-forwarded-for` outside local (Vercel overwrites it to prevent spoofing; vercel.com/docs/headers/request-headers, checked 2026-10-15). `rate_limit_forget_old()` clears day-old buckets (daily cron).
+
 ---
 
 # Stack Summary (one page, for final approval)
