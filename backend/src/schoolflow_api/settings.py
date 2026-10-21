@@ -41,12 +41,15 @@ class Settings(BaseSettings):
     # SecretStr prints as "**********", so secrets never leak into logs.
     app_secret_key: SecretStr = Field(min_length=32)
     database_url: SecretStr
+    # The super admin's pages only (role app_platform, D-051). Without it those pages
+    # answer 503 (making it required needs a CHANGE: an existing test omits it).
+    database_url_platform: SecretStr | None = None
     database_url_migrations: SecretStr | None = None
     test_database_url: SecretStr | None = None
 
-    _check_urls = field_validator("database_url", "database_url_migrations", "test_database_url")(
-        must_be_postgres_with_psycopg
-    )
+    _check_urls = field_validator(
+        "database_url", "database_url_platform", "database_url_migrations", "test_database_url"
+    )(must_be_postgres_with_psycopg)
 
     @property
     def debug(self) -> bool:
