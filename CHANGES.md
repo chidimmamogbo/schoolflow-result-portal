@@ -191,3 +191,11 @@ These seven changes were made during Phase 4 (2026-10-11 to 2026-10-12). Chidimm
 - What changes: migration 16 adds a foreign key from `(logo_file_id, id)` to `files(id, school_id)` (and the same line in `schools/models.py`); nothing else.
 - After: a school's logo can only be one of that school's own files, and a file in use as a logo cannot be deleted.
 - Proof: `tests/test_corrections.py` (a school pointing its logo at another school's file is refused); `tests/test_schools_schema.py` stays green.
+
+### CHANGE: A public route serves the school's logo for the login page (Chidimma `ok`, 2026-10-22, 9.2e part 2b)
+- Before: `GET /auth/schools/{code}/public` returned code, name and colour with `logo_url` always empty (D-159), and logos were served only to signed-in members through `GET /files/{id}` (D-163). `PUBLIC_ROUTES` (D-160) listed seven routes.
+- Why it must change: F02 rule 2 and AT-09.6: the school's own login link (`/login/GMC`) shows the school's name and logo before anyone signs in; D-056 already planned "School logos only through the public school endpoint".
+- When: now, with the first uploads merged (PR #37).
+- What changes: migration 23 adds `auth_school_logo(code)` (owner-run, callable only by `app_user`), which returns the storage key, type and hash of an active school's logo and nothing else; a new public route `GET /auth/schools/{code}/logo` (rate limited per IP like the school page) serves it with `Cache-Control: public, max-age=3600` and an ETag; `school_public` fills `logo_url` when a logo exists; `PUBLIC_ROUTES` and its test gain this eighth route. Signatures, stamps and attachments stay private.
+- After: the login page can show the logo of an active school to anyone who knows its code (the code is printed on login slips, and the name is already public on that page); a suspended or unknown school, or a school without a logo, answers 404.
+- Proof: new tests in `tests/test_auth.py` (logo served, 304 with the ETag, no logo, suspended, unknown, a signature is never served here) and the updated public-route test in `tests/test_authz.py`.

@@ -53,6 +53,7 @@ from schoolflow_api.core.deps import DbSession, get_rate_limiter
 from schoolflow_api.core.errors import ProblemError, problem_response
 from schoolflow_api.core.ratelimit import RateLimiter, client_ip, limit_by_ip
 from schoolflow_api.db import use_context
+from schoolflow_api.files.storage import FileStorage, get_file_storage
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -84,6 +85,7 @@ ForgotByIp = Depends(limit_by_ip("forgot", 10, 900))
 PublicByIp = Depends(limit_by_ip("school-public", 60, 60))
 SameOrigin = Depends(same_origin)
 Limiter = Annotated[RateLimiter, Depends(get_rate_limiter)]
+Storage = Annotated[FileStorage, Depends(get_file_storage)]
 
 
 # --- helpers ------------------------------------------------------------------------
@@ -278,9 +280,35 @@ def school_public(code: str, session: DbSession) -> SchoolPublic:
     ).first()
     if row is None:
         raise ProblemError(404, "Not Found")
+    has_logo = school_logo(session, row.school_code) is not None
     return SchoolPublic(
-        code=row.school_code, name=row.school_name, colour=row.school_colour, logo_url=None
+        code=row.school_code,
+        name=row.school_name,
+        colour=row.school_colour,
+        logo_url=f"/api/v1/auth/schools/{row.school_code}/logo" if has_logo else None,
     )
+
+
+def school_logo(session: Session, code: str) -> Any:
+    return session.execute(
+        text("select storage_key, content_type, sha256 from auth_school_logo(:code)"),
+        {"code": code[:20]},
+    ).first()
+
+
+@router.get("/schools/{code}/logo", dependencies=[PublicByIp])
+def school_logo_image(
+    code: str, request: Request, session: DbSession, storage: Storage
+) -> Response:
+    """The logo of an active school for its login page (approved CHANGE 2026-10-22)."""
+    row = school_logo(session, code)
+    if row is None:
+        raise ProblemError(404, "Not Found")
+    etag = f'"{bytes(row.sha256).hex()}"'
+    headers = {"Cache-Control": "public, max-age=3600", "ETag": etag}
+    if request.headers.get("if-none-match") == etag:
+        return Response(status_code=304, headers=headers)
+    return Response(storage.get(row.storage_key), media_type=row.content_type, headers=headers)
 
 
 # --- the session ----------------------------------------------------------------------

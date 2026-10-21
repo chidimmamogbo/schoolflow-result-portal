@@ -17,7 +17,8 @@ as FastAPI dependencies, in this order:
    the workflow state and require_someone_else() for separation of duties.
    The database checks scope, workflow and duties again (D-051).
 
-Only the routes in PUBLIC_ROUTES skip step 1; tests/test_authz.py fails if
+Only the routes in PUBLIC_ROUTES skip step 1 (the logo route joined by an approved
+CHANGE, 2026-10-22); tests/test_authz.py fails if
 any other route does.
 """
 
@@ -45,6 +46,7 @@ PUBLIC_ROUTES = frozenset(
         ("GET", "/api/v1/health/ready"),
         ("POST", "/api/v1/auth/login"),
         ("GET", "/api/v1/auth/schools/{code}/public"),
+        ("GET", "/api/v1/auth/schools/{code}/logo"),
         ("POST", "/api/v1/auth/activate"),
         ("POST", "/api/v1/auth/password/forgot"),
         ("POST", "/api/v1/auth/password/reset"),
