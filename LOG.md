@@ -17,6 +17,34 @@ Entry template:
 
 ---
 
+## 2026-10-22 (Session 5, continued): 9.2e part 1
+
+### What we did
+- PR #35 (9.2d, the platform module) merged on Chidimma's `merge`; staging not touched.
+- 9.2e split in two PRs to keep each reviewable. **Part 1, a school sets itself up**, test-first: school settings (contacts and colour only), assessment mode and head's title per level (a mode change waits for next term once entries started), sessions and terms (no overlaps, terms inside their session, one active term), classes and arms at levels that are on, departments, subjects and the subjects each arm takes, additional admins (principal only, platform limit, activation email or slip), and login support for the school's own people (never the principal, never yourself, never a shared account).
+- Migration 22: column grants and a school-admin trigger so `app_user` can edit exactly these school and level columns. Shared helpers `audit/log.py` and `emails/queue.py`. Defaults recorded as D-162.
+
+### What changed (files)
+- New: migration 22, `school/{__init__,schemas,routes,people}.py`, `audit/log.py`, `emails/queue.py`, `tests/test_school_setup.py`.
+- Updated: `main.py` (two routers), `DECISIONS.md`, `MEMORY.md`, `LOG.md`.
+
+### Issues and fixes
+- A PL/pgSQL `case` that reads `new.id` or `new.school_id` fails on a table without one of them; replaced with `if`.
+- Pyright now flags `@contextmanager` on a function typed `Iterator`; typed `Generator` instead.
+- Every API test passed first time, so two gaps were closed before the breaks: a database-level test for migration 22's trigger (the API's permission check stops teachers first), and the deactivate test now checks that the session rows are gone.
+- **Deliberate breaks:** 16, all caught.
+
+### Tests
+- Full backend suite: 1116 passed (about 10.5 minutes locally). Ruff, format and strict Pyright clean.
+
+### Next step
+- After `merge`: 9.2e part 2, people, test-first.
+
+### Blockers
+- None.
+
+---
+
 ## 2026-10-22 (Session 5, continued)
 
 ### What we did
