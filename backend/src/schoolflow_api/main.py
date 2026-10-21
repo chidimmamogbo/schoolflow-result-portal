@@ -14,6 +14,8 @@ from schoolflow_api.core.errors import register_error_handlers
 from schoolflow_api.core.logs import configure_logging
 from schoolflow_api.core.middleware import add_request_middleware
 from schoolflow_api.platform import routes as platform
+from schoolflow_api.school import people as school_people
+from schoolflow_api.school import routes as school
 from schoolflow_api.settings import get_settings
 
 
@@ -46,6 +48,8 @@ def create_app(app_env: str | None = None) -> FastAPI:
     api_v1.include_router(health.router)
     api_v1.include_router(auth.router)
     api_v1.include_router(platform.router)
+    api_v1.include_router(school.router)
+    api_v1.include_router(school_people.router)
     app.include_router(api_v1)
     return app
 
