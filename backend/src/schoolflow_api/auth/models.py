@@ -88,3 +88,22 @@ class AccountToken(IdMixin, Base):
     expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     used_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     cancelled_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class LoginThrottle(Base):
+    """Failed logins per account or typed name (D-042; migration 20).
+
+    The key is a keyed hash, so the table holds no username or email. Only the
+    owner-run login_throttle_*() functions touch it.
+    """
+
+    __tablename__ = "login_throttles"
+    __table_args__ = (
+        CheckConstraint(f"octet_length(key_hash) = {TOKEN_HASH_BYTES}", name="key_hash_length"),
+        CheckConstraint("failures >= 1", name="failures_positive"),
+    )
+
+    key_hash: Mapped[bytes] = mapped_column(LargeBinary, primary_key=True)
+    failures: Mapped[int]
+    last_failed_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    locked_until: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
