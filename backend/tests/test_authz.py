@@ -257,6 +257,7 @@ def test_every_route_except_the_public_list_needs_a_session(db_session: Session)
         ("GET", "/api/v1/health/ready"),
         ("POST", "/api/v1/auth/login"),
         ("GET", "/api/v1/auth/schools/{code}/public"),
+        ("GET", "/api/v1/auth/schools/{code}/logo"),
         ("POST", "/api/v1/auth/activate"),
         ("POST", "/api/v1/auth/password/forgot"),
         ("POST", "/api/v1/auth/password/reset"),

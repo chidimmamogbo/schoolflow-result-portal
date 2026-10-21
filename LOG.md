@@ -17,6 +17,36 @@ Entry template:
 
 ---
 
+## 2026-10-22 (Session 5, continued): 9.2e part 2b and the logo CHANGE
+
+### What we did
+- PR #37 (9.2e part 2a) merged on Chidimma's `merge`; staging not touched.
+- Chidimma approved the CHANGE for a public school logo on the login page; recorded in `CHANGES.md` and built first: migration 23 (`auth_school_logo`, logos only), `GET /auth/schools/{code}/logo` (rate limited, public caching, ETag), `logo_url` filled on the school page, an eighth public route.
+- **9.2e part 2b, pupils and parents**, test-first: pupils (register, search, edit, status, enrol in the active session with the arm's subjects, change subjects, move arms with history, login slips) and CSV import (preview with row problems, commit all or nothing, template). Parents: guardians with wards, link requests that look the same for every email (D-140, option 2A), slips only without an email, pause, resume and remove the school's own link, resend and cancel requests. Migration 24: the signed-in parent lists, accepts and declines requests sent to their own verified email; staff and pupils never can.
+- Defaults recorded as D-164.
+
+### What changed (files)
+- New: migrations 23 and 24, `school/{pupils,guardians}.py`, `parents/{__init__,routes}.py`, `tests/test_pupils_and_parents_api.py`.
+- Updated: `auth/routes.py` and `authz/deps.py` (the logo CHANGE), `main.py`, `tests/test_auth.py` and `tests/test_authz.py` (logo tests, eighth public route), `CHANGES.md`, `DECISIONS.md`, `MEMORY.md`, `LOG.md`.
+
+### Issues and fixes
+- The files trigger names the uploader from the signed-in user; the logo test sets the context before inserting files.
+- An expiry before creation breaks a database rule; the expiry test moves both dates.
+- Before the breaks, a test was added for AT-31.7 (a teacher cannot answer a request sent to their email).
+- The break script rewrote migration 23 with Windows line endings (same content); restored from git.
+- **Deliberate breaks:** 17, all caught.
+
+### Tests
+- Full backend suite: 1147 passed (about 9.5 minutes locally). Ruff, format and strict Pyright clean.
+
+### Next step
+- After `merge`: 9.2f, grading set-up (with learning areas, skills and the rating scale), test-first.
+
+### Blockers
+- None.
+
+---
+
 ## 2026-10-22 (Session 5, continued): 9.2e part 2a
 
 ### What we did

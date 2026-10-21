@@ -18,6 +18,7 @@ import hashlib
 import hmac
 import uuid
 from collections.abc import Callable
+from pathlib import Path
 from typing import Any
 
 import pytest
@@ -29,6 +30,8 @@ from sqlalchemy.orm import Session
 from schoolflow_api.auth import passwords, throttle
 from schoolflow_api.auth.passwords import MIN_LENGTH, MIN_LENGTH_STUDENT, is_common
 from schoolflow_api.auth.tokens import CSRF_COOKIE, SESSION_COOKIE, token_hash
+from schoolflow_api.db import use_context
+from schoolflow_api.files.storage import LocalFileStorage, get_file_storage
 from schoolflow_api.settings import get_settings
 from tests.auth_support import (
     ORIGIN,
@@ -886,3 +889,57 @@ def test_the_session_lookup_names_only_live_sessions(db_session: Session, tunde:
             text("select auth_session_account(:h)"), {"h": token_hash("other-token")}
         )
     assert (found, missing) == (tunde, None)
+
+
+def test_the_school_login_link_serves_the_logo_and_nothing_else(
+    app: FastAPI, db_session: Session, gmc: uuid.UUID, tmp_path: Path
+) -> None:
+    """CHANGE 2026-10-22, F02 rule 2, AT-09.6: the logo is public; signatures never are."""
+    storage = LocalFileStorage(tmp_path)
+    app.dependency_overrides[get_file_storage] = lambda: storage
+    client = client_for(app)
+    assert client.get("/api/v1/auth/schools/GMC/logo").status_code == 404  # no logo yet
+
+    uploader = make_login(db_session, username="ngozi.okeke", school_id=gmc, role="school_admin")
+
+    def stored(purpose: str, data: bytes) -> uuid.UUID:
+        key = f"schools/{gmc}/{purpose}/{uuid.uuid4().hex}.png"
+        storage.put(key, data, "image/png")
+        use_context(db_session, school_id=gmc, user_id=uploader)  # the database names the uploader
+        file_id: uuid.UUID = db_session.scalar(
+            text(
+                "insert into files (school_id, purpose, storage_key, content_type, size_bytes,"
+                " sha256, original_name) values (:s, :p, :k, 'image/png', :n, :h, 'x.png')"
+                " returning id"
+            ),
+            {"s": gmc, "p": purpose, "k": key, "n": len(data), "h": hashlib.sha256(data).digest()},
+        )
+        use_context(db_session)
+        return file_id
+
+    signature = stored("signature", b"\x89PNG signature bytes")
+    db_session.execute(
+        text("update schools set logo_file_id = :f where id = :s"), {"f": signature, "s": gmc}
+    )
+    assert client.get("/api/v1/auth/schools/GMC/logo").status_code == 404  # not a logo
+
+    logo = stored("logo", b"\x89PNG logo bytes")
+    db_session.execute(
+        text("update schools set logo_file_id = :f where id = :s"), {"f": logo, "s": gmc}
+    )
+    response = client.get("/api/v1/auth/schools/gmc/logo")
+    assert response.status_code == 200
+    assert response.content == b"\x89PNG logo bytes"
+    assert response.headers["content-type"] == "image/png"
+    assert response.headers["cache-control"] == "public, max-age=3600"
+    etag = response.headers["etag"]
+    assert (
+        client.get("/api/v1/auth/schools/GMC/logo", headers={"If-None-Match": etag}).status_code
+        == 304
+    )
+    assert client.get("/api/v1/auth/schools/GMC/public").json()["logo_url"] == (
+        "/api/v1/auth/schools/GMC/logo"
+    )
+    assert client.get("/api/v1/auth/schools/NOPE/logo").status_code == 404
+    db_session.execute(text("update schools set status = 'suspended' where id = :id"), {"id": gmc})
+    assert client.get("/api/v1/auth/schools/GMC/logo").status_code == 404
