@@ -17,6 +17,35 @@ Entry template:
 
 ---
 
+## 2026-10-22 (Session 5, continued): 9.2e part 2a
+
+### What we did
+- PR #36 (9.2e part 1) merged on Chidimma's `merge`; staging not touched.
+- 9.2e part 2 split again: **2a staff and uploads** (this), 2b pupils and parents; learning areas, skills and the rating scale move to 9.2f.
+- Staff: create teachers and reviewers (activation email or slip), edit names and emails, list. Assignments: subject, learning area or form teacher (optionally teaching all subjects), assistants (two per arm at most), reviewer scopes. Ids from other schools are not found; arms at levels that are off are refused; the database's rules come back as 409 with their names.
+- Uploads: logo, signature, stamp; type from the first bytes, 1 MB, Pillow re-save from pixels only (no EXIF or GPS), 1200 px; school folder; logo set at once; downloads for the school's own people with private caching and an ETag. `FileStorage` with a local folder (now git-ignored); Blob comes with the first staging deploy of uploads.
+- Defaults recorded as D-163. Added `pillow` 13.0.0.
+
+### What changed (files)
+- New: `school/staff.py`, `files/{storage,images,routes}.py`, `tests/test_staff_and_uploads.py`.
+- Updated: `main.py` (two routers), `pyproject.toml` and `uv.lock` (Pillow), `.gitignore` (`backend/.local-storage/`), `DECISIONS.md`, `MEMORY.md`, `LOG.md`.
+
+### Issues and fixes
+- psycopg cannot run two statements with parameters in one call; a test now uses one update.
+- Every API test passed first time, so two gaps were closed before the breaks: a test that correction attachments are not served by the school files route, and a test that local storage never leaves its folder.
+- **Deliberate breaks:** 14, all caught.
+
+### Tests
+- Full backend suite: 1129 passed (about 10 minutes locally). Ruff, format and strict Pyright clean.
+
+### Next step
+- After `merge`: 9.2e part 2b, pupils and parents, test-first.
+
+### Blockers
+- None.
+
+---
+
 ## 2026-10-22 (Session 5, continued): 9.2e part 1
 
 ### What we did

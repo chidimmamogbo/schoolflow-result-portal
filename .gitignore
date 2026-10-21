@@ -66,3 +66,6 @@ Desktop.ini
 
 # ---- Claude Code personal settings (shared settings.json is kept) ----
 .claude/settings.local.json
+
+# Uploaded files in development and tests (D-059)
+backend/.local-storage/
