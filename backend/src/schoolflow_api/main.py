@@ -8,6 +8,7 @@ with the environment they want to check.
 from fastapi import APIRouter, FastAPI
 from pydantic import ValidationError
 
+from schoolflow_api.auth import routes as auth
 from schoolflow_api.core import health
 from schoolflow_api.core.errors import register_error_handlers
 from schoolflow_api.core.logs import configure_logging
@@ -42,6 +43,7 @@ def create_app(app_env: str | None = None) -> FastAPI:
     # can sit beside it without breaking the frontend.
     api_v1 = APIRouter(prefix="/api/v1")
     api_v1.include_router(health.router)
+    api_v1.include_router(auth.router)
     app.include_router(api_v1)
     return app
 

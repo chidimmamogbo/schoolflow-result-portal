@@ -17,6 +17,41 @@ Entry template:
 
 ---
 
+## 2026-10-15 to 2026-10-21 (Session 5, continued)
+
+### What we did
+- PR #33 (9.2a, the API core) merged on Chidimma's `merge`; staging not touched.
+- **9.2b and 9.2c in one batch, test-first** (Chidimma's faster pace). Migration 20: `login_throttles` and narrow owner-run functions for what happens before sign-in (find the login's account, a session's account, use up a link, queue reset and "password changed" emails, an active school's public details), callable only by `app_user`.
+- `auth/`: Argon2id via pwdlib (OWASP setting), password rules (15, 10 for students, 128 at most, 9,126 common passwords blocked, different from the current one), session and CSRF tokens (hash only stored; CSRF token tied to the session), growing login delays, and the routes: login, school login page, logout, logout-all, refresh, me, change password, activate, forgot and reset. No register route.
+- `authz/deps.py`: the chain (session with CSRF and Origin, membership and school active, temporary password changed, feature, permission) and route helpers (level on, not found, workflow state, separation of duties).
+- Defaults recorded as D-159 and D-160 instead of questions.
+
+### What changed (files)
+- New: migration 20, `auth/{passwords,tokens,throttle,schemas,routes}.py`, `auth/common_passwords.txt`, `authz/deps.py`, `tests/{auth_support,test_auth,test_authz}.py`.
+- Updated: `auth/models.py` (new `LoginThrottle` model), `main.py` (includes the auth router), `pyproject.toml` and `uv.lock` (`pwdlib[argon2]`), `DECISIONS.md`, `MEMORY.md`, `LOG.md`.
+
+### Issues and fixes
+- **Argon2 too slow with pwdlib's defaults** (about 2 seconds a check here, with the CPU near 95%). Fix: OWASP's first Argon2id setting; hashes upgrade if the cost is raised later (D-159).
+- **pytest would have shipped in the app:** a test helper briefly lived in `passwords.py` and imported pytest (a dev-only package). Moved to `tests/auth_support.py`.
+- **Route coverage test saw no routes:** FastAPI 0.143 keeps included routers nested (`_IncludedRouter`), so `app.routes` no longer lists them. Fix: the test reads the app's OpenAPI description and calls every route without a session, expecting 401 outside the public list.
+- **One failed request wiped the test's set-up:** the test override rolled back the whole session. Fix: each request gets its own savepoint.
+- **Docker Desktop stuck on "starting"** twice; fixed by restarting it by hand.
+- **Deliberate breaks:** 21. 19 caught at once. "No dummy hash check" survived because the test counted calls to our own function; the test now counts real Argon2 checks inside the hasher, and catches it. "Admission number from any school" changes nothing (the account is already tied to the code's school, and a pupil record links only to an account of its own school), so it is a redundant safeguard, not a gap.
+
+### Tests
+- Full backend suite: 1076 passed (about 7 minutes locally). Ruff, format and strict Pyright clean.
+
+### Next step
+- After `merge`: BUILD_PROMPT 9.2d, the platform module (super admin), test-first.
+
+### Blockers
+- None.
+
+### Roughly left
+- Phase 7: 9.2d to 9.2j2 (platform, school administration, grading set-up, results engine, score entry, rating sheets, form teacher, approval and publishing, audit, attention, plus reports, verify, notices, emails, billing and files). Then Phases 8 to 11.
+
+---
+
 ## 2026-10-12 to 2026-10-15 (Session 5)
 
 ### What we did
