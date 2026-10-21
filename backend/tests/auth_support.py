@@ -8,8 +8,9 @@ session and CSRF cookies. All names, emails and passwords are fictional.
 """
 
 import uuid
-from collections.abc import Iterator
+from collections.abc import Callable, Iterator
 from datetime import UTC, datetime, timedelta
+from typing import Any, cast
 from urllib.parse import urlsplit
 
 import pytest
@@ -17,7 +18,7 @@ from fastapi import FastAPI
 from fastapi.testclient import TestClient
 from pwdlib import PasswordHash
 from pwdlib.hashers.argon2 import Argon2Hasher
-from sqlalchemy import text
+from sqlalchemy import CursorResult, text
 from sqlalchemy.orm import Session
 
 from schoolflow_api.auth import passwords
@@ -27,6 +28,7 @@ from schoolflow_api.core.deps import get_db, get_rate_limiter
 from schoolflow_api.core.ratelimit import RateLimiter
 from schoolflow_api.db import use_context
 from schoolflow_api.main import create_app
+from schoolflow_api.platform.deps import get_platform_db
 from schoolflow_api.settings import get_settings
 from tests.factories import add_membership, create_user
 
@@ -176,3 +178,91 @@ def make_link(
         },
     )
     return link_id
+
+
+# Where use_context() keeps (school_id, user_id) in session.info (schoolflow_api/db.py).
+CONTEXT_KEY = "schoolflow_context"
+SET_CONTEXT = text(
+    "select set_config('app.school_id', :s, true), set_config('app.user_id', :u, true)"
+)
+
+
+class PlatformAsRole:
+    """The platform's database session in tests: the test session, but each
+    statement runs as app_platform with the platform's own context.
+
+    In production the platform session is a second connection logged in as
+    app_platform (DATABASE_URL_PLATFORM). Tests keep everything in one rolled-
+    back transaction, so this wrapper switches role around each statement and
+    then puts back the app_user role and context of the request's own session.
+    Only what platform code uses is provided.
+    """
+
+    def __init__(self, session: Session) -> None:
+        self._session = session
+        self.info: dict[str, object] = {}
+
+    def in_transaction(self) -> bool:
+        return False  # use_context() then only records the context in .info
+
+    def _as_platform[T](self, run: Callable[[], T]) -> T:
+        school_id, user_id = cast(tuple[object, object], self.info.get(CONTEXT_KEY, (None, None)))
+        self._session.execute(text("set local role app_platform"))
+        self._session.execute(
+            SET_CONTEXT,
+            {"s": str(school_id or ""), "u": str(user_id or "")},
+        )
+        result = run()
+        # Only after success: after an error the request's savepoint is rolled back.
+        self._session.execute(text("set local role app_user"))
+        user_school, user_user = self._session.info.get(CONTEXT_KEY, (None, None))
+        self._session.execute(
+            SET_CONTEXT,
+            {"s": str(user_school or ""), "u": str(user_user or "")},
+        )
+        return result
+
+    def execute(self, statement: Any, params: Any = None) -> Any:
+        result = self._as_platform(lambda: self._session.execute(statement, params))
+        rows = cast(CursorResult[Any], result)
+        return BufferedResult(list(rows)) if rows.returns_rows else result
+
+    def scalar(self, statement: Any, params: Any = None) -> Any:
+        return self._as_platform(lambda: self._session.scalar(statement, params))
+
+    def scalars(self, statement: Any, params: Any = None) -> Any:
+        return self._as_platform(lambda: list(self._session.scalars(statement, params)))
+
+
+class BufferedResult:
+    """Rows fetched while the role was app_platform, readable afterwards."""
+
+    def __init__(self, rows: list[Any]) -> None:
+        self._rows = rows
+
+    def __iter__(self) -> Iterator[Any]:
+        return iter(self._rows)
+
+    def one(self) -> Any:
+        if len(self._rows) != 1:
+            raise AssertionError(f"expected one row, got {len(self._rows)}")
+        return self._rows[0]
+
+    def first(self) -> Any:
+        return self._rows[0] if self._rows else None
+
+    def all(self) -> list[Any]:
+        return list(self._rows)
+
+
+def build_platform_app(db_session: Session) -> FastAPI:
+    """build_auth_app plus the platform session wrapper (D-051)."""
+    app = build_auth_app(db_session)
+    platform = PlatformAsRole(db_session)
+
+    def test_platform_db() -> Iterator[Session]:
+        platform.info.clear()
+        yield cast(Session, platform)
+
+    app.dependency_overrides[get_platform_db] = test_platform_db
+    return app

@@ -17,6 +17,40 @@ Entry template:
 
 ---
 
+## 2026-10-22 (Session 5, continued)
+
+### What we did
+- **9.2d, the platform (super admin) module, test-first in one batch.** Platform routes check the super admin through the normal chain, then work through a second session as `app_platform` (D-051), which itself refuses anyone else.
+- Migration 21: `platform_school_usage`, `platform_unpublished_classes`, `platform_username_taken`, `platform_email_taken`, owner-run and callable only by `app_platform` (numbers and names, never records).
+- Endpoints: create school (school, features, levels from the school type, subscription, principal, `activation` and `school_setup` emails, audit; taken code, username or email refused with a field error), list, detail, edit, change code (confirmed), suspend with a reason and reactivate, resend the set-up email, usage, activity, features, levels (at least one on; confirmation naming classes with unpublished results; school type worked out), school admins and their login support (email, reset link, temporary password shown once, sign out, deactivate, reactivate, make principal), platform settings (General, Email, Billing, Security, audited), audit log, email log (status only) and payments.
+- Temporary passwords: four words from EFF's short word list (`auth/temporary.py`), reusable by 9.2e.
+- Defaults recorded as D-161.
+
+### What changed (files)
+- New: migration 21, `platform/{deps,schemas,settings_model,routes}.py`, `auth/temporary.py`, `auth/temporary_words.txt`, `tests/test_platform.py`.
+- Updated: `settings.py` (optional `DATABASE_URL_PLATFORM`), `main.py` (includes the platform router), `tests/auth_support.py` (`build_platform_app`, `PlatformAsRole`), `DECISIONS.md`, `MEMORY.md`, `LOG.md`.
+
+### Issues and fixes
+- **Two roles, one test transaction:** the platform session must see the test's uncommitted data, so tests wrap the same session and switch role and context around each platform statement (`PlatformAsRole`); production uses a real second connection.
+- **Making `DATABASE_URL_PLATFORM` required** outside local would break an existing settings test (staging settings without it), so it stays optional (503 without it) until a CHANGE.
+- **Lowercase school codes were refused instead of read as uppercase:** Pydantic checks the pattern before `to_upper`. Fix: uppercase in a before-validator.
+- **Equal timestamps:** audit events in one test transaction share `created_at`; tests compare actions as sets.
+- **Deliberate breaks:** 17. 15 caught at once. "Platform session for anyone" survived because each route's permission check refuses first; a new test calls a test route that uses only the platform session, and it now catches it. "Login support reaches any member" is redundant with row-level security (the platform role sees only school admin accounts, and an account is staff or parent, never both), so it changes nothing. The deactivate test was strengthened before the run to check that the session rows are gone.
+
+### Tests
+- Full backend suite: 1104 passed (about 8 minutes locally). Ruff, format and strict Pyright clean.
+
+### Next step
+- After `merge`: BUILD_PROMPT 9.2e, school administration, test-first.
+
+### Blockers
+- None.
+
+### Roughly left
+- Phase 7: 9.2e to 9.2j2 plus reports, verify, notices, emails, billing and files. Then Phases 8 to 11.
+
+---
+
 ## 2026-10-15 to 2026-10-21 (Session 5, continued)
 
 ### What we did
@@ -36,6 +70,7 @@ Entry template:
 - **Route coverage test saw no routes:** FastAPI 0.143 keeps included routers nested (`_IncludedRouter`), so `app.routes` no longer lists them. Fix: the test reads the app's OpenAPI description and calls every route without a session, expecting 401 outside the public list.
 - **One failed request wiped the test's set-up:** the test override rolled back the whole session. Fix: each request gets its own savepoint.
 - **Docker Desktop stuck on "starting"** twice; fixed by restarting it by hand.
+- **CI dependency audit failed on PR #34:** a new advisory (GHSA-6q48-6c7w-9gw2) against `certifi` 2026.7.22, which bundled root certificates from a CA with compromised intermediate keys. Fix: `uv lock --upgrade-package certifi` to 2026.10.19 (lockfile only; `certifi` comes in through httpx). PR #34 merged on Chidimma's `merge`.
 - **Deliberate breaks:** 21. 19 caught at once. "No dummy hash check" survived because the test counted calls to our own function; the test now counts real Argon2 checks inside the hasher, and catches it. "Admission number from any school" changes nothing (the account is already tied to the code's school, and a pupil record links only to an account of its own school), so it is a redundant safeguard, not a gap.
 
 ### Tests
