@@ -802,6 +802,15 @@ Installed on Chidimma's laptop (checked 2026-10-09): Node 24.21.0, npm 11.19.0, 
 - `duplicates()` finds rows repeating the same key (ignoring capitals and spaces) for imports.
 - Tests: worked examples from the spec, Hypothesis property tests (every total 0 to 100 has exactly one default grade; competition ranking for any class), 100% line and branch coverage.
 
+
+### D-167. Score entry and import (2026-10-22; reading of BUILD_PROMPT 9.2h, SPEC F06 rule 3, F09, D-047, D-143, D-144; defaults chosen while building)
+- **Assignments decide, not roles (D-144):** a person's sheets are the (arm, subject) pairs the `teacher_subjects` view gives them (subject assignments, and the form teacher who teaches all subjects) plus every subject of each arm they assist. Only school staff reach `/sheets` (parents and pupils get 403). Anyone else gets 404 for a sheet; school admins read every sheet of their school but enter scores only where they teach (403 `not_assigned`). Every route needs the Results feature (404 `feature_disabled`) and a level that is on (404 `level_disabled`).
+- **My sheets** lists every pair in the active term, with its sheet's status or `not_started`; only levels on Scores (Skill ratings levels get rating sheets, 9.2h1). **Opening** (`POST /sheets`) makes the draft, or returns the existing one; when the term has no saved structure for the level, the suggested one (the latest earlier structure, else the platform default) is saved then (409 `use_rating_sheet` for a Skill ratings level).
+- **The grid** shows the structure's columns and the arm's current pupils in the term's session who take the subject (pupils who moved out are no longer listed), each with total, grade, missing and out-of-range columns from the results engine, and counts (complete, missing, errors). Search and filters are on the page.
+- **Saving** sends cells (pupil, column, whole number or none). Every cell is checked first (on the sheet, a column of the structure, 0 to the column's maximum; strings and decimals refused): any problem answers 422 `invalid_scores` with one error per cell and saves nothing. The same cell twice in one save: the last value wins. A change after a submission carries the save's reason (the database refuses one without, D-143); removing a score is only allowed in the first draft. Each save writes one `scores.save` audit event with the old and new value of every changed cell.
+- **CSV:** the template has admission number, surname, first name and the column labels, filled with the current scores; an import uses exactly those columns, is previewed with each row's problems (not on the sheet, twice in the file, not a whole number, over the maximum) and committed all or nothing (422 `import_has_errors`); a blank cell leaves that score as it is; the error file returns the bad rows with an `errors` column; the export adds total and grade.
+- Class names on sheets join the class and arm without a space ("JSS 1A"). (`/auth/me`'s form class joins them with a space; to align in a later tidy-up.)
+
 ---
 
 # Stack Summary (one page, for final approval)

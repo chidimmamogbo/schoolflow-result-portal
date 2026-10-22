@@ -17,6 +17,33 @@ Entry template:
 
 ---
 
+## 2026-10-22 (Session 5, continued): 9.2h
+
+### What we did
+- On `merge`: PR #39 (9.2f) merged, PR #40 (9.2g) updated from `main` (the notes files conflicted; both sides kept), CI green again, merged. Staging not touched.
+- **9.2h, score entry and import**, test-first: my sheets by assignment (subject teachers, form teachers who teach all subjects, assistants on their arm), opening a draft (saving the term's structure if missing), the grid (structure's columns, only pupils taking the subject, totals, grades and flags from the engine, counts), saving scores all or nothing with reasons after a submission, CSV template, import preview and commit, error file, export. School admins read every sheet but enter only where they teach.
+- Defaults recorded as D-167. No migration.
+
+### What changed (files)
+- New: `results/sheets.py`, `tests/test_score_entry.py`.
+- Updated: `main.py`, `DECISIONS.md`, `MEMORY.md`, `LOG.md`.
+
+### Issues and fixes
+- Submitting in a test needs every score (the database checks completeness); the test fills the sheet first.
+- Before and during the breaks, tests were added for: blank CSV cells and repeated cells, pupils who moved arms, a level switched off, a Skill ratings level, and a school admin opening a sheet for a subject she does not teach.
+- **Deliberate breaks:** 17. 15 caught at first; one break's search text no longer matched after formatting (checked by hand: caught), and "open any subject" survived for teachers because the request rolls back, but would have let a school admin create sheets; the new test catches it. 17 of 17.
+
+### Tests
+- Full backend suite: 1190 passed (about 12 minutes locally). Ruff, format and strict Pyright clean.
+
+### Next step
+- After `merge`: 9.2h1 rating sheets and 9.2i approval workflow, test-first.
+
+### Blockers
+- None.
+
+---
+
 ## 2026-10-22 (Session 5, continued): 9.2g
 
 ### What we did
