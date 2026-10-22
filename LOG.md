@@ -38,6 +38,28 @@ Entry template:
 
 ### Next step
 - After `merge` of #39 and this PR: 9.2h, score entry and import, test-first.
+## 2026-10-22 (Session 5, continued): 9.2f
+
+### What we did
+- PR #38 (9.2e part 2b and the logo CHANGE) merged on Chidimma's `merge`; staging not touched. 9.2e is complete.
+- **9.2f, grading set-up**, test-first: defaults copied once on first use (bands for all four levels, pass mark 40, 13 traits and the 1 to 5 key, the five-point rating scale, Nursery's ten learning areas when Nursery is on); grading bands and remark bands per level covering 0 to 100; pass mark 1 to 99; traits and key; assessment structures per level and term (1 to 8 components adding up to 100 with the difference shown, none for Skill ratings, next term once locked, the latest earlier structure suggested); learning areas, skills, classes' areas; the rating scale with exactly one attention point, keeping points' ids.
+- Defaults recorded as D-165. No migration: the existing tables, grants and rules were enough.
+
+### What changed (files)
+- New: `grading/setup.py`, `school/grading.py`, `tests/test_grading_setup_api.py`.
+- Updated: `main.py`, `DECISIONS.md`, `MEMORY.md`, `LOG.md`.
+
+### Issues and fixes
+- A test sent an empty band list to check the level rule, which validation refused first; it now sends a valid set.
+- Before the breaks, three tests were added or strengthened: the earlier structure offered for a new term, a school without Nursery gets no learning areas, and scale points keep their ids.
+- The break script now restores each file's exact bytes (no line-ending noise).
+- **Deliberate breaks:** 15. 14 caught at once; "defaults copied again" survived because the test did not check the second request's status (the failed request rolled back, so the counts matched); now it does, and catches it.
+
+### Tests
+- Full backend suite: 1158 passed (about 11 minutes locally). Ruff, format and strict Pyright clean.
+
+### Next step
+- After `merge`: 9.2g, the results engine (pure functions), test-first.
 
 ### Blockers
 - None.
