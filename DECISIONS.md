@@ -786,6 +786,15 @@ Installed on Chidimma's laptop (checked 2026-10-09): Node 24.21.0, npm 11.19.0, 
 - **Not yet:** a brand-new person setting a password straight from the emailed link needs the sender and a new public route, so it comes with the email module as a CHANGE. Accepting is not written to the school's audit log (the request row records when).
 - The school pauses, resumes or removes only its own parent link (removing unlinks the guardian record first; the account and other schools' links stay).
 
+
+### D-166. The results engine (2026-10-22; reading of BUILD_PROMPT 9.2g, SPEC F08 rule 7, F09, F16, AC08.1, AC08.5; defaults chosen while building)
+- `results/engine.py` is pure Python (no database), version `CALCULATION_VERSION = "1.0"`, stored in each published snapshot (bump it when a rule changes a result).
+- A subject total is the sum of the component scores (the maximums add up to 100, so this is the weighted total). It exists only when every column has a score within 0 and its maximum; otherwise the missing and out-of-range columns are listed by label and there is no total. Scores for columns outside the structure are ignored.
+- Grades come from the level's bands (the first band containing the total). Positions are competition ranking: ties share a place and the next places are skipped (1st, 1st, 3rd); ties are judged on exact fractions, never on rounded averages. Averages are shown rounded half up to two places.
+- Subject average, highest and lowest use complete totals only. A pupil's overall total, average and position need a total in every subject they take (they are listed as incomplete otherwise; publishing waits for complete sheets anyway). Pupils taking different numbers of subjects are compared by average. The class average is the average of the complete pupils' averages. "Below pass mark" means a total under the pass mark (the pass mark itself passes).
+- `duplicates()` finds rows repeating the same key (ignoring capitals and spaces) for imports.
+- Tests: worked examples from the spec, Hypothesis property tests (every total 0 to 100 has exactly one default grade; competition ranking for any class), 100% line and branch coverage.
+
 ---
 
 # Stack Summary (one page, for final approval)

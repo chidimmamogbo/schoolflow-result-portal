@@ -17,6 +17,33 @@ Entry template:
 
 ---
 
+## 2026-10-22 (Session 5, continued): 9.2g
+
+### What we did
+- PR #39 (9.2f, grading set-up) opened, CI green. Chidimma said `continue` (not `merge`), so #39 stays open and 9.2g was built on its own branch from `main` (the engine does not depend on #39). MEMORY.md and LOG.md on `main` will catch up when #39 merges (its docs entry for 9.2f is in that PR).
+- **9.2g, the results engine**, test-first: pure functions for totals, grades, positions with ties, averages (half up, ties on exact values), missing and out-of-range flags, duplicates, a whole class's subject and overall results, and the calculation version. Added Hypothesis (D-098) for property tests.
+- Defaults recorded as D-166.
+
+### What changed (files)
+- New: `results/engine.py`, `tests/test_results_engine.py`.
+- Updated: `pyproject.toml` and `uv.lock` (Hypothesis 6.170.5, dev only), `DECISIONS.md`, `MEMORY.md`, `LOG.md`.
+
+### Issues and fixes
+- **Deliberate breaks:** 12. 9 caught at once; three tests were missing and are now added: an average exactly on a half (0.125 rounds to 0.13), two pupils whose averages both show 60.38 but differ (60.385 places above 60.375), and the pass mark itself passing (40 passes, 39 does not). Then 12 of 12.
+- A test helper made an exam score of -1 for a total of 39; it now fills the columns in order.
+- Engine tests use no database, so they ran alongside the full suite.
+
+### Tests
+- Full backend suite: 1162 passed before the three new tests (17 minutes this time, the machine was busy); engine tests 19 passed, 100% line and branch coverage.
+
+### Next step
+- After `merge` of #39 and this PR: 9.2h, score entry and import, test-first.
+
+### Blockers
+- None.
+
+---
+
 ## 2026-10-22 (Session 5, continued): 9.2e part 2b and the logo CHANGE
 
 ### What we did
