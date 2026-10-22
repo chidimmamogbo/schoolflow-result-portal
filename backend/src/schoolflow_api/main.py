@@ -14,6 +14,7 @@ from schoolflow_api.core.errors import register_error_handlers
 from schoolflow_api.core.logs import configure_logging
 from schoolflow_api.core.middleware import add_request_middleware
 from schoolflow_api.files import routes as files
+from schoolflow_api.form_class import routes as form_class
 from schoolflow_api.parents import routes as parents
 from schoolflow_api.platform import routes as platform
 from schoolflow_api.results import rating_sheets
@@ -68,6 +69,7 @@ def create_app(app_env: str | None = None) -> FastAPI:
     api_v1.include_router(result_sheets.router)
     api_v1.include_router(rating_sheets.router)
     api_v1.include_router(sheet_workflow.router)
+    api_v1.include_router(form_class.router)
     app.include_router(api_v1)
     return app
 

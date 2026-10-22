@@ -17,6 +17,33 @@ Entry template:
 
 ---
 
+## 2026-10-22 (Session 5, continued): 9.2h2
+
+### What we did
+- PR #42 (9.2h1 and 9.2i part 1) merged on Chidimma's `merge`; staging not touched.
+- **9.2h2, My class**, test-first: my classes (form teachers and assistants; others 403), the class view (times opened, each pupil's comment, times present and absent, trait ratings, average and suggested comments from the remark bands, counts), the broadsheet (subjects with sheet status and engine totals, or learning areas for Skill ratings), attendance days, pupil entries (checked: present within opened, ratings 1 to 5 on active traits, 300-character comments), preview ("Preview, not published"), submit (form teacher only) and the admin's return with a comment.
+- Defaults recorded as D-169 (submit does not check completeness; publication does, by template). No migration.
+
+### What changed (files)
+- New: `form_class/routes.py`, `tests/test_form_class.py`.
+- Updated: `main.py`, `DECISIONS.md`, `MEMORY.md`, `LOG.md`.
+
+### Issues and fixes
+- A leftover `if False else` around two copies of a query was removed before the first run.
+- Before the breaks a test was added for admins (read only, cannot submit, return only submitted sections) and a Skill ratings broadsheet; after the breaks a check that an assistant can open the arm.
+- **Deliberate breaks:** 15; 14 caught at first, one test strengthened, then 15 of 15.
+
+### Tests
+- Full backend suite: 1206 passed (about 14 minutes locally, the machine was busy). Ruff, format and strict Pyright clean.
+
+### Next step
+- After `merge`: 9.2i part 2, publication, test-first.
+
+### Blockers
+- None.
+
+---
+
 ## 2026-10-22 (Session 5, continued): 9.2h1 and 9.2i part 1
 
 ### What we did
