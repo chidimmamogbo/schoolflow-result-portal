@@ -16,7 +16,9 @@ from schoolflow_api.core.middleware import add_request_middleware
 from schoolflow_api.files import routes as files
 from schoolflow_api.parents import routes as parents
 from schoolflow_api.platform import routes as platform
+from schoolflow_api.results import rating_sheets
 from schoolflow_api.results import sheets as result_sheets
+from schoolflow_api.results import workflow as sheet_workflow
 from schoolflow_api.school import grading as school_grading
 from schoolflow_api.school import guardians as school_guardians
 from schoolflow_api.school import people as school_people
@@ -64,6 +66,8 @@ def create_app(app_env: str | None = None) -> FastAPI:
     api_v1.include_router(parents.router)
     api_v1.include_router(school_grading.router)
     api_v1.include_router(result_sheets.router)
+    api_v1.include_router(rating_sheets.router)
+    api_v1.include_router(sheet_workflow.router)
     app.include_router(api_v1)
     return app
 

@@ -17,6 +17,36 @@ Entry template:
 
 ---
 
+## 2026-10-22 (Session 5, continued): 9.2h1 and 9.2i part 1
+
+### What we did
+- PR #41 (9.2h) merged on Chidimma's `merge`; staging not touched.
+- 9.2i split: publishing needs the form teacher's sections (9.2h2), so this batch is rating sheets plus the sheet moves; publication, reopen and revoke come after 9.2h2.
+- **Rating sheets** (`/rating-sheets`): my rating sheets by assignment (class teachers who teach all subjects, area teachers, assistants), open, grid of pupils by the area's active skills with the school's scale, save ratings and comments all or nothing.
+- **Moves** (`/sheets/{id}/submit|return|review|approve`) for both kinds, the reviewer's queue (`/reviews`) and a read-only view of a sheet in scope, and the school admins' overview (`/school/sheets`). The database's section 8 rules (transitions, completeness, comments, D-052 separation, D-142 review first) stay the final word.
+- Defaults recorded as D-168. No migration.
+
+### What changed (files)
+- New: `results/rating_sheets.py`, `results/workflow.py`, `tests/test_ratings_and_workflow.py`.
+- Updated: `main.py`, `DECISIONS.md`, `MEMORY.md`, `LOG.md`.
+
+### Issues and fixes
+- A test re-sent an unchanged rating after submission (nothing to refuse); it now sends a different point.
+- Pyright needs `Field(default_factory=list[RatingCell])`, not a bare `list`, for typed defaults.
+- Before and after the breaks, tests were added for: approving a draft, a class-scoped reviewer covering rating sheets, opening a rating sheet at a Scores level, and a teacher reading another class's rating sheet.
+- **Deliberate breaks:** 16; 14 caught at first, two missing tests added, then 16 of 16.
+
+### Tests
+- Full backend suite: 1199 passed (about 12 minutes locally). Ruff, format and strict Pyright clean.
+
+### Next step
+- After `merge`: 9.2h2 form teacher tools, then publication (9.2i part 2), test-first.
+
+### Blockers
+- None.
+
+---
+
 ## 2026-10-22 (Session 5, continued): 9.2h
 
 ### What we did
