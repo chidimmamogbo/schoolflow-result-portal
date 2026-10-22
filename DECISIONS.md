@@ -819,6 +819,14 @@ Installed on Chidimma's laptop (checked 2026-10-09): Node 24.21.0, npm 11.19.0, 
 - **School admins do not return sheets** (SPEC section 8 and the permission matrix give returns to reviewers in scope); in a school with no reviewers, admins approve directly.
 - **Queues:** `GET /reviews` lists the reviewer's sheets waiting for review in the active term (scope only); `GET /reviews/{id}` shows a sheet in scope, read only. `GET /school/sheets` (school admins) lists every sheet of the active term with its kind, status and whether a reviewer covers it.
 
+
+### D-169. My class, the form teacher's tools (2026-10-22; reading of BUILD_PROMPT 9.2h2, SPEC F22, D-146, D-148; defaults chosen while building)
+- **Who:** the arm's form (class) teacher and its assistants work in My class; school admins read any arm's My class and return submitted sections (`sheets.approve`), but enter nothing there (403 `not_assigned`); a teacher with no form class or assistant place gets 403 `not_form_teacher` for `/form-class` and 404 for an arm (AC22.1, AC22.2). Every route needs the Results feature and a level that is on.
+- **Broadsheet:** for a Scores level, every current pupil of the arm against every subject the arm takes, with each sheet's status (`not_started` when there is none) and the results engine's subject totals, average and position, plus the class average; for a Skill ratings level, each learning area the class takes with its rating sheet's status.
+- **Entries:** times school opened (1 to 366, never below a pupil's times present: 422 `opened_below_present`); per pupil a comment (up to 300 characters), times present (never above times opened, and opened must be set first: 422 `present_over_opened`) and trait ratings 1 to 5 on active traits only (422 `unknown_trait`); partial saves change only the fields sent. Suggested comments come from the remark band containing the pupil's average (from the current sheets). The section row is made on the first write. Each save writes an audit event; the database records the author on every entry and rating.
+- **Submitting** the sections (the form teacher only; assistants 403 `assistants_cannot_submit`) does not check that every entry is complete: which blocks are required depends on the report template, so completeness is checked at publication (D-148). The class view reports counts (pupils, with a comment, with attendance) so the teacher can see what is missing. A school admin returns submitted sections with a comment (the database also refuses a return without one).
+- **Preview** returns the pupil's report data (subjects with totals and grades, average, position, comment, traits, attendance with times absent) labelled "Preview, not published"; the rendered PDF comes with report templates.
+
 ---
 
 # Stack Summary (one page, for final approval)
