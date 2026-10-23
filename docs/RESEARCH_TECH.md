@@ -564,6 +564,7 @@ Not a choice between products but a checklist to build in from day one, mapped t
 | Uploads | Allowlist by real content type, size limits, random names, private storage, authorised download | [OWASP File Upload](https://cheatsheetseries.owasp.org/cheatsheets/File_Upload_Cheat_Sheet.html) |
 | Secrets | Vercel environment variables per environment; only `.env.example` in git; secret scanning in pre-commit and CI | [Vercel env vars](https://vercel.com/docs/environment-variables) |
 | SQL | SQLAlchemy bound parameters only; a code search for string-built SQL | [OWASP SQL Injection Prevention](https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html) |
+| Dependencies | `bun audit` and `uv audit` fail CI on high or critical advisories. **2026-10-23:** Next.js 16.4.0 had GHSA-2464-fhr4-w9xw and GHSA-673q-mjm6-r5xr (critical, remote code execution) and GHSA-p3m5-59mp-jv5r (high, denial of service), published 2026-10-22, fixed from 16.4.1; the frontend moved to 16.4.2 (checked 2026-10-23) | [GitHub Advisory Database](https://github.com/advisories/GHSA-2464-fhr4-w9xw) |
 
 ---
 

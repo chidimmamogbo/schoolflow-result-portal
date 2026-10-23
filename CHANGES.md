@@ -199,3 +199,11 @@ These seven changes were made during Phase 4 (2026-10-11 to 2026-10-12). Chidimm
 - What changes: migration 23 adds `auth_school_logo(code)` (owner-run, callable only by `app_user`), which returns the storage key, type and hash of an active school's logo and nothing else; a new public route `GET /auth/schools/{code}/logo` (rate limited per IP like the school page) serves it with `Cache-Control: public, max-age=3600` and an ETag; `school_public` fills `logo_url` when a logo exists; `PUBLIC_ROUTES` and its test gain this eighth route. Signatures, stamps and attachments stay private.
 - After: the login page can show the logo of an active school to anyone who knows its code (the code is printed on login slips, and the name is already public on that page); a suspended or unknown school, or a school without a logo, answers 404.
 - Proof: new tests in `tests/test_auth.py` (logo served, 304 with the ETag, no logo, suspended, unknown, a signature is never served here) and the updated public-route test in `tests/test_authz.py`.
+
+### CHANGE: Upgrade Next.js to 16.4.2 for three security advisories (Chidimma `ok`, 2026-10-23)
+- Before: `frontend/package.json` pinned `next` and `eslint-config-next` at 16.4.0.
+- Why it must change: advisories published 2026-10-22 affect Next.js 16.0.0 to 16.4.0: GHSA-2464-fhr4-w9xw and GHSA-673q-mjm6-r5xr (critical, unauthenticated remote code execution) and GHSA-p3m5-59mp-jv5r (high, denial of service with Server Actions). CI's `bun audit` failed on PR #44 and would fail every PR.
+- When: now, before merging anything else.
+- What changes: `next` and `eslint-config-next` move to 16.4.2 (16.4.1 is the first patched release; 16.4.2 was the latest patch, released 2026-10-15); `bun.lock` updated; nothing else.
+- After: `bun audit` finds no vulnerabilities (one documented ignore, D-130); the frontend skeleton behaves the same.
+- Proof: `bun run format:check`, `lint`, `typecheck`, `test` (6 passed), `build` and `audit` locally, then the five required checks in CI.
