@@ -311,21 +311,42 @@ def compact(value: str) -> str:
 
 
 def report_codes(
-    school_code: str, session_name: str, term_number: int, class_name: str, admissions: list[str]
+    school_code: str,
+    session_name: str,
+    term_number: int,
+    class_name: str,
+    admissions: list[str],
+    kept: dict[str, str] | None = None,
+    taken: set[str] | None = None,
 ) -> dict[str, str]:
-    """GMC-2627-T1-JSS1A-014 (AT-16.2); the full admission number if two would clash."""
+    """GMC-2627-T1-JSS1A-014 (AT-16.2), different for every pupil.
+
+    The last part of the admission number, or the whole of it when two pupils
+    share that part; if an ID is still in use (by a classmate, or by another
+    pupil of the school this term, `taken`), it gets -2, -3 and so on. A pupil
+    who already has an ID this term keeps it (`kept`): the database requires
+    the same ID in every revision.
+    """
+    kept = kept or {}
     years = session_name.split("/")
     prefix = f"{school_code}-{years[0][-2:]}{years[-1][-2:]}-T{term_number}-{compact(class_name)}"
-    tails = {a: (re.findall(r"[A-Za-z0-9]+", a) or [a])[-1].upper() for a in admissions}
+    parts = {a: re.findall(r"[A-Z0-9]+", a.upper()) or ["PUPIL"] for a in admissions}
     counts: dict[str, int] = {}
-    for tail in tails.values():
-        counts[tail] = counts.get(tail, 0) + 1
-    codes: dict[str, str] = {}
-    for admission, tail in tails.items():
-        ending = (
-            tail if counts[tail] == 1 else "-".join(re.findall(r"[A-Z0-9]+", admission.upper()))
-        )
-        codes[admission] = f"{prefix}-{ending}"[:64]
+    for found_parts in parts.values():
+        counts[found_parts[-1]] = counts.get(found_parts[-1], 0) + 1
+    codes = {a: kept[a] for a in admissions if a in kept}
+    used = set(taken or set()) | set(codes.values())
+    for admission in sorted(a for a in admissions if a not in kept):
+        tail = parts[admission][-1]
+        ending = tail if counts[tail] == 1 else "-".join(parts[admission])
+        base = f"{prefix}-{ending}"[:64].rstrip("-")
+        code, number = base, 2
+        while code in used:
+            suffix = f"-{number}"
+            code = base[: 64 - len(suffix)].rstrip("-") + suffix
+            number += 1
+        used.add(code)
+        codes[admission] = code
     return codes
 
 
@@ -562,12 +583,24 @@ def publish(arm_id: uuid.UUID, who: Publishers, session: DbSession) -> Published
             {"a": arm.id, "y": term.session_id},
         )
     )
+    earlier = {
+        str(r.enrolment_id): r.report_code
+        for r in session.execute(
+            text(
+                "select distinct enrolment_id, report_code from report_documents where term_id = :t"
+            ),
+            {"t": term.id},
+        )
+    }
+    in_class = {str(p.enrolment_id): p.admission_number for p in pupils}
     codes = report_codes(
         school.code,
         term.session_name,
         term.term_number,
         arm.class_name,
-        [p.admission_number for p in pupils],
+        list(in_class.values()),
+        kept={in_class[e]: code for e, code in earlier.items() if e in in_class},
+        taken={code for e, code in earlier.items() if e not in in_class},
     )
     teacher_of = {
         str(r.subject_id): r.teacher_id

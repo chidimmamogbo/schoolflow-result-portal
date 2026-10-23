@@ -27,6 +27,7 @@ from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from schoolflow_api.grading.setup import ensure_defaults
+from schoolflow_api.reports.publication import report_codes
 from tests.auth_support import build_auth_app, csrf, logged_in, make_login, use_fast_hashing
 from tests.factories import (
     add_arm_subject,
@@ -490,3 +491,42 @@ def test_revoking_a_report_needs_a_reason(
         )
         == "Issued to the wrong pupil."
     )
+
+
+# --- report IDs are different for every pupil (D-170) -------------------------------------------
+
+
+def test_report_ids_never_repeat_in_a_class() -> None:
+    def ids(admissions: list[str], **more: Any) -> dict[str, str]:
+        return report_codes("GMC", "2026/2027", 1, "JSS 1A", admissions, **more)
+
+    assert ids(["GMC/2026/014", "GMC/2026/015"]) == {
+        "GMC/2026/014": "GMC-2627-T1-JSS1A-014",
+        "GMC/2026/015": "GMC-2627-T1-JSS1A-015",
+    }
+    # The same last part: both use the full admission number.
+    assert sorted(ids(["GMC/2026/014", "GMC/2025/014"]).values()) == [
+        "GMC-2627-T1-JSS1A-GMC-2025-014",
+        "GMC-2627-T1-JSS1A-GMC-2026-014",
+    ]
+    # Full numbers that read the same once tidied: a number is added.
+    assert sorted(ids(["GMC/2026/014", "GMC-2026-014", "gmc 2026 014"]).values()) == [
+        "GMC-2627-T1-JSS1A-GMC-2026-014",
+        "GMC-2627-T1-JSS1A-GMC-2026-014-2",
+        "GMC-2627-T1-JSS1A-GMC-2026-014-3",
+    ]
+    # Long numbers cut at 64 characters still differ.
+    # (the second pair is cut just after a dash, which is dropped)
+    long = ["A" * 70 + "/1", "A" * 70 + "-1", "A" * 70 + " 1", "B" * 45 + "/7/1", "B" * 45 + "/8/1"]
+    codes = list(ids(long).values())
+    assert len(set(codes)) == 5 and all(len(c) <= 64 for c in codes)
+    assert all(re.fullmatch(r"[A-Z0-9]+(-[A-Z0-9]+)*", c) for c in codes)
+    # An ID another pupil of the school holds this term is never reused.
+    taken = {"GMC-2627-T1-JSS1A-014"}
+    assert ids(["GMC/2026/014"], taken=taken) == {"GMC/2026/014": "GMC-2627-T1-JSS1A-014-2"}
+    # A pupil keeps the ID of earlier revisions, and a newcomer never takes it.
+    kept = {"GMC/2025/014": "GMC-2627-T1-JSS1A-014"}
+    assert ids(["GMC/2025/014", "GMC/2026/014"], kept=kept) == {
+        "GMC/2025/014": "GMC-2627-T1-JSS1A-014",
+        "GMC/2026/014": "GMC-2627-T1-JSS1A-GMC-2026-014",
+    }
