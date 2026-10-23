@@ -17,6 +17,35 @@ Entry template:
 
 ---
 
+## 2026-10-22 (Session 5, continued): 9.2i part 2a
+
+### What we did
+- PR #43 (9.2h2) merged on Chidimma's `merge`; staging not touched.
+- Publication split in two: 2a now (templates, readiness, principal's comments, publish, revoke, list of reports); 2b next (reopen and republish, attention views, audit timeline).
+- **Report templates**, test-first: versioned per level, settings checked against a fixed shape (footer always shown and last, no way to hide the report ID or QR code, unknown settings refused), Score or Skills card by the level's mode, core styles only, defaults until a school saves one.
+- **Publishing**, test-first: readiness as plain sentences, the principal's comments, then one transaction that publishes sheets and sections, freezes a snapshot per pupil with a report ID (`GMC-2627-T1-JSS1A-014`) and a 12-character verification code, records Students needing attention, posts one notice to the class's audience only and queues score-free emails. Revoke needs a reason.
+- Defaults recorded as D-170. No migration.
+- Chidimma accepted D-170 (2026-10-23) and asked that no two people in a class ever share a report ID: IDs now get `-2`, `-3` when still in use, skip IDs other pupils of the school hold this term, and are kept across revisions. New test with 5 clash cases; 6 of 6 breaks caught after one more case (an ID cut right after a dash).
+
+### What changed (files)
+- New: `reports/templates.py`, `reports/publication.py`, `tests/test_publication.py`.
+- Updated: `main.py`, `DECISIONS.md`, `MEMORY.md`, `LOG.md`.
+
+### Issues and fixes
+- Ruff wanted shorter lines and Pyright a typed list of averages; fixed before the breaks.
+- **Deliberate breaks:** 21; 20 caught at first. Revoking twice was still refused by the database, so the test now asks for the app's own `wrong_status` code; then 21 of 21.
+
+### Tests
+- Full backend suite: 1214 passed (about 13 minutes locally). Ruff, format and strict Pyright clean.
+
+### Next step
+- After `merge`: 9.2i part 2b (reopen and republish, attention views, audit timeline), test-first.
+
+### Blockers
+- None.
+
+---
+
 ## 2026-10-22 (Session 5, continued): 9.2h2
 
 ### What we did
