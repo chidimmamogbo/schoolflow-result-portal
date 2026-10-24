@@ -44,11 +44,18 @@ class Settings(BaseSettings):
     # The super admin's pages only (role app_platform, D-051). Without it those pages
     # answer 503 (making it required needs a CHANGE: an existing test omits it).
     database_url_platform: SecretStr | None = None
+    # The public verification page only (role app_verifier, D-076): it can call
+    # verify_report() and nothing else. Without it /verify answers 503.
+    database_url_verifier: SecretStr | None = None
     database_url_migrations: SecretStr | None = None
     test_database_url: SecretStr | None = None
 
     _check_urls = field_validator(
-        "database_url", "database_url_platform", "database_url_migrations", "test_database_url"
+        "database_url",
+        "database_url_platform",
+        "database_url_verifier",
+        "database_url_migrations",
+        "test_database_url",
     )(must_be_postgres_with_psycopg)
 
     @property

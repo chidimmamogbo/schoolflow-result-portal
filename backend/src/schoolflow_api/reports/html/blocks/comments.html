@@ -1,0 +1,11 @@
+{% set c = t.comments %}{% set v = s.comments %}
+<section class="block comments">
+  {% if c.form_teacher %}
+  <div class="label">{{ "Class teacher's comment" if s.card == "skills" else "Form teacher's comment" }}</div>
+  <p>{{ v.form_teacher or "" }}{% if c.show_names and v.form_teacher_name %}<br><em>{{ v.form_teacher_name }}</em>{% endif %}</p>
+  {% endif %}
+  {% if c.principal %}
+  <div class="label">{{ head_label }}'s comment</div>
+  <p>{{ v.head or "" }}</p>
+  {% endif %}
+</section>

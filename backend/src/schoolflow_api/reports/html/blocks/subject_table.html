@@ -1,0 +1,33 @@
+{% set c = t.subject_table %}
+<section class="block">
+  <table class="{{ 'shaded' if c.row_shading else '' }}">
+    <thead><tr>
+      <th>Subject</th>
+      {% if c.components %}{% for col in s.structure %}<th class="num">{{ col.label }}<br>{{ col.max_score }}</th>{% endfor %}{% endif %}
+      {% if c.total %}<th class="num">Total<br>100</th>{% endif %}
+      {% if c.grade %}<th>Grade</th>{% endif %}
+      {% if c.remark %}<th>Remark</th>{% endif %}
+      {% if c.position %}<th class="num">Subject position</th>{% endif %}
+      {% if c.class_average %}<th class="num">Class average</th>{% endif %}
+      {% if c.highest %}<th class="num">Highest in class</th>{% endif %}
+      {% if c.lowest %}<th class="num">Lowest in class</th>{% endif %}
+      {% if c.teacher_initials %}<th>Teacher</th>{% endif %}
+    </tr></thead>
+    <tbody>
+    {% for row in (s.subjects | sort(attribute="category") if c.group_by_category else s.subjects) %}
+      <tr>
+        <td>{{ row.name }}</td>
+        {% if c.components %}{% for col in s.structure %}<td class="num">{{ row.scores.get(col.label, "") }}</td>{% endfor %}{% endif %}
+        {% if c.total %}<td class="num{{ ' below' if c.highlight_below_pass and row.below_pass_mark else '' }}">{{ row.total if row.total is not none else "" }}</td>{% endif %}
+        {% if c.grade %}<td>{{ row.grade or "" }}</td>{% endif %}
+        {% if c.remark %}<td>{{ row.remark or "" }}</td>{% endif %}
+        {% if c.position %}<td class="num">{{ row.position | place }}</td>{% endif %}
+        {% if c.class_average %}<td class="num">{{ row.class_average or "" }}</td>{% endif %}
+        {% if c.highest %}<td class="num">{{ row.highest if row.highest is not none else "" }}</td>{% endif %}
+        {% if c.lowest %}<td class="num">{{ row.lowest if row.lowest is not none else "" }}</td>{% endif %}
+        {% if c.teacher_initials %}<td>{{ row.teacher | initials }}</td>{% endif %}
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</section>

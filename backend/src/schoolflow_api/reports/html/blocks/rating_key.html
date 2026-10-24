@@ -1,0 +1,4 @@
+<section class="block">
+  <div class="label">Rating key</div>
+  <p class="key">{% for p in s.scale %}{{ p.name }} ({{ p.code }}){% if t.rating_key.show_descriptions and p.description %}: {{ p.description }}{% endif %}{{ " · " if not loop.last else "" }}{% endfor %}</p>
+</section>

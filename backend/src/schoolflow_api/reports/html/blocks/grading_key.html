@@ -1,0 +1,3 @@
+<p class="key">Grading:
+{% for b in s.grading.bands %}{{ b.grade }} {{ b.min_score }} to {{ b.max_score }}{% if b.remark %} {{ b.remark }}{% endif %}{{ " · " if not loop.last else "" }}{% endfor %}
+</p>

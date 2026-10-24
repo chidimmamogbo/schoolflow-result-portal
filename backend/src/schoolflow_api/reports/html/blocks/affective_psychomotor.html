@@ -1,0 +1,14 @@
+{% set a = t.affective_psychomotor %}
+<section class="block domains {{ 'stacked' if a.layout == 'stacked' else '' }}">
+  {% for title, rows, on in [("Affective domain (1 to 5)", affective, a.affective), ("Psychomotor domain (1 to 5)", psychomotor, a.psychomotor)] %}
+  {% if on and rows %}
+  <div>
+    <div class="label">{{ title }}</div>
+    <table><tbody>{% for r in rows %}<tr><td>{{ r.name }}</td><td class="num">{{ r.value if r.value is not none else "" }}</td></tr>{% endfor %}</tbody></table>
+  </div>
+  {% endif %}
+  {% endfor %}
+  {% if a.rating_key and s.trait_key %}
+  <p class="key">{% for value, label in s.trait_key | dictsort(reverse=true) %}{{ value }} {{ label }}{{ " · " if not loop.last else "" }}{% endfor %}</p>
+  {% endif %}
+</section>

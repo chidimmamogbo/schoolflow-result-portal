@@ -1,0 +1,16 @@
+{% set h = t.school_header %}
+<header class="block header logo-{{ h.logo_position }}">
+  {% if h.logo and logo %}<img src="{{ logo }}" alt="{{ s.school.name }} logo">{% endif %}
+  <div>
+    <h1 class="school-name">{{ s.school.name }}</h1>
+    {% if h.address and (s.school.address or s.school.city) %}
+    <div>{{ [s.school.address, s.school.city, s.school.state] | select | join(", ") }}</div>
+    {% endif %}
+    {% if h.contacts and (s.school.phone or s.school.email) %}
+    <div>{{ [s.school.phone, s.school.email] | select | join(" · ") }}</div>
+    {% endif %}
+    {% if h.motto and s.school.get("motto") %}<div><em>{{ s.school.motto }}</em></div>{% endif %}
+    <div class="title">{{ h.report_title }}</div>
+    {% if h.session_term_line %}<div>{{ s.term.name }} · {{ s.term.session }} Session</div>{% endif %}
+  </div>
+</header>
