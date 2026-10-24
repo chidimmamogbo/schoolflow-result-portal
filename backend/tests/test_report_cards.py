@@ -121,3 +121,26 @@ def test_school_admins_open_cards_and_preview_templates(
         404,
         "level_disabled",
     )
+
+
+def test_published_snapshots_keep_the_term_dates(
+    app: FastAPI, db_session: Session, gmc: dict[str, Any]
+) -> None:
+    publish_a(app, gmc)
+    term = db_session.execute(
+        text("select starts_on, ends_on from terms where id = :t"), {"t": gmc["term"]}
+    ).one()
+    report_id, snapshot = db_session.execute(
+        text(
+            "select id, snapshot from report_documents where report_code = 'GMC-2627-T1-JSS1A-014'"
+        )
+    ).one()
+    assert (snapshot["term"]["starts_on"], snapshot["term"]["ends_on"]) == (
+        term.starts_on.isoformat(),
+        term.ends_on.isoformat(),
+    )
+    html = as_(app, "ngozi.okeke").get(f"/api/v1/school/reports/{report_id}/card.html").text
+    expected = (
+        f"{term.starts_on.day} {term.starts_on:%b %Y} to {term.ends_on.day} {term.ends_on:%b %Y}"
+    )
+    assert "Term dates" in html and expected in html

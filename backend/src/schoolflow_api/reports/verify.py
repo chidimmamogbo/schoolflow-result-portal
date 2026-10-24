@@ -5,7 +5,8 @@ genuine, without logging in. The lookup runs on its own database login,
 app_verifier, which can call `verify_report()` and read nothing else; the
 database hashes the code and returns only the school, the masked name
 (`Chuk*** O.`), session, term, status, revision, report ID and publication
-date, never scores or the full name (D-074). Input is forgiving (capitals,
+date, and for an old revision the newest one's number and date (migration
+25), never scores, the full name or another revision's code (D-074). Input is forgiving (capitals,
 spaces and dashes do not matter). A report verifies even when its level is
 switched off or the school is suspended (D-075). Each IP gets 30 lookups a
 minute and 10 unknown codes a minute (D-076); answers are never cached or
@@ -71,6 +72,8 @@ class Verification(ApiModel):
     revision: int
     published_at: dt.datetime | None
     has_newer_revision: bool
+    newer_revision: int | None  # the newest revision, for "A newer version exists (...)"
+    newer_published_at: dt.datetime | None
 
 
 @router.get(
@@ -114,4 +117,6 @@ def verify(
         revision=row.revision,
         published_at=row.published_at,
         has_newer_revision=row.has_newer_revision,
+        newer_revision=row.newer_revision,
+        newer_published_at=row.newer_published_at,
     )

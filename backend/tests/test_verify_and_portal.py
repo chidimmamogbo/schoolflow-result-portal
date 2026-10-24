@@ -113,6 +113,8 @@ def test_anyone_can_verify_a_published_report(
         "report_id": "GMC-2627-T1-JSS1A-014",
         "revision": 1,
         "has_newer_revision": False,
+        "newer_revision": None,
+        "newer_published_at": None,
     }
     assert body["published_at"]
     assert (headers["cache-control"], headers["referrer-policy"]) == ("no-store", "no-referrer")
@@ -152,6 +154,10 @@ def test_superseded_and_revoked_reports(
     new = check(app, new_code["verification_code"])[1]
     assert (old["status"], old["revision"], old["has_newer_revision"]) == ("superseded", 1, True)
     assert (new["status"], new["revision"], new["has_newer_revision"]) == ("valid", 2, False)
+    # VerifyAfter: "A newer version exists (revision 2, <date>)", never its code.
+    assert (old["newer_revision"], old["newer_published_at"]) == (2, new["published_at"])
+    assert (new["newer_revision"], new["newer_published_at"]) == (None, None)
+    assert new_code["verification_code"] not in str(old)
 
     report_id = db_session.scalar(
         text("select id from report_documents where verification_code = :c"),

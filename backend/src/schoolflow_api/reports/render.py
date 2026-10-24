@@ -127,6 +127,9 @@ def render_card(
         blocks=visible_blocks(settings),
         issued=issued,
         published_on=day(issued.published_at) if issued.published_at else "",
+        published_iso=issued.published_at.isoformat(timespec="seconds")
+        if issued.published_at
+        else None,
         verify_url=verify_url,
         verify_base=verify_base_url.rstrip("/") + "/verify",
         qr=qr_svg(verify_url) if verify_url else None,

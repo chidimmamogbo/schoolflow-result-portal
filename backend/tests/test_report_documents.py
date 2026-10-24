@@ -470,6 +470,8 @@ def test_a_valid_code_shows_only_the_published_facts(
         "report_code",
         "published_at",
         "has_newer_revision",
+        "newer_revision",  # migration 25 (CHANGE 2026-10-24)
+        "newer_published_at",
     }
     assert {key: value for key, value in found.items() if key != "published_at"} == {
         "school_name": "Greenfield Model College",
@@ -480,6 +482,8 @@ def test_a_valid_code_shows_only_the_published_facts(
         "revision": 1,
         "report_code": REPORT_ID,
         "has_newer_revision": False,
+        "newer_revision": None,
+        "newer_published_at": None,
     }
 
 
