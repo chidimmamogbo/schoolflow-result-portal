@@ -4,6 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
+{% if published_iso %}<meta name="dcterms.created" content="{{ published_iso }}">
+<meta name="dcterms.modified" content="{{ published_iso }}">{% endif %}
+<meta name="generator" content="SchoolFlow">
 <title>{{ s.pupil.first_name }} {{ s.pupil.surname }}, {{ s.term.name }} {{ s.term.session }}</title>
 <style>
   @page { size: {{ "A4" if t.page.paper == "a4" else "letter" }}; margin: {{ "10mm" if t.page.margins == "narrow" else "15mm" }}; }

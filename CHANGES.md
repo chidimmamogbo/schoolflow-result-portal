@@ -239,3 +239,28 @@ These seven changes were made during Phase 4 (2026-10-11 to 2026-10-12). Chidimm
 - What changes: `"git": {"deploymentEnabled": false}` in `vercel.json` (Vercel docs, git configuration, checked 2026-10-24); once this is merged, old images are deleted with `vercel vcr image rm backend <imageId>`, keeping staging's image (`154f10e13ec3`) and the newest five.
 - After: pull requests no longer get a Vercel preview link or the non-required "Vercel" check; to turn previews back on in Phase 8, list the branches again or remove the setting.
 - Proof: the next PR shows no Vercel build; `vercel vcr image ls backend` shows the images that are left; the staging page still loads.
+
+### CHANGE: WeasyPrint PDFs in the backend container and CI (Chidimma `ok`, 2026-10-24)
+- Before: report cards existed only as HTML (D-172); `Dockerfile.vercel` and the CI Backend job had no Pango, so WeasyPrint could not run.
+- Why it must change: F12 and F14 need PDF downloads; D-060 chose WeasyPrint in the container and D-064 bundled fonts with no network fetches.
+- When: now, after the card HTML (PR #50).
+- What changes: WeasyPrint 70.0 (and pypdf 6.21.2, pypdfium2 5.14.0 for tests) in `pyproject.toml`; `Dockerfile.vercel` installs `libpango-1.0-0 libpangoft2-1.0-0 libharfbuzz-subset0 fonts-dejavu-core fontconfig` (WeasyPrint's Debian guide, checked 2026-10-24), builds the font cache with `fc-cache -f` and sets `XDG_CACHE_HOME=/tmp` (the app user has no home folder, and Fontconfig otherwise warns on every render) and copies Inter, Merriweather and Nunito (SIL Open Font License) downloaded by `backend/docker/fetch_fonts.py` from Google Fonts at commit `e7db6ca`, each checked by SHA-256 (fonts are not kept in git); CI's Backend job installs the same three Pango libraries. New routes `/me/reports/{id}/report.pdf` and `/school/reports/{id}/report.pdf`; WeasyPrint is loaded on first use, so the app still starts without Pango (downloads then answer 503).
+- Size: measured locally on 2026-10-24, the image is 506 MB; PDF support accounts for about 68 MB (Python libraries 44 MB, system packages 18 MB, fonts 6 MB). The container renders all three fonts and `/api/v1/health` answers.
+- After: PDFs are made again from the card HTML on each download (D-058), the same report giving the same bytes (D-067); the PDF tests skip on Windows and must run in CI (`test_ci_can_make_pdfs`).
+- Proof: `tests/test_pdf.py` in CI; the Docker build and smoke test in CI.
+
+### CHANGE: Published snapshots keep the term dates (Chidimma `ok`, 2026-10-24)
+- Before: the snapshot's `term` held the number, name, session and next term date only, but the report card design prints "Term dates 8 Sep to 11 Dec 2026".
+- Why it must change: the card is built from the snapshot alone (D-172).
+- When: now, before real reports exist.
+- What changes: `reports/publication.py` adds `starts_on` and `ends_on` to `term` in new snapshots; the card shows the line when both are there.
+- After: reports published earlier keep their snapshots (no line); republishing a class published before this change gives every pupil a new revision, because their snapshots now differ.
+- Proof: `tests/test_report_cards.py::test_published_snapshots_keep_the_term_dates`.
+
+### CHANGE: Verification names the newer revision (Chidimma `ok`, 2026-10-24)
+- Before: `verify_report()` (migration 15) said only whether a newer revision exists.
+- Why it must change: the VerifyAfter design says "A newer version exists (revision 2, 10 Dec 2026)".
+- When: now, with the verify page's API.
+- What changes: migration 25 drops and recreates `verify_report()` with two more columns, `newer_revision` and `newer_published_at` (the newest revision's number and date), same owner-run settings and single grant to `app_verifier`; `/verify/{code}` returns them. It still never returns another revision's code, the full name or any score.
+- After: the SUPERSEDED page can name the newer revision and its date.
+- Proof: `tests/test_verify_and_portal.py::test_superseded_and_revoked_reports`; `tests/test_migrations.py` (upgrade and downgrade).

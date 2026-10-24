@@ -17,6 +17,38 @@ Entry template:
 
 ---
 
+## 2026-10-24 (Session 5, continued): PDFs, term dates, migration 25
+
+### What we did
+- PR #50 merged on `merge`; Chidimma said `ok` to three CHANGEs.
+- **PDFs**, test-first: WeasyPrint 70.0 renders the card HTML on each download (`/me/reports/{id}/report.pdf`, `/school/reports/{id}/report.pdf`), inline data only, the same bytes each time. `Dockerfile.vercel` gets Pango, Fontconfig and the three fonts (downloaded at a pinned Google Fonts commit, checked by SHA-256); CI's Backend job gets Pango.
+- **Term dates** now in new snapshots; the card prints them.
+- **Migration 25:** `verify_report()` also returns the newest revision's number and date; `/verify` passes them on.
+
+### What changed (files)
+- New: `reports/pdf.py`, `docker/fetch_fonts.py`, migration 25, `tests/test_pdf.py`.
+- Updated: `Dockerfile.vercel`, `.github/workflows/ci.yml`, `pyproject.toml`, `uv.lock`, `parents/portal.py`, `reports/cards.py`, `reports/verify.py`, `reports/publication.py`, `reports/render.py`, `reports/html/card.html`, `tests/test_verify_and_portal.py`, `tests/test_report_cards.py`, `tests/test_report_documents.py` (pinned columns), `CHANGES.md`, `DECISIONS.md`, `MEMORY.md`, `LOG.md`.
+
+### Issues and fixes
+- WeasyPrint 70 replaced the fetcher function with a `URLFetcher` class; used `allowed_protocols={"data"}`.
+- A Python edit wrote a literal `
+` into the Dockerfile and apt failed (exit 100); fixed by hand.
+- Docker Desktop dropped one build ("error reading from server: EOF"); a retry worked.
+- Fontconfig warned "No writable cache directories" on each render; fixed by building the cache in the image and `XDG_CACHE_HOME=/tmp`.
+- The image is 506 MB; my estimate of 30 to 60 MB extra was low: PDF support is about 68 MB.
+- Migration 15's test pins `verify_report`'s columns; updated for the two approved new ones.
+
+### Tests
+- Full backend suite: 1244 passed, 1 skipped (the PDF check, no Pango on Windows), 1 failed (the pinned columns, then fixed; its file passes 69 of 69). The PDF check runs in CI.
+
+### Next step
+- After `merge`: corrections and the notice board, test-first.
+
+### Blockers
+- None.
+
+---
+
 ## 2026-10-24 (Session 5, continued): images cleared, card HTML, verification, portal
 
 ### What we did

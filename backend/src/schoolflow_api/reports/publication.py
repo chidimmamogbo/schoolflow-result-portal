@@ -511,7 +511,8 @@ def publish(arm_id: uuid.UUID, who: Publishers, session: DbSession) -> Published
     ensure_defaults(session, school_id, who.role.value)
     term = session.execute(
         text(
-            "select t.id, t.session_id, t.term_number, t.next_term_begins, s.name as session_name"
+            "select t.id, t.session_id, t.term_number, t.starts_on, t.ends_on, t.next_term_begins,"
+            " s.name as session_name"
             " from terms t join academic_sessions s on s.id = t.session_id where t.is_active"
         )
     ).first()
@@ -706,6 +707,8 @@ def publish(arm_id: uuid.UUID, who: Publishers, session: DbSession) -> Published
                 "number": term.term_number,
                 "name": TERM_NAMES[term.term_number],
                 "session": term.session_name,
+                "starts_on": term.starts_on.isoformat(),  # CHANGE 2026-10-24
+                "ends_on": term.ends_on.isoformat(),
                 "next_term_begins": term.next_term_begins.isoformat()
                 if term.next_term_begins
                 else None,

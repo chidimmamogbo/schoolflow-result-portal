@@ -1,7 +1,7 @@
 """Report cards for the school's staff (BUILD_PROMPT 9.2k; SPEC F12; D-066, D-172).
 
 School admins open any published report of their school as the printed
-card's HTML (Valid, Superseded or Revoked, the status printed in the
+card's HTML or PDF (Valid, Superseded or Revoked, the status printed in the
 footer), and preview a level's template with fictional data, watermarked
 "Preview, not published", before saving it. Both use the same renderer as
 the parents' card and the PDF.
@@ -10,13 +10,14 @@ the parents' card and the PDF.
 import uuid
 from typing import Annotated, Any
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Response
 from fastapi.responses import HTMLResponse
 from sqlalchemy import text
+from sqlalchemy.orm import Session
 
 from schoolflow_api.authz.deps import Principal, ensure_level_enabled, found, require
 from schoolflow_api.core.deps import DbSession
-from schoolflow_api.parents.portal import Storage, card_response, school_logo
+from schoolflow_api.parents.portal import Storage, card_response, pdf_response, school_logo
 from schoolflow_api.reports.render import Issued, render_card
 from schoolflow_api.reports.templates import Settings, card_for, current, head_title_of
 from schoolflow_api.school.schemas import LevelName
@@ -41,11 +42,8 @@ SAMPLE_AREAS = (
 )
 
 
-@router.get("/reports/{report_id}/card.html", response_class=HTMLResponse)
-def school_report_card(
-    report_id: uuid.UUID, _: Publishers, session: DbSession, storage: Storage
-) -> HTMLResponse:
-    row = found(
+def school_report(session: Session, report_id: uuid.UUID) -> Any:
+    return found(
         session.execute(
             text(
                 "select id, report_code, revision, status, published_at, verification_code,"
@@ -54,7 +52,20 @@ def school_report_card(
             {"r": report_id},
         ).first()
     )
-    return card_response(session, storage, row)
+
+
+@router.get("/reports/{report_id}/card.html", response_class=HTMLResponse)
+def school_report_card(
+    report_id: uuid.UUID, _: Publishers, session: DbSession, storage: Storage
+) -> HTMLResponse:
+    return card_response(session, storage, school_report(session, report_id))
+
+
+@router.get("/reports/{report_id}/report.pdf", response_class=Response)
+def school_report_pdf(
+    report_id: uuid.UUID, _: Publishers, session: DbSession, storage: Storage
+) -> Response:
+    return pdf_response(session, storage, school_report(session, report_id))
 
 
 def sample_snapshot(

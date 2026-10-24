@@ -1,7 +1,9 @@
 # The backend container that Vercel builds and runs as the `backend` service (D-110, D-119).
 # Follows uv's Docker guide (multi-stage, non-editable install) at uv 0.12.16
 # and Vercel's "Deploy Python apps on Vercel using Docker" guide. Checked 2026-10-11.
-# The PDF system libraries (Pango for WeasyPrint) are added here in the PDF step.
+# PDFs (CHANGE 2026-10-24, D-060, D-064): Pango for WeasyPrint from Debian, as its
+# install guide lists for Debian 11 and later (checked 2026-10-24), and the three
+# report card fonts, downloaded at a pinned commit and checked by SHA-256.
 
 # ---- Stage 1: install dependencies and the app into a virtual environment ----
 FROM python:3.14-slim AS builder
@@ -22,19 +24,34 @@ RUN uv sync --locked --no-install-project --no-editable
 COPY src ./src
 RUN uv sync --locked --no-editable
 
+# The report card fonts (Inter, Merriweather, Nunito; SIL Open Font License).
+COPY docker/fetch_fonts.py ./docker/fetch_fonts.py
+RUN python docker/fetch_fonts.py /fonts
+
 # ---- Stage 2: the small image that actually runs ----
 FROM python:3.14-slim
 
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     PORT=8000 \
-    PATH="/app/.venv/bin:$PATH"
+    PATH="/app/.venv/bin:$PATH" \
+    XDG_CACHE_HOME=/tmp
+
+# Pango and HarfBuzz for WeasyPrint, plus a plain fallback font and fc-cache; no
+# package lists kept.
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        libpango-1.0-0 libpangoft2-1.0-0 libharfbuzz-subset0 fonts-dejavu-core fontconfig \
+    && rm -rf /var/lib/apt/lists/*
 
 # Run as an unprivileged user, never as root.
 RUN useradd --system --uid 10001 --no-create-home app
 
 # Only the virtual environment is copied: no source tree, no uv, no tests.
 COPY --from=builder /app/.venv /app/.venv
+COPY --from=builder /fonts /usr/share/fonts/truetype/schoolflow
+# Build the font cache now, so the app never needs a writable font cache.
+RUN fc-cache -f
 
 USER app
 EXPOSE 8000

@@ -16,6 +16,7 @@ dependencies = [
     "pydantic-settings>=2.15.0",
     "segno>=1.6.6",
     "sqlalchemy>=2.1.4",
+    "weasyprint>=70.0",
 ]
 
 [build-system]
@@ -26,6 +27,8 @@ build-backend = "uv_build"
 dev = [
     "httpx2>=2.13.1",
     "hypothesis>=6.170.5",
+    "pypdf>=6.21.2",
+    "pypdfium2>=5.14.0",
     "pyright>=1.1.414",
     "pytest>=9.1.1",
     "pytest-cov>=7.1.0",

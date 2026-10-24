@@ -6,7 +6,7 @@ and colour (one account across schools, D-138); a student sees only
 themselves. Only published reports appear (AC14.1): Valid ones and older
 Superseded revisions, each with its status and revision; a revoked report is
 withdrawn and never shown. A report opens as light data for the online view
-or as the printed card's HTML. Reading another school's children switches
+or as the printed card's HTML or PDF. Reading another school's children switches
 the database's school for that query only, and only to schools the signed-
 in parent belongs to; reports themselves are read in the school chosen with
 X-School-Id, like every other request. Staff use the school's own pages.
@@ -16,7 +16,7 @@ import datetime as dt
 import uuid
 from typing import Annotated, Any
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Response
 from fastapi.responses import HTMLResponse
 from sqlalchemy import text
 from sqlalchemy.orm import Session
@@ -28,6 +28,7 @@ from schoolflow_api.core.errors import ProblemError
 from schoolflow_api.core.schemas import ApiModel
 from schoolflow_api.db import use_context
 from schoolflow_api.files.storage import FileStorage, get_file_storage
+from schoolflow_api.reports import pdf
 from schoolflow_api.reports.render import Issued, logo_uri, render_card
 from schoolflow_api.schools.models import Feature
 from schoolflow_api.settings import get_settings
@@ -38,6 +39,7 @@ Families = Annotated[Principal, Depends(require("reports.view"))]
 Readers = Annotated[Principal, Depends(require("reports.view", feature=Feature.PARENT_PORTAL))]
 Storage = Annotated[FileStorage, Depends(get_file_storage)]
 FAMILY = (Role.PARENT, Role.STUDENT)
+PRIVATE = {"Cache-Control": "private, no-store"}
 TERM_NAMES = {1: "First Term", 2: "Second Term", 3: "Third Term"}
 
 
@@ -306,14 +308,28 @@ def school_logo(session: Session, storage: FileStorage, snapshot: dict[str, Any]
     return logo_uri(storage.get(row.storage_key), row.content_type) if row else None
 
 
-def card_response(session: Session, storage: FileStorage, row: Any) -> HTMLResponse:
-    html = render_card(
+def card_html(session: Session, storage: FileStorage, row: Any) -> str:
+    return render_card(
         row.snapshot,
         Issued(row.report_code, row.revision, row.published_at, row.verification_code, row.status),
         verify_base_url=str(get_settings().app_base_url),
         logo=school_logo(session, storage, row.snapshot),
     )
-    return HTMLResponse(html, headers={"Cache-Control": "private, no-store"})
+
+
+def card_response(session: Session, storage: FileStorage, row: Any) -> HTMLResponse:
+    return HTMLResponse(card_html(session, storage, row), headers=PRIVATE)
+
+
+def pdf_response(session: Session, storage: FileStorage, row: Any) -> Response:
+    """The PDF, made again from the same HTML on each download (D-058)."""
+    body = pdf.pdf_of(card_html(session, storage, row), row.report_code, row.revision)
+    name = pdf.filename(row.report_code, row.revision)
+    return Response(
+        body,
+        media_type="application/pdf",
+        headers={**PRIVATE, "Content-Disposition": f'attachment; filename="{name}"'},
+    )
 
 
 @router.get("/reports/{report_id}/card.html", response_class=HTMLResponse)
@@ -322,3 +338,10 @@ def report_card(
 ) -> HTMLResponse:
     """The printed card as HTML (the PDF is made from the same HTML)."""
     return card_response(session, storage, my_report(session, who, report_id))
+
+
+@router.get("/reports/{report_id}/report.pdf", response_class=Response)
+def report_pdf(
+    report_id: uuid.UUID, who: Readers, session: DbSession, storage: Storage
+) -> Response:
+    return pdf_response(session, storage, my_report(session, who, report_id))
