@@ -17,6 +17,30 @@ Entry template:
 
 ---
 
+## 2026-10-25 (Session 5, continued): domain folders, PR 2
+
+### What we did
+- PR #52 (moving day) merged on `merge`.
+- Wrote a splitter (scratchpad `split_domain.py`): it reads a route file with Python's parser and writes `schemas.py` (the ApiModel classes), `utils.py` (named pure helpers), `services.py` (each route's body, unchanged, as a function with plain parameters, plus the other helpers) and a thin `router.py` that calls the service.
+- Split `publication` (1151 lines: router 76, services 1036, schemas 70, utils 72) and `platform_admin` (router 267, services 1014; its schemas file was already separate).
+
+### What changed (files)
+- `app/src/publication/` and `app/src/platform_admin/`; one test import line (`report_codes` now in `publication/utils.py`); `MEMORY.md`, `LOG.md`.
+
+### Issues and fixes
+- None. `platform_admin/services.py` still returns a JSONResponse for "name taken"; to move into the router in a later PR.
+
+### Tests
+- Full backend suite: 1245 passed, 1 skipped (PDF on Windows), as before. Ruff, format and strict Pyright clean.
+
+### Next step
+- After `merge`: PRs 3 to 5, the remaining domains.
+
+### Blockers
+- None.
+
+---
+
 ## 2026-10-25 (Session 5, continued): domain folders, PR 1 (moving day)
 
 ### What we did
