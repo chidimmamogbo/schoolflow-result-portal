@@ -215,3 +215,19 @@ These seven changes were made during Phase 4 (2026-10-11 to 2026-10-12). Chidimm
 - What changes: `bun audit fix` moved zod to 4.6.6 and undici to 8.12.2 inside the ranges already allowed; only `bun.lock` changes.
 - After: `bun audit` finds no vulnerabilities (with the documented D-130 ignore); nothing shipped to users changes.
 - Proof: `bun run format:check`, `lint`, `typecheck`, `test` (6 passed), `build` and `audit` locally, then the five required checks in CI.
+
+### CHANGE: Report template defaults follow the approved labels file (Chidimma `ok`, 2026-10-24)
+- Before: PR #44 (D-170) chose some defaults that differ from `design/NAVIGATION_AND_SETTINGS.md` section 3: Attendance shown, class average per subject off, scores below the pass mark highlighted, number of subjects in the summary, and on the Skills report card the pupil's photo on and ratings as words and codes. The head's title was editable only in the level settings.
+- Why it must change: the labels file is the source of exact labels and defaults (AGENT.md design rules).
+- When: now, before any screen or PDF uses the defaults.
+- What changes: in `reports/templates.py`, Score report card: Attendance hidden, class average on, highlight off, number of subjects off; Skills report card: photo off, ratings as words. Templates show the level's head's title, and saving a template may change it (written to `school_levels.head_title`, audited as `school_levels.update`). Templates already saved keep their settings.
+- After: a school that never saved a template publishes without times present unless it shows the Attendance block.
+- Proof: `tests/test_template_defaults.py` (red on the old code, green now); the publication tests stay green.
+
+### CHANGE: Score sheet CSV exports show formula-like cells as text (Chidimma `ok`, 2026-10-24)
+- Before: `results/sheets.csv_text` (score sheet export, template and import error files) wrote cells as they were; a surname such as `=cmd|calc` would run as a formula when a teacher opened the file in a spreadsheet.
+- Why it must change: names and comments come from school data, and the attention export already guards against this (D-171).
+- When: now.
+- What changes: `csv_text` puts an apostrophe before any cell that starts with `=`, `+`, `-`, `@`, a tab or a return; the attention export uses the same function.
+- After: every CSV the API writes is safe to open in a spreadsheet; ordinary cells are unchanged.
+- Proof: `tests/test_template_defaults.py::test_score_sheet_exports_show_formulas_as_text` and the attention CSV tests.

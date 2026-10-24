@@ -13,7 +13,11 @@ renderer only ever sees settings it understands:
   ratings level (AC12.4); the core styles only (Bold Banner, Ink Saver and
   Cumulative come after the core).
 Until a school saves one, a level uses the defaults below (Modern for Score
-cards, Early Years for Skills cards).
+cards, Early Years for Skills cards), which follow
+`design/NAVIGATION_AND_SETTINGS.md` section 3 (CHANGE 2026-10-24). The
+head's title is a template setting there; it is stored once per level
+(`school_levels.head_title`), which is the same thing because each level
+has one template.
 """
 
 import uuid
@@ -26,11 +30,11 @@ from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from schoolflow_api.audit.log import write_audit
-from schoolflow_api.authz.deps import Principal, ensure_level_enabled, require
+from schoolflow_api.authz.deps import Principal, ensure_level_enabled, found, require
 from schoolflow_api.core.deps import DbSession
 from schoolflow_api.core.errors import ProblemError
 from schoolflow_api.core.schemas import ApiModel
-from schoolflow_api.school.schemas import LevelName
+from schoolflow_api.school.schemas import HeadTitle, LevelName
 from schoolflow_api.schools.models import Level
 
 router = APIRouter(prefix="/school", tags=["report templates"])
@@ -81,11 +85,11 @@ class SubjectTable(ApiModel):
     grade: bool = True
     remark: bool = True
     position: bool = True
-    class_average: bool = False
+    class_average: bool = True
     highest: bool = False
     lowest: bool = False
     teacher_initials: bool = False
-    highlight_below_pass: bool = True
+    highlight_below_pass: bool = False
     row_shading: bool = True
     group_by_category: bool = False
 
@@ -96,7 +100,7 @@ class Summary(ApiModel):
     overall_position: bool = True
     number_in_class: bool = True
     class_average: bool = False
-    number_of_subjects: bool = True
+    number_of_subjects: bool = False
     promotion_result: bool = False
     marks_obtainable: bool = False
     highest_average: bool = False
@@ -141,7 +145,7 @@ class Footer(ApiModel):
 class SkillsTable(ApiModel):
     area_comments: bool = True
     skill_descriptions: bool = False
-    rating_display: Literal["words", "codes", "words_and_codes"] = "words_and_codes"
+    rating_display: Literal["words", "codes", "words_and_codes"] = "words"
     group_by_area: bool = True
 
 
@@ -174,7 +178,7 @@ def check_blocks(blocks: list[str], hidden: list[str], allowed: tuple[str, ...])
 class ScoreCard(ApiModel):
     card: Literal["scores"] = "scores"
     blocks: list[str] = Field(default_factory=lambda: list(SCORE_BLOCKS))
-    hidden: list[str] = Field(default_factory=list[str])
+    hidden: list[str] = Field(default_factory=lambda: ["attendance"])
     school_header: SchoolHeader = SchoolHeader()
     student_details: StudentDetails = StudentDetails()
     subject_table: SubjectTable = SubjectTable()
@@ -197,7 +201,7 @@ class SkillsCard(ApiModel):
     blocks: list[str] = Field(default_factory=lambda: list(SKILLS_BLOCKS))
     hidden: list[str] = Field(default_factory=list[str])
     school_header: SchoolHeader = SchoolHeader()
-    student_details: StudentDetails = StudentDetails(age=True, photo=True)
+    student_details: StudentDetails = StudentDetails(age=True)
     skills_table: SkillsTable = SkillsTable()
     rating_key: RatingKey = RatingKey()
     attendance: AttendanceBlock = AttendanceBlock()
@@ -225,11 +229,13 @@ class TemplateOut(ApiModel):
     id: str | None
     version: int | None
     style: str
+    head_title: str
     settings: dict[str, Any]
 
 
 class TemplateIn(ApiModel):
     style: CoreStyle
+    head_title: HeadTitle | None = None
     settings: dict[str, Any]
 
 
@@ -298,13 +304,21 @@ def template_for_publication(session: Session, who: Principal, level: str) -> tu
     return row, settings
 
 
-def out(level: str, row: Any, style: str, settings: Settings) -> TemplateOut:
+def head_title_of(session: Session, level: str) -> str:
+    title: str = session.scalar(
+        text("select head_title from school_levels where level = :l"), {"l": level}
+    )
+    return title
+
+
+def out(session: Session, level: str, row: Any, style: str, settings: Settings) -> TemplateOut:
     return TemplateOut(
         level=level,
         card=settings.card,
         id=str(row.id) if row else None,
         version=row.version if row else None,
         style=style,
+        head_title=head_title_of(session, level),
         settings=settings.model_dump(mode="json"),
     )
 
@@ -318,7 +332,7 @@ def list_templates(_: Member, session: DbSession) -> list[TemplateOut]:
     templates: list[TemplateOut] = []
     for level in levels:
         row, style, settings = current(session, str(level))
-        templates.append(out(str(level), row, style, settings))
+        templates.append(out(session, str(level), row, style, settings))
     return templates
 
 
@@ -344,5 +358,20 @@ def save_template(
             raise ProblemError(
                 422, f"Choose an uploaded {purpose} of this school.", code="unknown_file"
             )
+    old_title = head_title_of(session, level)
+    if body.head_title is not None and body.head_title != old_title:
+        session.execute(
+            text("update school_levels set head_title = :h where level = :l"),
+            {"h": body.head_title, "l": level},
+        )
+        write_audit(
+            session,
+            who.school_id,
+            who.role.value,
+            "school_levels.update",
+            target=("schools", found(who.school_id)),
+            old={"level": level, "head_title": old_title},
+            new={"level": level, "head_title": body.head_title},
+        )
     row = save(session, who, level, body.style, settings)
-    return out(level, row, body.style, settings)
+    return out(session, level, row, body.style, settings)
