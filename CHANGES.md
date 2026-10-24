@@ -207,3 +207,11 @@ These seven changes were made during Phase 4 (2026-10-11 to 2026-10-12). Chidimm
 - What changes: `next` and `eslint-config-next` move to 16.4.2 (16.4.1 is the first patched release; 16.4.2 was the latest patch, released 2026-10-15); `bun.lock` updated; nothing else.
 - After: `bun audit` finds no vulnerabilities (one documented ignore, D-130); the frontend skeleton behaves the same.
 - Proof: `bun run format:check`, `lint`, `typecheck`, `test` (6 passed), `build` and `audit` locally, then the five required checks in CI.
+
+### CHANGE: Refresh zod and undici for two high advisories (Chidimma `ok`, 2026-10-24)
+- Before: `frontend/bun.lock` held zod 4.6.5 (through `eslint-config-next` > `eslint-plugin-react-hooks`) and undici 8.11.2 (through `jsdom`), both development tools only.
+- Why it must change: GHSA-mrhx-c7xc-m3w5 (zod, high: memory exhaustion on oversized constrained collections, fixed in 4.6.6) and GHSA-xjj6-f33q-929c (undici, high: denial of service through too many content encodings, fixed in 8.12.2, published 2026-10-23). CI's `bun audit` failed on PR #46.
+- When: now, before merging PR #46.
+- What changes: `bun audit fix` moved zod to 4.6.6 and undici to 8.12.2 inside the ranges already allowed; only `bun.lock` changes.
+- After: `bun audit` finds no vulnerabilities (with the documented D-130 ignore); nothing shipped to users changes.
+- Proof: `bun run format:check`, `lint`, `typecheck`, `test` (6 passed), `build` and `audit` locally, then the five required checks in CI.
