@@ -15,9 +15,19 @@ written. Publishing then happens in one transaction:
 3. Students needing attention are recorded from the same results (F23);
 4. one notice goes to the class's audience only, and one email to each of
    its pupils and parents with an email address, never with scores (F17, F18).
-A report is revoked only with a reason. Reopening and republishing come next.
+A report is revoked only with a reason.
+
+Reopening (F10, section 8): a school admin reopens chosen sheets of a
+published class, or its class sections, with a reason (and optionally the
+correction request that prompted it); each becomes a new revision in Draft
+(or Open) and goes through the workflow again, while the pupils' Valid
+reports stay in place. Republishing issues a new revision only for pupils
+whose snapshot changed (the database supersedes the old one and keeps the
+report ID), records their attention entries afresh, and tells only them,
+their parents and the class's staff (D-171).
 """
 
+import json
 import re
 import secrets
 import uuid
@@ -56,6 +66,7 @@ Commenters = Annotated[
     Principal, Depends(require("results.principal_comments", feature=Feature.RESULTS))
 ]
 Revokers = Annotated[Principal, Depends(require("results.revoke", feature=Feature.RESULTS))]
+Reopeners = Annotated[Principal, Depends(require("results.reopen", feature=Feature.RESULTS))]
 Comment = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=300)]
 Reason = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=500)]
 
@@ -114,6 +125,15 @@ class Revoked(ApiModel):
     status: str
 
 
+class ReopenBody(ApiModel):
+    reason: Reason
+    sheet_ids: Annotated[list[uuid.UUID], Field(max_length=100)] = Field(
+        default_factory=list[uuid.UUID]
+    )
+    sections: bool = False
+    correction_request_id: uuid.UUID | None = None
+
+
 # --- the class and its readiness --------------------------------------------------------------
 
 
@@ -161,9 +181,32 @@ def plural(count: int) -> str:
     return f"{count} student" if count == 1 else f"{count} students"
 
 
+def published_before(session: Session, arm: Any, term: Any) -> bool:
+    return bool(
+        session.scalar(
+            text(
+                "select exists (select 1 from report_documents where arm_id = :a and term_id = :t)"
+            ),
+            {"a": arm.id, "t": term.id},
+        )
+    )
+
+
 def readiness(session: Session, arm: Any, term: Any, settings: Settings) -> Readiness:
+    """What still stops publication; on a republish, parts not reopened stay Published."""
     sheets = needed_sheets(session, arm, term, settings.card)
-    if sheets and all(s.status == "published" for s in sheets):
+    section = session.execute(
+        text(
+            "select id, status, times_school_opened from class_report_sections"
+            " where arm_id = :a and term_id = :t"
+        ),
+        {"a": arm.id, "t": term.id},
+    ).first()
+    again = published_before(session, arm, term)
+    reopened = any(s.status != "published" for s in sheets) or (
+        again and section is not None and section.status != "published"
+    )
+    if sheets and not reopened:
         return Readiness(
             ready=False,
             problems=["Already published"],
@@ -173,7 +216,7 @@ def readiness(session: Session, arm: Any, term: Any, settings: Settings) -> Read
     problems = [
         f"{s.name}: {(s.status or 'not started').replace('_', ' ')}"
         for s in sheets
-        if s.status != "approved"
+        if s.status not in ("approved", "published")  # published: not reopened this time
     ]
     if not sheets:
         problems.append("No subjects or learning areas to publish")
@@ -187,13 +230,6 @@ def readiness(session: Session, arm: Any, term: Any, settings: Settings) -> Read
         and shown(settings, "affective_psychomotor")
         and (settings.affective_psychomotor.affective or settings.affective_psychomotor.psychomotor)
     )
-    section = session.execute(
-        text(
-            "select id, status, times_school_opened from class_report_sections"
-            " where arm_id = :a and term_id = :t"
-        ),
-        {"a": arm.id, "t": term.id},
-    ).first()
     pupils = pupils_of(session, arm.id, term.session_id)
     entries = {
         r.enrolment_id: r
@@ -207,7 +243,8 @@ def readiness(session: Session, arm: Any, term: Any, settings: Settings) -> Read
             {"s": section.id if section else None},
         )
     }
-    if needs_comment or needs_attendance or needs_traits:
+    unchanged = again and section is not None and section.status == "published"
+    if (needs_comment or needs_attendance or needs_traits) and not unchanged:
         if section is None or section.status != "submitted":
             problems.append(NOT_SUBMITTED if needs_comment else "Class sections are not submitted")
         else:
@@ -615,6 +652,17 @@ def publish(arm_id: uuid.UUID, who: Publishers, session: DbSession) -> Published
     averages: list[Decimal] = []
     if results is not None:
         averages = [r.average for r in results.pupils.values() if r.average is not None]
+    valid = {
+        str(r.enrolment_id): r.snapshot
+        for r in session.execute(
+            text(
+                "select enrolment_id, snapshot from report_documents"
+                " where arm_id = :a and term_id = :t and status = 'valid'"
+            ),
+            {"a": arm.id, "t": term.id},
+        )
+    }
+    again = published_before(session, arm, term)
 
     published: list[PublishedReport] = []
     for pupil in pupils:
@@ -718,6 +766,8 @@ def publish(arm_id: uuid.UUID, who: Publishers, session: DbSession) -> Published
         else:
             snapshot |= {"areas": skills_areas(session, arm, term, enrolment), "scale": scale}
 
+        if valid.get(enrolment) == json.loads(json_dump(snapshot)):
+            continue  # nothing on this pupil's report changed: it stays Valid
         code = new_verification_code()
         report = session.execute(
             text(
@@ -749,12 +799,13 @@ def publish(arm_id: uuid.UUID, who: Publishers, session: DbSession) -> Published
             )
         )
 
-    tell_the_class(session, who, arm, term)
+    if published:
+        tell_the_class(session, who, arm, term, [r.enrolment_id for r in published], updated=again)
     write_audit(
         session,
         school_id,
         who.role.value,
-        "results.publish",
+        "results.republish" if again else "results.publish",
         target=("class_arms", arm.id),
         new={"term_id": str(term.id), "reports": len(published)},
     )
@@ -762,8 +813,6 @@ def publish(arm_id: uuid.UUID, who: Publishers, session: DbSession) -> Published
 
 
 def json_dump(value: dict[str, Any]) -> str:
-    import json
-
     return json.dumps(value, default=str)
 
 
@@ -839,13 +888,33 @@ def record_attention(
         )
 
 
-def tell_the_class(session: Session, who: Principal, arm: Any, term: Any) -> None:
-    """One notice for the class's audience only; one email per pupil or parent with an email."""
-    title = f"{TERM_NAMES[term.term_number]} results for {arm.class_label} are now available"
-    body = (
-        f"{TERM_NAMES[term.term_number]} {term.session_name} results for {arm.class_name}"
-        " are published. Log in to view the report."
-    )
+def tell_the_class(
+    session: Session,
+    who: Principal,
+    arm: Any,
+    term: Any,
+    enrolments: list[str],
+    *,
+    updated: bool = False,
+) -> None:
+    """One notice for the class's audience only; one email per pupil or parent with an email.
+
+    `enrolments` are the pupils who got a new report: on a republish, only
+    they and their parents hear about it (with the class's staff).
+    """
+    term_name = TERM_NAMES[term.term_number]
+    if updated:
+        title = f"Updated {term_name} results for {arm.class_label} are now available"
+        body = (
+            f"Updated {term_name} {term.session_name} results for {arm.class_name}"
+            " are published. Log in to view the report."
+        )
+    else:
+        title = f"{term_name} results for {arm.class_label} are now available"
+        body = (
+            f"{term_name} {term.session_name} results for {arm.class_name}"
+            " are published. Log in to view the report."
+        )
     notice_id = session.scalar(
         text(
             "insert into notices (school_id, title, body, kind) values (:s, :t, :b, 'system')"
@@ -861,15 +930,14 @@ def tell_the_class(session: Session, who: Principal, arm: Any, term: Any) -> Non
         session.scalars(
             text(
                 "select p.user_id from enrolments e join students p on p.id = e.student_id"
-                " where e.arm_id = :a and e.session_id = :y and e.left_on is null"
-                " and p.user_id is not null"
+                " where e.id = any(:e) and p.user_id is not null"
                 " union select g.user_id from enrolments e join guardian_students gs"
                 " on gs.student_id = e.student_id join guardians g on g.id = gs.guardian_id"
                 " join school_memberships m on m.user_id = g.user_id and m.school_id = g.school_id"
                 " and m.status = 'active'"
-                " where e.arm_id = :a and e.session_id = :y and e.left_on is null"
+                " where e.id = any(:e)"
             ),
-            {"a": arm.id, "y": term.session_id},
+            {"e": [uuid.UUID(e) for e in enrolments]},
         )
     )
     staff = set(
@@ -916,8 +984,9 @@ def tell_the_class(session: Session, who: Principal, arm: Any, term: Any) -> Non
                 "full_name": user.full_name,
                 "school_name": school_name,
                 "class_name": arm.class_name,
-                "term_name": TERM_NAMES[term.term_number],
+                "term_name": term_name,
                 "session_name": term.session_name,
+                "updated": updated,
                 "login_path": "/login",
             },
             priority=5,
@@ -984,3 +1053,96 @@ def revoke(report_id: uuid.UUID, body: RevokeBody, who: Revokers, session: DbSes
         reason=body.reason,
     )
     return Revoked(id=str(report_id), status="revoked")
+
+
+# --- reopening ------------------------------------------------------------------------------------
+
+OPEN_CORRECTIONS = ("open", "investigating", "needs_more_information")
+
+
+@router.post("/publications/{arm_id}/reopen", response_model=Readiness)
+def reopen(arm_id: uuid.UUID, body: ReopenBody, who: Reopeners, session: DbSession) -> Readiness:
+    """New revisions of chosen sheets (Draft) or of the class sections (Open), with a reason."""
+    arm = load_arm(session, who, arm_id)
+    term = active_term(session)
+    if not published_before(session, arm, term):
+        raise ProblemError(
+            409, "This class has not been published this term.", code="not_published"
+        )
+    if not body.sheet_ids and not body.sections:
+        raise ProblemError(
+            422, "Choose the sheets or class sections to reopen.", code="nothing_to_reopen"
+        )
+    if body.correction_request_id is not None:
+        request = found(
+            session.execute(
+                text(
+                    "select c.id, c.status from correction_requests c"
+                    " join report_documents d on d.id = c.report_document_id"
+                    " where c.id = :c and d.arm_id = :a and d.term_id = :t"
+                ),
+                {"c": body.correction_request_id, "a": arm.id, "t": term.id},
+            ).first()
+        )
+        require_status(request.status, *OPEN_CORRECTIONS)
+    sheets = [
+        found(
+            session.execute(
+                text(
+                    "select id, status from result_sheets"
+                    " where id = :s and arm_id = :a and term_id = :t"
+                ),
+                {"s": sheet_id, "a": arm.id, "t": term.id},
+            ).first()
+        )
+        for sheet_id in dict.fromkeys(body.sheet_ids)
+    ]
+    for sheet in sheets:
+        require_status(sheet.status, "published")
+    section = None
+    if body.sections:
+        section = found(
+            session.execute(
+                text(
+                    "select id, status from class_report_sections"
+                    " where arm_id = :a and term_id = :t"
+                ),
+                {"a": arm.id, "t": term.id},
+            ).first()
+        )
+        require_status(section.status, "published")
+    for sheet in sheets:
+        session.execute(
+            text(
+                "update result_sheets set status = 'draft', status_comment = :why,"
+                " revision = revision + 1 where id = :s"
+            ),
+            {"why": body.reason, "s": sheet.id},
+        )
+    if section is not None:
+        session.execute(
+            text(
+                "update class_report_sections set status = 'open', status_comment = :why,"
+                " revision = revision + 1 where id = :s"
+            ),
+            {"why": body.reason, "s": section.id},
+        )
+    write_audit(
+        session,
+        who.school_id,
+        who.role.value,
+        "results.reopen",
+        target=("class_arms", arm.id),
+        new={
+            "term_id": str(term.id),
+            "sheet_ids": [str(sheet.id) for sheet in sheets],
+            "sections": section is not None,
+            "correction_request_id": str(body.correction_request_id)
+            if body.correction_request_id
+            else None,
+        },
+        reason=body.reason,
+    )
+    ensure_defaults(session, found(who.school_id), who.role.value)
+    _, _, settings = current(session, arm.level)
+    return readiness(session, arm, term, settings)
