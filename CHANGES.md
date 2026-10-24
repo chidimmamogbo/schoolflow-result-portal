@@ -231,3 +231,11 @@ These seven changes were made during Phase 4 (2026-10-11 to 2026-10-12). Chidimm
 - What changes: `csv_text` puts an apostrophe before any cell that starts with `=`, `+`, `-`, `@`, a tab or a return; the attention export uses the same function.
 - After: every CSV the API writes is safe to open in a spreadsheet; ordinary cells are unchanged.
 - Proof: `tests/test_template_defaults.py::test_score_sheet_exports_show_formulas_as_text` and the attention CSV tests.
+
+### CHANGE: No automatic Vercel builds for branch pushes, and old images cleared (Chidimma `ok`, 2026-10-24)
+- Before: `vercel.json` turned off Git deployments only for `main` and `staging`, so every push to any other branch built a preview, each with a backend container image. Vercel Hobby keeps 50 images per project; on 2026-10-24 all 50 were used (3.8 GB), so preview builds failed at the image push and the next staging deploy would too.
+- Why it must change: free tier only (D-00A); CI already builds and smoke-tests the backend image on every PR, and staging deploys through the CI job with the Vercel CLI (D-131), which this setting does not affect.
+- When: now.
+- What changes: `"git": {"deploymentEnabled": false}` in `vercel.json` (Vercel docs, git configuration, checked 2026-10-24); once this is merged, old images are deleted with `vercel vcr image rm backend <imageId>`, keeping staging's image (`154f10e13ec3`) and the newest five.
+- After: pull requests no longer get a Vercel preview link or the non-required "Vercel" check; to turn previews back on in Phase 8, list the branches again or remove the setting.
+- Proof: the next PR shows no Vercel build; `vercel vcr image ls backend` shows the images that are left; the staging page still loads.
