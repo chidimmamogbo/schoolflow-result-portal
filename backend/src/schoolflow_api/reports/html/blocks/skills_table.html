@@ -1,0 +1,17 @@
+{% set k = t.skills_table %}
+<section class="block">
+  {% for area in s.areas %}
+  <table class="shaded">
+    <thead><tr><th>{{ area.name if k.group_by_area else "Skill" }}</th><th>Rating</th></tr></thead>
+    <tbody>
+    {% for skill in area.skills %}
+      <tr>
+        <td>{{ skill.skill }}{% if k.skill_descriptions and skill.description %}<br><span class="key">{{ skill.description }}</span>{% endif %}</td>
+        <td>{% if k.rating_display == "codes" %}{{ skill.code }}{% elif k.rating_display == "words_and_codes" %}{{ skill.rating }} ({{ skill.code }}){% else %}{{ skill.rating }}{% endif %}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% if k.area_comments and area.comment %}<p class="key">{{ area.comment }}</p>{% endif %}
+  {% endfor %}
+</section>

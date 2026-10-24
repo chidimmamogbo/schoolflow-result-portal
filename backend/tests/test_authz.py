@@ -261,4 +261,5 @@ def test_every_route_except_the_public_list_needs_a_session(db_session: Session)
         ("POST", "/api/v1/auth/activate"),
         ("POST", "/api/v1/auth/password/forgot"),
         ("POST", "/api/v1/auth/password/reset"),
+        ("GET", "/api/v1/verify/{code}"),  # public report verification (F13, D-071)
     } == PUBLIC_ROUTES

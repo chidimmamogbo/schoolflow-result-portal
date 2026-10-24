@@ -1,0 +1,6 @@
+{% set a = t.attendance %}{% set v = s.attendance %}
+<section class="block summary" aria-label="Attendance">
+  {% if a.times_school_opened %}<div><span class="label">Times school opened</span><strong>{{ v.times_school_opened if v.times_school_opened is not none else "" }}</strong></div>{% endif %}
+  {% if a.times_present %}<div><span class="label">Times present</span><strong>{{ v.times_present if v.times_present is not none else "" }}</strong></div>{% endif %}
+  {% if a.times_absent %}<div><span class="label">Times absent</span><strong>{{ v.times_absent if v.times_absent is not none else "" }}</strong></div>{% endif %}
+</section>

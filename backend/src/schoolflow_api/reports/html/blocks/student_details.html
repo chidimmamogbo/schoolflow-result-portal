@@ -1,0 +1,14 @@
+{% set d = t.student_details %}
+<section class="block details" aria-label="{{ 'Pupil details' if s.card == 'skills' else 'Student details' }}">
+  <div><div class="label">Name</div>{{ [s.pupil.first_name, s.pupil.other_names, s.pupil.surname] | select | join(" ") }}</div>
+  {% if d.admission_number %}<div><div class="label">Admission no.</div>{{ s.pupil.admission_number }}</div>{% endif %}
+  {% if d.class_arm %}<div><div class="label">Class</div>{{ s["class"].name }}</div>{% endif %}
+  {% if d.gender and s.pupil.gender %}<div><div class="label">Gender</div>{{ s.pupil.gender | capitalize }}</div>{% endif %}
+  {% if d.age and age is not none %}<div><div class="label">Age</div>{{ age }}</div>{% endif %}
+  {% if d.date_of_birth and s.pupil.date_of_birth %}<div><div class="label">Date of birth</div>{{ s.pupil.date_of_birth | day }}</div>{% endif %}
+  {% if d.house and s.pupil.house %}<div><div class="label">House</div>{{ s.pupil.house }}</div>{% endif %}
+  {% if s.term.get("starts_on") and s.term.get("ends_on") %}<div><div class="label">Term dates</div>{{ s.term.starts_on | day }} to {{ s.term.ends_on | day }}</div>{% endif %}
+  {% if s.card == "scores" %}<div><div class="label">No. in class</div>{{ s.summary.number_in_class }}</div>{% endif %}
+  {% if d.form_teacher_name and s["class"].form_teacher %}<div><div class="label">{{ "Class teacher" if s.card == "skills" else "Form teacher" }}</div>{{ s["class"].form_teacher }}</div>{% endif %}
+  {% if t.footer.next_term_begins and s.term.next_term_begins %}<div><div class="label">Next term begins</div>{{ s.term.next_term_begins | day }}</div>{% endif %}
+</section>

@@ -16,9 +16,10 @@ from schoolflow_api.core.logs import configure_logging
 from schoolflow_api.core.middleware import add_request_middleware
 from schoolflow_api.files import routes as files
 from schoolflow_api.form_class import routes as form_class
+from schoolflow_api.parents import portal
 from schoolflow_api.parents import routes as parents
 from schoolflow_api.platform import routes as platform
-from schoolflow_api.reports import attention, publication
+from schoolflow_api.reports import attention, cards, publication, verify
 from schoolflow_api.reports import templates as report_templates
 from schoolflow_api.results import rating_sheets
 from schoolflow_api.results import sheets as result_sheets
@@ -77,6 +78,9 @@ def create_app(app_env: str | None = None) -> FastAPI:
     api_v1.include_router(publication.router)
     api_v1.include_router(attention.router)
     api_v1.include_router(audit.router)
+    api_v1.include_router(cards.router)
+    api_v1.include_router(portal.router)
+    api_v1.include_router(verify.router)
     app.include_router(api_v1)
     return app
 

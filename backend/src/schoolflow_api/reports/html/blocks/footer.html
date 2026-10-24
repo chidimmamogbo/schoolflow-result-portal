@@ -1,0 +1,13 @@
+{% set f = t.footer %}
+<footer class="block footer qr-{{ f.qr_position }}">
+  <div class="text">
+    <div>Report ID <strong>{{ issued.report_code }}</strong> · Revision {{ issued.revision }} · Published {{ published_on }}</div>
+    {% if issued.status != "valid" %}<div class="status">{{ issued.status | capitalize }}</div>{% endif %}
+    {% if issued.verification_code %}<div>Verify this report: scan the QR code or enter code {{ issued.verification_code }} at {{ verify_base }}</div>{% endif %}
+    {% if t.page.grading_key == "in_footer" and s.card == "scores" %}{% include "blocks/grading_key.html" %}{% endif %}
+    {% if f.contact_line and (s.school.phone or s.school.email) %}<div>{{ s.school.name }} · {{ [s.school.phone, s.school.email] | select | join(" · ") }}</div>{% endif %}
+    {% if f.note %}<div>{{ f.note }}</div>{% endif %}
+    <div class="key">Powered by SchoolFlow</div>
+  </div>
+  {% if qr %}<div aria-label="QR code to verify this report">{{ qr }}</div>{% endif %}
+</footer>

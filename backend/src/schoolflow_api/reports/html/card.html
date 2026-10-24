@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>{{ s.pupil.first_name }} {{ s.pupil.surname }}, {{ s.term.name }} {{ s.term.session }}</title>
+<style>
+  @page { size: {{ "A4" if t.page.paper == "a4" else "letter" }}; margin: {{ "10mm" if t.page.margins == "narrow" else "15mm" }}; }
+  :root { --accent: {{ accent }}; --ink: #1a1a1a; --muted: #555555; --line: #c8c8c8; --shade: #f3f4f6; --alert: #b42318; }
+  * { box-sizing: border-box; }
+  html { color-scheme: light; }
+  body { margin: 0; background: #ffffff; color: var(--ink);
+         font-family: {{ {"inter": "Inter, Arial, sans-serif", "merriweather": "Merriweather, Georgia, serif", "nunito": "Nunito, Arial, sans-serif"}[t.page.font] }};
+         font-size: {{ {"small": "9pt", "medium": "10pt", "large": "11.5pt"}[t.page.text_size] }}; line-height: 1.35; }
+  .card { max-width: 190mm; margin: 0 auto; padding: 4mm; position: relative; }
+  .block { margin: 0 0 4mm; }
+  .borders-boxed .block { border: 1px solid var(--line); padding: 3mm; }
+  h1, h2, h3 { margin: 0; }
+  .label { font-size: 0.78em; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
+  table { width: 100%; border-collapse: collapse; }
+  th, td { padding: 1.2mm 1.5mm; text-align: left; vertical-align: top; }
+  .borders-lines th, .borders-lines td, .borders-boxed th, .borders-boxed td { border-bottom: 1px solid var(--line); }
+  th { font-size: 0.82em; color: var(--muted); font-weight: 600; }
+  td.num, th.num { text-align: right; }
+  .shaded tbody tr:nth-child(even) { background: var(--shade); }
+  .below { color: var(--alert); font-weight: 600; }
+  .header { display: flex; align-items: center; gap: 4mm; border-bottom: 2px solid var(--accent); padding-bottom: 3mm; }
+  .header.logo-centre { flex-direction: column; text-align: center; }
+  .header.logo-right { flex-direction: row-reverse; text-align: right; }
+  .header img { width: 22mm; height: 22mm; object-fit: contain; }
+  .school-name { font-size: 1.5em; color: var(--accent); }
+  .title { margin-top: 1mm; font-weight: 700; }
+  .details { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2mm 4mm; }
+  .summary { display: flex; flex-wrap: wrap; gap: 3mm 8mm; }
+  .summary div strong { display: block; font-size: 1.2em; }
+  .domains { display: flex; gap: 6mm; }
+  .domains.stacked { flex-direction: column; }
+  .domains > div { flex: 1; }
+  .comments p { margin: 1mm 0 3mm; }
+  .signatures { display: flex; justify-content: space-between; gap: 8mm; }
+  .signatures div { flex: 1; border-top: 1px solid var(--ink); padding-top: 1mm; font-size: 0.85em; }
+  .signatures img { max-height: 14mm; }
+  .footer { display: flex; align-items: center; gap: 4mm; border-top: 1px solid var(--line); padding-top: 3mm; font-size: 0.85em; }
+  .footer.qr-left { flex-direction: row-reverse; justify-content: flex-end; }
+  .footer .text { flex: 1; }
+  .footer svg { width: 26mm; height: 26mm; }
+  .key { font-size: 0.85em; color: var(--muted); }
+  .preview { position: fixed; top: 40%; left: 0; right: 0; text-align: center; font-size: 34pt; color: rgba(180, 35, 24, 0.18); transform: rotate(-20deg); pointer-events: none; }
+  .watermark { position: fixed; top: 30%; left: 30%; width: 40%; opacity: 0.06; }
+  .style-classic .school-name { font-family: Merriweather, Georgia, serif; text-transform: uppercase; }
+  .style-classic th { text-transform: uppercase; }
+  .style-compact { font-size: 0.9em; }
+  .style-compact th, .style-compact td { padding: 0.6mm 1mm; }
+  .style-early_years .school-name { font-family: Nunito, Arial, sans-serif; }
+  .style-early_years .block { border-radius: 3mm; }
+  .status { font-weight: 700; }
+</style>
+</head>
+<body>
+<main class="card style-{{ style }} borders-{{ t.page.borders }}">
+{% if preview %}<div class="preview" aria-hidden="true">{{ preview_label }}</div>{% endif %}
+{% if t.page.watermark and logo %}<img class="watermark" src="{{ logo }}" alt="">{% endif %}
+{% for block in blocks %}
+{% include "blocks/" ~ block ~ ".html" %}
+{% endfor %}
+</main>
+</body>
+</html>

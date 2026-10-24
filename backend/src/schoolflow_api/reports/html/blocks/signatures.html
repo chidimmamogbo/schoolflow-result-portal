@@ -1,0 +1,6 @@
+{% set g = t.signatures %}
+<section class="block signatures">
+  {% if g.form_teacher_line %}<div>{{ "Class teacher" if s.card == "skills" else "Form teacher" }}: signature</div>{% endif %}
+  <div>{{ head_label }}: signature{{ " and stamp" if g.stamp_file_id else "" }}</div>
+  {% if g.date_line %}<div>Date</div>{% endif %}
+</section>

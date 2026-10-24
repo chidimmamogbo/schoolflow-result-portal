@@ -18,7 +18,7 @@ as FastAPI dependencies, in this order:
    The database checks scope, workflow and duties again (D-051).
 
 Only the routes in PUBLIC_ROUTES skip step 1 (the logo route joined by an approved
-CHANGE, 2026-10-22); tests/test_authz.py fails if
+CHANGE, 2026-10-22; public verification is F13, D-071); tests/test_authz.py fails if
 any other route does.
 """
 
@@ -50,6 +50,7 @@ PUBLIC_ROUTES = frozenset(
         ("POST", "/api/v1/auth/activate"),
         ("POST", "/api/v1/auth/password/forgot"),
         ("POST", "/api/v1/auth/password/reset"),
+        ("GET", "/api/v1/verify/{code}"),
     }
 )
 SAFE_METHODS = frozenset({"GET", "HEAD", "OPTIONS"})

@@ -1,0 +1,15 @@
+{% set m = t.summary %}{% set v = s.summary %}
+<section class="block">
+  <div class="summary">
+    {% if m.total_score %}<div><span class="label">Total score</span><strong>{{ v.total if v.total is not none else "" }}</strong></div>{% endif %}
+    {% if m.total_average %}<div><span class="label">Total average</span><strong>{{ v.average or "" }}</strong></div>{% endif %}
+    {% if m.overall_position %}<div><span class="label">{{ "Class position" if style == "classic" else "Overall class position" }}</span><strong>{{ v.position | place }}</strong></div>{% endif %}
+    {% if m.number_in_class or not m.overall_position %}<div><span class="label">No. in class</span><strong>{{ v.number_in_class }}</strong></div>{% endif %}
+    {% if m.class_average %}<div><span class="label">Class average</span><strong>{{ v.class_average or "" }}</strong></div>{% endif %}
+    {% if m.number_of_subjects %}<div><span class="label">Number of subjects</span><strong>{{ v.subjects }}</strong></div>{% endif %}
+    {% if m.marks_obtainable %}<div><span class="label">Marks obtainable</span><strong>{{ v.marks_obtainable }}</strong></div>{% endif %}
+    {% if m.highest_average %}<div><span class="label">Highest average in class</span><strong>{{ v.highest_average or "" }}</strong></div>{% endif %}
+    {% if m.lowest_average %}<div><span class="label">Lowest average in class</span><strong>{{ v.lowest_average or "" }}</strong></div>{% endif %}
+  </div>
+  {% if t.page.grading_key == "below_summary" %}{% include "blocks/grading_key.html" %}{% endif %}
+</section>

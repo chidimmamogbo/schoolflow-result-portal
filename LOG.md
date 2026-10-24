@@ -17,6 +17,35 @@ Entry template:
 
 ---
 
+## 2026-10-24 (Session 5, continued): images cleared, card HTML, verification, portal
+
+### What we did
+- PR #48 (template defaults, safe CSV) merged on `merge`. Option 2: PR #49 turned off Git-triggered Vercel builds. Option 1: deleted 44 old container images with `vercel vcr image rm` (43 + 1 test, none failed); 6 remain, including staging's `154f10e`; staging still answers 200 and `/api/v1/health` is ok. Staging itself not updated.
+- **Report card HTML**, test-first: from the snapshot only, one Jinja2 file per block, footer last, escaped, light, QR as inline SVG; staff open any report's card and preview templates with fictional data.
+- **Public verification** `/verify/{code}` on its own `app_verifier` login, with rate limits and private headers; added to the pinned public route list (F13, D-071).
+- **Portal** for parents (every linked school, grouped by school) and students (themselves): children, reports, the online view and the card.
+- Found while building: WeasyPrint needs Pango in the container and CI, the snapshot lacks the term dates the card shows, and `verify_report` gives no newer revision number or date for the SUPERSEDED page. Three CHANGEs proposed. Defaults recorded as D-172. No migration.
+
+### What changed (files)
+- New: `reports/render.py`, `reports/html/` (card and 12 blocks), `reports/cards.py`, `reports/verify.py`, `parents/portal.py`, `tests/test_report_cards.py`, `tests/test_verify_and_portal.py`.
+- Updated: `settings.py` (`database_url_verifier`), `authz/deps.py` and `tests/test_authz.py` (public verify route), `main.py`, `pyproject.toml` and `uv.lock` (Jinja2 3.1.6, segno 1.6.6), `DECISIONS.md`, `MEMORY.md`, `LOG.md`.
+
+### Issues and fixes
+- Apostrophes from Jinja expressions are escaped (`&#39;`); tests compare unescaped text.
+- One portal test was flaky: rows made in one test transaction share a time, so the school order and a parent's default school were random. Schools now sort by name, and the test names the school.
+- **Deliberate breaks:** 19; 17 caught at first. Fixed: the 404's `X-Robots-Tag` is now checked (the middleware already adds `no-store`), and the reports list after a revoke. Then 19 of 19.
+
+### Tests
+- Full backend suite: 1241 passed and 1 failed (the flaky order, fixed and rerun 4 times plus its file). Ruff, format and strict Pyright clean.
+
+### Next step
+- After `merge` and the CHANGE answers: the PDF with WeasyPrint, then corrections and notices.
+
+### Blockers
+- None (CHANGE answers needed for the PDF).
+
+---
+
 ## 2026-10-24 (Session 5, continued): two more advisories, template defaults, safe CSV
 
 ### What we did
