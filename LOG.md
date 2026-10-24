@@ -17,6 +17,37 @@ Entry template:
 
 ---
 
+## 2026-10-23 and 2026-10-24 (Session 5, continued): Next.js advisories, 9.2i part 2b, 9.2j, 9.2j2
+
+### What we did
+- Chidimma accepted D-170 and asked that no two pupils ever share a report ID; done in PR #44 (numbered IDs, IDs kept across revisions).
+- CI's audit failed on three new Next.js advisories (two critical, one high, published 2026-10-22). CHANGE approved; PR #45 moved Next.js to 16.4.2. Both PRs merged on `merge`; staging not touched.
+- **Reopen and republish**, test-first: a school admin reopens chosen sheets or the class sections with a reason (optionally naming an open correction request); republishing issues new revisions only for pupils whose report changed, keeps report IDs, tells only those pupils, their parents and the staff.
+- **Students needing attention** (`/attention`, CSV export) by subject, student and learning area, scoped by role; parents and students refused.
+- **Audit timeline** (`/school/audit`) for school admins with filters and pages.
+- Found while reading the labels file: five template defaults from PR #44 differ from `design/NAVIGATION_AND_SETTINGS.md` section 3 (CHANGE proposed, waiting for `ok`). Defaults recorded as D-171. No migration.
+
+### What changed (files)
+- New: `reports/attention.py`, `audit/routes.py`, `tests/test_republishing.py`, `tests/test_attention.py`, `tests/test_audit_timeline.py`.
+- Updated: `reports/publication.py` (readiness for republish, changed-only reports, reopen), `main.py`, `DECISIONS.md`, `MEMORY.md`, `LOG.md`.
+
+### Issues and fixes
+- Long heredocs failed again in the Bash tool; edit scripts went to the scratchpad through the Write tool.
+- A correction request test used the wrong pupil (the database refused it: parents report only on their own children).
+- Audit events in one test transaction share a time, so the timeline test picks events by action.
+- **Deliberate breaks:** 39; 35 caught at first. Fixed: a closed correction request case, a learning area specialist in the skills test, and one break that could not happen (removed by simplifying readiness). One survives by design: row-level security already hides other schools' audit events, and the query's own school filter is a second guard.
+
+### Tests
+- Full backend suite: 1226 passed (about 15 minutes locally). Ruff, format and strict Pyright clean.
+
+### Next step
+- After `merge` and the CHANGE answer: report PDFs, public verification and the parent and student portal, test-first.
+
+### Blockers
+- None.
+
+---
+
 ## 2026-10-22 (Session 5, continued): 9.2i part 2a
 
 ### What we did
