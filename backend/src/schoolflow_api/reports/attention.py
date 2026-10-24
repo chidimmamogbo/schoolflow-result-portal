@@ -277,16 +277,7 @@ def csv_cells(view: View, row: AttentionRow) -> list[str]:
             else ("Yes" if row.average_below_pass_mark else "No")
         )
         rest = [row.failed_count, row.average, flag]
-    return [safe(v) for v in [*start, *rest]]
-
-
-def safe(value: object) -> str:
-    """A cell a spreadsheet will not run as a formula (names come from the school)."""
-    cell = "" if value is None else str(value)
-    return f"'{cell}" if cell[:1] in FORMULA_STARTS else cell
-
-
-FORMULA_STARTS = ("=", "+", "-", "@", chr(9), chr(13))
+    return ["" if v is None else str(v) for v in [*start, *rest]]  # made safe by csv_text
 
 
 @router.get("/export.csv")

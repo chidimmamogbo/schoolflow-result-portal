@@ -17,6 +17,33 @@ Entry template:
 
 ---
 
+## 2026-10-24 (Session 5, continued): two more advisories, template defaults, safe CSV
+
+### What we did
+- Chidimma said `ok` to three CHANGEs and `merge`. PR #47 refreshed zod (4.6.6) and undici (8.12.2) for two high advisories in development tools; PR #46 (reopen, republish, attention, audit timeline) was then brought up to date and merged. Staging not touched.
+- Template defaults now follow NAVIGATION section 3, the head's title shows and can be changed on templates, and every CSV export shows formula-like cells as text (branch `fix/template-defaults`).
+- Found: the Vercel image registry is full (50 of 50), so preview builds fail; decision asked.
+
+### What changed (files)
+- New: `tests/test_template_defaults.py`.
+- Updated: `reports/templates.py`, `results/sheets.py`, `reports/attention.py`, `frontend/bun.lock` (PR #47), `CHANGES.md`, `MEMORY.md`, `LOG.md`.
+
+### Issues and fixes
+- The first Vitest run after `bun audit fix` reported no tests; a second run passed 6 of 6 (seen once before, after `bun install`).
+- The new tests were written after the code this time; they were run against the old code (5 failed) before being kept.
+- **Deliberate breaks:** 6 of 6 caught.
+
+### Tests
+- Full backend suite: 1231 passed (about 15 minutes locally). Ruff, format and strict Pyright clean.
+
+### Next step
+- After `merge` and the image decision: report PDFs, public verification and the portal, test-first.
+
+### Blockers
+- Vercel image registry full (decision asked).
+
+---
+
 ## 2026-10-23 and 2026-10-24 (Session 5, continued): Next.js advisories, 9.2i part 2b, 9.2j, 9.2j2
 
 ### What we did

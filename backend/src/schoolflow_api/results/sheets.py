@@ -503,9 +503,18 @@ def save_scores(
 # --- CSV ----------------------------------------------------------------------------------------
 
 
+# A spreadsheet runs a cell that starts with one of these as a formula.
+FORMULA_STARTS = ("=", "+", "-", "@", chr(9), chr(13))
+
+
+def safe_cell(value: str) -> str:
+    """A cell a spreadsheet shows as text (names and comments come from the school)."""
+    return f"'{value}" if value[:1] in FORMULA_STARTS else value
+
+
 def csv_text(rows: list[list[str]]) -> str:
     out = io.StringIO()
-    csv.writer(out, lineterminator="\n").writerows(rows)
+    csv.writer(out, lineterminator="\n").writerows([[safe_cell(c) for c in r] for r in rows])
     return out.getvalue()
 
 
