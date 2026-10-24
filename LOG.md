@@ -17,6 +17,33 @@ Entry template:
 
 ---
 
+## 2026-10-25 (Session 5, continued): domain folders, PR 1 (moving day)
+
+### What we did
+- PR #51 (PDFs) merged on `merge`.
+- Chidimma asked how the backend is organised and asked for the domain folder layout of her Paywork EscrowPro project inside one `app/` folder. The folder map was approved (`ok`) and recorded as D-173.
+- Moving day: every file moved with `git mv` into `backend/app/` (core, db, platform, src/<domain>, tests/core, tests/database, tests/domains), five small merges and one split, imports rewritten by a script; config, Dockerfile, migrations' imports and AGENT.md updated. No behaviour change.
+
+### What changed (files)
+- Moved: everything in `backend/src/schoolflow_api/` and `backend/tests/` (see MEMORY.md, "Where files moved").
+- Updated: `pyproject.toml`, `Dockerfile.vercel`, `.dockerignore`, `migrations/env.py` and three migrations' imports, `AGENT.md`, `CHANGES.md`, `DECISIONS.md`, `MEMORY.md`, `LOG.md`.
+
+### Issues and fixes
+- Merged files imported from themselves (a circular import); removed.
+- Two test helpers and the local storage path counted folders from their old place; fixed.
+- A long heredoc failed again; the docs script went to the scratchpad.
+
+### Tests
+- Full backend suite: 1245 passed, 1 skipped (the PDF check on Windows), the same count as before the move. Ruff, format and strict Pyright clean. The built package holds no tests and keeps the HTML templates and word lists.
+
+### Next step
+- After `merge`: PRs 2 to 5, splitting the large route files into router, services and schemas.
+
+### Blockers
+- None.
+
+---
+
 ## 2026-10-24 (Session 5, continued): PDFs, term dates, migration 25
 
 ### What we did

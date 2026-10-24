@@ -8,9 +8,36 @@ The living record of where the project stands. Update it at the end of every ses
 |---|---|
 | Last updated | 2026-10-24 (Session 5, in progress) |
 | Phase | **Phase 7 (backend, test-first) in progress.** Phases 1 to 6 done |
-| Current step | **PDFs and two approved CHANGEs**, on branch `feat/phase7-pdf` (PR open, waiting for Chidimma's `merge`): WeasyPrint PDFs (`reports/pdf.py`, `/me/reports/{id}/report.pdf`, `/school/reports/{id}/report.pdf`), Pango and fonts in `Dockerfile.vercel`, Pango in CI, term dates in snapshots, migration 25 (`verify_report` names the newer revision). Merged: PRs #18 to #50 |
-| Next step | After `merge`: corrections (9.2n) and the notice board (9.2o), test-first. Then the email sender; billing and the webhook; dashboard, seed and CLI. Staging needs `DATABASE_URL_VERIFIER` (role `app_verifier` with LOGIN) before /verify works there |
+| Current step | **Domain folders, PR 1 (moving day)**, on branch `refactor/app-domain-folders` (PR open, waiting for Chidimma's `merge`): every file moved into `backend/app/` (core, db, platform, src/<domain>, tests), imports rewritten, no behaviour change; D-173. Merged: PRs #18 to #51 |
+| Next step | **Domain folders, PRs 2 to 5:** split the large route files into thin `router.py`, `services.py` and `schemas.py` (publication, platform_admin, schools and structure, grading, form_class, results, students, staff, accounts, guardians), tests unchanged. Then corrections (9.2n) and the notice board (9.2o), test-first |
 | Code | Monorepo `chidimmamogbo/schoolflow-result-portal` (public). `backend/`: settings (fail fast), SQLAlchemy 2.1 + psycopg 3, Alembic with 25 migrations (schools; roles and RLS; accounts; sessions and links; permissions; school structure; pupils, parents and enrolment; staff assignments; grading set-up; staff who also teach; result sheets and scores; skill ratings; change reasons and class levels; form teacher class sections; report templates, documents and verification; uploaded files and the correction queue; notices and the email outbox; billing and the audit log; rate limits; login throttles and login functions; platform counts and checks; school admins edit their school; public school logo; parents answer link requests; verification names the newer revision), the API core in `core/` (D-158), login and sessions in `auth/` (D-159), the authorization chain in `authz/deps.py` (D-160), the super admin's platform module in `platform/` (D-161), the school's own set-up and staff in `school/` (D-162, D-163), uploads in `files/` (D-163), pupils and parents in `school/pupils.py`, `school/guardians.py` and `parents/` (D-164), the grading set-up in `school/grading.py` and `grading/setup.py` (D-165), the results engine in `results/engine.py` (D-166), score entry in `results/sheets.py` (D-167), rating sheets and the sheet moves in `results/rating_sheets.py` and `results/workflow.py` (D-168), My class in `form_class/routes.py` (D-169), report templates, publication, reopening, Students needing attention, card HTML, verification and staff cards in `reports/` (D-170 to D-172), the parent and student portal in `parents/portal.py` (D-172), the audit timeline in `audit/routes.py` (D-171), `use_context()` per-transaction tenant setting, the permission matrix in `authz/permissions.py`, grading and rating defaults in `grading/defaults.py` and `ratings/defaults.py`, the result-sheet workflow (score and rating sheets) enforced by triggers, 1246 tests on real Postgres 17 (rollback per test, about 17 minutes locally, about a minute in CI). `frontend/`: Next.js 16.4.2 skeleton. CI: 5 required checks (Backend job has a Postgres 17.11 service) + staging deploy. Production deploy in Phase 11 |
+
+## Where files moved (D-173, 2026-10-25)
+
+Older notes below may still name the old paths. Old to new, all under `backend/app/`:
+
+| Old | New |
+|---|---|
+| `settings.py`, `db.py`, `models.py` | `core/config.py`; `db/base.py` and `db/session.py`; `db/models.py` |
+| `core/deps.py`, `authz/deps.py` | `core/dependencies.py` (DbSession, `require`, `Principal`, `found`, ...) |
+| `authz/permissions.py`, `authz/models.py`, `core/ratelimit.py` | `core/permissions.py`, `core/models.py`, `core/rate_limit.py` |
+| `auth/passwords.py`, `auth/tokens.py`, `auth/temporary.py` | `core/security.py` |
+| `auth/routes.py`, `auth/throttle.py` | `src/auth/router.py`, `src/auth/services.py` |
+| `platform/` (super admin) | `src/platform_admin/` (`router.py`, `dependencies.py`, `schemas.py`, `settings_model.py`) |
+| `school/routes.py`, `school/schemas.py` | `src/schools/router.py` (still holds the structure routes until split), `src/schools/schemas.py` |
+| `school/people.py`, `staff.py`, `pupils.py`, `guardians.py`, `grading.py` | `src/accounts/router.py`, `src/staff/router.py`, `src/students/router.py`, `src/guardians/router.py`, `src/grading/router.py` |
+| `assignments/models.py`, `ratings/*` | `src/staff/models.py`; merged into `src/grading/` |
+| `grading/setup.py` | `src/grading/services.py` (`ensure_defaults`) |
+| `parents/routes.py`, `parents/portal.py` | `src/guardians/parent_router.py`, `src/portal/router.py` |
+| `results/*`, `form_class/routes.py` | `src/results/*` (same names), `src/form_class/router.py` |
+| `reports/cards.py`, `templates.py`, `render.py`, `html/` | `src/reports/router.py`, `templates.py`, `render.py`, `html/` |
+| `reports/publication.py`, `attention.py`, `verify.py` | `src/publication/router.py`, `src/attention/router.py`, `src/verification/router.py` |
+| `audit/log.py`, `audit/routes.py` | `src/audit/services.py` (`write_audit`), `src/audit/router.py` |
+| `files/storage.py`, `files/images.py`, `reports/pdf.py`, `emails/queue.py` | `platform/storage.py`, `platform/images.py`, `platform/pdf.py`, `platform/email/queue.py` |
+| `core/health.py` | `src/health/router.py` |
+| `tests/*.py` | `tests/` (support files), `tests/core/`, `tests/database/`, `tests/domains/` |
+
+The package is `app`: `uv run uvicorn app.main:app --reload`; tests `uv run pytest`.
 
 ## Key documents for building (read before Phase 7 work)
 

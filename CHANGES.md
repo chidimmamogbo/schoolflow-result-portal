@@ -264,3 +264,11 @@ These seven changes were made during Phase 4 (2026-10-11 to 2026-10-12). Chidimm
 - What changes: migration 25 drops and recreates `verify_report()` with two more columns, `newer_revision` and `newer_published_at` (the newest revision's number and date), same owner-run settings and single grant to `app_verifier`; `/verify/{code}` returns them. It still never returns another revision's code, the full name or any score.
 - After: the SUPERSEDED page can name the newer revision and its date.
 - Proof: `tests/test_verify_and_portal.py::test_superseded_and_revoked_reports`; `tests/test_migrations.py` (upgrade and downgrade).
+
+### CHANGE: Domain folders inside one app/ package, step 1 of the move (Chidimma `ok`, 2026-10-25)
+- Before: `backend/src/schoolflow_api/` with models grouped by table and routes grouped by user, and `backend/tests/` flat.
+- Why it must change: one folder per domain, as in Chidimma's Paywork EscrowPro, is easier to find things in and to grow (D-173).
+- When: now, before corrections and the notice board.
+- What changes: every file moves with `git mv` to the approved map (`app/core`, `app/db`, `app/platform`, `app/src/<domain>`, `app/tests/{core,database,domains}`); five small merges (`core/dependencies.py` takes the authorization chain, `core/models.py` the role and permission tables, `core/security.py` the password, token and temporary password helpers, `grading/models.py` and `grading/defaults.py` the rating ones) and one split (`db/base.py` out of `db/session.py`); imports rewritten; `pyproject.toml` (build module `app`, test, Pyright and Ruff paths), `Dockerfile.vercel` (`COPY app`, `uvicorn app.main:app`), `.dockerignore`, `migrations/env.py` and three migrations' import lines, two test path helpers, the local storage path, `AGENT.md`.
+- After: same URLs, responses, database and migrations; the large route files are split in the next PRs.
+- Proof: the full backend suite, Ruff, format and strict Pyright, and the Docker build and smoke test in CI.

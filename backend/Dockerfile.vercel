@@ -21,7 +21,7 @@ WORKDIR /app
 COPY pyproject.toml uv.lock .python-version ./
 RUN uv sync --locked --no-install-project --no-editable
 
-COPY src ./src
+COPY app ./app
 RUN uv sync --locked --no-editable
 
 # The report card fonts (Inter, Merriweather, Nunito; SIL Open Font License).
@@ -56,4 +56,4 @@ RUN fc-cache -f
 USER app
 EXPOSE 8000
 
-CMD ["sh", "-c", "exec uvicorn schoolflow_api.main:app --host 0.0.0.0 --port ${PORT}"]
+CMD ["sh", "-c", "exec uvicorn app.main:app --host 0.0.0.0 --port ${PORT}"]
