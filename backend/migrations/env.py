@@ -11,8 +11,8 @@ from logging.config import fileConfig
 from alembic import context
 from sqlalchemy import Connection, create_engine, pool
 
-from schoolflow_api.models import Base
-from schoolflow_api.settings import load_migration_settings
+from app.core.config import load_migration_settings
+from app.db.models import Base
 
 config = context.config
 

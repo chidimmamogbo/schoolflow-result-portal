@@ -9,4 +9,4 @@ __pycache__/
 .hypothesis/
 .coverage
 htmlcov/
-tests/
+app/tests/

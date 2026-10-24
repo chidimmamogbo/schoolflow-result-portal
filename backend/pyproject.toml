@@ -23,6 +23,13 @@ dependencies = [
 requires = ["uv_build>=0.12.16,<0.13.0"]
 build-backend = "uv_build"
 
+# The package is the app/ folder at the backend root (domain folders, 2026-10-25);
+# its tests never go into the built package or the container.
+[tool.uv.build-backend]
+module-name = "app"
+module-root = ""
+source-exclude = ["app/tests"]
+
 [dependency-groups]
 dev = [
     "httpx2>=2.13.1",
@@ -36,7 +43,7 @@ dev = [
 ]
 
 [tool.pytest.ini_options]
-testpaths = ["tests"]
+testpaths = ["app/tests"]
 # Any warning fails the run, so deprecations are fixed when they appear.
 filterwarnings = ["error"]
 
@@ -51,10 +58,10 @@ select = ["E", "W", "F", "I", "B", "UP", "S", "N", "SIM", "RUF"]
 
 [tool.ruff.lint.per-file-ignores]
 # Tests use plain `assert`, which is how pytest checks results.
-"tests/**" = ["S101"]
+"app/tests/**" = ["S101"]
 
 [tool.pyright]
-include = ["src", "tests"]
+include = ["app"]
 pythonVersion = "3.14"
 typeCheckingMode = "strict"
 venvPath = "."

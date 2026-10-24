@@ -74,7 +74,7 @@ Full reasoning in `DECISIONS.md` (Stack Summary at the end). Commands below are 
 
 | Path | What |
 |---|---|
-| `backend/` | FastAPI app (uv, Python 3.14). Code in `src/schoolflow_api/`, tests in `tests/`, container in `Dockerfile.vercel` |
+| `backend/` | FastAPI app (uv, Python 3.14). Package `app/`: `core/`, `db/`, `platform/` (outside services), `src/<domain>/` (each with `router.py`, `services.py`, `schemas.py`, `models.py`, `utils.py` as needed), `tests/` (`core/`, `database/`, `domains/`); migrations in `migrations/`; container in `Dockerfile.vercel` (D-173) |
 | `frontend/` | Next.js App Router (Bun, Node 24, TypeScript strict, Tailwind). Code in `src/app/` and `src/components/`, tests in `__tests__/` folders |
 | `design/` | UI handoff (tokens, screens, exact labels). Read-only reference |
 | `docs/` | Spec, build prompt, research, services |
@@ -90,7 +90,7 @@ Full reasoning in `DECISIONS.md` (Stack Summary at the end). Commands below are 
 | Lint, format | `uv run ruff check .` and `uv run ruff format --check .` |
 | Types | `uv run pyright` (strict) |
 | Audit | `uv audit --locked --preview-features audit-command` |
-| Run locally | `uv run uvicorn schoolflow_api.main:app --reload` |
+| Run locally | `uv run uvicorn app.main:app --reload` |
 | Container | `docker build -f Dockerfile.vercel -t schoolflow-api:local .` |
 
 **Frontend** (run inside `frontend/`; use `bunx`, not `npx`):
