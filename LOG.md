@@ -17,6 +17,27 @@ Entry template:
 
 ---
 
+## 2026-10-25 (Session 5, continued): the email sender
+
+### What we did
+- PR #56 (notice board) merged on `merge`.
+- **Email sender**, test-first, in `app/platform/email/`: `EmailProvider` with Resend (checked against Resend's API docs, 2026-10-25) and a recording stand-in; `send_due` takes due emails by priority then age, stops at 95 a Lagos day, prepares each through migration 26's `email_prepare` (school name and Reply-To; activation and reset links minted at send time, only hashes stored, older link cancelled; link requests written for a parent, a staff or pupil address, or a new address), sends, and records Sent or retries after 1 min, 5 min, 30 min, 2 h, 12 h, then Failed. Error notes lose addresses. A worker command runs it. D-176.
+
+### Issues and fixes
+- Emails queued in one test transaction share a time, so the order test checks priority only; link request placeholders must be unique hashes.
+- **Deliberate breaks:** 23; 22 caught at first; the platform email test now has a school in the database. Then 23 of 23.
+
+### Tests
+- Full backend suite: 1272 passed, 1 skipped (PDF on Windows). Ruff, format, strict Pyright and the dependency audit clean.
+
+### Next step
+- After `merge`: the new-parent `/join` route (CHANGE) and how the sender runs on Vercel (decision), then billing.
+
+### Blockers
+- Two answers from Chidimma (see the PR message).
+
+---
+
 ## 2026-10-25 (Session 5, continued): the notice board (9.2o)
 
 ### What we did
