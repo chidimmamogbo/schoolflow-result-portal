@@ -19,8 +19,8 @@ from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from app.src.reports.render import PREVIEW_LABEL, Issued, render_card
-from app.src.reports.router import sample_snapshot
-from app.src.reports.templates import ScoreCard, SkillsCard
+from app.src.reports.schemas import ScoreCard, SkillsCard
+from app.src.reports.services import sample_snapshot
 from app.tests.domains.test_publication import app, as_, code_of, fast_hashing, gmc, send
 from app.tests.domains.test_republishing import publish_a
 

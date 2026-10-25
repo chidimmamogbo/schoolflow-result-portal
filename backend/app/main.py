@@ -19,19 +19,16 @@ from app.src.auth import router as auth
 from app.src.files import router as files
 from app.src.form_class import router as form_class
 from app.src.grading import router as school_grading
-from app.src.guardians import parent_router as parents
-from app.src.guardians import router as school_guardians
+from app.src.guardians import router as guardians
 from app.src.health import router as health
 from app.src.platform_admin import router as platform
 from app.src.portal import router as portal
 from app.src.publication import router as publication
-from app.src.reports import router as cards
-from app.src.reports import templates as report_templates
-from app.src.results import rating_sheets as rating_sheets
-from app.src.results import sheets as result_sheets
-from app.src.results import workflow as sheet_workflow
+from app.src.reports import router as reports
+from app.src.results import router as results
 from app.src.schools import router as school
 from app.src.staff import router as school_staff
+from app.src.structure import router as structure
 from app.src.students import router as school_pupils
 from app.src.verification import router as verify
 
@@ -66,22 +63,23 @@ def create_app(app_env: str | None = None) -> FastAPI:
     api_v1.include_router(auth.router)
     api_v1.include_router(platform.router)
     api_v1.include_router(school.router)
+    api_v1.include_router(structure.router)
     api_v1.include_router(school_people.router)
     api_v1.include_router(school_staff.router)
     api_v1.include_router(files.router)
     api_v1.include_router(school_pupils.router)
-    api_v1.include_router(school_guardians.router)
-    api_v1.include_router(parents.router)
+    api_v1.include_router(guardians.router)
+    api_v1.include_router(guardians.parent_router)
     api_v1.include_router(school_grading.router)
-    api_v1.include_router(result_sheets.router)
-    api_v1.include_router(rating_sheets.router)
-    api_v1.include_router(sheet_workflow.router)
+    api_v1.include_router(results.router)
+    api_v1.include_router(results.rating_router)
+    api_v1.include_router(results.workflow_router)
     api_v1.include_router(form_class.router)
-    api_v1.include_router(report_templates.router)
+    api_v1.include_router(reports.templates_router)
     api_v1.include_router(publication.router)
     api_v1.include_router(attention.router)
     api_v1.include_router(audit.router)
-    api_v1.include_router(cards.router)
+    api_v1.include_router(reports.router)
     api_v1.include_router(portal.router)
     api_v1.include_router(verify.router)
     app.include_router(api_v1)

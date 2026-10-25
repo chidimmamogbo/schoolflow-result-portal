@@ -12,9 +12,9 @@ container's disk that disappears.
 """
 
 from pathlib import Path, PurePosixPath
-from typing import Protocol
+from typing import Annotated, Protocol
 
-from fastapi import Request
+from fastapi import Depends, Request
 
 from app.core.errors import ProblemError
 
@@ -55,3 +55,7 @@ def get_file_storage(request: Request) -> FileStorage:
     if request.app.state.app_env == "local":
         return LocalFileStorage(LOCAL_ROOT)
     raise ProblemError(503, "Service unavailable", "File storage is not set up yet.")
+
+
+# The route parameter type for "the configured storage" (tests override get_file_storage).
+Storage = Annotated[FileStorage, Depends(get_file_storage)]

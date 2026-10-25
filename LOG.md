@@ -17,6 +17,33 @@ Entry template:
 
 ---
 
+## 2026-10-25 (Session 5, continued): domain folders, PR 3 (the remaining domains)
+
+### What we did
+- PR #53 merged on `merge`.
+- Split every remaining domain into thin `router.py`, `services.py` and `schemas.py`: accounts, attention, audit, auth, files, form_class, grading, guardians, portal, reports, results, schools, staff, structure, students, verification.
+- `results` (three route files) and `guardians` and `reports` (two each) were first joined into one `router.py` keeping one router object per part (`rating_router`, `workflow_router`, `parent_router`, `templates_router`).
+- `structure` got its own routes and schemas out of `schools`; the school admin schemas moved to `accounts`.
+- `ProblemError` can now carry field errors, so `platform_admin` services raise "this code is taken" instead of building a response (same 409 body).
+- The report card helpers moved from `portal` to `reports`, `Settings` to `reports/schemas.py`, `parse` and `shown` to `reports/utils.py`, and the `Storage` dependency to `app/platform/storage.py`, which removed two circular imports.
+
+### Issues and fixes
+- Joining files brought two different `pupils_of` functions (score sheets: pupils who take the subject; rating sheets: every pupil) and two `Comment` types (300 and 1000 characters) into one module, where the last one silently wins. Ruff caught the function; a duplicate-name scan caught the type. Renamed `rating_pupils_of` and `MoveComment`.
+- A text replacement of `sheets.name` also changed permission and audit names (`"sheets.approve"` became `"approve"`); found by listing the original strings and restored before any test ran.
+- The first full run failed to import most domain tests: circular imports between `portal` and `reports`, and between `reports/render.py` and `reports/services.py`; fixed as above.
+- `staff` failed to split at first (a parameter type with a comma inside); the splitter now reads parameter types with Python's parser.
+
+### Tests
+- Full backend suite: 1245 passed, 1 skipped (PDF on Windows), as before; no duplicate top-level names in any file. Ruff, format and strict Pyright clean.
+
+### Next step
+- After `merge`: corrections (9.2n) and the notice board (9.2o), test-first, in the new layout.
+
+### Blockers
+- None.
+
+---
+
 ## 2026-10-25 (Session 5, continued): domain folders, PR 2
 
 ### What we did

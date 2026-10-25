@@ -17,13 +17,12 @@ import uuid
 from typing import Any
 
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse
 from pydantic import ValidationError
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from app.core.dependencies import Principal, found
-from app.core.errors import ProblemError, problem_response
+from app.core.errors import ProblemError
 from app.core.security import issue_temporary_password
 from app.src.platform_admin import settings_model as settings_model
 from app.src.platform_admin.schemas import (
@@ -121,8 +120,9 @@ def queue_email(
     )
 
 
-def taken(field: str, message: str, code: str) -> JSONResponse:
-    return problem_response(
+def taken(field: str, message: str, code: str) -> ProblemError:
+    """A 409 that names the field, as a form shows it."""
+    return ProblemError(
         409,
         message,
         code=code,
@@ -236,14 +236,14 @@ def create_school(
     body: CreateSchool,
     _: Principal,
     db: Session,
-) -> Created | JSONResponse:
+) -> Created:
     if code_taken(db, body.code):
-        return taken("code", "This school code is taken.", "code_taken")
+        raise taken("code", "This school code is taken.", "code_taken")
     principal = body.principal
     if db.scalar(text("select platform_username_taken(:u)"), {"u": principal.username}):
-        return taken("principal.username", "This username is taken.", "username_taken")
+        raise taken("principal.username", "This username is taken.", "username_taken")
     if db.scalar(text("select platform_email_taken(:e)"), {"e": principal.email}):
-        return taken("principal.email", "This email is already used.", "email_taken")
+        raise taken("principal.email", "This email is already used.", "email_taken")
 
     school_id: uuid.UUID = db.scalar(
         text(
@@ -419,11 +419,11 @@ def change_code(
     body: ChangeCode,
     _: Principal,
     db: Session,
-) -> SchoolRow | JSONResponse:
+) -> SchoolRow:
     row = school_row(db, school_id)
     if body.code != row.code:
         if code_taken(db, body.code):
-            return taken("code", "This school code is taken.", "code_taken")
+            raise taken("code", "This school code is taken.", "code_taken")
         if not body.confirm:
             raise ProblemError(
                 409, "Confirm the new school code", CODE_CHANGE_WARNING, code="confirmation_needed"

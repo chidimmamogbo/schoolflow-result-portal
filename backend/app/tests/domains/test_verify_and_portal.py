@@ -23,7 +23,7 @@ from fastapi import FastAPI
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
-from app.src.verification.router import get_verifier_db
+from app.src.verification.services import get_verifier_db
 from app.tests.auth_support import client_for, logged_in
 from app.tests.domains.test_publication import (
     app,

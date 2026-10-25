@@ -44,8 +44,8 @@ from app.core.dependencies import (
 from app.core.errors import ProblemError
 from app.platform.email.queue import queue_email
 from app.src.audit.services import write_audit
-from app.src.form_class.router import class_results, ensure_section, pupils_of
-from app.src.grading.router import Band
+from app.src.form_class.services import class_results, ensure_section, pupils_of
+from app.src.grading.schemas import Band
 from app.src.grading.services import ensure_defaults
 from app.src.publication.schemas import (
     HeadComments,
@@ -64,9 +64,11 @@ from app.src.publication.utils import (
     plural,
     report_codes,
 )
-from app.src.reports.templates import Settings, current, shown, template_for_publication
+from app.src.reports.schemas import Settings
+from app.src.reports.services import current, template_for_publication
+from app.src.reports.utils import shown
 from app.src.results.engine import CALCULATION_VERSION, ClassResult, grade_for
-from app.src.results.sheets import active_term
+from app.src.results.services import active_term
 from app.src.schools.models import Level
 
 TERM_NAMES = {1: "First Term", 2: "Second Term", 3: "Third Term"}
