@@ -38,6 +38,7 @@ class ProblemError(Exception):
         detail: str | None = None,
         *,
         code: str | None = None,
+        errors: Sequence[Mapping[str, Any]] | None = None,
         headers: Mapping[str, str] | None = None,
     ) -> None:
         super().__init__(title)
@@ -45,6 +46,7 @@ class ProblemError(Exception):
         self.title = title
         self.detail = detail
         self.code = code
+        self.errors = errors  # field errors, as in a 422 (for example "this code is taken")
         self.headers = headers
 
 
@@ -83,7 +85,9 @@ def internal_error() -> JSONResponse:
 async def _problem(_: Request, exc: Exception) -> JSONResponse:
     if not isinstance(exc, ProblemError):
         raise exc
-    return problem_response(exc.status, exc.title, exc.detail, code=exc.code, headers=exc.headers)
+    return problem_response(
+        exc.status, exc.title, exc.detail, code=exc.code, errors=exc.errors, headers=exc.headers
+    )
 
 
 async def _http(_: Request, exc: Exception) -> JSONResponse:

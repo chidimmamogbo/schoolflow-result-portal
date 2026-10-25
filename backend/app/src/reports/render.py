@@ -24,7 +24,8 @@ import segno
 from jinja2 import Environment, PackageLoader, StrictUndefined, select_autoescape
 from markupsafe import Markup
 
-from app.src.reports.templates import Settings, parse
+from app.src.reports.schemas import Settings
+from app.src.reports.utils import parse
 from app.src.results.engine import ordinal
 
 PREVIEW_LABEL = "Preview, not published"

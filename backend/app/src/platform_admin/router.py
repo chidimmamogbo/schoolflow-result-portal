@@ -7,7 +7,6 @@ import uuid
 from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, Query
-from fastapi.responses import JSONResponse
 
 from app.core.dependencies import Principal, require
 from app.src.platform_admin import services
@@ -72,7 +71,7 @@ def check_username(username: Annotated[Username, Query()], _: Manage, db: Platfo
 
 
 @router.post("/schools", status_code=201, response_model=Created)
-def create_school(body: CreateSchool, _: Manage, db: PlatformDb) -> Created | JSONResponse:
+def create_school(body: CreateSchool, _: Manage, db: PlatformDb) -> Created:
     return services.create_school(body=body, _=_, db=db)
 
 
@@ -97,9 +96,7 @@ def edit_school(school_id: uuid.UUID, body: EditSchool, _: Manage, db: PlatformD
 
 
 @router.post("/schools/{school_id}/change-code", response_model=SchoolRow)
-def change_code(
-    school_id: uuid.UUID, body: ChangeCode, _: Manage, db: PlatformDb
-) -> SchoolRow | JSONResponse:
+def change_code(school_id: uuid.UUID, body: ChangeCode, _: Manage, db: PlatformDb) -> SchoolRow:
     return services.change_code(school_id=school_id, body=body, _=_, db=db)
 
 
