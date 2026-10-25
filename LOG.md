@@ -17,6 +17,29 @@ Entry template:
 
 ---
 
+## 2026-10-25 (Session 5, continued): the notice board (9.2o)
+
+### What we did
+- On `merge`: PR #54 (domain layout, step 3) merged; PR #55 (corrections) was rebased onto `main`, checked again (CI on the new commit) and merged.
+- **Notice board**, test-first, in `src/notices/`: school admins post plain-text notices to everyone, roles, classes, or roles within classes, with the recipients fixed when posted (pinned notices for everyone also reach later members); edit, pin and archive (system notices keep their words; archiving is final), all audited; everyone reads their board pinned first, with read marks and an unread count, a parent across all their linked schools labelled by school. D-175.
+
+### Issues and fixes
+- Two expected recipient counts in my first test were wrong (a class also reaches its covering reviewer; GMC has 8 members); corrected from the fixture.
+- The test that orders notices by time needed a signed-in school admin to move `created_at` (the database asks who changes a notice).
+- **Deliberate breaks:** 20; 18 caught at first. Added checks that a paused member is not told and a paused school link hides that school's notices. Then 20 of 20.
+- The auto-mode safety check gave no answer for a while; file edits went ahead, the commands waited until `continue`.
+
+### Tests
+- Full backend suite: 1255 passed, 1 skipped (PDF on Windows). Ruff, format and strict Pyright clean.
+
+### Next step
+- After `merge`: the email sender, test-first.
+
+### Blockers
+- None.
+
+---
+
 ## 2026-10-25 (Session 5, continued): corrections (9.2n)
 
 ### What we did
