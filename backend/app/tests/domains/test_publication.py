@@ -27,7 +27,7 @@ from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from app.src.grading.services import ensure_defaults
-from app.src.publication.router import report_codes
+from app.src.publication.utils import report_codes
 from app.tests.auth_support import build_auth_app, csrf, logged_in, make_login, use_fast_hashing
 from app.tests.factories import (
     add_arm_subject,
