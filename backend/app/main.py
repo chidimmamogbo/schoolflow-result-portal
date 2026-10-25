@@ -16,6 +16,7 @@ from app.src.accounts import router as school_people
 from app.src.attention import router as attention
 from app.src.audit import router as audit
 from app.src.auth import router as auth
+from app.src.corrections import router as corrections
 from app.src.files import router as files
 from app.src.form_class import router as form_class
 from app.src.grading import router as school_grading
@@ -82,6 +83,7 @@ def create_app(app_env: str | None = None) -> FastAPI:
     api_v1.include_router(reports.router)
     api_v1.include_router(portal.router)
     api_v1.include_router(verify.router)
+    api_v1.include_router(corrections.router)
     app.include_router(api_v1)
     return app
 

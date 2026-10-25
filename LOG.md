@@ -17,6 +17,28 @@ Entry template:
 
 ---
 
+## 2026-10-25 (Session 5, continued): corrections (9.2n)
+
+### What we did
+- Chidimma said `next` with PR #54 still open; the corrections branch was started on top of PR #54 (stacked), to be rebased on `main` after #54 is merged.
+- **Corrections**, test-first, in the domain layout (`src/corrections/`): raise (parents for their own child, staff for their classes, school admins; never pupils), list and view (requester and school admins only), moves along SPEC section 8 (school admins; the requester answers "Needs more information"), one checked attachment (image re-saved, or a PDF without scripts or embedded files, up to 4 MB), downloads only. AC15.1: a request named by a reopen shows the republished revision, old against new, and the link is stored when it is resolved. The requester is emailed the number and status only. D-174.
+- `clean_image` takes a size limit (1 MB default, 4 MB for attachments).
+
+### Issues and fixes
+- First try linked the corrected report at republish; the database refuses a link before a request is Resolved (`ck_correction_requests_corrected_only_when_resolved`), so the link is shown while open and stored on resolving. Publication stays unchanged (no CHANGE needed).
+- **Deliberate breaks:** 24; 23 caught at first. The emails' fields are now pinned (the school's message never goes into an email). Then 24 of 24.
+
+### Tests
+- Full backend suite: 1250 passed, 1 skipped (PDF on Windows). Ruff, format and strict Pyright clean.
+
+### Next step
+- After `merge` of PR #54 and this PR: the notice board (9.2o), test-first.
+
+### Blockers
+- PR #54 must be merged first.
+
+---
+
 ## 2026-10-25 (Session 5, continued): domain folders, PR 3 (the remaining domains)
 
 ### What we did

@@ -40,8 +40,10 @@ def unsupported() -> ProblemError:
     return ProblemError(415, "Upload a PNG, JPEG or WebP image.", code="unsupported_file")
 
 
-def too_large() -> ProblemError:
-    return ProblemError(413, "The image must be 1 MB or smaller.", code="file_too_large")
+def too_large(limit: int = IMAGE_LIMIT_BYTES) -> ProblemError:
+    size = f"{limit // (1024 * 1024)} MB"
+    what = "image" if limit == IMAGE_LIMIT_BYTES else "file"
+    return ProblemError(413, f"The {what} must be {size} or smaller.", code="file_too_large")
 
 
 def sniff(data: bytes) -> str | None:
@@ -55,9 +57,10 @@ def sniff(data: bytes) -> str | None:
     return None
 
 
-def clean_image(data: bytes) -> CleanImage:
-    if len(data) > IMAGE_LIMIT_BYTES:
-        raise too_large()
+def clean_image(data: bytes, limit: int = IMAGE_LIMIT_BYTES) -> CleanImage:
+    """The cleaned image; `limit` is 1 MB for logos and 4 MB for correction attachments."""
+    if len(data) > limit:
+        raise too_large(limit)
     kind = sniff(data)
     if kind is None:
         raise unsupported()
@@ -91,7 +94,7 @@ def clean_image(data: bytes) -> CleanImage:
     options: dict[str, object] = {"quality": 88} if kind in {"JPEG", "WEBP"} else {}
     clean.save(out, kind, optimize=True, **options)
     result = out.getvalue()
-    if len(result) > IMAGE_LIMIT_BYTES:
-        raise too_large()
+    if len(result) > limit:
+        raise too_large(limit)
     content_type, extension = FORMATS[kind]
     return CleanImage(result, content_type, extension)
