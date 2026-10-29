@@ -47,6 +47,15 @@ class Settings(BaseSettings):
     # The public verification page only (role app_verifier, D-076): it can call
     # verify_report() and nothing else. Without it /verify answers 503.
     database_url_verifier: SecretStr | None = None
+    # The background email sender only (role app_sender, D-153): it reads the outbox and
+    # updates its sending columns. Without it the sender does not run.
+    database_url_sender: SecretStr | None = None
+    # Resend (D-078): a sending-only key; empty means emails stay queued.
+    resend_api_key: SecretStr | None = None
+    # The sending subdomain (D-079): emails come from no-reply@<this>.
+    email_from_domain: str = "notify.meritiaa.com"
+    # Resend Free allows 100 a day; the sender stops at this many (D-082).
+    email_daily_limit: int = Field(default=95, ge=1, le=10_000)
     database_url_migrations: SecretStr | None = None
     test_database_url: SecretStr | None = None
 
@@ -54,6 +63,7 @@ class Settings(BaseSettings):
         "database_url",
         "database_url_platform",
         "database_url_verifier",
+        "database_url_sender",
         "database_url_migrations",
         "test_database_url",
     )(must_be_postgres_with_psycopg)
