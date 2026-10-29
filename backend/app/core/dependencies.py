@@ -8,7 +8,9 @@ Routes take the session as `DbSession`: one transaction per request, committed
 before the response is sent (scope="function", FastAPI docs checked
 2026-10-15), so a rule PostgreSQL checks at commit still becomes a proper
 error response; rolled back on any error. Who the database works for is set
-by the auth dependencies with `use_context()` (9.2b and 9.2c).
+by the auth dependencies with `use_context()` (9.2b and 9.2c). When the route
+queued an email, DbSession also starts one email run in the background, after
+the response (platform/email/trigger.py, D-177).
 """
 
 import uuid
@@ -18,7 +20,7 @@ from functools import lru_cache
 from typing import Annotated
 from urllib.parse import urlsplit
 
-from fastapi import Depends, Request
+from fastapi import BackgroundTasks, Depends, Request
 from sqlalchemy import Engine, text
 from sqlalchemy.orm import Session
 
@@ -28,6 +30,7 @@ from app.core.permissions import MATRIX, Role, permissions_for
 from app.core.rate_limit import RateLimiter
 from app.core.security import CSRF_HEADER, SESSION_COOKIE, csrf_matches, token_hash
 from app.db.session import make_engine, use_context
+from app.platform.email.trigger import get_email_kick, take_queued
 from app.src.schools.models import Feature, Level
 
 
@@ -49,7 +52,20 @@ def get_db() -> Iterator[Session]:
         session.close()
 
 
-DbSession = Annotated[Session, Depends(get_db, scope="function")]
+def get_db_session(
+    session: Annotated[Session, Depends(get_db, scope="function")],
+    background: BackgroundTasks,
+    kick: Annotated[Callable[[], None], Depends(get_email_kick)],
+) -> Iterator[Session]:
+    """get_db, plus: an email queued by a successful route goes out soon after (D-177)."""
+    take_queued(session)  # a fresh request starts unmarked
+    yield session
+    # Not reached when the route fails. The task runs after get_db has committed.
+    if take_queued(session):
+        background.add_task(kick)
+
+
+DbSession = Annotated[Session, Depends(get_db_session, scope="function")]
 
 
 def get_rate_limiter() -> RateLimiter:
@@ -92,6 +108,9 @@ PUBLIC_ROUTES = frozenset(
         ("POST", "/api/v1/auth/password/forgot"),
         ("POST", "/api/v1/auth/password/reset"),
         ("GET", "/api/v1/verify/{code}"),
+        # A new parent's link and Vercel's daily email run (CHANGE 2026-10-29, D-177).
+        ("POST", "/api/v1/auth/join"),
+        ("GET", "/api/v1/cron/emails"),
     }
 )
 SAFE_METHODS = frozenset({"GET", "HEAD", "OPTIONS"})

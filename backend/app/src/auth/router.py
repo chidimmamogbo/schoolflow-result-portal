@@ -100,6 +100,14 @@ def reset_password(
     return services.reset_password(body=body, request=request, response=response, session=session)
 
 
+@router.post("/join", response_model=LoginResult, dependencies=[LinkByIp, SameOrigin])
+def join(
+    body: LinkRequest, request: Request, response: Response, session: DbSession
+) -> LoginResult:
+    # A new parent's link from a school's request (CHANGE 2026-10-29, D-177).
+    return services.join(body=body, request=request, response=response, session=session)
+
+
 @router.post(
     "/password/forgot",
     status_code=202,

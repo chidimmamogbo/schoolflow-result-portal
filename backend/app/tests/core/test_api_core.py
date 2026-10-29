@@ -287,6 +287,8 @@ def test_ready_checks_the_database(client: TestClient) -> None:
 
 def test_ready_says_when_the_database_is_down(db_session: Session) -> None:
     class Down:
+        info: dict[str, object] = {}  # read by DbSession, like a real session's
+
         def execute(self, *_: object) -> None:
             raise OperationalError("select 1", {}, Exception("connection refused"))
 
