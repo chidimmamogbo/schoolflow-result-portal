@@ -47,5 +47,11 @@
         "service": "frontend"
       }
     }
+  ],
+  "crons": [
+    {
+      "path": "/api/v1/cron/emails",
+      "schedule": "0 6 * * *"
+    }
   ]
 }

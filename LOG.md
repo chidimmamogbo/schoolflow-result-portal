@@ -17,6 +17,31 @@ Entry template:
 
 ---
 
+## 2026-10-29 (Session 5, continued): new parents join; emails go out on their own
+
+### What we did
+- PR #57 (email sender) merged on `merge`. Chidimma approved the `/join` CHANGE and chose option A for sending.
+- **`POST /auth/join`**, test-first: migration 27's `join_parent_link()` creates the parent account from an open link request (email verified, username from the name, numbered when taken), links the school and guardian record, accepts the request; the route checks the password first and logs the parent in. D-177.
+- **Option A:** `DbSession` starts one background sender run after any request that queued an email (`app/platform/email/trigger.py`); `GET /cron/emails` with `CRON_SECRET` runs it daily (`vercel.json` cron at 06:00 UTC, production only); one advisory lock per batch keeps two runs under the daily limit. The worker command reuses the same run.
+- The platform module now uses the shared `queue_email()` instead of its own copy.
+
+### Issues and fixes
+- **Port 5432 was taken** by another project's container (`mmirioma-postgres-1`). Left it running; started ours on 5433 with a scratchpad override file and pointed `TEST_DATABASE_URL` at it (MEMORY.md fact).
+- **Platform emails did not start a run** at first: the platform module had its own copy of `queue_email()`. Fixed by using the shared one.
+- `same_origin` allows a missing Origin by design (D-038); the test now sends a foreign one.
+- **Deliberate breaks:** 23; 20 caught at first. The username test now needs a second number, the logging test checks the structured fields, and the runner test leaves out the key with the login set. Then 23 of 23.
+
+### Tests
+- Full backend suite: 1299 passed, 2 failed, 1 skipped (PDF on Windows). Failure 1, from this branch: the "database is down" test's fake session had no `.info`, which `DbSession` now reads; the fake now has one, and the file passes. Failure 2 is an older flaky check: `test_anyone_can_verify_a_published_report` asserts `"78" not in str(body)`, but the random verification code and the `published_at` fractions can contain "78"; it passed on rerun. A CHANGE to check only the fields that could hold a score is proposed in the PR. Ruff, format and strict Pyright clean.
+
+### Next step
+- After `merge`: billing and the Paystack webhook (9.2p).
+
+### Blockers
+- None. Chidimma's secrets for staging (sender login, Resend key, verifier login) and later production (`CRON_SECRET`) are listed in MEMORY.md.
+
+---
+
 ## 2026-10-25 (Session 5, continued): the email sender
 
 ### What we did

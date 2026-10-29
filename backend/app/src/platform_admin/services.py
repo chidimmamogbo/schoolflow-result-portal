@@ -24,6 +24,7 @@ from sqlalchemy.orm import Session
 from app.core.dependencies import Principal, found
 from app.core.errors import ProblemError
 from app.core.security import issue_temporary_password
+from app.platform.email.queue import queue_email
 from app.src.platform_admin import settings_model as settings_model
 from app.src.platform_admin.schemas import (
     AdminRow,
@@ -96,26 +97,6 @@ def audit(
             "old": json.dumps(old) if old is not None else None,
             "new": json.dumps(new) if new is not None else None,
             "reason": reason,
-        },
-    )
-
-
-def queue_email(
-    db: Session, school_id: uuid.UUID, template: str, to: str, data: dict[str, Any]
-) -> None:
-    db.execute(
-        text(
-            "insert into email_outbox (school_id, type, to_address, template, template_data,"
-            " priority, idempotency_key) values (:school, :template, :to, :template,"
-            " cast(:data as jsonb), 1, :key)"
-        ),
-        {
-            "school": school_id,
-            "template": template,
-            "to": to,
-            "data": json.dumps(data),
-            # One email per request: a resend is a new event (D-080).
-            "key": f"{template}:{school_id}:{uuid.uuid4()}",
         },
     )
 

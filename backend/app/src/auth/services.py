@@ -38,6 +38,7 @@ from app.core.security import (
     token_hash,
 )
 from app.db.session import use_context
+from app.platform.email.trigger import note_queued
 from app.platform.storage import FileStorage
 from app.src.auth import services as throttle
 from app.src.auth.schemas import (
@@ -104,6 +105,14 @@ LINK_INVALID = ProblemError(
     "This link has expired or was already used.",
     "Ask your school admin for a new one.",
     code="link_invalid",
+)
+
+# Only the holder of the link sees this, and the link was sent to that email.
+EMAIL_HAS_ACCOUNT = ProblemError(
+    409,
+    "This email already has a SchoolFlow account.",
+    "Log in, then accept the school's request from your account.",
+    code="email_has_account",
 )
 
 PASSWORD_TITLES = {
@@ -495,6 +504,7 @@ def change_password(
     )
     rotate_session(session, response, principal.session_id)
     session.execute(text("select auth_password_changed_email()"))
+    note_queued(session)
     if principal.school_id is not None:
         session.execute(
             text(
@@ -543,6 +553,28 @@ def reset_password(
 ) -> LoginResult:
     use_link(session, request, response, body, "reset")
     session.execute(text("select auth_password_changed_email()"))
+    note_queued(session)
+    return LoginResult(must_change_password=False)
+
+
+def join(
+    body: LinkRequest,
+    request: Request,
+    response: Response,
+    session: Session,
+) -> LoginResult:
+    """A new parent sets a password from a school's link request (D-138, D-177)."""
+    # Checked first, so a weak password leaves the link usable.
+    check_new_password(body.password, student=False)
+    joined = session.execute(
+        text("select account, outcome from join_parent_link(:hash, :password)"),
+        {"hash": token_hash(body.token), "password": passwords.hash_password(body.password)},
+    ).one()
+    if joined.outcome == "email_has_account":
+        raise EMAIL_HAS_ACCOUNT
+    if joined.account is None:
+        raise LINK_INVALID
+    start_session(session, request, response, joined.account, False)
     return LoginResult(must_change_password=False)
 
 
@@ -554,4 +586,5 @@ def forgot_password(
     email = body.email.strip().lower()
     if limiter.hit(f"forgot:email:{email}", 3, 3600) == 0:
         session.execute(text("select auth_request_password_reset(:email)"), {"email": email})
+        note_queued(session)  # maybe nothing was queued; a run then finds nothing
     return Accepted(detail=FORGOT_SENT)
