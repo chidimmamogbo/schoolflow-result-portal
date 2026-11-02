@@ -188,6 +188,18 @@ def results_published(d: dict[str, Any], p: Prepared) -> Content:
     )
 
 
+def payment_receipt(d: dict[str, Any], p: Prepared) -> Content:
+    return Content(
+        f"Receipt {d['receipt_number']} for {d['term_name']}",
+        [
+            f"Hello {d['full_name']},",
+            f"We received {d['amount']} from {d['school_name']} for {d['term_name']}.",
+            f"Your receipt number is {d['receipt_number']}. You can download it from Billing.",
+        ],
+        ("View billing", f"{p.base_url}{d['billing_path']}"),
+    )
+
+
 def correction_updated(d: dict[str, Any], p: Prepared) -> Content:
     status = STATUS_WORDS.get(d["status"], d["status"])
     return Content(
@@ -209,6 +221,7 @@ TEMPLATES: dict[str, Callable[[dict[str, Any], Prepared], Content]] = {
     "parent_link_request": parent_link_request,
     "results_published": results_published,
     "correction_updated": correction_updated,
+    "payment_receipt": payment_receipt,
 }
 
 

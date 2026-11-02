@@ -111,6 +111,9 @@ PUBLIC_ROUTES = frozenset(
         # A new parent's link and Vercel's daily email run (CHANGE 2026-10-29, D-177).
         ("POST", "/api/v1/auth/join"),
         ("GET", "/api/v1/cron/emails"),
+        # Paystack's webhook (its signature is the check, D-094) and the daily payment run.
+        ("POST", "/api/v1/webhooks/payments"),
+        ("GET", "/api/v1/cron/payments"),
     }
 )
 SAFE_METHODS = frozenset({"GET", "HEAD", "OPTIONS"})

@@ -289,6 +289,30 @@ These seven changes were made during Phase 4 (2026-10-11 to 2026-10-12). Chidimm
 - After: emails leave seconds after the request that queued them; the cron (production only) sends what is left once a day. Staging needs `DATABASE_URL_SENDER` and `RESEND_API_KEY`; production also needs `CRON_SECRET`.
 - Proof: `app/tests/domains/test_email_trigger.py`; `tests/core/test_authz.py`; the email sender tests.
 
+### CHANGE: A manual payment may be started by the super admin (Chidimma `ok`, 2026-11-02)
+- Before: `check_payment()` (migration 18) let only a school admin start a payment, and `app_platform` could not insert payments, so F19 rule 12's manual payment could not be recorded.
+- Why it must change: the super admin records manual payments (SPEC F19 rule 12, D-096).
+- When: now, with billing.
+- What changes: migration 28 replaces `check_payment()` to accept a super admin as well and grants `app_platform` the same insert columns a school admin has. The amount is still copied from the invoice and the invoice must still be unpaid.
+- After: `POST /platform/invoices/{id}/manual-payment` works; schools are not affected.
+- Proof: `test_billing_api.py::test_a_manual_payment_pays_the_invoice_with_a_receipt_and_a_note`; `tests/database/test_billing.py`.
+
+### CHANGE: A daily payment run, a second cron and a public route (Chidimma `ok`, 2026-11-02)
+- Before: `vercel.json` had one cron (emails); `PUBLIC_ROUTES` did not list the payment routes.
+- Why it must change: D-094 says the daily cron reprocesses pending events, and D-092 says it refreshes statuses.
+- When: now, with billing.
+- What changes: `POST /webhooks/payments` (planned in BUILD_PROMPT 9.2s) and `GET /cron/payments` (same `CRON_SECRET` check as the email run) join `PUBLIC_ROUTES` and the pinned test; `vercel.json` gains `/api/v1/cron/payments` at 05:00 UTC. `/cron/*`'s 503 message no longer says "email".
+- After: leftover events and overdue statuses are handled once a day, production only.
+- Proof: `test_billing_api.py` (the daily run section); `tests/core/test_authz.py`.
+
+### CHANGE: Settings errors never repeat the refused value (Chidimma `ok`, 2026-11-02)
+- Before: when a setting was refused, Pydantic's error text included its value, so a mistaken live key or a database address with its password could reach the logs at start-up.
+- Why it must change: secrets stay out of logs (non-negotiable). The billing test for live keys found it.
+- When: now.
+- What changes: `hide_input_in_errors=True` on the settings in `core/config.py`.
+- After: the error names the setting and the rule, never the value.
+- Proof: `test_billing_api.py::test_only_test_keys_are_accepted`; `tests/core/test_settings.py`.
+
 ### CHANGE: pypdf 6.21.2 to 6.21.4 (Chidimma `ok`, 2026-11-02)
 - Before: `uv.lock` held pypdf 6.21.2, a dev dependency used only by `app/tests/domains/test_pdf.py`; the running app does not use it.
 - Why it must change: seven advisories were published against 6.21.2 (GHSA-x3rh-gjgm-fmqc, GHSA-62m5-6wh8-28x7, GHSA-42gh-23hr-vphw, GHSA-4vqv-7265-gm2w, GHSA-5849-834g-hvw5, GHSA-cggf-277g-3q54, GHSA-mfr5-77xh-9j7h), and they fail CI's audit step on every PR.

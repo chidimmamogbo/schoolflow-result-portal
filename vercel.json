@@ -50,6 +50,10 @@
   ],
   "crons": [
     {
+      "path": "/api/v1/cron/payments",
+      "schedule": "0 5 * * *"
+    },
+    {
       "path": "/api/v1/cron/emails",
       "schedule": "0 6 * * *"
     }

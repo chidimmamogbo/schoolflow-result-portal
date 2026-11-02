@@ -57,3 +57,5 @@ def platform_db(
 
 
 PlatformDb = Annotated[Session, Depends(platform_db)]
+# Nobody is signed in: only for the signature-checked webhook (D-094).
+RawPlatformDb = Annotated[Session, Depends(get_platform_db, scope="function")]

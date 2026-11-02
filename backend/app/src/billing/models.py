@@ -111,11 +111,17 @@ class SchoolSubscription(IdMixin, TimestampMixin, Base):
     __table_args__ = (
         UniqueConstraint("school_id"),
         CheckConstraint(one_of("status", SubscriptionStatus), name="status_allowed"),
+        CheckConstraint(
+            "grace_period_days IS NULL OR grace_period_days BETWEEN 0 AND 90",
+            name="grace_period_valid",
+        ),
     )
 
     school_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("schools.id"))
     billing_enabled: Mapped[bool] = mapped_column(server_default=text("false"))
     status: Mapped[str] = mapped_column(server_default=SubscriptionStatus.FREE_PILOT.value)
+    # This school's own grace period; empty means the platform setting (F19 rule 7).
+    grace_period_days: Mapped[int | None]
 
 
 class Invoice(IdMixin, TimestampMixin, Base):

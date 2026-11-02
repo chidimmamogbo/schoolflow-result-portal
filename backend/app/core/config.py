@@ -30,6 +30,8 @@ ENV_CONFIG = SettingsConfigDict(
     # backend/.env may hold names for modules not built yet; ignore them
     # here rather than crash. Each module adds its own required fields.
     extra="ignore",
+    # A refused value is never repeated in the error: it could be a secret.
+    hide_input_in_errors=True,
 )
 
 
@@ -58,6 +60,9 @@ class Settings(BaseSettings):
     email_daily_limit: int = Field(default=95, ge=1, le=10_000)
     # Vercel sends it with the daily cron call (D-177); without it the call is refused.
     cron_secret: SecretStr | None = Field(default=None, min_length=16)
+    # Paystack (D-087): test keys only in the MVP. Without it payments answer 503 and
+    # webhooks cannot be checked.
+    paystack_secret_key: SecretStr | None = None
     database_url_migrations: SecretStr | None = None
     test_database_url: SecretStr | None = None
 
@@ -69,6 +74,15 @@ class Settings(BaseSettings):
         "database_url_migrations",
         "test_database_url",
     )(must_be_postgres_with_psycopg)
+
+    @field_validator("paystack_secret_key")
+    @classmethod
+    def only_test_keys(cls, value: SecretStr | None) -> SecretStr | None:
+        key = value.get_secret_value() if value is not None else ""
+        if key and not key.startswith("sk_test_"):
+            # The message names the expected format, never the value itself.
+            raise ValueError("must be a Paystack test key (sk_test_...) in the MVP")
+        return value
 
     @property
     def debug(self) -> bool:

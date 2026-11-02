@@ -271,4 +271,6 @@ def test_every_route_except_the_public_list_needs_a_session(db_session: Session)
         ("GET", "/api/v1/verify/{code}"),  # public report verification (F13, D-071)
         ("POST", "/api/v1/auth/join"),  # a new parent's link (CHANGE 2026-10-29, D-177)
         ("GET", "/api/v1/cron/emails"),  # Vercel's daily run, with CRON_SECRET (D-177)
+        ("POST", "/api/v1/webhooks/payments"),  # Paystack, checked by its signature (D-094)
+        ("GET", "/api/v1/cron/payments"),  # the daily payment run (D-094, D-178)
     } == PUBLIC_ROUTES
