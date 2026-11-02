@@ -44,6 +44,8 @@ RETRY_GAPS = (
     dt.timedelta(hours=12),
 )
 MAX_ATTEMPTS = len(RETRY_GAPS)
+# The advisory lock number that gives one run the sender's turn (any fixed number).
+SENDER_LOCK = 7_176_001
 LINKED = ("activation", "password_reset", "parent_link_request")
 ADDRESS = re.compile(r"[^\s@<>()\"']+@[^\s@<>()\"']+")
 STATUS_WORDS = {
@@ -253,6 +255,10 @@ def send_due(
     batch: int = 50,
 ) -> SendReport:
     base = base_url.rstrip("/")
+    # One run at a time counts and sends (D-177); a second run sends nothing and
+    # leaves the rest to the run that has the turn (or the next one).
+    if not session.scalar(text("select pg_try_advisory_xact_lock(:k)"), {"k": SENDER_LOCK}):
+        return SendReport(sent=0, retried=0, failed=0, waiting=0)
     sent_today = int(
         session.scalar(
             text(

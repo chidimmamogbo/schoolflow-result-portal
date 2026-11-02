@@ -16,9 +16,10 @@ from sqlalchemy import Engine
 from sqlalchemy.orm import Session
 
 from app.core.config import get_settings
-from app.core.dependencies import PrincipalDep
+from app.core.dependencies import DbSession, PrincipalDep
 from app.core.errors import ProblemError
 from app.db.session import make_engine, use_context
+from app.platform.email.trigger import FORWARD_TO
 
 
 @lru_cache
@@ -44,11 +45,14 @@ def get_platform_db() -> Iterator[Session]:
 def platform_db(
     principal: PrincipalDep,
     session: Annotated[Session, Depends(get_platform_db, scope="function")],
+    request_session: DbSession,
 ) -> Session:
     """The platform session, working for the signed-in super admin."""
     if not principal.is_super_admin:
         raise ProblemError(403, "You don't have permission to do this.", code="permission_denied")
     use_context(session, user_id=principal.user_id)
+    # Emails queued here go out after the request, like any other (D-177).
+    session.info[FORWARD_TO] = request_session
     return session
 
 

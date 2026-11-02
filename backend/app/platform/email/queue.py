@@ -1,6 +1,7 @@
 """Queueing emails in the outbox (SPEC F18; D-080, D-081, D-083).
 
-The background sender writes and sends them later. Template data never
+The sender writes and sends them soon after the request commits (trigger.py,
+D-177). Template data never
 holds a password, token, link or score (the table refuses those keys); links
 are made by the sender at send time.
 """
@@ -11,6 +12,8 @@ from typing import Any
 
 from sqlalchemy import text
 from sqlalchemy.orm import Session
+
+from app.platform.email.trigger import note_queued
 
 _INSERT = text(
     "insert into email_outbox (school_id, type, to_address, template, template_data,"
@@ -40,3 +43,4 @@ def queue_email(
             "key": f"{template}:{school_id}:{uuid.uuid4()}",
         },
     )
+    note_queued(session)

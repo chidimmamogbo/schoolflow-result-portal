@@ -272,3 +272,35 @@ These seven changes were made during Phase 4 (2026-10-11 to 2026-10-12). Chidimm
 - What changes: every file moves with `git mv` to the approved map (`app/core`, `app/db`, `app/platform`, `app/src/<domain>`, `app/tests/{core,database,domains}`); five small merges (`core/dependencies.py` takes the authorization chain, `core/models.py` the role and permission tables, `core/security.py` the password, token and temporary password helpers, `grading/models.py` and `grading/defaults.py` the rating ones) and one split (`db/base.py` out of `db/session.py`); imports rewritten; `pyproject.toml` (build module `app`, test, Pyright and Ruff paths), `Dockerfile.vercel` (`COPY app`, `uvicorn app.main:app`), `.dockerignore`, `migrations/env.py` and three migrations' import lines, two test path helpers, the local storage path, `AGENT.md`.
 - After: same URLs, responses, database and migrations; the large route files are split in the next PRs.
 - Proof: the full backend suite, Ruff, format and strict Pyright, and the Docker build and smoke test in CI.
+
+### CHANGE: A public route for new parents to join from a link (Chidimma `ok`, 2026-10-29)
+- Before: a link request to an email with no SchoolFlow account carried a `/join` link (D-176), but no route could use it.
+- Why it must change: SPEC F03 rule 8 covers both a new and an existing parent; a new parent needs a way to set a password.
+- When: now, with the sender's trigger.
+- What changes: `POST /api/v1/auth/join` joins `PUBLIC_ROUTES` (and the pinned list in `tests/core/test_authz.py`); migration 27 adds `join_parent_link()`, owner-run and granted to `app_user` alone; the route checks the password, creates the parent account from the request, links it to the school and the guardian record, accepts the request and logs the parent in (D-177). Same IP limit and Origin check as activation.
+- After: a wrong, used, expired, cancelled or declined link, a paused school or a guardian who already has a login gets the usual "link expired" answer; an email that has gained an account is told to log in and accept.
+- Proof: `app/tests/domains/test_join.py`; `tests/core/test_authz.py`; the deliberate breaks listed in LOG.md.
+
+### CHANGE: Emails go out right after the request, plus a daily cron route (Chidimma chose option A, 2026-10-29)
+- Before: queued emails left only when someone ran `uv run python -m app.platform.email.worker` by hand.
+- Why it must change: activation, reset and link emails must arrive within seconds (D-019, D-079), on Vercel Hobby, which allows one cron run a day.
+- When: now.
+- What changes: `DbSession` (in `core/dependencies.py`) wraps `get_db` and, when the route queued an email, starts one background sender run after the response (`app/platform/email/trigger.py`); `queue_email()` marks the session, and so do the password reset, password changed and forgot password routes; `platform_db` forwards its mark; the platform module uses the shared `queue_email()` instead of its own copy. `send_due` takes an advisory lock per batch. New public route `GET /api/v1/cron/emails` (in `PUBLIC_ROUTES` and the pinned test) checks `Authorization: Bearer <CRON_SECRET>`; new optional setting `CRON_SECRET` (at least 16 characters, in `.env.example`); `vercel.json` gains `"crons": [{"path": "/api/v1/cron/emails", "schedule": "0 6 * * *"}]`. The worker command now uses the same run.
+- After: emails leave seconds after the request that queued them; the cron (production only) sends what is left once a day. Staging needs `DATABASE_URL_SENDER` and `RESEND_API_KEY`; production also needs `CRON_SECRET`.
+- Proof: `app/tests/domains/test_email_trigger.py`; `tests/core/test_authz.py`; the email sender tests.
+
+### CHANGE: pypdf 6.21.2 to 6.21.4 (Chidimma `ok`, 2026-11-02)
+- Before: `uv.lock` held pypdf 6.21.2, a dev dependency used only by `app/tests/domains/test_pdf.py`; the running app does not use it.
+- Why it must change: seven advisories were published against 6.21.2 (GHSA-x3rh-gjgm-fmqc, GHSA-62m5-6wh8-28x7, GHSA-42gh-23hr-vphw, GHSA-4vqv-7265-gm2w, GHSA-5849-834g-hvw5, GHSA-cggf-277g-3q54, GHSA-mfr5-77xh-9j7h), and they fail CI's audit step on every PR.
+- When: now.
+- What changes: `uv.lock` only, with `uv lock --upgrade-package pypdf`.
+- After: `uv audit` finds no known vulnerabilities.
+- Proof: the audit step in CI; the PDF tests, which run in CI.
+
+### CHANGE: The verify test no longer searches the time (Chidimma `ok`, 2026-11-02)
+- Before: `test_anyone_can_verify_a_published_report` checked that the score "78" was not anywhere in the response, including `published_at`, whose fractions of a second can contain "78" (about 1 run in 20).
+- Why it must change: it fails at random when nothing is wrong, which teaches everyone to ignore a test about score privacy.
+- When: now.
+- What changes: the search covers every field except `published_at`. The time holds only a time; the same test still compares all the other fields exactly.
+- After: the score check still fails if a score appears in any other field.
+- Proof: the test file, run repeatedly.

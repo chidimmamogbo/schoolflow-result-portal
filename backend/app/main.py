@@ -17,6 +17,7 @@ from app.src.attention import router as attention
 from app.src.audit import router as audit
 from app.src.auth import router as auth
 from app.src.corrections import router as corrections
+from app.src.cron import router as cron
 from app.src.files import router as files
 from app.src.form_class import router as form_class
 from app.src.grading import router as school_grading
@@ -62,6 +63,7 @@ def create_app(app_env: str | None = None) -> FastAPI:
     # can sit beside it without breaking the frontend.
     api_v1 = APIRouter(prefix="/api/v1")
     api_v1.include_router(health.router)
+    api_v1.include_router(cron.router)
     api_v1.include_router(auth.router)
     api_v1.include_router(platform.router)
     api_v1.include_router(school.router)

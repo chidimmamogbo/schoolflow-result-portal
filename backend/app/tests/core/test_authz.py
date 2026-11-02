@@ -269,4 +269,6 @@ def test_every_route_except_the_public_list_needs_a_session(db_session: Session)
         ("POST", "/api/v1/auth/password/forgot"),
         ("POST", "/api/v1/auth/password/reset"),
         ("GET", "/api/v1/verify/{code}"),  # public report verification (F13, D-071)
+        ("POST", "/api/v1/auth/join"),  # a new parent's link (CHANGE 2026-10-29, D-177)
+        ("GET", "/api/v1/cron/emails"),  # Vercel's daily run, with CRON_SECRET (D-177)
     } == PUBLIC_ROUTES
