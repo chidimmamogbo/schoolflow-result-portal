@@ -37,8 +37,7 @@ Entry template:
 - After `merge` of #58 and then this PR: dashboard (9.2u), then seed and CLI (9.2v).
 
 ### Blockers
-- Chidimma's `ok` on three CHANGEs (see the PR), and on the flaky verify test fix. A real test-card payment on staging is still to do (D-097).
-- CI's audit step fails on seven new `pypdf` 6.21.2 advisories (fixed by 6.21.4; test-only dependency, used by `test_pdf.py`). Moving it needs Chidimma's `ok`; PRs cannot merge until then.
+- Chidimma said `ok` on the three billing CHANGEs, the `pypdf` move to 6.21.4 and the flaky verify test fix (all done; the last two are on PR #58 and merged into this branch). Still open: their answer on `/school/payments/verify` only reading our own records, and `merge` of #58 then #59. A real test-card payment on staging is still to do (D-097).
 
 ---
 

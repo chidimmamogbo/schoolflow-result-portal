@@ -289,7 +289,7 @@ These seven changes were made during Phase 4 (2026-10-11 to 2026-10-12). Chidimm
 - After: emails leave seconds after the request that queued them; the cron (production only) sends what is left once a day. Staging needs `DATABASE_URL_SENDER` and `RESEND_API_KEY`; production also needs `CRON_SECRET`.
 - Proof: `app/tests/domains/test_email_trigger.py`; `tests/core/test_authz.py`; the email sender tests.
 
-### CHANGE: A manual payment may be started by the super admin (proposed 2026-11-02, waiting for Chidimma's `ok`)
+### CHANGE: A manual payment may be started by the super admin (Chidimma `ok`, 2026-11-02)
 - Before: `check_payment()` (migration 18) let only a school admin start a payment, and `app_platform` could not insert payments, so F19 rule 12's manual payment could not be recorded.
 - Why it must change: the super admin records manual payments (SPEC F19 rule 12, D-096).
 - When: now, with billing.
@@ -297,7 +297,7 @@ These seven changes were made during Phase 4 (2026-10-11 to 2026-10-12). Chidimm
 - After: `POST /platform/invoices/{id}/manual-payment` works; schools are not affected.
 - Proof: `test_billing_api.py::test_a_manual_payment_pays_the_invoice_with_a_receipt_and_a_note`; `tests/database/test_billing.py`.
 
-### CHANGE: A daily payment run, a second cron and a public route (proposed 2026-11-02, waiting for Chidimma's `ok`)
+### CHANGE: A daily payment run, a second cron and a public route (Chidimma `ok`, 2026-11-02)
 - Before: `vercel.json` had one cron (emails); `PUBLIC_ROUTES` did not list the payment routes.
 - Why it must change: D-094 says the daily cron reprocesses pending events, and D-092 says it refreshes statuses.
 - When: now, with billing.
@@ -305,10 +305,26 @@ These seven changes were made during Phase 4 (2026-10-11 to 2026-10-12). Chidimm
 - After: leftover events and overdue statuses are handled once a day, production only.
 - Proof: `test_billing_api.py` (the daily run section); `tests/core/test_authz.py`.
 
-### CHANGE: Settings errors never repeat the refused value (proposed 2026-11-02, waiting for Chidimma's `ok`)
+### CHANGE: Settings errors never repeat the refused value (Chidimma `ok`, 2026-11-02)
 - Before: when a setting was refused, Pydantic's error text included its value, so a mistaken live key or a database address with its password could reach the logs at start-up.
 - Why it must change: secrets stay out of logs (non-negotiable). The billing test for live keys found it.
 - When: now.
 - What changes: `hide_input_in_errors=True` on the settings in `core/config.py`.
 - After: the error names the setting and the rule, never the value.
 - Proof: `test_billing_api.py::test_only_test_keys_are_accepted`; `tests/core/test_settings.py`.
+
+### CHANGE: pypdf 6.21.2 to 6.21.4 (Chidimma `ok`, 2026-11-02)
+- Before: `uv.lock` held pypdf 6.21.2, a dev dependency used only by `app/tests/domains/test_pdf.py`; the running app does not use it.
+- Why it must change: seven advisories were published against 6.21.2 (GHSA-x3rh-gjgm-fmqc, GHSA-62m5-6wh8-28x7, GHSA-42gh-23hr-vphw, GHSA-4vqv-7265-gm2w, GHSA-5849-834g-hvw5, GHSA-cggf-277g-3q54, GHSA-mfr5-77xh-9j7h), and they fail CI's audit step on every PR.
+- When: now.
+- What changes: `uv.lock` only, with `uv lock --upgrade-package pypdf`.
+- After: `uv audit` finds no known vulnerabilities.
+- Proof: the audit step in CI; the PDF tests, which run in CI.
+
+### CHANGE: The verify test no longer searches the time (Chidimma `ok`, 2026-11-02)
+- Before: `test_anyone_can_verify_a_published_report` checked that the score "78" was not anywhere in the response, including `published_at`, whose fractions of a second can contain "78" (about 1 run in 20).
+- Why it must change: it fails at random when nothing is wrong, which teaches everyone to ignore a test about score privacy.
+- When: now.
+- What changes: the search covers every field except `published_at`. The time holds only a time; the same test still compares all the other fields exactly.
+- After: the score check still fails if a score appears in any other field.
+- Proof: the test file, run repeatedly.
