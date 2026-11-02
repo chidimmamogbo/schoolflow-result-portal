@@ -38,6 +38,7 @@ Entry template:
 
 ### Blockers
 - Chidimma's `ok` on three CHANGEs (see the PR), and on the flaky verify test fix. A real test-card payment on staging is still to do (D-097).
+- CI's audit step fails on seven new `pypdf` 6.21.2 advisories (fixed by 6.21.4; test-only dependency, used by `test_pdf.py`). Moving it needs Chidimma's `ok`; PRs cannot merge until then.
 
 ---
 
