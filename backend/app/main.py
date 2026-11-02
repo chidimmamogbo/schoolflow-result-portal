@@ -16,6 +16,7 @@ from app.src.accounts import router as school_people
 from app.src.attention import router as attention
 from app.src.audit import router as audit
 from app.src.auth import router as auth
+from app.src.billing import router as billing
 from app.src.corrections import router as corrections
 from app.src.cron import router as cron
 from app.src.files import router as files
@@ -66,6 +67,9 @@ def create_app(app_env: str | None = None) -> FastAPI:
     api_v1.include_router(cron.router)
     api_v1.include_router(auth.router)
     api_v1.include_router(platform.router)
+    api_v1.include_router(billing.platform_router)
+    api_v1.include_router(billing.school_router)
+    api_v1.include_router(billing.webhook_router)
     api_v1.include_router(school.router)
     api_v1.include_router(structure.router)
     api_v1.include_router(school_people.router)

@@ -17,6 +17,30 @@ Entry template:
 
 ---
 
+## 2026-11-02 (Session 5, continued): billing and the Paystack webhook (9.2q to 9.2t)
+
+### What we did
+- Chidimma asked whether Paystack could run without a webhook; the answer was yes but with real losses, and they chose to keep it. They also asked why the verify test is flaky: my first explanation wrongly named the verification code, which is not in that response; corrected in the PR, LOG and MEMORY (the fractions of a second in `published_at`).
+- **Billing**, on a branch stacked on PR #58: pricing engine, price lists, invoices, adjustment invoices, voids, manual payments, the super admin's overview, the school's billing card, Pay now, receipts with PDF, the signed webhook, processing with Paystack's Verify, the daily run. D-178. Migration 28.
+
+### Issues and fixes
+- **A real leak found by a test:** Pydantic's error text repeated a refused setting's value, so a live key or a database password could reach the logs. `hide_input_in_errors=True` (CHANGE proposed).
+- `app_platform` cannot read terms or pupils or post notices (D-051), so migration 28 adds four narrow owner-run functions.
+- BUILD_PROMPT 9.2r says the verify route checks with the gateway; the spec says only the webhook marks paid. The spec wins; the route only reads (D-178).
+- Long heredocs failed again; scripts go in the scratchpad.
+- **Deliberate breaks:** 53; 49 caught at first. Survivors led to tests for an empty secret key, an event handled twice, billing off with a real reference, and the error code on a second manual payment. Then 53 of 53.
+
+### Tests
+- Full backend suite: 1436 passed, 2 skipped (PDFs on Windows). Ruff, format and strict Pyright clean.
+
+### Next step
+- After `merge` of #58 and then this PR: dashboard (9.2u), then seed and CLI (9.2v).
+
+### Blockers
+- Chidimma's `ok` on three CHANGEs (see the PR), and on the flaky verify test fix. A real test-card payment on staging is still to do (D-097).
+
+---
+
 ## 2026-10-29 (Session 5, continued): new parents join; emails go out on their own
 
 ### What we did
