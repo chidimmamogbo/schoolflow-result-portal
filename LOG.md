@@ -32,7 +32,7 @@ Entry template:
 - **Deliberate breaks:** 23; 20 caught at first. The username test now needs a second number, the logging test checks the structured fields, and the runner test leaves out the key with the login set. Then 23 of 23.
 
 ### Tests
-- Full backend suite: 1299 passed, 2 failed, 1 skipped (PDF on Windows). Failure 1, from this branch: the "database is down" test's fake session had no `.info`, which `DbSession` now reads; the fake now has one, and the file passes. Failure 2 is an older flaky check: `test_anyone_can_verify_a_published_report` asserts `"78" not in str(body)`, but the random verification code and the `published_at` fractions can contain "78"; it passed on rerun. A CHANGE to check only the fields that could hold a score is proposed in the PR. Ruff, format and strict Pyright clean.
+- Full backend suite: 1299 passed, 2 failed, 1 skipped (PDF on Windows). Failure 1, from this branch: the "database is down" test's fake session had no `.info`, which `DbSession` now reads; the fake now has one, and the file passes. Failure 2 is an older flaky check: `test_anyone_can_verify_a_published_report` asserts `"78" not in str(body)`, but the fractions of a second in `published_at` can contain "78" (about 1 run in 20; the likely cause, as the failure's text was not kept); it passed on rerun. A CHANGE to check only the fields that could hold a score is proposed in the PR. Ruff, format and strict Pyright clean.
 
 ### Next step
 - After `merge`: billing and the Paystack webhook (9.2p).
