@@ -37,7 +37,7 @@ Entry template:
 - After `merge` of #58 and then this PR: dashboard (9.2u), then seed and CLI (9.2v).
 
 ### Blockers
-- Chidimma said `ok` on the three billing CHANGEs, the `pypdf` move to 6.21.4 and the flaky verify test fix (all done; the last two are on PR #58 and merged into this branch). Still open: their answer on `/school/payments/verify` only reading our own records, and `merge` of #58 then #59. A real test-card payment on staging is still to do (D-097).
+- Chidimma said `ok` on the three billing CHANGEs, the `pypdf` move to 6.21.4 and the flaky verify test fix (all done), confirmed that `/school/payments/verify` only reads our own records, and said `merge` for #58 and #59. A real test-card payment on staging is still to do (D-097).
 
 ---
 
