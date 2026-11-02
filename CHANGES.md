@@ -288,3 +288,19 @@ These seven changes were made during Phase 4 (2026-10-11 to 2026-10-12). Chidimm
 - What changes: `DbSession` (in `core/dependencies.py`) wraps `get_db` and, when the route queued an email, starts one background sender run after the response (`app/platform/email/trigger.py`); `queue_email()` marks the session, and so do the password reset, password changed and forgot password routes; `platform_db` forwards its mark; the platform module uses the shared `queue_email()` instead of its own copy. `send_due` takes an advisory lock per batch. New public route `GET /api/v1/cron/emails` (in `PUBLIC_ROUTES` and the pinned test) checks `Authorization: Bearer <CRON_SECRET>`; new optional setting `CRON_SECRET` (at least 16 characters, in `.env.example`); `vercel.json` gains `"crons": [{"path": "/api/v1/cron/emails", "schedule": "0 6 * * *"}]`. The worker command now uses the same run.
 - After: emails leave seconds after the request that queued them; the cron (production only) sends what is left once a day. Staging needs `DATABASE_URL_SENDER` and `RESEND_API_KEY`; production also needs `CRON_SECRET`.
 - Proof: `app/tests/domains/test_email_trigger.py`; `tests/core/test_authz.py`; the email sender tests.
+
+### CHANGE: pypdf 6.21.2 to 6.21.4 (Chidimma `ok`, 2026-11-02)
+- Before: `uv.lock` held pypdf 6.21.2, a dev dependency used only by `app/tests/domains/test_pdf.py`; the running app does not use it.
+- Why it must change: seven advisories were published against 6.21.2 (GHSA-x3rh-gjgm-fmqc, GHSA-62m5-6wh8-28x7, GHSA-42gh-23hr-vphw, GHSA-4vqv-7265-gm2w, GHSA-5849-834g-hvw5, GHSA-cggf-277g-3q54, GHSA-mfr5-77xh-9j7h), and they fail CI's audit step on every PR.
+- When: now.
+- What changes: `uv.lock` only, with `uv lock --upgrade-package pypdf`.
+- After: `uv audit` finds no known vulnerabilities.
+- Proof: the audit step in CI; the PDF tests, which run in CI.
+
+### CHANGE: The verify test no longer searches the time (Chidimma `ok`, 2026-11-02)
+- Before: `test_anyone_can_verify_a_published_report` checked that the score "78" was not anywhere in the response, including `published_at`, whose fractions of a second can contain "78" (about 1 run in 20).
+- Why it must change: it fails at random when nothing is wrong, which teaches everyone to ignore a test about score privacy.
+- When: now.
+- What changes: the search covers every field except `published_at`. The time holds only a time; the same test still compares all the other fields exactly.
+- After: the score check still fails if a score appears in any other field.
+- Proof: the test file, run repeatedly.

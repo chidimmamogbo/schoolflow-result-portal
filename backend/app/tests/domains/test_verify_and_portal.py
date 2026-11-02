@@ -104,7 +104,9 @@ def test_anyone_can_verify_a_published_report(
     report = codes["GMC/2026/014"]
     status, body, headers = check(app, report["verification_code"])
     assert status == 200
-    assert {k: v for k, v in body.items() if k != "published_at"} == {
+    # The time is random: its fractions of a second can contain any digits.
+    shown = {k: v for k, v in body.items() if k != "published_at"}
+    assert shown == {
         "status": "valid",
         "school": "Greenfield Model College",
         "student": "Chuk*** O.",
@@ -119,7 +121,7 @@ def test_anyone_can_verify_a_published_report(
     assert body["published_at"]
     assert (headers["cache-control"], headers["referrer-policy"]) == ("no-store", "no-referrer")
     assert "noindex" in headers["x-robots-tag"]
-    assert "Chukwuemeka" not in str(body) and "78" not in str(body)
+    assert "Chukwuemeka" not in str(body) and "78" not in str(shown)
 
     # Forgiving input (D-072): small letters, no dashes, spaces.
     sloppy = report["verification_code"].lower().replace("-", " ")
