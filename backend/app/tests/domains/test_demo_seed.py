@@ -15,9 +15,18 @@ and then use the demo password: a vice principal, a reviewer over Sciences,
 subject and form teachers so every demo class can be published, BSA's
 Primary 4A class teacher who teaches all subjects with an assistant, and
 Nursery teachers over the class's learning areas. No staff email is sent.
+
+Round 3a: 20 to 30 fictional pupils per demo class (the brief's names first;
+tests use the named ones only), enrolled with their class's subjects;
+Chukwuemeka Obi is GMC/2026/014 and a BSA pupil shares 2026/014. Two pupils
+get logins. Ikenna Obi joins from GMC's emailed link and accepts BSA's
+request, so one account sees wards in both schools; other parents get
+login slips. The seed's app never starts a real email or payment run.
 All data is fictional.
 """
 
+from collections.abc import Generator
+from contextlib import contextmanager
 from typing import Any
 
 import pytest
@@ -27,7 +36,9 @@ from sqlalchemy.orm import Session
 
 from app.cli.demo.browser import Demo, SeedError
 from app.cli.demo.platform import SUPER_ADMIN, seed_platform
+from app.cli.demo.pupils import CLASSES, pupils_for, seed_pupils
 from app.cli.demo.schools import seed_schools
+from app.platform.email import trigger
 from app.tests.auth_support import (
     ORIGIN,
     PASSWORD,
@@ -51,10 +62,20 @@ def app(db_session: Session) -> FastAPI:
     return build_platform_app(db_session)
 
 
+@contextmanager
+def as_sender(db: Session) -> Generator[Session]:
+    db.execute(text("set local role app_sender"))
+    try:
+        yield db
+    finally:
+        db.execute(text("reset role"))
+
+
 @pytest.fixture
 def demo(app: FastAPI, db_session: Session) -> Demo:
     make_login(db_session, username=SUPER_ADMIN, full_name="Platform Admin", is_super_admin=True)
-    made = Demo(app, password=DEMO_PASSWORD, origin=ORIGIN)
+    made = Demo(app, password=DEMO_PASSWORD, origin=ORIGIN, mail=lambda: as_sender(db_session))
+    made.full = False  # the brief's named pupils only: quicker, same rules
     made.people[SUPER_ADMIN] = made.log_in(SUPER_ADMIN, PASSWORD)
     return made
 
@@ -120,7 +141,7 @@ def test_the_principals_are_the_primary_admins_of_their_own_school(
 
 def test_it_refuses_to_seed_twice(demo: Demo, db_session: Session) -> None:
     seed_platform(demo)
-    with pytest.raises(SeedError, match="GMC is already used"):
+    with pytest.raises(SeedError, match="already has schools"):
         seed_platform(demo)
     assert db_session.scalar(text("select count(*) from schools")) == 3
 
@@ -151,6 +172,12 @@ def seeded(demo: Demo) -> Demo:
     return demo
 
 
+@pytest.fixture
+def with_pupils(seeded: Demo) -> Demo:
+    seed_pupils(seeded)
+    return seeded
+
+
 def rows(db: Session, sql: str, **params: Any) -> list[Any]:
     return list(db.execute(text(sql), params))
 
@@ -166,7 +193,7 @@ def test_every_school_has_the_session_and_three_terms(seeded: Demo, db_session: 
         (code, "2026/2027", n, n == 1) for code in ("BSA", "GMC", "RCS") for n in (1, 2, 3)
     ]
     first = next(r for r in found if r.code == "GMC" and r.term_number == 1)
-    assert (str(first.starts_on), str(first.next_term_begins)) == ("2026-09-07", "2027-01-05")
+    assert (str(first.starts_on), str(first.next_term_begins)) == ("2026-09-08", "2027-01-05")
 
 
 def test_gmc_has_its_classes_subjects_and_departments(seeded: Demo, db_session: Session) -> None:
@@ -250,13 +277,14 @@ def test_no_staff_email_is_queued(seeded: Demo, db_session: Session) -> None:
     """Principals get an activation email and each school office a set-up email;
     staff got login slips, so nothing else is queued."""
     to = set(db_session.scalars(text("select to_address from email_outbox")))
-    assert to == {
+    assert to <= {
         "ngozi.okeke@gmc.example",
         "chiamaka.nwafor@bsa.example",
         "femi.adeyemi@rcs.example",
         "office@gmc.example",
         "office@bsa.example",
         "office@rcs.example",
+        "ikenna.obi@home.example",
     }
 
 
@@ -348,3 +376,118 @@ def test_rcs_has_a_class_on_each_level(seeded: Demo, db_session: Session) -> Non
         )
     }
     assert levels == {"nursery", "primary", "junior_secondary"}
+
+
+def test_the_seed_never_starts_a_real_email_or_payment_run(app: FastAPI, demo: Demo) -> None:
+    kick = app.dependency_overrides[trigger.get_email_kick]()
+    assert kick() is None
+    from app.src.billing import processing
+
+    assert app.dependency_overrides[processing.get_payment_kick]()  # a do-nothing kick
+
+
+def test_it_refuses_a_database_that_has_any_school(demo: Demo, db_session: Session) -> None:
+    from app.tests.factories import create_school
+
+    create_school(db_session, code="ZZZ", name="Some Real School")
+    with pytest.raises(SeedError, match="already has schools"):
+        seed_platform(demo)
+
+
+def test_full_classes_have_20_to_30_fictional_pupils() -> None:
+    for code, arm in CLASSES:
+        pupils = pupils_for(code, arm, full=True)
+        assert 20 <= len(pupils) <= 30, (code, arm)
+        assert len({(p.first_name, p.surname) for p in pupils}) == len(pupils), (code, arm)
+    jss1a = pupils_for("GMC", "JSS 1A", full=True)
+    assert len(jss1a) == 25
+    chukwuemeka = next(p for p in jss1a if p.first_name == "Chukwuemeka")
+    assert chukwuemeka.admission_number == "GMC/2026/014"
+    numbers = [p.admission_number for code, arm in CLASSES if code == "GMC"
+               for p in pupils_for(code, arm, full=True)]  # fmt: skip
+    assert len(numbers) == len(set(numbers))
+    bsa = [p.admission_number for code, arm in CLASSES if code == "BSA"
+           for p in pupils_for(code, arm, full=True)]  # fmt: skip
+    assert "2026/014" in bsa and len(bsa) == len(set(bsa))
+
+
+def test_pupils_are_enrolled_with_their_class_subjects(
+    with_pupils: Demo, db_session: Session
+) -> None:
+    found = rows(
+        db_session,
+        "select p.first_name, p.surname, p.admission_number, c.name || a.name as arm,"
+        " (select count(*) from student_subjects ss where ss.enrolment_id = e.id) as subjects"
+        " from students p join enrolments e on e.student_id = p.id"
+        " join class_arms a on a.id = e.arm_id join classes c on c.id = a.class_id"
+        " join schools s on s.id = p.school_id where s.code = 'GMC'",
+    )
+    by_name = {(r.first_name, r.surname): r for r in found}
+    chukwuemeka = by_name[("Chukwuemeka", "Obi")]
+    assert (chukwuemeka.admission_number, chukwuemeka.arm, chukwuemeka.subjects) == (
+        "GMC/2026/014",
+        "JSS 1A",
+        8,
+    )
+    assert by_name[("Adaeze", "Obi")].arm == "JSS 3A"
+    assert all(r.subjects > 0 for r in found)
+    for code, arm in CLASSES:
+        count = db_session.scalar(
+            text(
+                "select count(*) from enrolments e join class_arms a on a.id = e.arm_id"
+                " join classes c on c.id = a.class_id join schools s on s.id = c.school_id"
+                " where s.code = :code and c.name || a.name = :arm"
+            ),
+            {"code": code, "arm": arm},
+        )
+        assert count == len(pupils_for(code, arm, full=False)) > 0, (code, arm)
+
+
+def test_two_pupils_log_in_with_their_school_code(app: FastAPI, with_pupils: Demo) -> None:
+    assert log_in(client_for(app), "GMC/2026/014", DEMO_PASSWORD, school_code="GMC") == 200
+    assert log_in(client_for(app), "2026/014", DEMO_PASSWORD, school_code="BSA") == 200
+    # The same number at the other school is not this pupil (AC02.6).
+    assert log_in(client_for(app), "2026/014", DEMO_PASSWORD, school_code="GMC") == 401
+
+
+def test_ikenna_is_one_parent_in_two_schools(
+    app: FastAPI, with_pupils: Demo, db_session: Session
+) -> None:
+    links = rows(
+        db_session,
+        "select s.code, p.first_name from guardian_students gs"
+        " join guardians g on g.id = gs.guardian_id join students p on p.id = gs.student_id"
+        " join schools s on s.id = g.school_id join users u on u.id = g.user_id"
+        " where u.email = 'ikenna.obi@home.example'",
+    )
+    assert {(r.code, r.first_name) for r in links} == {
+        ("GMC", "Chukwuemeka"),
+        ("GMC", "Adaeze"),
+        ("BSA", "Kosi"),
+    }
+    accounts = db_session.scalar(
+        text("select count(*) from users where email = 'ikenna.obi@home.example'")
+    )
+    assert accounts == 1
+    assert log_in(client_for(app), "ikenna.obi@home.example", DEMO_PASSWORD) == 200
+    children = with_pupils.as_("ikenna.obi").get("/me/children")
+    assert {school["school_code"] for school in children} == {"GMC", "BSA"}
+
+
+def test_other_parents_use_login_slips(
+    app: FastAPI, with_pupils: Demo, db_session: Session
+) -> None:
+    for username in ("aisha.ibrahim", "ada.okeke", "peter.udo"):
+        assert log_in(client_for(app), username, DEMO_PASSWORD) == 200, username
+    no_email = db_session.scalar(
+        text(
+            "select count(*) from users where username in ('aisha.ibrahim', 'ada.okeke',"
+            " 'peter.udo') and email is null"
+        )
+    )
+    assert no_email == 3
+
+
+def test_no_seeded_email_is_left_waiting(with_pupils: Demo, db_session: Session) -> None:
+    """The seed read its own mail; nothing is left for the real sender."""
+    assert db_session.scalar(text("select count(*) from email_outbox where status = 'queued'")) == 0

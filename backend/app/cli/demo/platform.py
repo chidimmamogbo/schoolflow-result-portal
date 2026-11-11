@@ -25,8 +25,8 @@ SCHOOLS: list[dict[str, Any]] = [
     {
         "name": "Greenfield Model College",
         "email": "office@gmc.example",
-        "phone": "08010000001",
-        "address": "12 Unity Road, Independence Layout",
+        "phone": "08030001122",
+        "address": "14 Chime Avenue, Independence Layout",
         "city": "Enugu",
         "state": "Enugu",
         "code": "GMC",
@@ -44,12 +44,12 @@ SCHOOLS: list[dict[str, Any]] = [
         "name": "Bright Stars Academy",
         "email": "office@bsa.example",
         "phone": "08010000002",
-        "address": "4 Ogui Road",
+        "address": "3 University Road",
         "city": "Nsukka",
         "state": "Enugu",
         "code": "BSA",
         "school_type": "nursery_primary",
-        "colour": "#7A3E9D",
+        "colour": "#7A1F2B",
         "features": {**ALL_ON, "correction_queue": False},
         "billing": "free_pilot",
         "principal": {
@@ -62,12 +62,12 @@ SCHOOLS: list[dict[str, Any]] = [
         "name": "Royal Crest Schools",
         "email": "office@rcs.example",
         "phone": "08010000003",
-        "address": "9 Upper Iweka Road",
-        "city": "Onitsha",
-        "state": "Anambra",
+        "address": "Trans-Ekulu",
+        "city": "Enugu",
+        "state": "Enugu",
         "code": "RCS",
         "school_type": "all_levels",
-        "colour": "#1F4E8C",
+        "colour": "#1D3A6E",
         "features": ALL_ON,
         "billing": "on",
         "principal": {
@@ -88,12 +88,9 @@ def save_default_prices(owner: Any) -> int:
 
 
 def check_nothing_seeded(owner: Any) -> None:
-    for school in SCHOOLS:
-        if not owner.get(f"/platform/schools/check-code?code={school['code']}")["available"]:
-            raise SeedError(
-                f"School code {school['code']} is already used, so the demo is there already."
-                " Seed an empty database."
-            )
+    """Only an empty database: the seed reads all queued mail, which must all be its own."""
+    if owner.get("/platform/schools"):
+        raise SeedError("The database already has schools. Seed an empty database.")
 
 
 def create_schools(demo: Demo, owner: Any) -> None:

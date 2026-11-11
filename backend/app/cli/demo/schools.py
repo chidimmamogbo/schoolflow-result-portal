@@ -1,8 +1,8 @@
 """Each demo school's set-up and staff, made by its own principal (D-180).
 
-ACCEPTANCE_TESTS fixtures: GMC's Sciences department, Tunde Adebayo
+ACCEPTANCE_TESTS fixtures and design brief section 12: GMC's Sciences department, Tunde Adebayo
 (Mathematics JSS 1A and 1B, form teacher JSS 1A), Emeka Nwosu reviewing
-Sciences and vice principal Chukwudi Eze; BSA's Primary 4A class teacher
+Sciences, English teacher Grace Etim and vice principal Chukwudi Eze; BSA's Primary 4A class teacher
 Ifeoma Chukwu (teaches all subjects) with assistant Ngozi Ani, and Nursery 2
 class teacher Amaka Udeh. Everyone else is invented so each demo class has a
 teacher for every subject. Staff get a temporary password on a login slip
@@ -13,9 +13,9 @@ from typing import Any
 
 from app.cli.demo.browser import Browser, Demo
 
-SESSION = {"name": "2026/2027", "starts_on": "2026-09-07", "ends_on": "2027-07-23"}
+SESSION = {"name": "2026/2027", "starts_on": "2026-09-08", "ends_on": "2027-07-23"}
 TERMS = [
-    {"term_number": 1, "starts_on": "2026-09-07", "ends_on": "2026-12-11",
+    {"term_number": 1, "starts_on": "2026-09-08", "ends_on": "2026-12-11",
      "next_term_begins": "2027-01-05"},
     {"term_number": 2, "starts_on": "2027-01-05", "ends_on": "2027-04-02",
      "next_term_begins": "2027-04-26"},
@@ -79,8 +79,8 @@ SETUP: dict[str, dict[str, Any]] = {
         "staff": [
             ("Emeka Nwosu", "emeka.nwosu", "reviewer"),
             ("Tunde Adebayo", "tunde.adebayo", "teacher"),
-            ("Amina Bello", "amina.bello", "teacher"),
             ("Grace Etim", "grace.etim", "teacher"),
+            ("Ruth Ekpo", "ruth.ekpo", "teacher"),
             ("Bola Ige", "bola.ige", "teacher"),
             ("Kunle Balogun", "kunle.balogun", "teacher"),
             ("Hauwa Musa", "hauwa.musa", "teacher"),
@@ -92,11 +92,11 @@ SETUP: dict[str, dict[str, Any]] = {
                 for arm in ("JSS 1A", "JSS 1B", "JSS 3A", "SS 1A")
             ],
             *[
-                ("amina.bello", arm, "English Language", False)
+                ("grace.etim", arm, "English Language", False)
                 for arm in ("JSS 1A", "JSS 1B", "JSS 3A", "SS 1A")
             ],
             *[
-                ("grace.etim", arm, s, False)
+                ("ruth.ekpo", arm, s, False)
                 for arm in ("JSS 1A", "JSS 1B")
                 for s in ("Basic Science", "Basic Technology")
             ],
@@ -114,7 +114,7 @@ SETUP: dict[str, dict[str, Any]] = {
             *[("hauwa.musa", "SS 1A", s, False) for s in ("Physics", "Chemistry", "Biology")],
             ("tunde.adebayo", "JSS 1A", None, False),
             ("kunle.balogun", "JSS 1B", None, False),
-            ("amina.bello", "JSS 3A", None, False),
+            ("grace.etim", "JSS 3A", None, False),
             ("hauwa.musa", "SS 1A", None, False),
         ],
         "assistants": [],
