@@ -17,6 +17,17 @@ Entry template:
 
 ---
 
+## 2026-11-11 (Session 5, continued): a new deploy token
+
+### What we did
+- Chidimma said `merge`: PR #61 (the super admin commands) is on `main`.
+- Chidimma made a new project-scoped Vercel token, `schoolflow-github-actions-2026-11` (30 days, so about 2026-12-11), stored it as `VERCEL_TOKEN` in the GitHub `staging` environment (updated 2026-11-11 10:37 UTC) and deleted the expired one. Steps checked against Vercel's guide "How do I use a Vercel API access token" (2026-11-11).
+
+### Blockers
+- Before the next staging deploy: Vercel's backend image registry was full (50 of 50) on 2026-10-24; list and free space first.
+
+---
+
 ## 2026-11-11 (Session 5, continued): the super admin commands (9.2v part 1)
 
 ### What we did

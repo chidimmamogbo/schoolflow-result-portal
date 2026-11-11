@@ -53,7 +53,7 @@ Names finalised on 2026-10-12 in `backend/.env.example` and `frontend/.env.examp
 | Blob access (OIDC, automatic on Vercel) | Vercel | n/a | Backend file storage | Injected by Vercel; local dev uses the local-folder storage |
 | `SENTRY_DSN`, `NEXT_PUBLIC_SENTRY_DSN` | Sentry | No (still kept in env) | Backend, frontend | Vercel env; local `.env` files |
 | `SENTRY_AUTH_TOKEN` | Sentry | Yes | CI source-map upload | GitHub Actions secrets only |
-| `VERCEL_TOKEN` (with expiry) | Vercel | Yes | CI deploy | GitHub environment `staging` only (branch `staging`). Token `schoolflow-github-actions`, scoped to the `schoolflow-result-portal` project, created 2026-10-11, **expires 2026-11-10: renew before then** |
+| `VERCEL_TOKEN` (with expiry) | Vercel | Yes | CI deploy | GitHub environment `staging` only (branch `staging`). Token `schoolflow-github-actions-2026-11`, scoped to the `schoolflow-result-portal` project, created 2026-11-11 with a 30-day expiry, **expires about 2026-12-11: renew before then**. The first token (`schoolflow-github-actions`, 2026-10-11) expired 2026-11-10 and was deleted |
 | `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID` | Vercel | No | CI deploy | GitHub environment `staging` (values in local `.vercel/project.json`) |
 | `APP_ENV`, `APP_BASE_URL` | Ours | No | Backend, frontend | Vercel env; local `.env` |
 
