@@ -22,6 +22,14 @@ Chukwuemeka Obi is GMC/2026/014 and a BSA pupil shares 2026/014. Two pupils
 get logins. Ikenna Obi joins from GMC's emailed link and accepts BSA's
 request, so one account sees wards in both schools; other parents get
 login slips. The seed's app never starts a real email or payment run.
+
+Round 3b: teachers enter and submit scores and ratings, the reviewer reviews
+Sciences, the principal approves; form teachers enter comments, attendance
+and traits; principals write their comments and publish JSS 1A, Primary 4A
+and Nursery 2, which fills Students needing attention with the brief's
+examples. JSS 1B is left mid-week (one sheet submitted, one with gaps). GMC
+and BSA save a report template, GMC pins the sports notice, and no seeded
+email is left waiting.
 All data is fictional.
 """
 
@@ -37,6 +45,7 @@ from sqlalchemy.orm import Session
 from app.cli.demo.browser import Demo, SeedError
 from app.cli.demo.platform import SUPER_ADMIN, seed_platform
 from app.cli.demo.pupils import CLASSES, pupils_for, seed_pupils
+from app.cli.demo.results import seed_results, split, total_for
 from app.cli.demo.schools import seed_schools
 from app.platform.email import trigger
 from app.tests.auth_support import (
@@ -176,6 +185,12 @@ def seeded(demo: Demo) -> Demo:
 def with_pupils(seeded: Demo) -> Demo:
     seed_pupils(seeded)
     return seeded
+
+
+@pytest.fixture
+def with_results(with_pupils: Demo) -> Demo:
+    seed_results(with_pupils)
+    return with_pupils
 
 
 def rows(db: Session, sql: str, **params: Any) -> list[Any]:
@@ -490,4 +505,126 @@ def test_other_parents_use_login_slips(
 
 def test_no_seeded_email_is_left_waiting(with_pupils: Demo, db_session: Session) -> None:
     """The seed read its own mail; nothing is left for the real sender."""
+    assert db_session.scalar(text("select count(*) from email_outbox where status = 'queued'")) == 0
+
+
+@pytest.mark.parametrize(
+    ("total", "columns"),
+    [(78, [20, 20, 60]), (38, [20, 20, 60]), (100, [20, 20, 60]), (0, [20, 20, 60]),
+     (63, [10, 10, 10, 10, 60]), (97, [10, 10, 10, 10, 60]), (7, [10, 10, 10, 10, 60])],
+)  # fmt: skip
+def test_a_total_is_split_across_the_columns(total: int, columns: list[int]) -> None:
+    parts = split(total, columns)
+    assert sum(parts) == total
+    assert all(0 <= part <= top for part, top in zip(parts, columns, strict=True))
+
+
+def test_the_brief_examples_have_their_totals() -> None:
+    assert total_for("Chukwuemeka Obi", "Mathematics") == 78
+    assert total_for("Musa Ibrahim", "Mathematics") == 38
+    assert total_for("Halima Garba", "Basic Science") == 35
+    assert total_for("Halima Garba", "Mathematics") == 39
+    from app.cli.demo.schools import JSS
+
+    subjects = JSS
+    daniel = [total_for("Daniel Okon", subject) for subject in subjects]
+    assert sum(daniel) / len(daniel) == 38.5
+    assert sum(1 for t in daniel if t < 40) == 6
+    # Everyone else passes, so the list holds only the brief's examples.
+    assert total_for("Zainab Yusuf", "Mathematics") >= 40
+
+
+def test_three_classes_are_published(with_results: Demo, db_session: Session) -> None:
+    published = rows(
+        db_session,
+        "select s.code, c.name || a.name as arm, count(*) as reports"
+        " from report_documents d join class_arms a on a.id = d.arm_id"
+        " join classes c on c.id = a.class_id join schools s on s.id = c.school_id"
+        " where d.status = 'valid' group by s.code, c.name, a.name order by arm",
+    )
+    expected = {
+        ("GMC", "JSS 1A"): len(pupils_for("GMC", "JSS 1A", full=False)),
+        ("BSA", "Primary 4A"): len(pupils_for("BSA", "Primary 4A", full=False)),
+        ("BSA", "Nursery 2"): len(pupils_for("BSA", "Nursery 2", full=False)),
+    }
+    assert {(r.code, r.arm): r.reports for r in published} == expected
+    chukwuemeka = rows(
+        db_session,
+        "select ac.label, sc.value from scores sc join enrolments e on e.id = sc.enrolment_id"
+        " join students p on p.id = e.student_id join result_sheets r on r.id = sc.sheet_id"
+        " join subjects sb on sb.id = r.subject_id"
+        " join assessment_components ac on ac.id = sc.component_id"
+        " where p.admission_number = 'GMC/2026/014' and sb.name = 'Mathematics'"
+        " order by ac.position",
+    )
+    assert [(r.label, r.value) for r in chukwuemeka] == [("CA1", 16), ("CA2", 15), ("Exam", 47)]
+
+
+def test_students_needing_attention_shows_the_brief_examples(with_results: Demo) -> None:
+    ngozi = with_results.as_("ngozi.okeke")
+    by_subject = ngozi.get("/attention?view=by_subject")["rows"]
+    found = {(r["student_name"], r["subject"], r["score"]) for r in by_subject}
+    assert ("Musa Ibrahim", "Mathematics", 38) in found
+    assert ("Halima Garba", "Basic Science", 35) in found
+    assert ("Halima Garba", "Mathematics", 39) in found
+    by_student = ngozi.get("/attention?view=by_student")["rows"]
+    daniel = next(r for r in by_student if r["student_name"] == "Daniel Okon")
+    assert (daniel["failed_count"], daniel["average"], daniel["average_below_pass_mark"]) == (
+        6,
+        "38.50",
+        True,
+    )
+    skills = with_results.as_("chiamaka.nwafor").get("/attention?view=by_learning_area")["rows"]
+    assert ("Hauwa Sani", "Number work", "Counts 1 to 20") in {
+        (r["student_name"], r["learning_area"], r["skill"]) for r in skills
+    }
+
+
+def test_ikenna_sees_published_reports_in_both_schools(with_results: Demo) -> None:
+    ikenna = with_results.as_("ikenna.obi")
+    seen: set[tuple[str, str]] = set()
+    for school in ikenna.get("/me/children"):
+        for child in school["children"]:
+            reports = ikenna.get(f"/me/students/{child['student_id']}/reports",
+                                 school=school["school_id"])  # fmt: skip
+            if reports:
+                seen.add((school["school_code"], child["name"].split()[0]))
+    assert {("GMC", "Chukwuemeka"), ("BSA", "Kosi")} <= seen
+
+
+def test_jss_1b_is_left_mid_week(with_results: Demo, db_session: Session) -> None:
+    sheets = {
+        r.subject: r.status
+        for r in rows(
+            db_session,
+            "select sb.name as subject, r.status from result_sheets r"
+            " join subjects sb on sb.id = r.subject_id join class_arms a on a.id = r.arm_id"
+            " join classes c on c.id = a.class_id where c.name || a.name = 'JSS 1B'",
+        )
+    }
+    assert sheets == {"Mathematics": "submitted", "English Language": "draft"}
+    dashboard = with_results.as_("ngozi.okeke").get("/dashboard/school")["results"]
+    assert dashboard["missing_scores"]["count"] > 0
+    assert dashboard["attention"]["subject_results"] >= 4
+
+
+def test_templates_and_notices_are_there(with_results: Demo, db_session: Session) -> None:
+    templates = {
+        (r.code, r.level, r.style)
+        for r in rows(
+            db_session,
+            "select s.code, t.level, t.style from report_templates t"
+            " join schools s on s.id = t.school_id",
+        )
+    }
+    assert ("GMC", "junior_secondary", "classic") in templates
+    assert ("BSA", "primary", "modern") in templates
+    pinned = rows(
+        db_session,
+        "select s.code, n.title, n.pinned from notices n join schools s on s.id = n.school_id"
+        " where n.kind = 'manual'",
+    )
+    assert ("GMC", "Inter-house sports holds on Friday, 14 November", True) in {
+        (r.code, r.title, r.pinned) for r in pinned
+    }
     assert db_session.scalar(text("select count(*) from email_outbox where status = 'queued'")) == 0
