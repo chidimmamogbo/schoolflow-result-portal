@@ -24,7 +24,7 @@ Entry template:
 - Chidimma made a new project-scoped Vercel token, `schoolflow-github-actions-2026-11` (30 days, so about 2026-12-11), stored it as `VERCEL_TOKEN` in the GitHub `staging` environment (updated 2026-11-11 10:37 UTC) and deleted the expired one. Steps checked against Vercel's guide "How do I use a Vercel API access token" (2026-11-11).
 
 ### Blockers
-- Before the next staging deploy: Vercel's backend image registry was full (50 of 50) on 2026-10-24; list and free space first.
+- None. Vercel's backend image registry, full (50 of 50) on 2026-10-24, held 6 images on 2026-11-11 (`vercel vcr image ls backend`), so staging deploys have room again.
 
 ---
 
