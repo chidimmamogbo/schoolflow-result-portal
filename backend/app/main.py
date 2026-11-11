@@ -19,6 +19,7 @@ from app.src.auth import router as auth
 from app.src.billing import router as billing
 from app.src.corrections import router as corrections
 from app.src.cron import router as cron
+from app.src.dashboard import router as dashboard
 from app.src.files import router as files
 from app.src.form_class import router as form_class
 from app.src.grading import router as school_grading
@@ -86,6 +87,7 @@ def create_app(app_env: str | None = None) -> FastAPI:
     api_v1.include_router(reports.templates_router)
     api_v1.include_router(publication.router)
     api_v1.include_router(attention.router)
+    api_v1.include_router(dashboard.router)
     api_v1.include_router(audit.router)
     api_v1.include_router(reports.router)
     api_v1.include_router(portal.router)

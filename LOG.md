@@ -17,6 +17,29 @@ Entry template:
 
 ---
 
+## 2026-11-02 (Session 5, continued): the dashboards (9.2u)
+
+### What we did
+- Chidimma said `ok` on the `pypdf` move, the flaky verify test fix and the billing CHANGEs, confirmed `/school/payments/verify` only reads, and said `merge`: PRs #58 and #59 are on `main`.
+- **Dashboards:** `GET /dashboard/school`, `GET /dashboard/staff`, `POST /dashboard/reminders`. D-179. No migration, and no change to any existing behaviour.
+
+### Issues and fixes
+- After squashing #58, #59 showed conflicts in nine files although `main` had the same tree as #58's last commit. Confirmed by tree hash, then merged with `-s ours`.
+- Five first-run failures were test mistakes: a student logs in with the school code, a paused membership is `paused`, Correction queue is off by default in the fixture, and a request moves through Investigating before Rejected.
+- Long heredocs failed again; files are written directly.
+- **Deliberate breaks:** 36; 32 caught at first. Survivors led to tests for a pupil joining after approval, a change in a draft, a reminder with nobody to tell, and parents refused with no active term. Then 36 of 36.
+
+### Tests
+- Full backend suite: 1471 passed, 2 skipped (PDFs on Windows), about 36 minutes locally. Ruff, format and strict Pyright clean.
+
+### Next step
+- After `merge` of this PR: seed and CLI (9.2v), which finish the Phase 7 backend.
+
+### Blockers
+- None. Chidimma to choose new wording for the attention card's caption and the reminder notices (Phase 8). A real test-card payment on staging is still to do (D-097).
+
+---
+
 ## 2026-11-02 (Session 5, continued): billing and the Paystack webhook (9.2q to 9.2t)
 
 ### What we did
