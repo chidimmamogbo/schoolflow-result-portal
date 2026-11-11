@@ -928,6 +928,14 @@ Installed on Chidimma's laptop (checked 2026-10-09): Node 24.21.0, npm 11.19.0, 
 - **Reminders (default):** NAVIGATION approves "Remind form teachers" and the board shows "Remind teachers", but no document says what they do. `POST /dashboard/reminders` with `form_teachers` or `teachers` posts a system notice to the active people who still owe the work and nobody else, with an audit entry. It sends no email, because F18 lists no reminder email. With nobody to remind it posts nothing. It needs Results and the Notice board on. The wording is a first draft for Chidimma.
 - **Not stored, so not shown:** the Super dashboard board's "pilot ends 11 Dec 2026" has no column behind it. Raise it in Phase 8 if wanted.
 
+### D-180. The super admin commands and how the demo seed is built (2026-11-11; reading of BUILD_PROMPT 9.2v, SPEC section 4; Chidimma chose the seed method and the demo password)
+- **Commands:** `uv run python -m app.cli create-super-admin --username ... --full-name ... [--email ...]` and `reset-super-admin --username ...`, in `app/cli/` (argparse, no new dependency). They run on the owner connection (`DATABASE_URL_MIGRATIONS`), because no app role may set `users.is_super_admin`.
+- **Passwords:** typed twice at a hidden prompt, or read from a variable named with `--password-env NAME`; never a command-line argument (it would stay in the shell history), never printed. The staff rules apply (15 characters, not common).
+- **Reset:** super admins only, so the command line can never reset a school admin or anyone else. It sets the new password, clears any temporary password and deletes every session. It does not clear the login throttle: a locked-out super admin waits for the delay to pass.
+- **Audit:** `platform.super_admin_created` and `platform.super_admin_reset`, actor role `system`, with the username only.
+- **Exit codes:** 0 done, 1 refused (taken, badly formed or unknown username), 2 wrong input (weak password, typings differ, variable not set, no command).
+- **Seed (Chidimma, 2026-11-11):** built through the app's own routes in the same process, signing in as each person, so every rule and database check runs. Every demo account uses one password from `SEED_PASSWORD`, which never goes in git, logs or the screen. Built in the next PR.
+
 ---
 
 # Stack Summary (one page, for final approval)

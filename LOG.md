@@ -17,6 +17,29 @@ Entry template:
 
 ---
 
+## 2026-11-11 (Session 5, continued): the super admin commands (9.2v part 1)
+
+### What we did
+- Chidimma said `merge`: PR #60 (the dashboards) is on `main`.
+- Chidimma chose how the demo seed is built: through the app's routes, with one `SEED_PASSWORD` (D-180).
+- **Commands:** `create-super-admin` and `reset-super-admin` in `app/cli/`. No migration, and no change to anything already built.
+
+### Issues and fixes
+- Docker Desktop had stopped; `docker desktop start`, then our database again on 5433 (the other project's container holds 5432).
+- Ruff wants exception names ending in `Error`; a 15-character common password for the test came from `test_auth.py`.
+- **Deliberate breaks:** 14; 13 caught at first. The username check survived because the database also refuses a bad username, so the test now checks the message the operator sees. Then 14 of 14.
+
+### Tests
+- New file: 15 passed. Ruff, format and strict Pyright clean on the whole backend. The full suite was not run locally (about 36 minutes, nothing existing changed); CI runs it.
+
+### Next step
+- After `merge`: the demo seed (9.2v part 2), through the app with `SEED_PASSWORD`.
+
+### Blockers
+- The Vercel deploy token expired on 2026-11-10: staging deploys fail until Chidimma makes a new one.
+
+---
+
 ## 2026-11-02 (Session 5, continued): the dashboards (9.2u)
 
 ### What we did
