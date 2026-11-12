@@ -17,6 +17,24 @@ Entry template:
 
 ---
 
+## 2026-11-12 (Session 5, continued): Phase 8 batch 3, the results flow
+
+### What we did
+- Chidimma said `merge`: PRs #63 (batch 1) and #64 (batch 2) are on `main`.
+- **Batch 3**, on `feat/phase8-results`: the principal's dashboard (pipeline tiles, needs attention with reminders, sheets by class, attention, results so far, billing); Approvals; Publish results (checklist, principal's comments with "Apply to {n} students", the publish warning, reopen with a reason); Students needing attention (By subject, By student, By learning area, CSV) for admins, teachers and reviewers; Report templates (style, show block, live preview); Corrections (list, detail with timeline, investigate, ask for more, resolve, reject with a message); School notices (list with reach, post with audience, archive); Audit trail; the teacher's Home, My result sheets, the score grid and rating grid (Save draft, Submit, reason after submission, CSV export and import); My class (times school opened, comments with suggestions, attendance, traits, submit, all subjects); the reviewer's dashboard, review queue and sheet review (Mark reviewed, Return with a comment); the notice board for everyone.
+
+### Issues and fixes
+- A page file may only export what Next.js expects; the approvals helper moved to `components/results/approvals.ts`.
+- No API lists a school's email outbox status, so `/school/emails` says so plainly (backend gap).
+
+### Tests
+- Frontend: 64 tests in 13 files; lint, format, typecheck and `next build` clean.
+
+### Next step
+- After `merge`: batch 4, parent and student portal, billing and the super admin.
+
+---
+
 ## 2026-11-12 (Session 5, continued): Phase 8 batch 2, school admin set-up and people
 
 ### What we did
