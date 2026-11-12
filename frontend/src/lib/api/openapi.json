@@ -6484,6 +6484,60 @@
         "title": "SchoolDetail",
         "type": "object"
       },
+      "SchoolEmailRow": {
+        "additionalProperties": false,
+        "description": "Status only (D-083): never the template data, the body or provider error text.",
+        "properties": {
+          "attempts": {
+            "title": "Attempts",
+            "type": "integer"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "sent_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sent At"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "to_address": {
+            "title": "To Address",
+            "type": "string"
+          },
+          "type": {
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "to_address",
+          "status",
+          "attempts",
+          "created_at",
+          "sent_at"
+        ],
+        "title": "SchoolEmailRow",
+        "type": "object"
+      },
       "SchoolNotice": {
         "additionalProperties": false,
         "description": "A notice as school admins manage it.",
@@ -8977,6 +9031,17 @@
           "surname": {
             "title": "Surname",
             "type": "string"
+          },
+          "user_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "User Id"
           }
         },
         "required": [
@@ -13334,6 +13399,48 @@
       }
     },
     "/api/v1/school/arms/{arm_id}/subjects": {
+      "get": {
+        "operationId": "get_arm_subjects_api_v1_school_arms__arm_id__subjects_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "arm_id",
+            "required": true,
+            "schema": {
+              "title": "Arm Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/SubjectRow"
+                  },
+                  "title": "Response Get Arm Subjects Api V1 School Arms  Arm Id  Subjects Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Arm Subjects",
+        "tags": ["school"]
+      },
       "put": {
         "operationId": "set_arm_subjects_api_v1_school_arms__arm_id__subjects_put",
         "parameters": [
@@ -14292,6 +14399,64 @@
         },
         "summary": "Rename Department",
         "tags": ["school"]
+      }
+    },
+    "/api/v1/school/emails": {
+      "get": {
+        "operationId": "school_emails_api_v1_school_emails_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 100,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/SchoolEmailRow"
+                  },
+                  "title": "Response School Emails Api V1 School Emails Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "School Emails",
+        "tags": ["emails"]
       }
     },
     "/api/v1/school/files": {
@@ -17174,6 +17339,49 @@
       }
     },
     "/api/v1/school/students/{student_id}/subjects": {
+      "get": {
+        "operationId": "get_pupil_subjects_api_v1_school_students__student_id__subjects_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "student_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Student Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/SubjectName"
+                  },
+                  "title": "Response Get Pupil Subjects Api V1 School Students  Student Id  Subjects Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Pupil Subjects",
+        "tags": ["school"]
+      },
       "put": {
         "operationId": "set_pupil_subjects_api_v1_school_students__student_id__subjects_put",
         "parameters": [

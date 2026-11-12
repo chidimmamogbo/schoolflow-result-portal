@@ -58,6 +58,11 @@ def move_pupil(student_id: uuid.UUID, body: Move, who: Admin, session: DbSession
     return services.move_pupil(student_id=student_id, body=body, who=who, session=session)
 
 
+@router.get("/students/{student_id}/subjects", response_model=list[SubjectName])
+def get_pupil_subjects(student_id: uuid.UUID, who: Admin, session: DbSession) -> list[SubjectName]:
+    return services.pupil_subjects(student_id=student_id, who=who, session=session)
+
+
 @router.put("/students/{student_id}/subjects", response_model=list[SubjectName])
 def set_pupil_subjects(
     student_id: uuid.UUID, body: PupilSubjects, who: Admin, session: DbSession
