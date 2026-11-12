@@ -1,6 +1,5 @@
-// Built out in a later Phase 8 batch; the shell, guard and title are ready.
-import { PageHeader } from "@/components/ui/layout";
-
+"use client";
+import { PortalHome } from "@/components/portal/portal";
 export default function Page() {
-  return <PageHeader title="Home" />;
+  return <PortalHome base="/parent" title="Home" />;
 }
