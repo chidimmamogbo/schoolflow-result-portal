@@ -7,4 +7,8 @@ one password in SEED_PASSWORD, which is never printed or stored in git.
 
 - `browser.py`: a signed-in person (cookie, CSRF header, plain errors).
 - `platform.py`: the super admin, the price list, the schools and principals.
+- `schools.py`, `pupils.py`, `results.py`: set-up and staff, pupils and parents,
+  results week and publishing.
+- `run.py`: every step in order, plus invoices; `__main__.py`: the command,
+  `SEED_PASSWORD=... uv run python -m app.cli.demo`.
 """

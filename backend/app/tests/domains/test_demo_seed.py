@@ -30,6 +30,11 @@ and Nursery 2, which fills Students needing attention with the brief's
 examples. JSS 1B is left mid-week (one sheet submitted, one with gaps). GMC
 and BSA save a report template, GMC pins the sports notice, and no seeded
 email is left waiting.
+
+Round 3c: the super admin generates the term's invoices; GMC's stays
+unpaid, RCS's is paid by a recorded bank transfer, BSA (free pilot) gets
+none. `seed_demo` runs every step in order and reports each one without
+the password.
 All data is fictional.
 """
 
@@ -46,6 +51,7 @@ from app.cli.demo.browser import Demo, SeedError
 from app.cli.demo.platform import SUPER_ADMIN, seed_platform
 from app.cli.demo.pupils import CLASSES, pupils_for, seed_pupils
 from app.cli.demo.results import seed_results, split, total_for
+from app.cli.demo.run import seed_demo
 from app.cli.demo.schools import seed_schools
 from app.platform.email import trigger
 from app.tests.auth_support import (
@@ -628,3 +634,25 @@ def test_templates_and_notices_are_there(with_results: Demo, db_session: Session
         (r.code, r.title, r.pinned) for r in pinned
     }
     assert db_session.scalar(text("select count(*) from email_outbox where status = 'queued'")) == 0
+
+
+def test_the_whole_seed_runs_and_bills_two_schools(demo: Demo, db_session: Session) -> None:
+    said: list[str] = []
+    seed_demo(demo, said.append)
+    invoices = {
+        r.code: r
+        for r in rows(
+            db_session,
+            "select s.code, i.status, i.amount_kobo, (select p.receipt_number from payments p"
+            " where p.invoice_id = i.id and p.status = 'succeeded') as receipt_number"
+            " from invoices i"
+            " join schools s on s.id = i.school_id",
+        )
+    }
+    assert set(invoices) == {"GMC", "RCS"}  # BSA is on a free pilot
+    assert invoices["GMC"].status == "unpaid"
+    assert (invoices["RCS"].status, invoices["RCS"].receipt_number is not None) == ("paid", True)
+    assert all(i.amount_kobo > 0 for i in invoices.values())
+    assert db_session.scalar(text("select count(*) from email_outbox where status = 'queued'")) == 0
+    assert any("Done" in line for line in said)
+    assert all(DEMO_PASSWORD not in line for line in said)
