@@ -103,7 +103,10 @@ test("a student logs in with the school code filled in", async () => {
     screen.getByLabelText("Username or admission number"),
     "GMC/2026/014",
   );
-  await userEvent.type(screen.getByLabelText("Password"), "fictional-pupil-words");
+  await userEvent.type(
+    screen.getByLabelText("Password"),
+    "fictional-pupil-words",
+  );
   await userEvent.click(screen.getByRole("button", { name: "Log in" }));
   await waitFor(() => expect(router.replace).toHaveBeenCalledWith("/student"));
   expect(sent).toEqual({
