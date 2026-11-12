@@ -70,3 +70,22 @@ export async function ok<T>(call: Promise<Result<T>>): Promise<T> {
   }
   return data as T;
 }
+
+// Files go up as multipart form data (pupil import, school images), with the
+// same cookie and CSRF header as every other change.
+export async function sendForm<T>(path: string, form: FormData): Promise<T> {
+  const response = await globalThis.fetch(`${baseUrl()}${path}`, {
+    method: "POST",
+    body: form,
+    credentials: "same-origin",
+    headers: { [CSRF_HEADER]: readCookie(CSRF_COOKIE) },
+  });
+  const body: unknown =
+    response.status === 204 ? null : await response.json().catch(() => null);
+  if (!response.ok)
+    throw new ApiError(
+      response.status,
+      body as { title?: string; code?: string } | null,
+    );
+  return body as T;
+}
