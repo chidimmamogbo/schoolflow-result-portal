@@ -971,3 +971,15 @@ Installed on Chidimma's laptop (checked 2026-10-09): Node 24.21.0, npm 11.19.0, 
 | Backups | Manual `pg_dump` + restore test; Neon Launch on onboarding day | D-031, D-127 |
 
 **Status:** approved by Chidimma on 2026-10-09. Phase 2 complete; Phase 3 (services and accounts) started.
+
+### D-181. How the frontend is built (2026-11-12; Phase 8; Chidimma asked for bulk batches to finish in one or two days; defaults chosen while building)
+- **Batches:** four, one PR each: (1) foundations and public pages; (2) school admin set-up and people; (3) the results flow; (4) parent and student portal, billing and the super admin. Tests stay first but lean: shared pieces fully, each page a render test with its main action and one error or refusal; deliberate breaks for security behaviour only. Breakpoint and theme checks of every page are Phase 9's Playwright run.
+- **Libraries (Round 1 stack):** next-themes, TanStack Query, openapi-fetch with types generated from the backend (`src/lib/api/openapi.json` and `schema.ts`), React Hook Form and zod where forms grow, Radix (`radix-ui`) for dialogs, menus, tabs and tooltips, class-variance-authority, clsx and tailwind-merge, sonner for toasts; MSW 3, Testing Library user-event and jest-dom for tests.
+- **shadcn/ui (reading of D-005):** components are written in the shadcn way (our own files on Radix, styled with the tokens) instead of running the shadcn CLI, which is interactive and adds files we would restyle anyway. Same result, fewer moving parts.
+- **Data fetching (reading of D-012):** pages are client components using TanStack Query against the same-domain API; the session cookie is `__Host-` and HttpOnly, so the browser sends it and server components would have to forward it. Layouts stay server components.
+- **API types:** regenerate after any backend change: in `backend/`, dump `create_app(app_env="local").openapi()` to `frontend/src/lib/api/openapi.json`, then in `frontend/` run `bunx openapi-typescript src/lib/api/openapi.json -o src/lib/api/schema.ts`. A wrong path or field then fails `bun run typecheck`.
+- **Guards:** `Protected` steers people (not signed in to `/login?next=...`, a temporary password to `/change-password`, the wrong role home); only a path on this site is followed after login. The server remains the gate.
+- **Tests:** each test file imports `@/test/setup` (MSW server, fake router, matchMedia and ResizeObserver, 30-second test timeout for this laptop), so the Phase 4 Vitest config is unchanged. Run with `bun run test --maxWorkers=2` when memory is short.
+- **Copy:** labels from NAVIGATION sections 1 to 5 (section 5 approved 2026-10-12); password rule text per D-036 and D-134. Pages without a board use plain sentences in the same voice (landing, privacy, verify, password pages); Chidimma may reword them.
+- **Not yet:** running the frontend against the local API needs a dev proxy from `/api` to the backend and https for the `__Host-` cookies; both change built config (`next.config.ts`), so they come as a CHANGE when we first run it locally.
+
