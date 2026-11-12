@@ -17,6 +17,26 @@ Entry template:
 
 ---
 
+## 2026-11-12 (Session 5, continued): Phase 8 batch 4, portal, billing and the super admin
+
+### What we did
+- Chidimma said `merge`: PR #65 (batch 3) is on `main`.
+- **Batch 4**, on `feat/phase8-portal-billing`: the parent and student portal (children grouped by school with each school's colour, link requests to accept or decline, reports per child, a report page showing the school's own card HTML in a sandboxed frame, Download PDF, Verify, Report a problem; a parent's corrections); school billing (plan, amount due, Pay now that asks only for a checkout link, invoices, a receipt, and the return page that reads our own record every 3 seconds until the webhook has marked it paid); the super admin (overview, schools, Create school, school detail with Overview, Features and Report cards by level, School admins with login support, Subscription, Invoices and Activity; pricing in naira saved in kobo with version history; billing with generate, void with a reason and manual payments; payments with Resend receipt; audit log; email log; settings).
+- A parent with children in two schools sends the school's id with each portal request.
+
+### Issues and fixes
+- The first return page did not refetch; it now polls with TanStack Query's `refetchInterval` and stops after two minutes.
+- The "paid without the server" deliberate break survived at first: the test now checks nothing says "Payment received" while the server says pending.
+- **Deliberate breaks (money):** 2 of 2.
+
+### Tests
+- Frontend: 70 tests in 14 files; lint, format, typecheck and `next build` clean.
+
+### Next step
+- After `merge`: Phase 8 is built. Then the CHANGE for running the frontend locally (dev proxy and https in `next.config.ts`), the backend gaps (read routes for subjects, a student's account id and the school's email status), and Phase 9 (end-to-end demo, every breakpoint, both themes).
+
+---
+
 ## 2026-11-12 (Session 5, continued): Phase 8 batch 3, the results flow
 
 ### What we did
