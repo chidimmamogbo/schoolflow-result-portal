@@ -17,6 +17,29 @@ Entry template:
 
 ---
 
+## 2026-11-12 (Session 5, continued): Phase 8 batch 1, foundations and public pages
+
+### What we did
+- Chidimma said `ok` to keeping the demo emails marked sent, and `merge`: PR #62 (the demo seed) is on `main`. **Phase 7 is done.**
+- Chidimma asked for the frontend in bulk steps, to finish in one or two days. Plan: four batches (D-181).
+- **Batch 1:** design tokens mapped into Tailwind, theme (light, dark, system), the typed API client with CSRF, `/auth/me` and route guards, the app shell (collapsible sidebar remembered, phone drawer, notice bell, theme toggle, profile menu), every role's menu word for word, shared components (button, fields, cards, states, status badges, responsive table, dialogs with reasons, tabs), and the public pages: `/`, `/login`, `/login/[code]`, `/activate`, `/reset-password`, `/join`, `/forgot-password`, `/change-password`, `/verify`, `/verify/[code]`, `/privacy`, `/school-paused`, `/profile`, plus each role's home with its title.
+
+### Issues and fixes
+- openapi-fetch kept the browser's `fetch` from start-up, so tests' fake API was never reached; it now looks fetch up on each call.
+- A link styled as a button had two children inside Radix's Slot; only the child is passed now.
+- MSW 3 renamed `onUnhandledRequest` to `onUnhandledFrame`.
+- jsdom refuses `__Host-` cookies on http; the CSRF test supplies the cookie directly.
+- Test workers timed out while memory was short; `--maxWorkers=2` and a 30-second test timeout.
+- **Deliberate breaks (security behaviour):** 10 of 10.
+
+### Tests
+- Frontend: 46 tests in 10 files; lint, format, typecheck and `next build` clean.
+
+### Next step
+- After `merge`: batch 2, school admin set-up and people.
+
+---
+
 ## 2026-11-12 (Session 5, continued): the demo seed (9.2v part 2)
 
 ### What we did

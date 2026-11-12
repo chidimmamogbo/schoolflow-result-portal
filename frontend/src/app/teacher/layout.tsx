@@ -1,0 +1,9 @@
+import type { ReactNode } from "react";
+
+import { Area } from "@/components/shell/area";
+
+export default function Layout({ children }: { children: ReactNode }) {
+  return (
+    <Area roles={["teacher", "school_admin", "reviewer"]}>{children}</Area>
+  );
+}
