@@ -17,6 +17,46 @@ Entry template:
 
 ---
 
+## 2026-11-12 (Session 5, continued): the demo seed (9.2v part 2)
+
+### What we did
+- **The demo seed**, in rounds 1, 2, 3a, 3b and 3c, on branch `feat/phase7-demo-seed`: `SEED_PASSWORD=... uv run python -m app.cli.demo` builds GMC, BSA and RCS through the app's own routes (D-180). This finishes the Phase 7 backend.
+- Chidimma agreed the seed should delete its demo emails; the outbox is append-only, so instead they stay marked sent to an in-process mailbox and never reach Resend (D-180).
+
+### Issues and fixes
+- Round 1 tests were written alongside the code; from round 2 on, tests first and red each time.
+- Seed data checked against design brief section 12: Grace Etim teaches English (Amina Bello is a pupil), BSA and RCS colours and addresses, First Term from 8 Sep.
+- A naming clash: Nursery 2's arm has no letter, so its id overwrote the class's; class ids now have their own name.
+- A hang of 52 minutes: the invented-name loop could only ever make 48 names; it now walks all 768 pairs and stops with a clear error if it runs out.
+- The join link is `/join#token=...`; the first pattern missed `token=`.
+- Each school's creation also queues a set-up email to its office address (expected).
+- The app shows a pupil's average as "38.50".
+- Windows ran low on memory once and stopped a run; nothing to fix in the code.
+- Adding `seed-demo` to the merged `app/cli/__main__.py` would have needed a CHANGE, so the seed has its own entry point, `app.cli.demo`.
+- **Deliberate breaks:** round 1 9 of 9, round 2 9 of 9, round 3a 10 of 10, round 3b 12 of 12, round 3c 11 of 11.
+
+### Tests
+- `test_demo_seed.py` (about 40 tests, roughly 20 minutes locally: each test builds the schools again) and `test_seed_command.py` (7). Ruff, format and strict Pyright clean. The full backend suite runs in CI.
+
+### Next step
+- After `merge`: Phase 8, the frontend, test-first. Before that, a run of the seed on a local database needs local logins for `app_user`, `app_platform` and `app_sender` (see MEMORY.md).
+
+### Blockers
+- None.
+
+---
+
+## 2026-11-11 (Session 5, continued): a new deploy token
+
+### What we did
+- Chidimma said `merge`: PR #61 (the super admin commands) is on `main`.
+- Chidimma made a new project-scoped Vercel token, `schoolflow-github-actions-2026-11` (30 days, so about 2026-12-11), stored it as `VERCEL_TOKEN` in the GitHub `staging` environment (updated 2026-11-11 10:37 UTC) and deleted the expired one. Steps checked against Vercel's guide "How do I use a Vercel API access token" (2026-11-11).
+
+### Blockers
+- None. Vercel's backend image registry, full (50 of 50) on 2026-10-24, held 6 images on 2026-11-11 (`vercel vcr image ls backend`), so staging deploys have room again.
+
+---
+
 ## 2026-11-11 (Session 5, continued): the super admin commands (9.2v part 1)
 
 ### What we did
