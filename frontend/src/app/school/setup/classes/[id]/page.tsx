@@ -27,8 +27,34 @@ import {
 } from "@/lib/api/school";
 
 function ArmSubjects({ arm, className }: { arm: Arm; className: string }) {
+  const { data: current } = useApi(["school", "arm-subjects", arm.id], () =>
+    ok(
+      api.GET("/api/v1/school/arms/{arm_id}/subjects", {
+        params: { path: { arm_id: arm.id } },
+      }),
+    ),
+  );
+  if (!current) return <LoadingState />;
+  return (
+    <ArmSubjectsForm
+      arm={arm}
+      className={className}
+      initial={current.map((s) => s.id)}
+    />
+  );
+}
+
+function ArmSubjectsForm({
+  arm,
+  className,
+  initial,
+}: {
+  arm: Arm;
+  className: string;
+  initial: string[];
+}) {
   const { data: subjects } = useSubjects();
-  const [chosen, setChosen] = useState<Set<string>>(new Set());
+  const [chosen, setChosen] = useState<Set<string>>(new Set(initial));
   const save = useAction(
     () =>
       ok(
@@ -37,7 +63,10 @@ function ArmSubjects({ arm, className }: { arm: Arm; className: string }) {
           body: { subject_ids: [...chosen] },
         }),
       ),
-    { done: "Subjects saved." },
+    {
+      invalidate: [["school", "arm-subjects", arm.id]],
+      done: "Subjects saved.",
+    },
   );
   return (
     <Card>
@@ -61,7 +90,7 @@ function ArmSubjects({ arm, className }: { arm: Arm; className: string }) {
         ))}
       </div>
       <p className="my-2 text-sm text-muted">
-        Tick every subject this arm takes, then save; it replaces the list.
+        The ticked subjects are the ones this arm takes.
       </p>
       <Button
         variant="primary"

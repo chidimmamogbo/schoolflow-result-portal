@@ -96,6 +96,11 @@ def delete_arm(arm_id: str, who: Admin, session: DbSession) -> None:
     return services.delete_arm(arm_id=arm_id, who=who, session=session)
 
 
+@router.get("/arms/{arm_id}/subjects", response_model=list[SubjectRow])
+def get_arm_subjects(arm_id: str, who: Admin, session: DbSession) -> list[SubjectRow]:
+    return services.arm_subjects(arm_id=arm_id, who=who, session=session)
+
+
 @router.put("/arms/{arm_id}/subjects", response_model=list[SubjectRow])
 def set_arm_subjects(
     arm_id: str, body: ArmSubjects, who: Admin, session: DbSession

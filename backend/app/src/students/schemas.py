@@ -55,6 +55,8 @@ class PupilRow(ApiModel):
     status: str
     arm_id: str | None
     has_login: bool
+    # For login support on the pupil's page (CHANGE 2026-11-12 B); None without a login.
+    user_id: str | None = None
 
 
 class Move(ApiModel):

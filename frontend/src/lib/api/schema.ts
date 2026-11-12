@@ -1569,7 +1569,8 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
-    get?: never;
+    /** Get Arm Subjects */
+    get: operations["get_arm_subjects_api_v1_school_arms__arm_id__subjects_get"];
     /** Set Arm Subjects */
     put: operations["set_arm_subjects_api_v1_school_arms__arm_id__subjects_put"];
     post?: never;
@@ -1787,6 +1788,23 @@ export interface paths {
     head?: never;
     /** Rename Department */
     patch: operations["rename_department_api_v1_school_departments__department_id__patch"];
+    trace?: never;
+  };
+  "/api/v1/school/emails": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** School Emails */
+    get: operations["school_emails_api_v1_school_emails_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
     trace?: never;
   };
   "/api/v1/school/files": {
@@ -2809,7 +2827,8 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
-    get?: never;
+    /** Get Pupil Subjects */
+    get: operations["get_pupil_subjects_api_v1_school_students__student_id__subjects_get"];
     /** Set Pupil Subjects */
     put: operations["set_pupil_subjects_api_v1_school_students__student_id__subjects_put"];
     post?: never;
@@ -5436,6 +5455,29 @@ export interface components {
       subscription: components["schemas"]["Subscription"] | null;
     };
     /**
+     * SchoolEmailRow
+     * @description Status only (D-083): never the template data, the body or provider error text.
+     */
+    SchoolEmailRow: {
+      /** Attempts */
+      attempts: number;
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string;
+      /** Id */
+      id: string;
+      /** Sent At */
+      sent_at: string | null;
+      /** Status */
+      status: string;
+      /** To Address */
+      to_address: string;
+      /** Type */
+      type: string;
+    };
+    /**
      * SchoolNotice
      * @description A notice as school admins manage it.
      */
@@ -6348,6 +6390,8 @@ export interface components {
       status: string;
       /** Surname */
       surname: string;
+      /** User Id */
+      user_id?: string | null;
     };
   };
   responses: never;
@@ -9402,6 +9446,37 @@ export interface operations {
       };
     };
   };
+  get_arm_subjects_api_v1_school_arms__arm_id__subjects_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        arm_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["SubjectRow"][];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
   set_arm_subjects_api_v1_school_arms__arm_id__subjects_put: {
     parameters: {
       query?: never;
@@ -9986,6 +10061,38 @@ export interface operations {
         };
         content: {
           "application/json": components["schemas"]["DepartmentRow"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  school_emails_api_v1_school_emails_get: {
+    parameters: {
+      query?: {
+        limit?: number;
+        offset?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["SchoolEmailRow"][];
         };
       };
       /** @description Validation Error */
@@ -12109,6 +12216,37 @@ export interface operations {
         };
         content: {
           "application/json": components["schemas"]["app__src__students__schemas__PupilRow"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  get_pupil_subjects_api_v1_school_students__student_id__subjects_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        student_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["SubjectName"][];
         };
       };
       /** @description Validation Error */
