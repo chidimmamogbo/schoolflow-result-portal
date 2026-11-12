@@ -17,6 +17,24 @@ Entry template:
 
 ---
 
+## 2026-11-12 (Session 5, continued): Phase 8 batch 2, school admin set-up and people
+
+### What we did
+- **Batch 2**, on `feat/phase8-school-admin` (stacked on batch 1, PR #63): School setup with tabs (Sessions, Classes, Subjects, Departments, Grading, Assessment, Learning areas and skills, Rating traits) and the class page (arms, assistants, subjects or learning areas); Students (list with search and class filter, add, CSV import with a checked preview, detail with details, class move, login and guardians); Teachers and Reviewers (list, add with an activation email or a one-time slip, assignments including class teacher who teaches all subjects, reviewer scopes, login support); Parents (list, add by link request or slip, children, contact, link request, pause, remove login); School admins (principal only, places left); School settings (contact details, colour, logo, signature and stamp).
+
+### Issues and fixes
+- PR #63's Frontend check failed on formatting after I renamed a test password without running Prettier again; fixed on batch 1 (`style:` commit) and carried into batch 2.
+- No route returns a pupil's subjects, an arm's subjects or a student's account id, so: the arm subjects form saves a fresh list (it can't show the current one), and a student's login page can give a login but not reset it. Worth small read routes later.
+- **Deliberate breaks:** 3 of 3 (principal-only page, link request for a parent with an email, confirming before deactivating).
+
+### Tests
+- Frontend: 58 tests in 12 files; lint, format, typecheck and `next build` clean.
+
+### Next step
+- After `merge` of #63 and this PR: batch 3, the results flow.
+
+---
+
 ## 2026-11-12 (Session 5, continued): Phase 8 batch 1, foundations and public pages
 
 ### What we did
