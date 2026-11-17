@@ -352,3 +352,9 @@ These seven changes were made during Phase 4 (2026-10-11 to 2026-10-12). Chidimm
 - What changes: SPEC v0.5.6 (F02 rules 1, 2, 11 to 14; AC02.9 to AC02.11; AC24.4); D-182; migration 29; the login now needs the school code and a tab, and refuses the wrong page with the generic error (counted as a failure); `POST /auth/platform/login`; page details with layout, picture, message and photo, also for suspended schools and old codes within 30 days; `/school/login-page` (with the photo upload) and `/platform/schools/{id}/login-page`; Create school takes the same choices; emails and slips link to the school's page; the new pages and settings in the frontend; the demo seed signs in on each person's own page; labels approved by Chidimma.
 - After: `/login/GMC` logs in only Greenfield's people, in Greenfield's look; the super admin uses only `/platform/login`.
 - Proof: `test_school_login_pages.py` and `test_login_page_settings.py` (each wrong page refused, suspended, unknown and old codes, settings refusals), deliberate breaks, the frontend tests, and the prototype's screens at three sizes in both themes.
+
+### CHANGE: Refresh dnspython and opentelemetry for new advisories (Chidimma `ok`, 2026-11-17)
+- Before: `backend/uv.lock` had dnspython 2.9.0 (GHSA-vvf4-9x63-8xvv) and opentelemetry-api 1.45.1 (GHSA-mf5v-w3w3-f6cg); the Python audit failed on every PR.
+- What changes: lock file only, `uv lock --upgrade-package dnspython --upgrade-package opentelemetry-api`: dnspython 2.9.2, opentelemetry-api, -sdk 1.45.2 and -semantic-conventions 0.66b2 (released together).
+- Proof: `uv audit` finds no known vulnerabilities; CI.
+- Not done: picomatch (GHSA-fc5q-39xc-vjpf) has no fixed release yet (4.0.7 is the newest), so a refresh cannot help; decision asked of Chidimma.
