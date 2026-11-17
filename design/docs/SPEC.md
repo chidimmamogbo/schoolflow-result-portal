@@ -2,8 +2,8 @@
 
 | | |
 |---|---|
-| Version | 0.5.5 |
-| Date | 2026-10-07 (v0.5); 2026-10-12 (v0.5.1, v0.5.2); 2026-10-13 (v0.5.3, v0.5.4); 2026-10-14 (v0.5.5) |
+| Version | 0.5.6 |
+| Date | 2026-10-07 (v0.5); 2026-10-12 (v0.5.1, v0.5.2); 2026-10-13 (v0.5.3, v0.5.4); 2026-10-14 (v0.5.5); 2026-11-17 (v0.5.6) |
 | Status | Agreed for build |
 | Owner | Chidimma Merit Mogbo |
 | Product name | SchoolFlow Result Portal (planning name: ResultChain) |
@@ -15,6 +15,7 @@
 > - v0.2: account provisioning by school admins, login-only model, student and teacher registration with assignments, guardian ward linking, notice board, email notifications, SaaS dashboard shell, full responsiveness, dark/light mode.
 > - v0.3: per-school subscription billing with an editable per-student, per-term pricing table and online payment in test mode.
 > - v0.4: product renamed SchoolFlow Result Portal; username login for everyone; student login with school code; password reset rules (no self-service for students, super admin resets school admins); additional school admins; configurable assessment structures per level (any number of CAs); teacher sheet search and filters; form teacher tools (broadsheet, comments, ratings, attendance, preview); Students needing attention list; expanded super admin functions and platform settings; full Create school form with colour picker and set-up emails; more report template styles and block settings; graduated pricing removed, volume pricing with optional cliff protection.
+> - v0.5.6 (2026-11-17, D-182, CHANGE C): each school has its own branded login page, `/login/{code}`, that logs in only its own people; the super admin logs in only at `/platform/login`; `/login` becomes Find your school; an old school code forwards for 30 days.
 > - v0.5.5 (2026-10-14, D-146): form teacher class sections follow the result sheet pattern after publication: they become Published with the class, and a school admin reopens them with a reason as a new revision when a correction is needed.
 > - v0.5.4 (2026-10-13, D-142, D-143, D-144): a school admin may approve a sheet nobody reviewed only when no reviewer's scope covers it; a reviewer may return a resubmitted sheet again; changing a saved score needs a reason once the sheet has been submitted at least once (or is a reopened revision); school admins and reviewers who also teach get teacher assignments and act as teachers on those sheets only.
 > - v0.5.3 (2026-10-13, D-139, D-140): pupils' names are stored as surname, first name and other names; a parent with an email is always added by link request (temporary password slips only for parents without an email), so a school never learns whether an email already uses SchoolFlow.
@@ -148,8 +149,8 @@ F01 to F26 below.
 ### F02. Authentication (login only)
 - **Users:** all.
 - **Rules:**
-  1. Login page with two tabs: **Staff and parents** (Email or username, Password) and **Student** (School code, Username or admission number, Password).
-  2. Opening a school's own login link (for example `/login/GMC`) opens the Student tab with the school code filled in and shows the school's name and logo.
+  1. **Each school has its own login page**, `/login/{code}` (for example `/login/GMC`), with two tabs: **Staff and parents** (Email or username, Password) and **Student** (Username or admission number, Password; the school code comes from the link). It logs in only that school's staff, its students on the Student tab, and parents linked to that school; a parent of several schools may use any of their schools' pages and starts in that school. Anyone else, including a right password on another school's page, gets the generic error of rule 3, and it counts as a failed login (rule 4). Each device opens the tab it used last (Student on a first visit) (v0.5.6, D-182).
+  2. The school's page shows its logo, name and look (rule 12). `/login` is **Find your school**: a School code box that leads to the school's page (no search by name, so the list of schools stays private). A device remembers the last school code (only the code) and goes straight to that page, which shows "Not {School name}? Find your school". An unknown code shows "We couldn't find that school". A suspended school's page looks normal; the paused message comes after a correct password (AC24.3). After a school code changes, the old code forwards to the new page for 30 days and then is not found; logins only ever accept the current code (AC24.4). Signing out, or a session ending, returns to the school's own page (v0.5.6, D-182).
   3. Generic error message for every failure; the response never reveals whether an account, username or school code exists.
   4. Rate limiting per identifier and per IP; temporary lockout after repeated failures.
   5. Session tokens in httpOnly, Secure cookies; refresh and logout; "sign out of all devices" support.
@@ -158,6 +159,10 @@ F01 to F26 below.
   8. The Student tab shows no forgot password link. It shows: "Forgot your password? Ask your school admin for a new one."
   9. A successful password reset signs the user out of every other session and sends a "your password was changed" email when the account has an email.
   10. No register route.
+  11. **The super admin logs in only at `/platform/login`** (Email or username, Password, then two-factor login once built, D-043), which refuses every other account with the generic error; school pages refuse the super admin. Under the form: "Looking for your school? Find your school". The page asks search engines not to list it (v0.5.6, D-182).
+  12. **Login page look:** on tablets and laptops a split screen in one of two layouts the school chooses, **Half and half** (picture on one side, logo and form on the other) or **Picture behind** (the picture fills the screen, the form in a card); on phones no picture is shown or downloaded, only the logo and name above the form. The picture is a SchoolFlow **Pattern** or **People** illustration in the school's colour, or the school's **own photo** (PNG, JPEG or WebP up to 4 MB, cleaned and saved as a JPEG of at most 1200 pixels a side). The upload warns: "This picture is public on your login page. Use a picture you have permission to share, such as your school building. Don't use pictures where pupils' faces can be recognised." The school takes responsibility for it. Over the picture: the school name and an optional message of up to 80 characters on one line, by default "Welcome to {School name}" (v0.5.6, D-182).
+  13. Forgot password, Reset password, Activate account and the first-login change of password show the same school's look, taken from the page or email link they came from (v0.5.6, D-182).
+  14. School admins set the look under School settings > **Login page** (Layout, Picture, Upload a photo, Login page message, Preview, Open login page, Copy link); the super admin sets the layout, picture and message on Create school and the school's details. Only the school uploads its own photo. Emails and slips link to the school's own page; super admin emails link to `/platform/login` (v0.5.6, D-182).
 - **Acceptance:**
   - AC02.1 Given any role, when visiting a register URL, then it is not found.
   - AC02.2 Given a temporary password, when the user logs in, then they must set a new password before anything else.
@@ -167,6 +172,9 @@ F01 to F26 below.
   - AC02.6 Given two schools that both have admission number 2026/014, when a student logs in with school code GMC, then only Greenfield's student is matched.
   - AC02.7 Given a wrong school code, a wrong username or a wrong password, when logging in, then the same generic error is shown.
   - AC02.8 Given the forgot password endpoint, when called for a student account, then no reset email is sent and the response is the same as for any other request.
+  - AC02.9 Given a Bright Stars teacher with the right password, when they log in on `/login/GMC`, then the generic error is shown and the attempt counts as a failure (v0.5.6).
+  - AC02.10 Given a parent linked to GMC and BSA, when they log in on either page, then they are signed in and start in that school; on a third school's page they get the generic error (v0.5.6).
+  - AC02.11 Given the super admin, when they log in on a school page, then the generic error is shown; given any school account, when it logs in on `/platform/login`, then the generic error is shown (v0.5.6).
 
 ### F03. Account provisioning, school admins and password resets
 - **Users:** super admin, school admins.
@@ -413,7 +421,7 @@ F01 to F26 below.
   - AC24.1 Given a school code that already exists, when creating a school, then the form shows it is taken and will not submit.
   - AC24.2 Given a valid Create school form, when submitted, then the school, its principal account and two queued emails exist, and neither email contains a password.
   - AC24.3 Given a suspended school, when any of its users logs in, then they see the paused message and no school data.
-  - AC24.4 Given the school code changes from GMC to GMCE, when a student logs in with GMC, then the login fails with the generic error.
+  - AC24.4 Given the school code changes from GMC to GMCE, when someone opens `/login/GMC` within 30 days, then they are taken to `/login/GMCE`; after 30 days it shows "We couldn't find that school"; and a login with GMC always fails with the generic error (v0.5.6).
   - AC24.5 Given a colour with poor contrast, when chosen, then the form shows a readability warning and the app falls back to the platform primary for text and buttons.
 
 ### F25. School type and report card levels
@@ -608,7 +616,7 @@ Public: landing, login (Staff and parents, Student), school login link, activate
 6. The principal of School A activates the account and adds a vice principal as an additional school admin.
 7. The principal sets the Senior Secondary assessment structure to CA1, CA2, CA3, Project and Exam (total 100), keeps CA1, CA2 and Exam for Junior Secondary, and sets the pass mark to 40.
 8. The principal registers a teacher (Mathematics for JSS 1A and JSS 1B, form teacher of JSS 1A), a reviewer/HOD for Sciences, bulk-registers JSS 1A students by CSV, assigns subjects, and registers a parent linked to two children.
-9. The teacher activates from the email link and logs in with their username. A student logs in on the Student tab with school code GMC, their admission number and a temporary password, and must set a new password.
+9. The teacher activates from the email link and logs in with their username. A student logs in on the Student tab of `/login/GMC` with their admission number and a temporary password, and must set a new password.
 10. The teacher opens the Mathematics JSS 1A sheet, searches for a student by name and enters CA and exam marks.
 11. The system catches a missing and an out-of-range mark.
 12. The teacher fixes them and submits.

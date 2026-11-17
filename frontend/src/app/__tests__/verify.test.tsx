@@ -6,7 +6,6 @@ import { screen } from "@testing-library/react";
 import { HttpResponse, http } from "msw";
 import { expect, test } from "vitest";
 
-import SchoolLoginPage from "@/app/login/[schoolCode]/page";
 import VerifyResultPage from "@/app/verify/[code]/page";
 import { renderWithClient } from "@/test/helpers";
 import { navigation, server } from "@/test/setup";
@@ -70,21 +69,4 @@ test("an unknown code gets a plain message", async () => {
   );
 });
 
-test("a school login link shows the school and fills the code", async () => {
-  navigation.params = { schoolCode: "gmc" };
-  server.use(
-    http.get("*/api/v1/auth/schools/:code/public", () =>
-      HttpResponse.json({
-        code: "GMC",
-        name: "Greenfield Model College",
-        colour: "#1E6B45",
-        logo_url: null,
-      }),
-    ),
-  );
-  renderWithClient(<SchoolLoginPage />);
-  expect(
-    await screen.findByText("Greenfield Model College"),
-  ).toBeInTheDocument();
-  expect(screen.getByLabelText("School code")).toHaveValue("GMC");
-});
+// The school login page moved to school-login.test.tsx (CHANGE C, D-182).

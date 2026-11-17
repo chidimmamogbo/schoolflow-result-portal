@@ -82,17 +82,35 @@ class Demo:
         # How someone signs in when it is not their username (an email, a school code).
         self.sign_in: dict[str, tuple[str, str | None]] = {}
         self.ids: dict[str, str] = {}
+        # The demo schools' codes, in the order they were made (their login pages).
+        self.codes: list[str] = []
         # The seed's own app never starts a real email or payment run: no demo email
         # may reach Resend, and payments are left to the webhook as usual.
         app.dependency_overrides[trigger.get_email_kick] = lambda: do_nothing
         app.dependency_overrides[processing.get_payment_kick] = lambda: do_nothing
 
     def log_in(self, identifier: str, password: str, school_code: str | None = None) -> Browser:
+        """Sign in on the person's own page (D-182). With a school code: that school's
+        Student tab. Without: each demo school's page in turn, then the platform page,
+        as a person would try the link they were given. A success clears the
+        failed tries, and there are at most three schools, so nobody is locked out."""
         person = Browser(self.app, self.origin)
         body: dict[str, str] = {"identifier": identifier, "password": password}
         if school_code is not None:
-            body["school_code"] = school_code
-        person.post("/auth/login", body)
+            person.post("/auth/login", body | {"school_code": school_code, "tab": "student"})
+            return person
+        doors = [("/auth/login", {"school_code": code}) for code in self.codes]
+        doors.append(("/auth/platform/login", {}))
+        for url, extra in doors:
+            response = person.client.post(
+                f"/api/v1{url}", json=body | extra, headers={"Origin": self.origin}
+            )
+            if response.status_code != 401:
+                break
+        else:
+            raise SeedError(f"No login page let {identifier} in.")
+        if response.status_code >= 400:
+            raise SeedError(f"POST {url} answered {response.status_code}.")
         return person
 
     def as_(self, name: str) -> Browser:

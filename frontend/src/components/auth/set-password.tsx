@@ -7,7 +7,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { type FormEvent, useEffect, useState } from "react";
 
-import { AuthCard } from "@/components/auth/auth-card";
+import { SchoolAuthFrame } from "@/components/auth/school-brand";
 import {
   LINK_INVALID,
   localProblem,
@@ -71,7 +71,7 @@ export function SetPassword({
   }
 
   return (
-    <AuthCard title={title} intro={intro}>
+    <SchoolAuthFrame title={title} intro={intro}>
       {token === null ? (
         <FormError message={LINK_INVALID} />
       ) : (
@@ -112,6 +112,6 @@ export function SetPassword({
           </Button>
         </form>
       )}
-    </AuthCard>
+    </SchoolAuthFrame>
   );
 }

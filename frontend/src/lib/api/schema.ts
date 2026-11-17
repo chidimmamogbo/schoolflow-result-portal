@@ -191,6 +191,23 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/api/v1/auth/platform/login": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Platform Login */
+    post: operations["platform_login_api_v1_auth_platform_login_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/api/v1/auth/refresh": {
     parameters: {
       query?: never;
@@ -202,6 +219,23 @@ export interface paths {
     put?: never;
     /** Refresh */
     post: operations["refresh_api_v1_auth_refresh_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/auth/schools/{code}/login-photo": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** School Login Photo */
+    get: operations["school_login_photo_api_v1_auth_schools__code__login_photo_get"];
+    put?: never;
+    post?: never;
     delete?: never;
     options?: never;
     head?: never;
@@ -1250,6 +1284,24 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/api/v1/platform/schools/{school_id}/login-page": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Platform Get Page */
+    get: operations["platform_get_page_api_v1_platform_schools__school_id__login_page_get"];
+    /** Platform Edit Page */
+    put: operations["platform_edit_page_api_v1_platform_schools__school_id__login_page_put"];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/api/v1/platform/schools/{school_id}/reactivate": {
     parameters: {
       query?: never;
@@ -2195,6 +2247,41 @@ export interface paths {
     /** Change Level */
     put: operations["change_level_api_v1_school_levels__level__put"];
     post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/school/login-page": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get Page */
+    get: operations["get_page_api_v1_school_login_page_get"];
+    /** Edit Page */
+    put: operations["edit_page_api_v1_school_login_page_put"];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/school/login-page/photo": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Upload Photo */
+    post: operations["upload_photo_api_v1_school_login_page_photo_post"];
     delete?: never;
     options?: never;
     head?: never;
@@ -3486,6 +3573,11 @@ export interface components {
       /** File */
       file: string;
     };
+    /** Body_upload_photo_api_v1_school_login_page_photo_post */
+    Body_upload_photo_api_v1_school_login_page_photo_post: {
+      /** File */
+      file: string;
+    };
     /** Body_upload_school_image_api_v1_school_files_post */
     Body_upload_school_image_api_v1_school_files_post: {
       /** File */
@@ -3749,6 +3841,7 @@ export interface components {
       /** Email */
       email: string;
       features: components["schemas"]["Features"];
+      login_page?: components["schemas"]["LoginPageChange"] | null;
       /** Name */
       name: string;
       /** Phone */
@@ -4307,19 +4400,68 @@ export interface components {
       /** Status */
       status: string;
     };
-    /** LoginRequest */
+    /** LoginPage */
+    LoginPage: {
+      /**
+       * Layout
+       * @enum {string}
+       */
+      layout: "half" | "behind";
+      /** Link */
+      link: string;
+      /** Message */
+      message: string | null;
+      /** Photo Url */
+      photo_url: string | null;
+      /**
+       * Picture
+       * @enum {string}
+       */
+      picture: "pattern" | "people" | "photo";
+    };
+    /**
+     * LoginPageChange
+     * @description Layout "Half and half" or "Picture behind"; picture "Pattern", "People" or
+     *     "Your own photo" (only once a photo is uploaded); the message over the picture.
+     */
+    LoginPageChange: {
+      /**
+       * Layout
+       * @enum {string}
+       */
+      layout: "half" | "behind";
+      /** Message */
+      message?: string | null;
+      /**
+       * Picture
+       * @enum {string}
+       */
+      picture: "pattern" | "people" | "photo";
+    };
+    /**
+     * LoginRequest
+     * @description A login on a school's own page, /login/{code} (F02 rule 1, D-182).
+     */
     LoginRequest: {
       /** Identifier */
       identifier: string;
       /** Password */
       password: string;
       /** School Code */
-      school_code?: string | null;
+      school_code: string;
+      /**
+       * Tab
+       * @default staff
+       * @enum {string}
+       */
+      tab: "staff" | "student";
     };
     /** LoginResult */
     LoginResult: {
       /** Must Change Password */
       must_change_password: boolean;
+      /** School Id */
+      school_id?: string | null;
     };
     /** ManualPayment */
     ManualPayment: {
@@ -4792,6 +4934,16 @@ export interface components {
       name: string;
       /** Price Kobo */
       price_kobo: number;
+    };
+    /**
+     * PlatformLoginRequest
+     * @description The super admin's own page, /platform/login (F02 rule 11).
+     */
+    PlatformLoginRequest: {
+      /** Identifier */
+      identifier: string;
+      /** Password */
+      password: string;
     };
     /** PlatformSettings */
     PlatformSettings: {
@@ -5522,16 +5674,34 @@ export interface components {
       /** Notices */
       notices: components["schemas"]["SchoolNotice"][];
     };
-    /** SchoolPublic */
+    /**
+     * SchoolPublic
+     * @description What a school's login page shows (F02 rules 2 and 12). The code is the
+     *     school's current one: when it differs from the link's, the page forwards.
+     */
     SchoolPublic: {
       /** Code */
       code: string;
       /** Colour */
       colour: string;
+      /**
+       * Layout
+       * @enum {string}
+       */
+      layout: "half" | "behind";
       /** Logo Url */
       logo_url: string | null;
+      /** Message */
+      message: string | null;
       /** Name */
       name: string;
+      /** Photo Url */
+      photo_url: string | null;
+      /**
+       * Picture
+       * @enum {string}
+       */
+      picture: "pattern" | "people" | "photo";
     };
     /** SchoolResults */
     SchoolResults: {
@@ -6730,6 +6900,39 @@ export interface operations {
       };
     };
   };
+  platform_login_api_v1_auth_platform_login_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["PlatformLoginRequest"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["LoginResult"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
   refresh_api_v1_auth_refresh_post: {
     parameters: {
       query?: never;
@@ -6746,6 +6949,37 @@ export interface operations {
         };
         content: {
           "application/json": components["schemas"]["LoginResult"];
+        };
+      };
+    };
+  };
+  school_login_photo_api_v1_auth_schools__code__login_photo_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        code: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": unknown;
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
         };
       };
     };
@@ -8714,6 +8948,72 @@ export interface operations {
         };
         content: {
           "application/json": components["schemas"]["LevelsResult"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  platform_get_page_api_v1_platform_schools__school_id__login_page_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        school_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["LoginPage"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  platform_edit_page_api_v1_platform_schools__school_id__login_page_put: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        school_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["LoginPageChange"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["LoginPage"];
         };
       };
       /** @description Validation Error */
@@ -10891,6 +11191,92 @@ export interface operations {
         };
         content: {
           "application/json": components["schemas"]["LevelResult"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  get_page_api_v1_school_login_page_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["LoginPage"];
+        };
+      };
+    };
+  };
+  edit_page_api_v1_school_login_page_put: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["LoginPageChange"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["LoginPage"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  upload_photo_api_v1_school_login_page_photo_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "multipart/form-data": components["schemas"]["Body_upload_photo_api_v1_school_login_page_photo_post"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["LoginPage"];
         };
       };
       /** @description Validation Error */

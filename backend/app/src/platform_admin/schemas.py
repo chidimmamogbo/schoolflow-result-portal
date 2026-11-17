@@ -11,6 +11,7 @@ from typing import Annotated, Literal, Self
 from pydantic import BeforeValidator, Field, StringConstraints, model_validator
 
 from app.core.schemas import ApiModel
+from app.src.login_page.schemas import LoginPageChange
 
 # The 36 states and the FCT (F24 rule 1: a dropdown when the country is Nigeria).
 NIGERIAN_STATES = frozenset(
@@ -85,6 +86,8 @@ class CreateSchool(SchoolDetails):
     features: Features
     billing: Literal["on", "free_pilot"]
     principal: PrincipalForm
+    # The school's login page (F02 rule 12, D-182); the defaults when left out.
+    login_page: LoginPageChange | None = None
 
 
 class EditSchool(ApiModel):

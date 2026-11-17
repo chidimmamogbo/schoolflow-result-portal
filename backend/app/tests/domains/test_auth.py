@@ -120,10 +120,10 @@ def test_the_cookies_are_set_safely(app: FastAPI, tunde: uuid.UUID) -> None:
     client = client_for(app)
     response = client.post(
         "/api/v1/auth/login",
-        json={"identifier": "tunde.adebayo", "password": PASSWORD},
+        json={"identifier": "tunde.adebayo", "password": PASSWORD, "school_code": "GMC"},
         headers={"Origin": ORIGIN},
     )
-    assert response.json() == {"must_change_password": False}
+    assert response.json()["must_change_password"] is False
     cookies = response.headers.get_list("set-cookie")
     session = next(c for c in cookies if c.startswith(f"{SESSION_COOKIE}="))
     token = next(c for c in cookies if c.startswith(f"{CSRF_COOKIE}="))
@@ -224,14 +224,29 @@ def test_every_login_failure_looks_the_same(
     monkeypatch.setattr(passwords, "PASSWORD_HASH", CountingHash())
 
     attempts = [
-        {"identifier": "GMC/2026/014", "password": PASSWORD, "school_code": "XYZ"},
-        {"identifier": "GMC/2026/099", "password": PASSWORD, "school_code": "GMC"},
-        {"identifier": "GMC/2026/014", "password": "wrong-password-here", "school_code": "GMC"},
-        {"identifier": "nobody.here", "password": PASSWORD},
-        {"identifier": "tunde.adebayo", "password": "wrong-password-here"},
-        {"identifier": "old.teacher", "password": PASSWORD},
-        {"identifier": "new.teacher", "password": PASSWORD},
-        {"identifier": "slip.teacher", "password": PASSWORD},
+        {
+            "identifier": "GMC/2026/014",
+            "password": PASSWORD,
+            "school_code": "XYZ",
+            "tab": "student",
+        },
+        {
+            "identifier": "GMC/2026/099",
+            "password": PASSWORD,
+            "school_code": "GMC",
+            "tab": "student",
+        },
+        {
+            "identifier": "GMC/2026/014",
+            "password": "wrong-password-here",
+            "school_code": "GMC",
+            "tab": "student",
+        },
+        {"identifier": "nobody.here", "password": PASSWORD, "school_code": "GMC"},
+        {"identifier": "tunde.adebayo", "password": "wrong-password-here", "school_code": "GMC"},
+        {"identifier": "old.teacher", "password": PASSWORD, "school_code": "GMC"},
+        {"identifier": "new.teacher", "password": PASSWORD, "school_code": "GMC"},
+        {"identifier": "slip.teacher", "password": PASSWORD, "school_code": "GMC"},
     ]
     answers: list[dict[str, Any]] = []
     for attempt in attempts:
@@ -258,7 +273,11 @@ def test_a_paused_school_is_named_only_after_a_correct_password(
         client_for(app),
         "POST",
         "/api/v1/auth/login",
-        json={"identifier": "tunde.adebayo", "password": "wrong-password-here"},
+        json={
+            "identifier": "tunde.adebayo",
+            "password": "wrong-password-here",
+            "school_code": "GMC",
+        },
         headers={"Origin": ORIGIN},
     )
     assert wrong["title"] == LOGIN_FAILED
@@ -268,7 +287,7 @@ def test_a_paused_school_is_named_only_after_a_correct_password(
         client,
         "POST",
         "/api/v1/auth/login",
-        json={"identifier": "tunde.adebayo", "password": PASSWORD},
+        json={"identifier": "tunde.adebayo", "password": PASSWORD, "school_code": "GMC"},
         headers={"Origin": ORIGIN},
     )
     assert right["_status"] == 403
@@ -327,7 +346,7 @@ def test_logins_from_another_site_are_refused(app: FastAPI, tunde: uuid.UUID) ->
     """D-038: the Origin check stops login forgery from another site."""
     response = client_for(app).post(
         "/api/v1/auth/login",
-        json={"identifier": "tunde.adebayo", "password": PASSWORD},
+        json={"identifier": "tunde.adebayo", "password": PASSWORD, "school_code": "GMC"},
         headers={"Origin": "https://evil.example"},
     )
     assert response.status_code == 403
@@ -337,7 +356,12 @@ def test_logins_from_another_site_are_refused(app: FastAPI, tunde: uuid.UUID) ->
 def test_login_refuses_extra_fields(app: FastAPI, tunde: uuid.UUID) -> None:
     response = client_for(app).post(
         "/api/v1/auth/login",
-        json={"identifier": "tunde.adebayo", "password": PASSWORD, "role": "super_admin"},
+        json={
+            "identifier": "tunde.adebayo",
+            "password": PASSWORD,
+            "school_code": "GMC",
+            "role": "super_admin",
+        },
         headers={"Origin": ORIGIN},
     )
     assert response.status_code == 422
@@ -476,10 +500,11 @@ def test_a_temporary_password_must_be_changed_first(
             "identifier": "chukwuemeka.obi",
             "password": "temp-slip-words-four",
             "school_code": "GMC",
+            "tab": "student",
         },
         headers={"Origin": ORIGIN},
     )
-    assert response.json() == {"must_change_password": True}
+    assert response.json()["must_change_password"] is True
     assert client.get("/api/v1/auth/me").json()["must_change_password"] is True
     assert problem(client, "POST", "/api/v1/auth/refresh", headers=csrf(client))["code"] == (
         "password_change_required"

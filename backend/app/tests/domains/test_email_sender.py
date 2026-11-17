@@ -91,8 +91,12 @@ def outbox(db: Session, email_id: uuid.UUID) -> Any:
     ).one()
 
 
-def link_in(email: OutgoingEmail, path: str) -> str:
-    match = re.search(rf"{re.escape(BASE)}{re.escape(path)}#token=([A-Za-z0-9_-]+)", email.text)
+def link_in(email: OutgoingEmail, path: str, school: str | None = "GMC") -> str:
+    """The token of the link to `path`; an email of one school names it (D-182)."""
+    where = f"?school={school}" if school else ""
+    match = re.search(
+        rf"{re.escape(BASE)}{re.escape(path)}{re.escape(where)}#token=([A-Za-z0-9_-]+)", email.text
+    )
     assert match, email.text
     assert match.group(0) in email.html
     return match.group(1)
@@ -311,6 +315,8 @@ def test_link_requests_are_written_for_whoever_owns_the_address(
 
     parent = by_address["ikenna@home.example"]
     assert "log in" in parent.text.lower() and f"{BASE}/login" in parent.text
+    # Not GMC's own page: the parent cannot log in there until they accept (D-182).
+    assert f"{BASE}/login/GMC" not in parent.text
     assert "#token=" not in parent.text
     staff = by_address["tunde@gmc.example"]
     assert "another email" in staff.text and "#token=" not in staff.text

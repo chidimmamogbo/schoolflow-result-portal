@@ -27,6 +27,7 @@ import { api, ok } from "@/lib/api/client";
 import type { Me } from "@/lib/api/types";
 import { featureOn, roleOf, useLogout } from "@/lib/auth";
 import { cn } from "@/lib/utils";
+import { loginPage } from "@/lib/school-memory";
 
 const COLLAPSED_KEY = "sf-sidebar-collapsed";
 
@@ -254,8 +255,9 @@ function ProfileMenu({ me }: { me: Me }) {
           <DropdownMenu.Item
             className="flex min-h-11 cursor-pointer items-center gap-2 rounded px-2 text-sm outline-none data-[highlighted]:bg-surface-2"
             onSelect={async () => {
+              const back = loginPage();
               await logout();
-              router.replace("/login");
+              router.replace(back);
             }}
           >
             <LogOut className="size-4" aria-hidden="true" />

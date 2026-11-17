@@ -1,10 +1,11 @@
 "use client";
 
-// School settings: contact details, colour and the images used on report
-// cards (logo, head's signature, school stamp). The name and code are the
-// platform's to change.
+// School settings: contact details, colour, the images used on report cards
+// (logo, head's signature, school stamp) and the school's own login page
+// (D-182). The name and code are the platform's to change.
 import { type FormEvent, useState } from "react";
 
+import { LoginPageEditor } from "@/components/setup/login-page-editor";
 import { Button } from "@/components/ui/button";
 import { Field, Input } from "@/components/ui/form";
 import {
@@ -14,8 +15,9 @@ import {
   PageHeader,
 } from "@/components/ui/layout";
 import { api, ok, sendForm } from "@/lib/api/client";
-import { useAction } from "@/lib/api/hooks";
+import { useAction, useApi } from "@/lib/api/hooks";
 import { KEYS, useSchool } from "@/lib/api/school";
+import type { LoginPageChange } from "@/components/setup/login-page-editor";
 
 const FIELDS = [
   ["email", "School email"],
@@ -25,6 +27,48 @@ const FIELDS = [
   ["state", "State"],
   ["country", "Country"],
 ] as const;
+
+function LoginPageSection({ code }: { code: string }) {
+  const page = useApi(["school", "login-page"], () =>
+    ok(api.GET("/api/v1/school/login-page")),
+  );
+  const save = useAction(
+    (change: LoginPageChange) =>
+      ok(api.PUT("/api/v1/school/login-page", { body: change })),
+    {
+      invalidate: [
+        ["school", "login-page"],
+        ["school-public", code],
+      ],
+      done: "Saved.",
+    },
+  );
+  const upload = useAction(
+    (file: File) => {
+      const form = new FormData();
+      form.append("file", file);
+      return sendForm("/api/v1/school/login-page/photo", form);
+    },
+    {
+      invalidate: [
+        ["school", "login-page"],
+        ["school-public", code],
+      ],
+      done: "Saved.",
+    },
+  );
+  if (!page.data) return <LoadingState />;
+  return (
+    <LoginPageEditor
+      key={JSON.stringify(page.data)}
+      page={page.data}
+      code={code}
+      busy={save.isPending}
+      onSave={(change) => save.mutate(change)}
+      upload={{ busy: upload.isPending, send: (file) => upload.mutate(file) }}
+    />
+  );
+}
 
 function Upload({
   purpose,
@@ -143,6 +187,10 @@ export default function SchoolSettingsPage() {
           <Upload purpose="logo" label="School logo" />
           <Upload purpose="signature" label="Head's signature" />
           <Upload purpose="stamp" label="School stamp" />
+        </Card>
+        <Card className="grid max-w-[var(--form-max)] gap-4">
+          <h2 className="text-xl font-semibold">Login page</h2>
+          <LoginPageSection code={school.code} />
         </Card>
       </div>
     </>

@@ -25,6 +25,7 @@ from app.core.dependencies import Principal, found
 from app.core.errors import ProblemError
 from app.core.security import issue_temporary_password
 from app.platform.email.queue import queue_email
+from app.src.login_page import services as login_page
 from app.src.platform_admin import settings_model as settings_model
 from app.src.platform_admin.schemas import (
     AdminRow,
@@ -247,6 +248,9 @@ def create_school(
             }
         ),
     )
+    if body.login_page is not None:
+        # Before the school has any photo, so "Your own photo" is refused (D-182).
+        login_page.change(db, school_id, body.login_page)
     for feature, enabled in body.features.model_dump().items():
         db.execute(
             text("insert into school_features (school_id, feature, enabled) values (:s, :f, :e)"),

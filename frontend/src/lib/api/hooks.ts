@@ -23,6 +23,7 @@ const MESSAGES: Record<string, string> = {
   email_taken: "That email is already used.",
   admission_number_taken: "That admission number is already used.",
   permission_denied: "You don't have permission to do this.",
+  photo_missing: "Upload a photo first.",
   feature_disabled: "This feature is switched off for your school.",
   level_disabled: "Report cards for this level are switched off.",
   admin_limit: "You have no school admin places left.",

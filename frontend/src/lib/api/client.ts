@@ -5,9 +5,11 @@
 import createClient, { type Middleware } from "openapi-fetch";
 
 import type { paths } from "@/lib/api/schema";
+import { chosenSchoolId } from "@/lib/school-memory";
 
 export const CSRF_COOKIE = "__Host-sf_csrf";
 export const CSRF_HEADER = "X-CSRF-Token";
+export const SCHOOL_HEADER = "X-School-Id";
 
 export class ApiError extends Error {
   readonly status: number;
@@ -37,6 +39,12 @@ const csrf: Middleware = {
   onRequest({ request }) {
     if (!["GET", "HEAD", "OPTIONS"].includes(request.method)) {
       request.headers.set(CSRF_HEADER, readCookie(CSRF_COOKIE));
+    }
+    // The school whose login page was used (D-182): a parent of several schools
+    // starts there. The server still checks the account belongs to it.
+    const school = chosenSchoolId();
+    if (school && !request.headers.has(SCHOOL_HEADER)) {
+      request.headers.set(SCHOOL_HEADER, school);
     }
     return request;
   },
@@ -78,7 +86,10 @@ export async function sendForm<T>(path: string, form: FormData): Promise<T> {
     method: "POST",
     body: form,
     credentials: "same-origin",
-    headers: { [CSRF_HEADER]: readCookie(CSRF_COOKIE) },
+    headers: {
+      [CSRF_HEADER]: readCookie(CSRF_COOKIE),
+      ...(chosenSchoolId() ? { [SCHOOL_HEADER]: chosenSchoolId() ?? "" } : {}),
+    },
   });
   const body: unknown =
     response.status === 204 ? null : await response.json().catch(() => null);
