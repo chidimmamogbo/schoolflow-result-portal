@@ -358,3 +358,9 @@ These seven changes were made during Phase 4 (2026-10-11 to 2026-10-12). Chidimm
 - What changes: lock file only, `uv lock --upgrade-package dnspython --upgrade-package opentelemetry-api`: dnspython 2.9.2, opentelemetry-api, -sdk 1.45.2 and -semantic-conventions 0.66b2 (released together).
 - Proof: `uv audit` finds no known vulnerabilities; CI.
 - Not done: picomatch (GHSA-fc5q-39xc-vjpf) has no fixed release yet (4.0.7 is the newest), so a refresh cannot help; decision asked of Chidimma.
+
+### CHANGE: Swap the frontend audit ignore (Chidimma `1A, 2A`, 2026-11-18)
+- Before: `bun run audit` ignored GHSA-vfj7-8cjw-p6xm (`braces`), now withdrawn by GitHub; a new high advisory, GHSA-fc5q-39xc-vjpf (`picomatch` <= 4.0.7, dev tools only), has no patched release, so every PR failed.
+- What changes: `frontend/package.json` `audit` script ignores GHSA-fc5q-39xc-vjpf instead; D-130 updated with the reason and "remove once patched".
+- Proof: `bun run audit` passes; CI.
+- Next (Chidimma `3A`): Next.js 16.4.2 to 16.4.5 for two moderate advisories, as its own CHANGE after this PR.

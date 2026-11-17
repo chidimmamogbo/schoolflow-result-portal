@@ -566,6 +566,7 @@ Installed on Chidimma's laptop (checked 2026-10-09): Node 24.21.0, npm 11.19.0, 
 - **Reason:** `braces` comes in only through `eslint-config-next` > `@next/eslint-plugin-next` > `fast-glob` > `micromatch`. It runs at development time on our own file patterns, never on user input, and never ships to the browser or the server.
 - **Remove the ignore** as soon as a patched `braces` (or a dependency path without it) is available; Dependabot alerts will flag it.
 - **Rejected:** letting CI stay red until a fix exists (blocks every merge with no date); report-only audits (new real problems could slip through).
+- **Updated 2026-11-18 (Chidimma: 1A, 2A):** GitHub withdrew GHSA-vfj7-8cjw-p6xm, so its ignore is removed. The one ignored advisory is now **GHSA-fc5q-39xc-vjpf** (`picomatch` <= 4.0.7, slow matching of repeated extglob patterns, published 2026-10-19, no patched release; 4.0.7 is the newest). Same reason: `picomatch` comes in only through development tools (Vite and Vitest through `tinyglobby` and `fdir`, ESLint through `typescript-eslint`), runs on our own config patterns, and never ships. Remove the ignore as soon as a patched `picomatch` is published.
 
 ### D-131. Staging deploy: project-scoped token, alias through the REST API (Chidimma's choice, 2026-10-11)
 - The `deploy-staging` job in `.github/workflows/ci.yml` runs only on pushes to `staging`, after all five checks. It reads `VERCEL_TOKEN`, `VERCEL_ORG_ID` and `VERCEL_PROJECT_ID` from the GitHub environment **`staging`**, which only the `staging` branch may use.
