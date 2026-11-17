@@ -95,7 +95,7 @@ def test_a_new_parent_joins_and_is_logged_in(
     guardian, request_id, token = link_request(db_session, gmc)
     client = client_for(app)
     status, body = join(client, token)
-    assert (status, body) == (200, {"must_change_password": False})
+    assert (status, body["must_change_password"]) == (200, False)
 
     me = client.get("/api/v1/auth/me").json()
     assert me["role"] == "parent" and me["school"]["code"] == "GMC"

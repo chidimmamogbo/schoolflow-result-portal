@@ -794,10 +794,15 @@ def test_the_school_login_link_shows_only_public_details(
         "name": "Greenfield Model College",
         "colour": "#1E6B45",
         "logo_url": None,
+        "layout": "half",
+        "picture": "pattern",
+        "message": None,
+        "photo_url": None,
     }
     assert client.get("/api/v1/auth/schools/NOPE/public").status_code == 404
+    # A suspended school's page looks normal (F02 rule 2, D-182): its status is private.
     db_session.execute(text("update schools set status = 'suspended' where id = :id"), {"id": gmc})
-    assert client.get("/api/v1/auth/schools/GMC/public").status_code == 404
+    assert client.get("/api/v1/auth/schools/GMC/public").status_code == 200
 
 
 def test_me_describes_the_principal(app: FastAPI, db_session: Session, gmc: uuid.UUID) -> None:
@@ -973,5 +978,6 @@ def test_the_school_login_link_serves_the_logo_and_nothing_else(
         "/api/v1/auth/schools/GMC/logo"
     )
     assert client.get("/api/v1/auth/schools/NOPE/logo").status_code == 404
+    # A suspended school's page keeps its logo (F02 rule 2, D-182).
     db_session.execute(text("update schools set status = 'suspended' where id = :id"), {"id": gmc})
-    assert client.get("/api/v1/auth/schools/GMC/logo").status_code == 404
+    assert client.get("/api/v1/auth/schools/GMC/logo").status_code == 200

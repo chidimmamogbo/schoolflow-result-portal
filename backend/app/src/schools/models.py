@@ -14,6 +14,7 @@ from sqlalchemy import (
     DateTime,
     ForeignKey,
     ForeignKeyConstraint,
+    Index,
     UniqueConstraint,
     func,
 )
@@ -136,6 +137,7 @@ class SchoolCodeChange(IdMixin, Base):
     """
 
     __tablename__ = "school_code_changes"
+    __table_args__ = (Index("ix_school_code_changes_old_code", "old_code", "changed_at"),)
 
     school_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("schools.id"))
     old_code: Mapped[str]

@@ -623,7 +623,8 @@ def test_pausing_removing_and_resending(
         db_session.scalar(text("select user_id from guardians where id = :g"), {"g": body["id"]})
         is None
     )
-    assert log_in(client_for(app), "ikenna.obi", body["temporary_password"]) == 403
+    # No longer the school's: its page gives the generic error (D-182).
+    assert log_in(client_for(app), "ikenna.obi", body["temporary_password"]) == 401
 
     _, waiting = send(principal, "POST", "/school/guardians", guardian("p@home.example", ward))
     wurl = f"/school/guardians/{waiting['id']}/link-request"

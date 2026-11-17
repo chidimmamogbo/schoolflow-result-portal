@@ -169,7 +169,8 @@ SLIP_PARENTS = [
     ("RCS", "Peter Udo", "peter.udo", [("first pupil of Primary 1A", "Father")]),
 ]
 
-JOIN_LINK = re.compile(r"/join#token=([A-Za-z0-9_\-]+)")
+# The school code may come first (D-182): /join?school=GMC#token=...
+JOIN_LINK = re.compile(r"/join(?:\?school=[A-Z0-9]+)?#token=([A-Za-z0-9_\-]+)")
 
 
 def enrol_pupils(demo: Demo, code: str, head: Browser) -> None:
