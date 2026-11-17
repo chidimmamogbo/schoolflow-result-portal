@@ -6,7 +6,10 @@ import { useParams } from "next/navigation";
 import { useState } from "react";
 
 import { ArmSelect } from "@/components/people/arm-select";
-import { CredentialSlip } from "@/components/people/login-support";
+import {
+  CredentialSlip,
+  LoginSupport,
+} from "@/components/people/login-support";
 import { PupilForm, type PupilDetails } from "@/components/people/pupil-form";
 import { Button } from "@/components/ui/button";
 import { Field, Input } from "@/components/ui/form";
@@ -19,7 +22,7 @@ import {
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Tabs } from "@/components/ui/tabs";
 import { api, ok } from "@/lib/api/client";
-import { useAction } from "@/lib/api/hooks";
+import { useAction, useApi } from "@/lib/api/hooks";
 import {
   KEYS,
   armNames,
@@ -29,6 +32,28 @@ import {
   useSchool,
   useStudents,
 } from "@/lib/api/school";
+
+function PupilSubjects({ studentId }: { studentId: string }) {
+  const { data } = useApi(["school", "pupil-subjects", studentId], () =>
+    ok(
+      api.GET("/api/v1/school/students/{student_id}/subjects", {
+        params: { path: { student_id: studentId } },
+      }),
+    ),
+  );
+  if (!data) return <LoadingState />;
+  return data.length ? (
+    <Card>
+      <ul className="grid gap-1 md:grid-cols-2">
+        {data.map((s) => (
+          <li key={s.id}>{s.name}</li>
+        ))}
+      </ul>
+    </Card>
+  ) : (
+    <EmptyState title="Not enrolled in a class this session." />
+  );
+}
 
 export default function StudentPage() {
   const { id } = useParams<{ id: string }>();
@@ -116,6 +141,11 @@ export default function StudentPage() {
             ),
           },
           {
+            value: "subjects",
+            label: "Subjects",
+            content: <PupilSubjects studentId={id} />,
+          },
+          {
             value: "class",
             label: "Class",
             content: (
@@ -147,11 +177,24 @@ export default function StudentPage() {
             label: "Login",
             content: (
               <Card className="grid max-w-[var(--form-max)] gap-4">
-                {pupil.has_login ? (
-                  <p>
-                    This student has a login. Students can&apos;t reset their
-                    own password.
-                  </p>
+                {pupil.has_login && pupil.user_id ? (
+                  <>
+                    <p>
+                      This student has a login. Students can&apos;t reset their
+                      own password; issue a temporary password here instead.
+                    </p>
+                    <LoginSupport
+                      person={{
+                        id: pupil.user_id,
+                        full_name: fullName(pupil),
+                        username: pupil.admission_number,
+                        email: null,
+                        is_active: true,
+                        activated: true,
+                      }}
+                      invalidate={[[...KEYS.students]]}
+                    />
+                  </>
                 ) : (
                   <>
                     <Field

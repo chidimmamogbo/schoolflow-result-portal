@@ -328,3 +328,19 @@ These seven changes were made during Phase 4 (2026-10-11 to 2026-10-12). Chidimm
 - What changes: the search covers every field except `published_at`. The time holds only a time; the same test still compares all the other fields exactly.
 - After: the score check still fails if a score appears in any other field.
 - Proof: the test file, run repeatedly.
+
+### CHANGE A: Run the frontend against the local API (Chidimma `ok`, 2026-11-12)
+- Before: `frontend/next.config.ts` set only the CSS loader, so locally every `/api` call answered 404 (only Vercel routes `/api` to the backend).
+- Why it must change: nobody could click through the pages on a laptop.
+- When: now.
+- What changes: `next.config.ts` adds `rewrites` from `/api/:path*` to `http://127.0.0.1:8000/api/:path*` in development only (`API_DEV_URL` overrides the address); production and staging keep `vercel.json`. `package.json` adds `dev:https` (`next dev --experimental-https`, a locally trusted certificate from mkcert; Next.js CLI reference, checked 2026-11-12) in case a browser refuses `__Host-` cookies on `http://localhost`.
+- After: backend on port 8000 and `bun run dev` let you log in at `http://localhost:3000` with the demo accounts.
+- Proof: `src/app/__tests__/local-and-gaps.test.tsx` (only development rewrites).
+
+### CHANGE B: Four small school reads (Chidimma `ok`, 2026-11-12)
+- Before: nothing returned an arm's subjects, a pupil's subjects, a student's account id or the school's email status.
+- Why it must change: the class page saved a fresh subject list without showing the current one, the student page could not reset a student's login, and `/school/emails` had nothing to show.
+- When: now.
+- What changes: `GET /school/arms/{arm_id}/subjects` and `GET /school/students/{student_id}/subjects` (school admins; another school's id answers 404); `PupilRow.user_id` (None without a login); `GET /school/emails` in `app/src/emails/router.py` (school admins; type, address, status, tries and times only, never content or error text; row-level security keeps it to the school). No migration. The class page, student page and Emails page use them.
+- After: the class page starts from each arm's subjects, a student's login can get a temporary password from their page (students still never reset their own), and Emails lists real statuses.
+- Proof: `app/tests/domains/test_school_reads.py` (with refusals for another school, a teacher and a parent), deliberate breaks on the refusals, and the frontend test above.

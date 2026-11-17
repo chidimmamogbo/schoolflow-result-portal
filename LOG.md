@@ -17,6 +17,24 @@ Entry template:
 
 ---
 
+## 2026-11-12 (Session 5, continued): Phase 8 done; local running and four reads
+
+### What we did
+- Chidimma said `merge`: PR #66 (batch 4) is on `main`. **Phase 8 is done.**
+- Chidimma said `ok` to CHANGE A (dev proxy and an https dev script) and CHANGE B (four school reads); both built on `feat/local-run-and-gaps`.
+
+### Issues and fixes
+- My script that wrote the new email files failed on a newline argument; the files were written directly. The test used the wrong `queue_email` arguments and a Primary class in a Secondary-only school; both fixed.
+- **Deliberate breaks:** 3 caught (arm subjects for anyone, emails for anyone, error text shown).
+
+### Tests
+- Backend: new `test_school_reads.py` 6 passed, `test_authz` passed. Frontend: 74 tests.
+
+### Next step
+- After `merge`: Chidimma sets up local logins (walkthrough in the PR), runs the seed and clicks through; then Phase 9.
+
+---
+
 ## 2026-11-12 (Session 5, continued): Phase 8 batch 4, portal, billing and the super admin
 
 ### What we did

@@ -415,6 +415,27 @@ def subjects_of_arm(session: Session, arm_id: uuid.UUID) -> list[SubjectRow]:
     ]
 
 
+def arm_subjects(arm_id: str, who: Principal, session: Session) -> list[SubjectRow]:
+    """The subjects an arm takes (CHANGE 2026-11-12 B); 404 for another school's arm."""
+    arm = load_arm(session, arm_id)
+    rows = session.execute(
+        text(
+            "select s.id, s.name, s.department_id, s.category from arm_subjects x"
+            " join subjects s on s.id = x.subject_id where x.arm_id = :arm order by s.name"
+        ),
+        {"arm": arm.id},
+    )
+    return [
+        SubjectRow(
+            id=str(r.id),
+            name=r.name,
+            department_id=str(r.department_id) if r.department_id else None,
+            category=r.category,
+        )
+        for r in rows
+    ]
+
+
 def set_arm_subjects(
     arm_id: str,
     body: ArmSubjects,

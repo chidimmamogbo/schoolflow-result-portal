@@ -103,7 +103,8 @@ def enrol(
 
 PUPIL_SELECT = (
     "select p.id, p.surname, p.first_name, p.other_names, p.admission_number, p.gender,"
-    " p.date_of_birth, p.house, p.department_id, p.status, p.user_id is not null as has_login,"
+    " p.date_of_birth, p.house, p.department_id, p.status,"
+    " p.user_id is not null as has_login, p.user_id,"
     " (select e.arm_id from enrolments e join terms t on t.session_id = e.session_id"
     "   and t.is_active where e.student_id = p.id and e.left_on is null) as arm_id"
     " from students p"
@@ -124,6 +125,7 @@ def pupil_row(r: Any) -> PupilRow:
         status=r.status,
         arm_id=str(r.arm_id) if r.arm_id else None,
         has_login=r.has_login,
+        user_id=str(r.user_id) if r.user_id else None,
     )
 
 
@@ -287,6 +289,24 @@ def move_pupil(
         new={"arm_id": arm},
     )
     return pupil_row(load_pupil(session, student_id))
+
+
+def pupil_subjects(student_id: uuid.UUID, who: Principal, session: Session) -> list[SubjectName]:
+    """The subjects a pupil takes this session (CHANGE 2026-11-12 B); none if not enrolled."""
+    load_pupil(session, student_id)
+    enrolment = current_enrolment(session, student_id)
+    if enrolment is None:
+        return []
+    return [
+        SubjectName(id=str(r.id), name=r.name)
+        for r in session.execute(
+            text(
+                "select s.id, s.name from student_subjects ss join subjects s"
+                " on s.id = ss.subject_id where ss.enrolment_id = :e order by s.name"
+            ),
+            {"e": enrolment.id},
+        )
+    ]
 
 
 def set_pupil_subjects(
