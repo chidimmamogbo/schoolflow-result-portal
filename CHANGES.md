@@ -344,3 +344,23 @@ These seven changes were made during Phase 4 (2026-10-11 to 2026-10-12). Chidimm
 - What changes: `GET /school/arms/{arm_id}/subjects` and `GET /school/students/{student_id}/subjects` (school admins; another school's id answers 404); `PupilRow.user_id` (None without a login); `GET /school/emails` in `app/src/emails/router.py` (school admins; type, address, status, tries and times only, never content or error text; row-level security keeps it to the school). No migration. The class page, student page and Emails page use them.
 - After: the class page starts from each arm's subjects, a student's login can get a temporary password from their page (students still never reset their own), and Emails lists real statuses.
 - Proof: `app/tests/domains/test_school_reads.py` (with refusals for another school, a teacher and a parent), deliberate breaks on the refusals, and the frontend test above.
+
+### CHANGE C: Each school's own login page and the platform login (Chidimma `ok`, 2026-11-17)
+- Before: one `/login` for everyone; `/login/{code}` only filled in the code and showed the logo, and accepted any account.
+- Why it must change: every school should have its own branded login that only its own people can use, and the super admin a separate page.
+- When: now, before Phase 9.
+- What changes: SPEC v0.5.6 (F02 rules 1, 2, 11 to 14; AC02.9 to AC02.11; AC24.4); D-182; migration 29; the login now needs the school code and a tab, and refuses the wrong page with the generic error (counted as a failure); `POST /auth/platform/login`; page details with layout, picture, message and photo, also for suspended schools and old codes within 30 days; `/school/login-page` (with the photo upload) and `/platform/schools/{id}/login-page`; Create school takes the same choices; emails and slips link to the school's page; the new pages and settings in the frontend; the demo seed signs in on each person's own page; labels approved by Chidimma.
+- After: `/login/GMC` logs in only Greenfield's people, in Greenfield's look; the super admin uses only `/platform/login`.
+- Proof: `test_school_login_pages.py` and `test_login_page_settings.py` (each wrong page refused, suspended, unknown and old codes, settings refusals), deliberate breaks, the frontend tests, and the prototype's screens at three sizes in both themes.
+
+### CHANGE: Refresh dnspython and opentelemetry for new advisories (Chidimma `ok`, 2026-11-17)
+- Before: `backend/uv.lock` had dnspython 2.9.0 (GHSA-vvf4-9x63-8xvv) and opentelemetry-api 1.45.1 (GHSA-mf5v-w3w3-f6cg); the Python audit failed on every PR.
+- What changes: lock file only, `uv lock --upgrade-package dnspython --upgrade-package opentelemetry-api`: dnspython 2.9.2, opentelemetry-api, -sdk 1.45.2 and -semantic-conventions 0.66b2 (released together).
+- Proof: `uv audit` finds no known vulnerabilities; CI.
+- Not done: picomatch (GHSA-fc5q-39xc-vjpf) has no fixed release yet (4.0.7 is the newest), so a refresh cannot help; decision asked of Chidimma.
+
+### CHANGE: Swap the frontend audit ignore (Chidimma `1A, 2A`, 2026-11-18)
+- Before: `bun run audit` ignored GHSA-vfj7-8cjw-p6xm (`braces`), now withdrawn by GitHub; a new high advisory, GHSA-fc5q-39xc-vjpf (`picomatch` <= 4.0.7, dev tools only), has no patched release, so every PR failed.
+- What changes: `frontend/package.json` `audit` script ignores GHSA-fc5q-39xc-vjpf instead; D-130 updated with the reason and "remove once patched".
+- Proof: `bun run audit` passes; CI.
+- Next (Chidimma `3A`): Next.js 16.4.2 to 16.4.5 for two moderate advisories, as its own CHANGE after this PR.

@@ -67,6 +67,8 @@ def build_auth_app(db_session: Session) -> FastAPI:
 
     app.dependency_overrides[get_db] = test_db
     app.dependency_overrides[get_rate_limiter] = lambda: RateLimiter.for_session(db_session)
+    # log_in() finds each account's own login page with it (D-182).
+    app.state.test_session = db_session
     return app
 
 
@@ -123,16 +125,46 @@ def make_login(
     return user_id
 
 
+def own_door(client: TestClient, identifier: str) -> tuple[str, str | None]:
+    """The login page a staff, parent or super admin account belongs on (D-182):
+    the platform page for the super admin, else its first school's page. An
+    unknown name gets a school page too, so it fails the ordinary way."""
+    session: Session = cast(FastAPI, client.app).state.test_session
+    name = identifier.strip().lower()
+    row = session.execute(
+        text(
+            "select u.is_super_admin,"
+            " (select s.code from school_memberships m join schools s on s.id = m.school_id"
+            "   where m.user_id = u.id order by m.created_at, m.school_id limit 1) as code"
+            " from users u where u.student_school_id is null"
+            " and (u.username = :name or u.email = :name)"
+        ),
+        {"name": name},
+    ).first()
+    if row is not None and row.is_super_admin:
+        return "/api/v1/auth/platform/login", None
+    fallback = session.scalar(text("select code from schools order by created_at, id limit 1"))
+    return "/api/v1/auth/login", (row.code if row and row.code else fallback) or "NONE"
+
+
 def log_in(
     client: TestClient,
     identifier: str,
     password: str = PASSWORD,
     school_code: str | None = None,
 ) -> int:
+    """Log in on the account's own page. With a school code: the Student tab of
+    that school's page (as before D-182); without: staff, parents and the super
+    admin on their own page."""
     body: dict[str, str] = {"identifier": identifier, "password": password}
     if school_code is not None:
-        body["school_code"] = school_code
-    response = client.post("/api/v1/auth/login", json=body, headers={"Origin": ORIGIN})
+        url = "/api/v1/auth/login"
+        body |= {"school_code": school_code, "tab": "student"}
+    else:
+        url, code = own_door(client, identifier)
+        if code is not None:
+            body["school_code"] = code
+    response = client.post(url, json=body, headers={"Origin": ORIGIN})
     return response.status_code
 
 

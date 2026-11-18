@@ -4,7 +4,7 @@ Lengths are generous outer limits only; the real password rules (D-036) are
 checked in routes.py so each refusal gets its own clear code.
 """
 
-from typing import Annotated
+from typing import Annotated, Literal
 
 from pydantic import Field
 
@@ -15,15 +15,33 @@ Password = Annotated[str, Field(min_length=1, max_length=1024)]
 Token = Annotated[str, Field(min_length=1, max_length=200)]
 
 
+SchoolCode = Annotated[str, Field(min_length=1, max_length=10)]
+
+
 class LoginRequest(ApiModel):
+    """A login on a school's own page, /login/{code} (F02 rule 1, D-182)."""
+
     identifier: Text
     password: Password
-    # Only on the Student tab (D-033).
-    school_code: Annotated[str, Field(min_length=1, max_length=10)] | None = None
+    # From the page's link, never typed: the account must belong to this school.
+    school_code: SchoolCode
+    # Which tab: staff and parents use an email or username, students a username
+    # or admission number inside the school (D-033).
+    tab: Literal["staff", "student"] = "staff"
+
+
+class PlatformLoginRequest(ApiModel):
+    """The super admin's own page, /platform/login (F02 rule 11)."""
+
+    identifier: Text
+    password: Password
 
 
 class LoginResult(ApiModel):
     must_change_password: bool
+    # The school whose page was used, so a parent of several schools starts
+    # there (F02 rule 1). None for the super admin.
+    school_id: str | None = None
 
 
 class ChangePasswordRequest(ApiModel):
@@ -46,11 +64,18 @@ class Accepted(ApiModel):
 
 
 class SchoolPublic(ApiModel):
+    """What a school's login page shows (F02 rules 2 and 12). The code is the
+    school's current one: when it differs from the link's, the page forwards."""
+
     code: str
     name: str
     colour: str
-    # The logo route arrives with uploads (9.2e); until then there is none.
     logo_url: str | None
+    layout: Literal["half", "behind"]
+    picture: Literal["pattern", "people", "photo"]
+    # The school's own words over the picture; None shows "Welcome to {name}".
+    message: str | None
+    photo_url: str | None
 
 
 class MeUser(ApiModel):

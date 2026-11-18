@@ -6,9 +6,18 @@ PostgreSQL itself. The migration in migrations/versions creates them.
 """
 
 import uuid
+from datetime import datetime
 from enum import StrEnum
 
-from sqlalchemy import CheckConstraint, ForeignKey, ForeignKeyConstraint, UniqueConstraint
+from sqlalchemy import (
+    CheckConstraint,
+    DateTime,
+    ForeignKey,
+    ForeignKeyConstraint,
+    Index,
+    UniqueConstraint,
+    func,
+)
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.base import Base, IdMixin, TimestampMixin, one_of
@@ -54,6 +63,21 @@ class AssessmentMode(StrEnum):
     SKILL_RATINGS = "skill_ratings"
 
 
+class LoginLayout(StrEnum):
+    """F02 rule 12: "Half and half" or "Picture behind"."""
+
+    HALF = "half"
+    BEHIND = "behind"
+
+
+class LoginPicture(StrEnum):
+    """F02 rule 12: "Pattern", "People" or "Your own photo"."""
+
+    PATTERN = "pattern"
+    PEOPLE = "people"
+    PHOTO = "photo"
+
+
 class School(IdMixin, TimestampMixin, Base):
     __tablename__ = "schools"
     __table_args__ = (
@@ -62,6 +86,20 @@ class School(IdMixin, TimestampMixin, Base):
         # point back at schools, so this link is added after both tables exist (use_alter).
         ForeignKeyConstraint(
             ["logo_file_id", "id"], ["files.id", "files.school_id"], use_alter=True
+        ),
+        ForeignKeyConstraint(
+            ["login_photo_file_id", "id"], ["files.id", "files.school_id"], use_alter=True
+        ),
+        CheckConstraint(one_of("login_layout", LoginLayout), name="login_layout_allowed"),
+        CheckConstraint(one_of("login_picture", LoginPicture), name="login_picture_allowed"),
+        CheckConstraint(
+            "login_message is null or (btrim(login_message) <> ''"
+            " and char_length(login_message) <= 80 and login_message !~ '[\\r\\n]')",
+            name="login_message_valid",
+        ),
+        CheckConstraint(
+            "login_picture <> 'photo' or login_photo_file_id is not null",
+            name="login_photo_when_chosen",
         ),
         CheckConstraint("code ~ '^[A-Z0-9]{3,10}$'", name="code_format"),
         CheckConstraint("colour ~ '^#[0-9A-Fa-f]{6}$'", name="colour_hex"),
@@ -85,6 +123,26 @@ class School(IdMixin, TimestampMixin, Base):
     logo_file_id: Mapped[uuid.UUID | None]
     status: Mapped[str] = mapped_column(server_default=SchoolStatus.ACTIVE.value)
     school_type: Mapped[str]
+    # The school's own login page (migration 29, CHANGE C, D-182).
+    login_layout: Mapped[str] = mapped_column(server_default=LoginLayout.HALF.value)
+    login_picture: Mapped[str] = mapped_column(server_default=LoginPicture.PATTERN.value)
+    login_message: Mapped[str | None]
+    login_photo_file_id: Mapped[uuid.UUID | None]
+
+
+class SchoolCodeChange(IdMixin, Base):
+    """Old school codes, so a login link with one forwards for 30 days (migration 29).
+
+    Written only by the owner-run trigger on schools; no app role reads it.
+    """
+
+    __tablename__ = "school_code_changes"
+    __table_args__ = (Index("ix_school_code_changes_old_code", "old_code", "changed_at"),)
+
+    school_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("schools.id"))
+    old_code: Mapped[str]
+    new_code: Mapped[str]
+    changed_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
 
 class SchoolFeature(IdMixin, TimestampMixin, Base):

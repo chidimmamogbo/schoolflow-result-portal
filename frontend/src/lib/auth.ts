@@ -6,6 +6,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { ApiError, api, ok } from "@/lib/api/client";
 import type { Me } from "@/lib/api/types";
+import { chooseSchoolId } from "@/lib/school-memory";
 
 export const ME_KEY = ["me"] as const;
 
@@ -59,6 +60,9 @@ export function useLogout() {
     try {
       await api.POST("/api/v1/auth/logout");
     } finally {
+      // The school chosen at login ends with the session; the device keeps
+      // only the school code, for its login page (D-182).
+      chooseSchoolId(null);
       client.setQueryData(ME_KEY, null);
       client.clear();
     }

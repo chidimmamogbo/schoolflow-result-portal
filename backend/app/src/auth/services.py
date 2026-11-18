@@ -9,7 +9,7 @@ generic answer as a wrong password (D-034).
 """
 
 import ipaddress
-from typing import Any
+from typing import Any, NamedTuple
 
 from fastapi import Depends, Request, Response
 from fastapi.responses import JSONResponse
@@ -20,7 +20,6 @@ from app.core import security as passwords
 from app.core.dependencies import (
     PrincipalDep,
     SessionDep,
-    choose_membership,
     enter_school,
     memberships_of,
     same_origin,
@@ -53,6 +52,7 @@ from app.src.auth.schemas import (
     MeSchool,
     MeSchoolLink,
     MeUser,
+    PlatformLoginRequest,
     SchoolPublic,
 )
 
@@ -129,7 +129,12 @@ LinkByIp = Depends(limit_by_ip("auth-link", 30, 900))
 
 ForgotByIp = Depends(limit_by_ip("forgot", 10, 900))
 
-PublicByIp = Depends(limit_by_ip("school-public", 60, 60))
+# Looking up a school by code: tight enough that guessing codes to list the
+# schools on SchoolFlow is slow (D-182), loose enough for a computer lab.
+PublicByIp = Depends(limit_by_ip("school-public", 120, 900))
+
+# The logo and login photo of a code already looked up.
+ImageByIp = Depends(limit_by_ip("school-images", 600, 900))
 
 SameOrigin = Depends(same_origin)
 
@@ -259,32 +264,39 @@ def login_failed() -> JSONResponse:
     return problem_response(401, LOGIN_FAILED, code="login_failed")
 
 
-def login(
-    body: LoginRequest,
-    request: Request,
-    response: Response,
-    session: Session,
-) -> LoginResult | JSONResponse:
+class CheckedAccount(NamedTuple):
+    account_id: Any
+    is_super_admin: bool
+    must_change_password: bool
+    key: bytes
+
+
+def check_password(
+    session: Session, *, code: str | None, identifier: str, password: str, door: str
+) -> CheckedAccount | None:
+    """The account whose password this is, or None (always one password check, D-034).
+
+    `door` keeps each page's throttle count for an unknown name separate; a
+    known account shares one count across every page.
+    """
     account = session.execute(
         text("select account_id, stored_hash from auth_login_account(:code, :identifier)"),
-        {"code": body.school_code, "identifier": body.identifier},
+        {"code": code, "identifier": identifier},
     ).first()
     account_id = account.account_id if account else None
     key = throttle.throttle_key(
-        f"account:{account_id}"
-        if account_id
-        else f"name:{(body.school_code or '').upper()}:{body.identifier.strip().lower()}"
+        f"account:{account_id}" if account_id else f"name:{door}:{identifier.strip().lower()}"
     )
     locked = throttle.seconds_locked(session, key) > 0
     # Always exactly one password check, so every answer takes the same time (D-034).
     matches, new_hash = passwords.verify_password(
-        body.password, account.stored_hash if account else None
+        password, account.stored_hash if account else None
     )
     if locked:
-        return login_failed()
+        return None
     if not matches or account_id is None:
         throttle.record_failure(session, key)
-        return login_failed()
+        return None
 
     use_context(session, user_id=account_id)
     user = session.execute(
@@ -296,41 +308,108 @@ def login(
         {"id": account_id},
     ).one()
     if user.temp_expired:  # D-040: an unused slip expires after 7 days
-        return login_failed()
-    throttle.clear(session, key)
+        return None
     if new_hash is not None:
         session.execute(
             text("update users set password_hash = :hash where id = :id"),
             {"hash": new_hash, "id": account_id},
         )
-    if not user.is_super_admin:
-        # The paused message comes only after a correct password (D-034).
-        try:
-            enter_school(
-                session, account_id, choose_membership(memberships_of(session, account_id), None)
-            )
-        except ProblemError as refused:
-            return problem_response(refused.status, refused.title, code=refused.code)
-    start_session(session, request, response, account_id, user.is_super_admin)
-    return LoginResult(must_change_password=user.must_change_password)
+    return CheckedAccount(account_id, user.is_super_admin, user.must_change_password, key)
+
+
+def wrong_door(session: Session, checked: CheckedAccount) -> JSONResponse:
+    """A right password on a page that is not the account's own: the same generic
+    answer as a wrong password, and it counts as a failure (D-182)."""
+    use_context(session)
+    throttle.record_failure(session, checked.key)
+    return login_failed()
+
+
+def login(
+    body: LoginRequest,
+    request: Request,
+    response: Response,
+    session: Session,
+) -> LoginResult | JSONResponse:
+    """A login on /login/{code}: only that school's staff, students and linked parents."""
+    code = body.school_code.strip().upper()
+    student = body.tab == "student"
+    checked = check_password(
+        session,
+        code=code if student else None,
+        identifier=body.identifier,
+        password=body.password,
+        door=f"{code}:{body.tab}",
+    )
+    if checked is None:
+        return login_failed()
+    if checked.is_super_admin:  # the super admin uses /platform/login only
+        return wrong_door(session, checked)
+    school_id = session.scalar(text("select auth_login_school(:code)"), {"code": code})
+    membership = next(
+        (m for m in memberships_of(session, checked.account_id) if m.school_id == school_id),
+        None,
+    )
+    # Staff and parents are found by name across the platform, so the tab matters
+    # too: a student account never logs in on the staff tab, nor staff on the student tab.
+    if membership is None or (membership.role == Role.STUDENT) != student:
+        return wrong_door(session, checked)
+    throttle.clear(session, checked.key)
+    # The paused message comes only after a correct password (D-034).
+    try:
+        enter_school(session, checked.account_id, membership)
+    except ProblemError as refused:
+        return problem_response(refused.status, refused.title, code=refused.code)
+    start_session(session, request, response, checked.account_id, False)
+    return LoginResult(must_change_password=checked.must_change_password, school_id=str(school_id))
+
+
+def platform_login(
+    body: PlatformLoginRequest,
+    request: Request,
+    response: Response,
+    session: Session,
+) -> LoginResult | JSONResponse:
+    """/platform/login: the super admin only; everyone else gets the generic answer."""
+    checked = check_password(
+        session,
+        code=None,
+        identifier=body.identifier,
+        password=body.password,
+        door="platform",
+    )
+    if checked is None:
+        return login_failed()
+    if not checked.is_super_admin:
+        return wrong_door(session, checked)
+    throttle.clear(session, checked.key)
+    start_session(session, request, response, checked.account_id, True)
+    return LoginResult(must_change_password=checked.must_change_password)
 
 
 def school_public(
     code: str,
     session: Session,
 ) -> SchoolPublic:
+    """A school's login page details. A code changed in the last 30 days answers
+    with the current code, so the page forwards (AC24.4, D-182)."""
     row = session.execute(
-        text("select school_code, school_name, school_colour from auth_school_public(:code)"),
-        {"code": code[:20]},
+        text("select * from auth_school_public(:code)"), {"code": code[:20]}
     ).first()
     if row is None:
-        raise ProblemError(404, "Not Found")
-    has_logo = school_logo(session, row.school_code) is not None
+        raise ProblemError(404, "Not Found", code="school_not_found")
+    base = f"/api/v1/auth/schools/{row.school_code}"
+    # A photo picture whose photo is missing falls back to the pattern.
+    picture = row.login_picture if row.login_picture != "photo" or row.has_photo else "pattern"
     return SchoolPublic(
         code=row.school_code,
         name=row.school_name,
         colour=row.school_colour,
-        logo_url=f"/api/v1/auth/schools/{row.school_code}/logo" if has_logo else None,
+        logo_url=f"{base}/logo" if row.has_logo else None,
+        layout=row.login_layout,
+        picture=picture,
+        message=row.login_message,
+        photo_url=f"{base}/login-photo" if row.has_photo else None,
     )
 
 
@@ -347,8 +426,26 @@ def school_logo_image(
     session: Session,
     storage: FileStorage,
 ) -> Response:
-    """The logo of an active school for its login page (approved CHANGE 2026-10-22)."""
-    row = school_logo(session, code)
+    """The logo of a school for its login page (approved CHANGE 2026-10-22)."""
+    return public_image(school_logo(session, code), request, storage)
+
+
+def school_login_photo(
+    code: str,
+    request: Request,
+    session: Session,
+    storage: FileStorage,
+) -> Response:
+    """The school's own photo for its login page (D-182). It is public on purpose:
+    the upload warns the school (F02 rule 12)."""
+    row = session.execute(
+        text("select storage_key, content_type, sha256 from auth_school_login_photo(:code)"),
+        {"code": code[:20]},
+    ).first()
+    return public_image(row, request, storage)
+
+
+def public_image(row: Any, request: Request, storage: FileStorage) -> Response:
     if row is None:
         raise ProblemError(404, "Not Found")
     etag = f'"{bytes(row.sha256).hex()}"'

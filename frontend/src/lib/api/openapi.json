@@ -876,6 +876,18 @@
         "title": "Body_import_scores_api_v1_sheets__sheet_id__import_post",
         "type": "object"
       },
+      "Body_upload_photo_api_v1_school_login_page_photo_post": {
+        "properties": {
+          "file": {
+            "contentMediaType": "application/octet-stream",
+            "title": "File",
+            "type": "string"
+          }
+        },
+        "required": ["file"],
+        "title": "Body_upload_photo_api_v1_school_login_page_photo_post",
+        "type": "object"
+      },
       "Body_upload_school_image_api_v1_school_files_post": {
         "properties": {
           "file": {
@@ -1523,6 +1535,16 @@
           },
           "features": {
             "$ref": "#/components/schemas/Features"
+          },
+          "login_page": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/LoginPageChange"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "name": {
             "maxLength": 200,
@@ -3377,8 +3399,86 @@
         "title": "LinkedReport",
         "type": "object"
       },
+      "LoginPage": {
+        "additionalProperties": false,
+        "properties": {
+          "layout": {
+            "enum": ["half", "behind"],
+            "title": "Layout",
+            "type": "string"
+          },
+          "link": {
+            "title": "Link",
+            "type": "string"
+          },
+          "message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Message"
+          },
+          "photo_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Photo Url"
+          },
+          "picture": {
+            "enum": ["pattern", "people", "photo"],
+            "title": "Picture",
+            "type": "string"
+          }
+        },
+        "required": ["layout", "picture", "message", "photo_url", "link"],
+        "title": "LoginPage",
+        "type": "object"
+      },
+      "LoginPageChange": {
+        "additionalProperties": false,
+        "description": "Layout \"Half and half\" or \"Picture behind\"; picture \"Pattern\", \"People\" or\n\"Your own photo\" (only once a photo is uploaded); the message over the picture.",
+        "properties": {
+          "layout": {
+            "enum": ["half", "behind"],
+            "title": "Layout",
+            "type": "string"
+          },
+          "message": {
+            "anyOf": [
+              {
+                "maxLength": 80,
+                "minLength": 1,
+                "pattern": "^[^\\r\\n]+$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Message"
+          },
+          "picture": {
+            "enum": ["pattern", "people", "photo"],
+            "title": "Picture",
+            "type": "string"
+          }
+        },
+        "required": ["layout", "picture"],
+        "title": "LoginPageChange",
+        "type": "object"
+      },
       "LoginRequest": {
         "additionalProperties": false,
+        "description": "A login on a school's own page, /login/{code} (F02 rule 1, D-182).",
         "properties": {
           "identifier": {
             "maxLength": 254,
@@ -3393,20 +3493,19 @@
             "type": "string"
           },
           "school_code": {
-            "anyOf": [
-              {
-                "maxLength": 10,
-                "minLength": 1,
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "School Code"
+            "maxLength": 10,
+            "minLength": 1,
+            "title": "School Code",
+            "type": "string"
+          },
+          "tab": {
+            "default": "staff",
+            "enum": ["staff", "student"],
+            "title": "Tab",
+            "type": "string"
           }
         },
-        "required": ["identifier", "password"],
+        "required": ["identifier", "password", "school_code"],
         "title": "LoginRequest",
         "type": "object"
       },
@@ -3416,6 +3515,17 @@
           "must_change_password": {
             "title": "Must Change Password",
             "type": "boolean"
+          },
+          "school_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "School Id"
           }
         },
         "required": ["must_change_password"],
@@ -4589,6 +4699,27 @@
         },
         "required": ["name", "min_students", "max_students", "price_kobo"],
         "title": "PlanForm",
+        "type": "object"
+      },
+      "PlatformLoginRequest": {
+        "additionalProperties": false,
+        "description": "The super admin's own page, /platform/login (F02 rule 11).",
+        "properties": {
+          "identifier": {
+            "maxLength": 254,
+            "minLength": 1,
+            "title": "Identifier",
+            "type": "string"
+          },
+          "password": {
+            "maxLength": 1024,
+            "minLength": 1,
+            "title": "Password",
+            "type": "string"
+          }
+        },
+        "required": ["identifier", "password"],
+        "title": "PlatformLoginRequest",
         "type": "object"
       },
       "PlatformSettings": {
@@ -6631,6 +6762,7 @@
       },
       "SchoolPublic": {
         "additionalProperties": false,
+        "description": "What a school's login page shows (F02 rules 2 and 12). The code is the\nschool's current one: when it differs from the link's, the page forwards.",
         "properties": {
           "code": {
             "title": "Code",
@@ -6638,6 +6770,11 @@
           },
           "colour": {
             "title": "Colour",
+            "type": "string"
+          },
+          "layout": {
+            "enum": ["half", "behind"],
+            "title": "Layout",
             "type": "string"
           },
           "logo_url": {
@@ -6651,12 +6788,48 @@
             ],
             "title": "Logo Url"
           },
+          "message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Message"
+          },
           "name": {
             "title": "Name",
             "type": "string"
+          },
+          "photo_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Photo Url"
+          },
+          "picture": {
+            "enum": ["pattern", "people", "photo"],
+            "title": "Picture",
+            "type": "string"
           }
         },
-        "required": ["code", "name", "colour", "logo_url"],
+        "required": [
+          "code",
+          "name",
+          "colour",
+          "logo_url",
+          "layout",
+          "picture",
+          "message",
+          "photo_url"
+        ],
         "title": "SchoolPublic",
         "type": "object"
       },
@@ -9659,6 +9832,45 @@
         "tags": ["auth"]
       }
     },
+    "/api/v1/auth/platform/login": {
+      "post": {
+        "operationId": "platform_login_api_v1_auth_platform_login_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PlatformLoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResult"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Platform Login",
+        "tags": ["auth"]
+      }
+    },
     "/api/v1/auth/refresh": {
       "post": {
         "operationId": "refresh_api_v1_auth_refresh_post",
@@ -9675,6 +9887,44 @@
           }
         },
         "summary": "Refresh",
+        "tags": ["auth"]
+      }
+    },
+    "/api/v1/auth/schools/{code}/login-photo": {
+      "get": {
+        "operationId": "school_login_photo_api_v1_auth_schools__code__login_photo_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "code",
+            "required": true,
+            "schema": {
+              "title": "Code",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "School Login Photo",
         "tags": ["auth"]
       }
     },
@@ -12497,6 +12747,96 @@
         },
         "summary": "Set Levels",
         "tags": ["platform"]
+      }
+    },
+    "/api/v1/platform/schools/{school_id}/login-page": {
+      "get": {
+        "operationId": "platform_get_page_api_v1_platform_schools__school_id__login_page_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "school_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "School Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginPage"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Platform Get Page",
+        "tags": ["login page"]
+      },
+      "put": {
+        "operationId": "platform_edit_page_api_v1_platform_schools__school_id__login_page_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "school_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "School Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginPageChange"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginPage"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Platform Edit Page",
+        "tags": ["login page"]
       }
     },
     "/api/v1/platform/schools/{school_id}/reactivate": {
@@ -15513,6 +15853,101 @@
         },
         "summary": "Change Level",
         "tags": ["school"]
+      }
+    },
+    "/api/v1/school/login-page": {
+      "get": {
+        "operationId": "get_page_api_v1_school_login_page_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginPage"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Get Page",
+        "tags": ["login page"]
+      },
+      "put": {
+        "operationId": "edit_page_api_v1_school_login_page_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginPageChange"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginPage"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Edit Page",
+        "tags": ["login page"]
+      }
+    },
+    "/api/v1/school/login-page/photo": {
+      "post": {
+        "operationId": "upload_photo_api_v1_school_login_page_photo_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_upload_photo_api_v1_school_login_page_photo_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginPage"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Upload Photo",
+        "tags": ["login page"]
       }
     },
     "/api/v1/school/notices": {

@@ -37,6 +37,9 @@ export default function CreateSchoolPage() {
     principal_name: "",
     principal_username: "",
     principal_email: "",
+    login_layout: "half" as "half" | "behind",
+    login_picture: "pattern" as "pattern" | "people",
+    login_message: "",
   });
   const [features, setFeatures] = useState<FeatureSet>(ALL_ON);
   const [error, setError] = useState<string | null>(null);
@@ -62,6 +65,12 @@ export default function CreateSchoolPage() {
               full_name: v.principal_name.trim(),
               username: v.principal_username.trim(),
               email: v.principal_email.trim(),
+            },
+            // The school's login page (F02 rule 14, D-182); its own photo comes later.
+            login_page: {
+              layout: v.login_layout,
+              picture: v.login_picture,
+              message: v.login_message.trim() || null,
             },
           },
         }),
@@ -202,6 +211,46 @@ export default function CreateSchoolPage() {
             </Select>
           )}
         </Field>
+        <Card className="grid gap-3">
+          <h2 className="font-semibold">Login page</h2>
+          <Field label="Layout">
+            {(f) => (
+              <Select
+                {...f}
+                value={v.login_layout}
+                onChange={set("login_layout")}
+              >
+                <option value="half">Half and half</option>
+                <option value="behind">Picture behind</option>
+              </Select>
+            )}
+          </Field>
+          <Field label="Picture">
+            {(f) => (
+              <Select
+                {...f}
+                value={v.login_picture}
+                onChange={set("login_picture")}
+              >
+                <option value="pattern">Pattern</option>
+                <option value="people">People</option>
+              </Select>
+            )}
+          </Field>
+          <Field
+            label="Login page message"
+            hint={`Up to 80 characters. Leave it empty to show "Welcome to {School name}".`}
+          >
+            {(f) => (
+              <Input
+                {...f}
+                maxLength={80}
+                value={v.login_message}
+                onChange={set("login_message")}
+              />
+            )}
+          </Field>
+        </Card>
         <Card className="grid gap-3">
           <h2 className="font-semibold">Principal</h2>
           <Field label="Full name">

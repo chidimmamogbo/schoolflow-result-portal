@@ -26,6 +26,7 @@ from app.src.form_class import router as form_class
 from app.src.grading import router as school_grading
 from app.src.guardians import router as guardians
 from app.src.health import router as health
+from app.src.login_page import router as login_page
 from app.src.notices import router as notices
 from app.src.platform_admin import router as platform
 from app.src.portal import router as portal
@@ -77,6 +78,7 @@ def create_app(app_env: str | None = None) -> FastAPI:
     api_v1.include_router(school_people.router)
     api_v1.include_router(school_staff.router)
     api_v1.include_router(files.router)
+    api_v1.include_router(login_page.router)
     api_v1.include_router(school_pupils.router)
     api_v1.include_router(guardians.router)
     api_v1.include_router(guardians.parent_router)

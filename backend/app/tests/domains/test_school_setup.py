@@ -505,7 +505,7 @@ def test_admins_with_a_slip_taken_names_and_removal(
     )
 
     assert send(principal, "DELETE", f"/school/admins/{created['id']}")[0] == 204
-    assert log_in(client_for(app), "chi.uzo", slip) == 403  # no school any more
+    assert log_in(client_for(app), "chi.uzo", slip) == 401  # no school: the generic error
     assert send(principal, "DELETE", f"/school/admins/{gmc['ngozi']}")[0] == 404
     assert send(principal, "DELETE", f"/school/admins/{gmc['tunde']}")[0] == 404
     assert {"school_admins.create", "school_admins.remove"} <= set(actions(db_session))

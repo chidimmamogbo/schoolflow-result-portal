@@ -25,9 +25,17 @@ from app.src.auth.schemas import (
     LoginRequest,
     LoginResult,
     Me,
+    PlatformLoginRequest,
     SchoolPublic,
 )
-from app.src.auth.services import ForgotByIp, LinkByIp, LoginByIp, PublicByIp, SameOrigin
+from app.src.auth.services import (
+    ForgotByIp,
+    ImageByIp,
+    LinkByIp,
+    LoginByIp,
+    PublicByIp,
+    SameOrigin,
+)
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -44,16 +52,30 @@ def login(
     return services.login(body=body, request=request, response=response, session=session)
 
 
+@router.post("/platform/login", response_model=LoginResult, dependencies=[LoginByIp, SameOrigin])
+def platform_login(
+    body: PlatformLoginRequest, request: Request, response: Response, session: DbSession
+) -> LoginResult | JSONResponse:
+    return services.platform_login(body=body, request=request, response=response, session=session)
+
+
 @router.get("/schools/{code}/public", response_model=SchoolPublic, dependencies=[PublicByIp])
 def school_public(code: str, session: DbSession) -> SchoolPublic:
     return services.school_public(code=code, session=session)
 
 
-@router.get("/schools/{code}/logo", dependencies=[PublicByIp])
+@router.get("/schools/{code}/logo", dependencies=[ImageByIp])
 def school_logo_image(
     code: str, request: Request, session: DbSession, storage: Storage
 ) -> Response:
     return services.school_logo_image(code=code, request=request, session=session, storage=storage)
+
+
+@router.get("/schools/{code}/login-photo", dependencies=[ImageByIp])
+def school_login_photo(
+    code: str, request: Request, session: DbSession, storage: Storage
+) -> Response:
+    return services.school_login_photo(code=code, request=request, session=session, storage=storage)
 
 
 # --- the session ----------------------------------------------------------------------

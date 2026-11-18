@@ -85,10 +85,21 @@ class Prepared:
     address_kind: str | None
     base_url: str
     token: str | None
+    # The school's code when the email belongs to one school: its links open
+    # that school's own pages (F02 rules 13 and 14, D-182).
+    school_code: str | None = None
 
 
 def link(prepared: Prepared, path: str) -> str:
-    return f"{prepared.base_url}{path}#token={prepared.token}"
+    school = f"?school={prepared.school_code}" if prepared.school_code else ""
+    return f"{prepared.base_url}{path}{school}#token={prepared.token}"
+
+
+def login_page(prepared: Prepared) -> str:
+    """The school's own login page, or Find your school when there is no one school."""
+    if prepared.school_code:
+        return f"{prepared.base_url}/login/{prepared.school_code}"
+    return f"{prepared.base_url}/login"
 
 
 def activation(d: dict[str, Any], p: Prepared) -> Content:
@@ -126,7 +137,7 @@ def password_changed(d: dict[str, Any], p: Prepared) -> Content:
             "Your password was just changed. If this was not you, contact your school admin"
             " straight away.",
         ],
-        ("Log in", f"{p.base_url}/login"),
+        ("Log in", login_page(p)),
     )
 
 
@@ -148,6 +159,7 @@ def parent_link_request(d: dict[str, Any], p: Prepared) -> Content:
         return Content(
             subject,
             ["Hello,", added, "Log in to accept or decline the link."],
+            # Not this school's page: the parent is not linked to it until they accept.
             ("Log in", f"{p.base_url}/login"),
         )
     if p.address_kind == "staff_or_pupil":
@@ -302,7 +314,14 @@ def send_due(
         ).first()
         if found is None:
             continue
-        prepared = Prepared(found.school_name, found.reply_to, found.address_kind, base, token)
+        prepared = Prepared(
+            found.school_name,
+            found.reply_to,
+            found.address_kind,
+            base,
+            token,
+            found.school_code,
+        )
         try:
             email = as_email(
                 row, render(row.template, row.template_data, prepared), prepared, from_domain

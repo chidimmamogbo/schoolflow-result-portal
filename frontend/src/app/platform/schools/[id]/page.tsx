@@ -19,9 +19,48 @@ import {
 } from "@/components/ui/layout";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Tabs } from "@/components/ui/tabs";
+import {
+  type LoginPageChange,
+  LoginPageEditor,
+} from "@/components/setup/login-page-editor";
 import { api, ok } from "@/lib/api/client";
 import { useAction, useApi } from "@/lib/api/hooks";
 import { date, dateTime, money } from "@/lib/format";
+
+// The school's login page look (F02 rule 14, D-182); the photo is the school's own.
+function LoginPageCard({ schoolId, code }: { schoolId: string; code: string }) {
+  const path = { params: { path: { school_id: schoolId } } };
+  const key = ["platform", "login-page", schoolId];
+  const page = useApi(key, () =>
+    ok(api.GET("/api/v1/platform/schools/{school_id}/login-page", path)),
+  );
+  const save = useAction(
+    (change: LoginPageChange) =>
+      ok(
+        api.PUT("/api/v1/platform/schools/{school_id}/login-page", {
+          ...path,
+          body: change,
+        }),
+      ),
+    { invalidate: [key, ["school-public", code]], done: "Saved." },
+  );
+  return (
+    <Card className="grid gap-4">
+      <h2 className="text-xl font-semibold">Login page</h2>
+      {page.data ? (
+        <LoginPageEditor
+          key={JSON.stringify(page.data)}
+          page={page.data}
+          code={code}
+          busy={save.isPending}
+          onSave={(change) => save.mutate(change)}
+        />
+      ) : (
+        <LoadingState />
+      )}
+    </Card>
+  );
+}
 
 function Admins({ schoolId }: { schoolId: string }) {
   const key = ["platform", "admins", schoolId];
@@ -319,6 +358,7 @@ export default function SchoolDetailPage() {
                     )}
                   </div>
                 </Card>
+                <LoginPageCard schoolId={id} code={s.code} />
               </div>
             ),
           },

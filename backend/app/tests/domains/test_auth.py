@@ -120,10 +120,10 @@ def test_the_cookies_are_set_safely(app: FastAPI, tunde: uuid.UUID) -> None:
     client = client_for(app)
     response = client.post(
         "/api/v1/auth/login",
-        json={"identifier": "tunde.adebayo", "password": PASSWORD},
+        json={"identifier": "tunde.adebayo", "password": PASSWORD, "school_code": "GMC"},
         headers={"Origin": ORIGIN},
     )
-    assert response.json() == {"must_change_password": False}
+    assert response.json()["must_change_password"] is False
     cookies = response.headers.get_list("set-cookie")
     session = next(c for c in cookies if c.startswith(f"{SESSION_COOKIE}="))
     token = next(c for c in cookies if c.startswith(f"{CSRF_COOKIE}="))
@@ -224,14 +224,29 @@ def test_every_login_failure_looks_the_same(
     monkeypatch.setattr(passwords, "PASSWORD_HASH", CountingHash())
 
     attempts = [
-        {"identifier": "GMC/2026/014", "password": PASSWORD, "school_code": "XYZ"},
-        {"identifier": "GMC/2026/099", "password": PASSWORD, "school_code": "GMC"},
-        {"identifier": "GMC/2026/014", "password": "wrong-password-here", "school_code": "GMC"},
-        {"identifier": "nobody.here", "password": PASSWORD},
-        {"identifier": "tunde.adebayo", "password": "wrong-password-here"},
-        {"identifier": "old.teacher", "password": PASSWORD},
-        {"identifier": "new.teacher", "password": PASSWORD},
-        {"identifier": "slip.teacher", "password": PASSWORD},
+        {
+            "identifier": "GMC/2026/014",
+            "password": PASSWORD,
+            "school_code": "XYZ",
+            "tab": "student",
+        },
+        {
+            "identifier": "GMC/2026/099",
+            "password": PASSWORD,
+            "school_code": "GMC",
+            "tab": "student",
+        },
+        {
+            "identifier": "GMC/2026/014",
+            "password": "wrong-password-here",
+            "school_code": "GMC",
+            "tab": "student",
+        },
+        {"identifier": "nobody.here", "password": PASSWORD, "school_code": "GMC"},
+        {"identifier": "tunde.adebayo", "password": "wrong-password-here", "school_code": "GMC"},
+        {"identifier": "old.teacher", "password": PASSWORD, "school_code": "GMC"},
+        {"identifier": "new.teacher", "password": PASSWORD, "school_code": "GMC"},
+        {"identifier": "slip.teacher", "password": PASSWORD, "school_code": "GMC"},
     ]
     answers: list[dict[str, Any]] = []
     for attempt in attempts:
@@ -258,7 +273,11 @@ def test_a_paused_school_is_named_only_after_a_correct_password(
         client_for(app),
         "POST",
         "/api/v1/auth/login",
-        json={"identifier": "tunde.adebayo", "password": "wrong-password-here"},
+        json={
+            "identifier": "tunde.adebayo",
+            "password": "wrong-password-here",
+            "school_code": "GMC",
+        },
         headers={"Origin": ORIGIN},
     )
     assert wrong["title"] == LOGIN_FAILED
@@ -268,7 +287,7 @@ def test_a_paused_school_is_named_only_after_a_correct_password(
         client,
         "POST",
         "/api/v1/auth/login",
-        json={"identifier": "tunde.adebayo", "password": PASSWORD},
+        json={"identifier": "tunde.adebayo", "password": PASSWORD, "school_code": "GMC"},
         headers={"Origin": ORIGIN},
     )
     assert right["_status"] == 403
@@ -327,7 +346,7 @@ def test_logins_from_another_site_are_refused(app: FastAPI, tunde: uuid.UUID) ->
     """D-038: the Origin check stops login forgery from another site."""
     response = client_for(app).post(
         "/api/v1/auth/login",
-        json={"identifier": "tunde.adebayo", "password": PASSWORD},
+        json={"identifier": "tunde.adebayo", "password": PASSWORD, "school_code": "GMC"},
         headers={"Origin": "https://evil.example"},
     )
     assert response.status_code == 403
@@ -337,7 +356,12 @@ def test_logins_from_another_site_are_refused(app: FastAPI, tunde: uuid.UUID) ->
 def test_login_refuses_extra_fields(app: FastAPI, tunde: uuid.UUID) -> None:
     response = client_for(app).post(
         "/api/v1/auth/login",
-        json={"identifier": "tunde.adebayo", "password": PASSWORD, "role": "super_admin"},
+        json={
+            "identifier": "tunde.adebayo",
+            "password": PASSWORD,
+            "school_code": "GMC",
+            "role": "super_admin",
+        },
         headers={"Origin": ORIGIN},
     )
     assert response.status_code == 422
@@ -476,10 +500,11 @@ def test_a_temporary_password_must_be_changed_first(
             "identifier": "chukwuemeka.obi",
             "password": "temp-slip-words-four",
             "school_code": "GMC",
+            "tab": "student",
         },
         headers={"Origin": ORIGIN},
     )
-    assert response.json() == {"must_change_password": True}
+    assert response.json()["must_change_password"] is True
     assert client.get("/api/v1/auth/me").json()["must_change_password"] is True
     assert problem(client, "POST", "/api/v1/auth/refresh", headers=csrf(client))["code"] == (
         "password_change_required"
@@ -769,10 +794,15 @@ def test_the_school_login_link_shows_only_public_details(
         "name": "Greenfield Model College",
         "colour": "#1E6B45",
         "logo_url": None,
+        "layout": "half",
+        "picture": "pattern",
+        "message": None,
+        "photo_url": None,
     }
     assert client.get("/api/v1/auth/schools/NOPE/public").status_code == 404
+    # A suspended school's page looks normal (F02 rule 2, D-182): its status is private.
     db_session.execute(text("update schools set status = 'suspended' where id = :id"), {"id": gmc})
-    assert client.get("/api/v1/auth/schools/GMC/public").status_code == 404
+    assert client.get("/api/v1/auth/schools/GMC/public").status_code == 200
 
 
 def test_me_describes_the_principal(app: FastAPI, db_session: Session, gmc: uuid.UUID) -> None:
@@ -948,5 +978,6 @@ def test_the_school_login_link_serves_the_logo_and_nothing_else(
         "/api/v1/auth/schools/GMC/logo"
     )
     assert client.get("/api/v1/auth/schools/NOPE/logo").status_code == 404
+    # A suspended school's page keeps its logo (F02 rule 2, D-182).
     db_session.execute(text("update schools set status = 'suspended' where id = :id"), {"id": gmc})
-    assert client.get("/api/v1/auth/schools/GMC/logo").status_code == 404
+    assert client.get("/api/v1/auth/schools/GMC/logo").status_code == 200

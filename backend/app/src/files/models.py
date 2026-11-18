@@ -31,6 +31,7 @@ from app.db.base import Base, IdMixin, one_of
 
 IMAGE_LIMIT_BYTES = 1024 * 1024  # 1 MB for logos, signatures and stamps (D-057)
 ATTACHMENT_LIMIT_BYTES = 4 * 1024 * 1024  # 4 MB for correction attachments (D-057)
+LOGIN_PHOTO_LIMIT_BYTES = 2 * 1024 * 1024  # 2 MB stored, after cleaning (migration 29)
 
 
 class FilePurpose(StrEnum):
@@ -38,6 +39,7 @@ class FilePurpose(StrEnum):
     SIGNATURE = "signature"  # the principal's signature image on report cards
     STAMP = "stamp"  # the school stamp image on report cards
     CORRECTION_ATTACHMENT = "correction_attachment"
+    LOGIN_PHOTO = "login_photo"  # the picture on the school's login page (migration 29)
 
 
 class StoredFile(IdMixin, Base):
@@ -56,7 +58,8 @@ class StoredFile(IdMixin, Base):
         ),
         CheckConstraint(
             f"size_bytes BETWEEN 1 AND CASE WHEN purpose = 'correction_attachment'"
-            f" THEN {ATTACHMENT_LIMIT_BYTES} ELSE {IMAGE_LIMIT_BYTES} END",
+            f" THEN {ATTACHMENT_LIMIT_BYTES} WHEN purpose = 'login_photo'"
+            f" THEN {LOGIN_PHOTO_LIMIT_BYTES} ELSE {IMAGE_LIMIT_BYTES} END",
             name="size_within_limit",
         ),
         CheckConstraint("octet_length(sha256) = 32", name="sha256_length"),

@@ -17,6 +17,31 @@ Entry template:
 
 ---
 
+## 2026-11-17 (Session 5, continued): CHANGE C, each school's own login page
+
+### What we did
+- Local run: Chidimma migrated, seeded and started both servers (the seed printed every step and `Done.`).
+- Chidimma asked why everyone shares one login page, then asked for per-school branded pages and a separate super admin page. Three rounds of questions (grilling), answers confirmed; prototype on branch `prototype/school-login` (3 layouts x 3 pictures x 3 screens); Chidimma chose layouts A and B as a per-school setting.
+- Chidimma said `merge` (PR #67 merged, tree checked), `ok` to CHANGE C and approved the labels.
+- Built CHANGE C on `feat/school-login-pages`: SPEC v0.5.6, D-182, migration 29, school and platform logins, the Login page settings (school and super admin), photo upload, email links to the school's pages, Find your school, branded password pages, sign-out to the right page, the demo seed signing in on each person's page.
+
+### Issues and fixes
+- This laptop was very slow all session (a Docker command took 46 s; the first test run timed out connecting); tests were rerun in the background.
+- A second parent link must be made as the parent (database rule); the test uses `parent_accepts_link`.
+- Found while testing: the "accept this school's link" email would have pointed at that school's page, where the parent cannot log in yet; it now points at Find your school (test added).
+- A script turned `\n` into real line breaks in the migration; fixed by hand.
+- Deliberate breaks: 3 caught; the super admin line on school pages is a second lock (the membership check refuses the super admin first), so breaking it alone changes nothing.
+
+### Tests
+- Backend: new `test_school_login_pages.py` and `test_login_page_settings.py` plus `test_email_sender.py`: 50 passed; auth helper finds each account's own page, so older tests are unchanged. Ruff, format and Pyright clean. Full suite left to CI.
+- Frontend: 83 passed in 16 files; lint, format and types clean.
+
+### Next step
+- Chidimma: look at PR for CHANGE C, then `merge`. Then: super admin two-factor login (D-043) as its own CHANGE, then Phase 9.
+- Open: School settings has no tabs yet, so "Login page" is a section; a name for the other tab is needed to make it a tab. The People illustration is drawn in code (no licence needed).
+
+---
+
 ## 2026-11-12 (Session 5, continued): Phase 8 done; local running and four reads
 
 ### What we did

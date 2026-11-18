@@ -4,7 +4,7 @@
 import Link from "next/link";
 import { type FormEvent, useState } from "react";
 
-import { AuthCard } from "@/components/auth/auth-card";
+import { SchoolAuthFrame } from "@/components/auth/school-brand";
 import { Button } from "@/components/ui/button";
 import { Field, Input } from "@/components/ui/form";
 import { api } from "@/lib/api/client";
@@ -29,7 +29,7 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <AuthCard
+    <SchoolAuthFrame
       title="Forgot password?"
       intro="No email on your account? Ask your school admin to reset your password."
     >
@@ -67,6 +67,6 @@ export default function ForgotPasswordPage() {
           </Button>
         </form>
       )}
-    </AuthCard>
+    </SchoolAuthFrame>
   );
 }

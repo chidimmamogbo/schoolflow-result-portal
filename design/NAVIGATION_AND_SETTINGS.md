@@ -28,7 +28,7 @@ Menus only show features that are switched on for the school and allowed for the
 | | Corrections | `Corrections.dc.html` |
 | | Emails | *(not designed yet)* |
 | | Billing | `BillingV5.dc.html` (approved v0.3: `Billing.dc.html`) |
-| | School settings | *(not designed yet)* |
+| | School settings | *(not designed yet; tab "Login page" from v0.5.6)* |
 
 Additional school admins see the same sidebar without "School admins". **(v0.5)** Only levels switched on for the school appear in any menu, tab or filter.
 Badges: Approvals shows the number of sheets awaiting approval (filled `primary` badge). Corrections shows the number of open requests.
@@ -265,11 +265,23 @@ Tabs: General · Email · School defaults · Billing · Security
 - Security: Additional school admins per school (2), Session length, Two-factor login for super admins (after the core).
 - Each tab: "Save changes" and "Last changed by {name} on {date}".
 
+### School settings > Login page **(v0.5.6, CHANGE C)**
+- Layout: "Half and half", "Picture behind".
+- Picture: "Pattern", "People", "Your own photo". Button "Upload a photo".
+- Photo warning: "This picture is public on your login page. Use a picture you have permission to share, such as your school building. Don't use pictures where pupils' faces can be recognised."
+- "Login page message", hint: "Up to 80 characters. Leave it empty to show "Welcome to {School name}"."
+- "Preview", "Open login page", "Copy link", "Save changes".
+- The super admin sees Layout, Picture (Pattern, People) and Login page message on Create school and the school's details.
+
 ### Login **(v0.4)**
 Tabs: Staff and parents · Student.
 - Staff and parents tab: Email or username, Password. Button: "Log in". Link: "Forgot password?".
-- Student tab: School code, Username or admission number, Password. Button: "Log in". Text instead of a link: "Forgot your password? Ask your school admin for a new one."
-- School login link (`/login/{code}`): school logo and name above the card, Student tab selected, School code filled in.
+- Student tab: Username or admission number, Password (the school code comes from the link). Button: "Log in". Text instead of a link: "Forgot your password? Ask your school admin for a new one."
+- **(v0.5.6, CHANGE C)** Every login is on a school's own page, `/login/{code}`: title "Welcome back"; the school's logo, name and picture; footer "Powered by SchoolFlow"; under the form "Not {School name}? Find your school". The tab used last on the device opens first (Student on a first visit).
+- Find your school (`/login`): title "Find your school"; intro "Enter your school code to go to your school's login page."; field "School code", hint "It's on your login slip or welcome email."; button "Continue".
+- Unknown code: "We couldn't find that school", "Check the code and try again.", link "Find your school".
+- Platform login (`/platform/login`): title "Platform login"; intro "For the SchoolFlow team only."; under the form "Looking for your school? Find your school".
+- Message over the picture when the school writes none: "Welcome to {School name}".
 - Error: "That login didn't work. Check your details and try again."
 - Forgot password note: "No email on your account? Ask your school admin to reset your password."
 - School paused page: "Your school's access is paused. Contact your school admin."

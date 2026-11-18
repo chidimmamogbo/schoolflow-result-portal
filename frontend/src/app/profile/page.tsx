@@ -8,6 +8,7 @@ import { roleLabel } from "@/components/shell/nav";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, PageHeader } from "@/components/ui/layout";
 import { useLogout, useMe } from "@/lib/auth";
+import { loginPage } from "@/lib/school-memory";
 
 export default function ProfilePage() {
   const { data: me } = useMe();
@@ -48,8 +49,9 @@ export default function ProfilePage() {
           <Button
             variant="ghost"
             onClick={async () => {
+              const back = loginPage();
               await logout();
-              router.replace("/login");
+              router.replace(back);
             }}
           >
             Log out

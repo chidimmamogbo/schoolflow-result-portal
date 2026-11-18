@@ -16,7 +16,7 @@
     "typecheck": "next typegen && tsc --noEmit",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "audit": "bun audit --audit-level=high --ignore=GHSA-vfj7-8cjw-p6xm"
+    "audit": "bun audit --audit-level=high --ignore=GHSA-fc5q-39xc-vjpf"
   },
   "dependencies": {
     "@hookform/resolvers": "^7.0.6",

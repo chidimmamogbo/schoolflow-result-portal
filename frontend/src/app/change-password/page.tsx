@@ -6,7 +6,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { type FormEvent, useState } from "react";
 
-import { AuthCard } from "@/components/auth/auth-card";
+import { SchoolAuthFrame } from "@/components/auth/school-brand";
 import {
   localProblem,
   minLength,
@@ -55,7 +55,7 @@ function ChangePassword({ me }: { me: Me }) {
   if (done) {
     const next = client.getQueryData<Me | null>(ME_KEY);
     return (
-      <AuthCard title="Change password">
+      <SchoolAuthFrame title="Change password">
         <div className="flex flex-col gap-4">
           <p role="status">Your password is changed.</p>
           <Button
@@ -65,12 +65,12 @@ function ChangePassword({ me }: { me: Me }) {
             Continue
           </Button>
         </div>
-      </AuthCard>
+      </SchoolAuthFrame>
     );
   }
 
   return (
-    <AuthCard
+    <SchoolAuthFrame
       title="Change password"
       intro={
         forced
@@ -120,7 +120,7 @@ function ChangePassword({ me }: { me: Me }) {
           Save password
         </Button>
       </form>
-    </AuthCard>
+    </SchoolAuthFrame>
   );
 }
 

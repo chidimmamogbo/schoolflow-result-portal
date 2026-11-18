@@ -99,6 +99,7 @@ def create_schools(demo: Demo, owner: Any) -> None:
         made = owner.post("/platform/schools", form)
         school_id = made["id"]
         demo.ids[form["code"]] = school_id
+        demo.codes.append(form["code"])
         username = form["principal"]["username"]
         admins = owner.get(f"/platform/schools/{school_id}/admins")
         principal = next(a for a in admins if a["username"] == username)
