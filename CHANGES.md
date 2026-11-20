@@ -364,3 +364,8 @@ These seven changes were made during Phase 4 (2026-10-11 to 2026-10-12). Chidimm
 - What changes: `frontend/package.json` `audit` script ignores GHSA-fc5q-39xc-vjpf instead; D-130 updated with the reason and "remove once patched".
 - Proof: `bun run audit` passes; CI.
 - Next (Chidimma `3A`): Next.js 16.4.2 to 16.4.5 for two moderate advisories, as its own CHANGE after this PR.
+
+### CHANGE: Next.js 16.4.2 to 16.4.5 (Chidimma `3A`, 2026-11-18)
+- Before: Next.js 16.4.2 had two moderate advisories, GHSA-mfr8-8qww-v76h and GHSA-vc7v-qv4w-wrv8 (both about `'use cache'` functions leaking data across root params; the app does not use `'use cache'` or `unstable_cache`).
+- What changes: `frontend/package.json` and `bun.lock`, `next` 16.4.5 exactly (patch release). `eslint-config-next` stays 16.4.2 (lint settings only, no advisory).
+- Proof: `bun audit` shows no Next.js advisory; types, lint, format, the 83 tests and the production build pass; CI.

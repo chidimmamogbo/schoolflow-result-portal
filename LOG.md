@@ -17,6 +17,18 @@ Entry template:
 
 ---
 
+## 2026-11-18 to 2026-11-20 (Session 5, continued): CHANGE C merged, Next.js 16.4.5
+
+### What we did
+- CI on PR #70 found older tests and the seed expecting the old login, the model missing the old-code index, and three new advisories. Fixed the tests; Chidimma said `ok` to refreshing dnspython 2.9.2 and opentelemetry 1.45.2; `picomatch` has no fixed release, so Chidimma chose `1A, 2A, 3A`: the audit ignores the picomatch advisory (D-130 updated), the withdrawn braces ignore goes, and Next.js gets its own change.
+- Chidimma said `merge`: PR #70 merged (tree checked). Locally the database container had stopped after a Docker restart; `docker start schoolflow-db-1` brought it back and migration 29 ran.
+- Next.js 16.4.2 to 16.4.5 on `chore/next-16-4-5`.
+
+### Next step
+- After `merge`: super admin two-factor login (D-043), then Phase 9.
+
+---
+
 ## 2026-11-17 (Session 5, continued): CHANGE C, each school's own login page
 
 ### What we did
