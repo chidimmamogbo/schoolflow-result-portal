@@ -1380,6 +1380,36 @@
         "title": "ClassView",
         "type": "object"
       },
+      "CodeRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "maxLength": 20,
+            "minLength": 6,
+            "title": "Code",
+            "type": "string"
+          }
+        },
+        "required": ["code"],
+        "title": "CodeRequest",
+        "type": "object"
+      },
+      "CodesLeft": {
+        "additionalProperties": false,
+        "properties": {
+          "codes_left": {
+            "title": "Codes Left",
+            "type": "integer"
+          },
+          "must_change_password": {
+            "title": "Must Change Password",
+            "type": "boolean"
+          }
+        },
+        "required": ["codes_left", "must_change_password"],
+        "title": "CodesLeft",
+        "type": "object"
+      },
       "ColumnOut": {
         "additionalProperties": false,
         "properties": {
@@ -3526,6 +3556,18 @@
               }
             ],
             "title": "School Id"
+          },
+          "two_factor": {
+            "anyOf": [
+              {
+                "enum": ["setup", "code"],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Two Factor"
           }
         },
         "required": ["must_change_password"],
@@ -4179,6 +4221,26 @@
         "title": "NewPupil",
         "type": "object"
       },
+      "NewRecoveryCodes": {
+        "additionalProperties": false,
+        "description": "Shown once; only their hashes are kept.",
+        "properties": {
+          "must_change_password": {
+            "title": "Must Change Password",
+            "type": "boolean"
+          },
+          "recovery_codes": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Recovery Codes",
+            "type": "array"
+          }
+        },
+        "required": ["recovery_codes", "must_change_password"],
+        "title": "NewRecoveryCodes",
+        "type": "object"
+      },
       "NewRequest": {
         "additionalProperties": false,
         "properties": {
@@ -4527,6 +4589,18 @@
         },
         "required": ["pass_mark"],
         "title": "PassMark",
+        "type": "object"
+      },
+      "Passed": {
+        "additionalProperties": false,
+        "properties": {
+          "must_change_password": {
+            "title": "Must Change Password",
+            "type": "boolean"
+          }
+        },
+        "required": ["must_change_password"],
+        "title": "Passed",
         "type": "object"
       },
       "PaymentRow": {
@@ -7176,6 +7250,23 @@
         },
         "required": ["id", "name", "starts_on", "ends_on", "terms"],
         "title": "SessionRow",
+        "type": "object"
+      },
+      "SetUp": {
+        "additionalProperties": false,
+        "description": "Shown once per set-up: the QR code to scan and the same secret as text.",
+        "properties": {
+          "qr_svg": {
+            "title": "Qr Svg",
+            "type": "string"
+          },
+          "secret": {
+            "title": "Secret",
+            "type": "string"
+          }
+        },
+        "required": ["secret", "qr_svg"],
+        "title": "SetUp",
         "type": "object"
       },
       "SheetCounts": {
@@ -10004,6 +10095,198 @@
         },
         "summary": "School Public",
         "tags": ["auth"]
+      }
+    },
+    "/api/v1/auth/two-factor/recovery": {
+      "post": {
+        "operationId": "use_recovery_api_v1_auth_two_factor_recovery_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CodeRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CodesLeft"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Use Recovery",
+        "tags": ["two-factor"]
+      }
+    },
+    "/api/v1/auth/two-factor/recovery-codes": {
+      "get": {
+        "operationId": "codes_left_api_v1_auth_two_factor_recovery_codes_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CodesLeft"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Codes Left",
+        "tags": ["two-factor"]
+      },
+      "post": {
+        "operationId": "replace_codes_api_v1_auth_two_factor_recovery_codes_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CodeRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewRecoveryCodes"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Replace Codes",
+        "tags": ["two-factor"]
+      }
+    },
+    "/api/v1/auth/two-factor/setup": {
+      "post": {
+        "operationId": "start_setup_api_v1_auth_two_factor_setup_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SetUp"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Start Setup",
+        "tags": ["two-factor"]
+      }
+    },
+    "/api/v1/auth/two-factor/setup/confirm": {
+      "post": {
+        "operationId": "finish_setup_api_v1_auth_two_factor_setup_confirm_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CodeRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewRecoveryCodes"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Finish Setup",
+        "tags": ["two-factor"]
+      }
+    },
+    "/api/v1/auth/two-factor/verify": {
+      "post": {
+        "operationId": "verify_api_v1_auth_two_factor_verify_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CodeRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Passed"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Verify",
+        "tags": ["two-factor"]
       }
     },
     "/api/v1/corrections": {

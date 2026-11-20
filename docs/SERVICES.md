@@ -50,6 +50,7 @@ Names finalised on 2026-10-12 in `backend/.env.example` and `frontend/.env.examp
 | `RESEND_API_KEY` (sending access, `notify.meritiaa.com` only) | Resend | Yes | Backend email sender | Vercel env; local `.env` (optional, tests use a fake) |
 | `EMAIL_FROM_DOMAIN` = `notify.meritiaa.com` | Resend | No | Backend | Vercel env; local `.env` |
 | `PAYSTACK_SECRET_KEY` (`sk_test_...`, **SchoolFlow** business) | Paystack | Yes | Backend payments and webhook signature | Vercel env; local `.env` |
+| `TOTP_ENCRYPTION_KEY` (32 random bytes, URL-safe base64) | None (made locally) | Yes | Encrypts the super admin's authenticator secret (D-043, D-183); without it the super admin cannot log in | Vercel env (production and staging differ); local `.env` |
 | Blob access (OIDC, automatic on Vercel) | Vercel | n/a | Backend file storage | Injected by Vercel; local dev uses the local-folder storage |
 | `SENTRY_DSN`, `NEXT_PUBLIC_SENTRY_DSN` | Sentry | No (still kept in env) | Backend, frontend | Vercel env; local `.env` files |
 | `SENTRY_AUTH_TOKEN` | Sentry | Yes | CI source-map upload | GitHub Actions secrets only |

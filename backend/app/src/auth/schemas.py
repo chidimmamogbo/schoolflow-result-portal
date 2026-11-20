@@ -42,6 +42,8 @@ class LoginResult(ApiModel):
     # The school whose page was used, so a parent of several schools starts
     # there (F02 rule 1). None for the super admin.
     school_id: str | None = None
+    # The super admin's next step (D-043): "setup" the authenticator, or enter a "code".
+    two_factor: Literal["setup", "code"] | None = None
 
 
 class ChangePasswordRequest(ApiModel):

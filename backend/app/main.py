@@ -37,6 +37,7 @@ from app.src.schools import router as school
 from app.src.staff import router as school_staff
 from app.src.structure import router as structure
 from app.src.students import router as school_pupils
+from app.src.two_factor import router as two_factor
 from app.src.verification import router as verify
 
 
@@ -79,6 +80,7 @@ def create_app(app_env: str | None = None) -> FastAPI:
     api_v1.include_router(school_staff.router)
     api_v1.include_router(files.router)
     api_v1.include_router(login_page.router)
+    api_v1.include_router(two_factor.router)
     api_v1.include_router(school_pupils.router)
     api_v1.include_router(guardians.router)
     api_v1.include_router(guardians.parent_router)

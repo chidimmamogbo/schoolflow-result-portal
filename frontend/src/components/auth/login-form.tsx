@@ -5,9 +5,7 @@
 // link. On /platform/login: the super admin's form. One error for every
 // failure, so it never says which detail was wrong, nor that an account
 // belongs on another page (non-negotiable).
-import { useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
 import {
   type FormEvent,
   type ReactNode,
@@ -15,11 +13,12 @@ import {
   useSyncExternalStore,
 } from "react";
 
+import { useFinishLogin } from "@/components/auth/finish-login";
+import { TwoFactor } from "@/components/auth/two-factor";
 import { Button } from "@/components/ui/button";
 import { Field, FormError, Input } from "@/components/ui/form";
 import { Tabs } from "@/components/ui/tabs";
 import { api, ok } from "@/lib/api/client";
-import { ME_KEY, fetchMe, homeFor } from "@/lib/auth";
 import {
   type LoginTab,
   chooseSchoolId,
@@ -32,19 +31,19 @@ import {
 export const LOGIN_FAILED =
   "That login didn't work. Check your details and try again.";
 
-// Only a path on this site, never "//elsewhere" (an open redirect).
-export function safeNext(next: string | null): string | null {
-  return next && next.startsWith("/") && !next.startsWith("//") ? next : null;
-}
+export { safeNext } from "@/components/auth/finish-login";
 
-type Result = { must_change_password: boolean; school_id?: string | null };
+type Result = {
+  must_change_password: boolean;
+  school_id?: string | null;
+  two_factor?: "setup" | "code" | null;
+};
 
 type Send = (identifier: string, password: string) => Promise<Result>;
 
-function useLogin(send: Send, after: (r: Result) => void) {
-  const router = useRouter();
-  const params = useSearchParams();
-  const client = useQueryClient();
+// `after` returns false when another step comes first (the super admin's code).
+function useLogin(send: Send, after: (r: Result) => boolean | void) {
+  const finish = useFinishLogin();
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -53,15 +52,11 @@ function useLogin(send: Send, after: (r: Result) => void) {
     setError(null);
     try {
       const result = await send(identifier, password);
-      after(result);
-      const me = await fetchMe();
-      client.setQueryData(ME_KEY, me);
-      if (!me) throw new Error("not signed in");
-      router.replace(
-        me.must_change_password
-          ? "/change-password"
-          : (safeNext(params.get("next")) ?? homeFor(me)),
-      );
+      if (after(result) === false) {
+        setBusy(false);
+        return;
+      }
+      await finish();
     } catch {
       setError(LOGIN_FAILED);
       setBusy(false);
@@ -198,6 +193,8 @@ export function LoginForm({ schoolCode }: { schoolCode: string }) {
 
 // /platform/login: the super admin only (F02 rule 11).
 export function PlatformLoginForm() {
+  // After the password, the super admin's code step (D-043).
+  const [step, setStep] = useState<"setup" | "code" | null>(null);
   const { submit, error, busy } = useLogin(
     (identifier, password) =>
       ok(
@@ -205,11 +202,16 @@ export function PlatformLoginForm() {
           body: { identifier, password },
         }),
       ),
-    () => {
+    (result) => {
       rememberPlatform();
       chooseSchoolId(null);
+      if (result.two_factor) {
+        setStep(result.two_factor);
+        return false;
+      }
     },
   );
+  if (step) return <TwoFactor first={step} />;
   return (
     <Credentials
       idLabel="Email or username"

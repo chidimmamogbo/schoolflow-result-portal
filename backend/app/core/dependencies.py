@@ -143,6 +143,9 @@ class SignedIn:
     token: str
     is_super_admin: bool
     must_change_password: bool
+    # A correct password still waiting for the super admin's code (D-043): only
+    # the two-factor routes and logout accept it.
+    second_factor_pending: bool = False
 
 
 @dataclass(frozen=True)
@@ -192,6 +195,7 @@ def same_origin(request: Request) -> None:
 
 _SESSION = text(
     "select s.id, u.is_active, u.is_super_admin, u.must_change_password,"
+    " s.second_factor_pending,"
     " s.last_seen_at < now() - make_interval(secs => case when u.is_super_admin"
     "     then cast(:admin_idle as integer) else cast(:idle as integer) end) as idle,"
     " s.last_seen_at < now() - interval '1 minute' as stale"
@@ -227,10 +231,22 @@ def current_session(request: Request, session: DbSession) -> SignedIn:
         session.execute(
             text("update user_sessions set last_seen_at = now() where id = :id"), {"id": row.id}
         )
-    return SignedIn(row.id, user_id, token, row.is_super_admin, row.must_change_password)
+    return SignedIn(
+        row.id,
+        user_id,
+        token,
+        row.is_super_admin,
+        row.must_change_password,
+        row.second_factor_pending,
+    )
 
 
 SessionDep = Annotated[SignedIn, Depends(current_session)]
+
+# Only the code step may follow a password on /platform/login (D-043).
+TWO_FACTOR_REQUIRED = problem(
+    401, "Enter the code from your authenticator app.", "two_factor_required"
+)
 
 
 # --- step 2: the school membership ----------------------------------------------------
@@ -275,6 +291,8 @@ def enter_school(session: Session, user_id: uuid.UUID, membership: Membership | 
 
 
 def current_principal(request: Request, signed_in: SessionDep, session: DbSession) -> Principal:
+    if signed_in.second_factor_pending:
+        raise TWO_FACTOR_REQUIRED
     if signed_in.is_super_admin:
         return Principal(
             signed_in.user_id,

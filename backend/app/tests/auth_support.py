@@ -13,6 +13,7 @@ from datetime import UTC, datetime, timedelta
 from typing import Any, cast
 from urllib.parse import urlsplit
 
+import pyotp
 import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
@@ -29,10 +30,14 @@ from app.core.security import CSRF_COOKIE, CSRF_HEADER, hash_password, token_has
 from app.db.session import use_context
 from app.main import create_app
 from app.src.platform_admin.dependencies import get_platform_db
+from app.src.two_factor.router import get_totp_cipher
+from app.src.two_factor.services import Cipher
 from app.tests.factories import add_membership, create_user
 
 PASSWORD = "fictional-blue-mango-river"  # noqa: S105 (fictional; 26 characters, not common)
 STUDENT_PASSWORD = "mango-river-9"  # noqa: S105 (fictional; 13 characters)
+# 32 fictional bytes; the real key lives only in each environment's secrets.
+TEST_CIPHER = Cipher(b"fictional-totp-key-for-tests-32b")
 _base = urlsplit(str(get_settings().app_base_url))
 ORIGIN = f"{_base.scheme}://{_base.netloc}"
 
@@ -69,6 +74,8 @@ def build_auth_app(db_session: Session) -> FastAPI:
     app.dependency_overrides[get_rate_limiter] = lambda: RateLimiter.for_session(db_session)
     # log_in() finds each account's own login page with it (D-182).
     app.state.test_session = db_session
+    # A fixed, fictional key for the super admin's authenticator secret (D-043).
+    app.dependency_overrides[get_totp_cipher] = lambda: TEST_CIPHER
     return app
 
 
@@ -165,7 +172,32 @@ def log_in(
         if code is not None:
             body["school_code"] = code
     response = client.post(url, json=body, headers={"Origin": ORIGIN})
+    if response.status_code == 200 and response.json().get("two_factor"):
+        return pass_two_factor(client, response.json()["two_factor"])
     return response.status_code
+
+
+def pass_two_factor(client: TestClient, step: str) -> int:
+    """What the super admin does after the password (D-043): set up the
+    authenticator on the first login, else type its current code. The test
+    session reads and decrypts the secret, and forgets the last step used, so a
+    test may log in several times within one 30-second step."""
+    session: Session = cast(FastAPI, client.app).state.test_session
+    if step == "setup":
+        secret = client.post("/api/v1/auth/two-factor/setup", headers=csrf(client)).json()["secret"]
+        url = "/api/v1/auth/two-factor/setup/confirm"
+    else:
+        sealed = session.scalar(
+            text(
+                "select totp_secret from users where is_super_admin and totp_secret is not null"
+                " order by created_at desc limit 1"
+            )
+        )
+        secret = TEST_CIPHER.open(bytes(sealed))
+        session.execute(text("update users set totp_last_step = null where is_super_admin"))
+        url = "/api/v1/auth/two-factor/verify"
+    code = pyotp.TOTP(secret).now()
+    return client.post(url, json={"code": code}, headers=csrf(client)).status_code
 
 
 def logged_in(

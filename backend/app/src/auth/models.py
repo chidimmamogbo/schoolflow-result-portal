@@ -61,6 +61,8 @@ class UserSession(IdMixin, Base):
     # Absolute end (7 days; 12 hours for the super admin, D-037).
     expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     revoked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    # A correct password that still waits for the super admin's code (D-043, migration 30).
+    second_factor_pending: Mapped[bool] = mapped_column(server_default=text("false"))
 
 
 class AccountToken(IdMixin, Base):
