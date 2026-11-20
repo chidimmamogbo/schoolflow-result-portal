@@ -262,7 +262,7 @@ Tabs: General · Email · School defaults · Billing · Security
 - Email: Sender name, Reply-to address.
 - School defaults: Grading bands, Assessment structure, Pass mark, Remark bands, Rating traits, Report template style.
 - Billing: Grace period (days, 14), Invoice due (days, 14), Gateway fees paid by: Platform, School (Platform), Cliff protection (on).
-- Security: Additional school admins per school (2), Session length, Two-factor login for super admins (after the core).
+- Security: Additional school admins per school (2), Session length. Two-factor login for super admins is always on (v0.5.7, D-183), so it is not a setting.
 - Each tab: "Save changes" and "Last changed by {name} on {date}".
 
 ### School settings > Login page **(v0.5.6, CHANGE C)**
@@ -281,6 +281,13 @@ Tabs: Staff and parents · Student.
 - Find your school (`/login`): title "Find your school"; intro "Enter your school code to go to your school's login page."; field "School code", hint "It's on your login slip or welcome email."; button "Continue".
 - Unknown code: "We couldn't find that school", "Check the code and try again.", link "Find your school".
 - Platform login (`/platform/login`): title "Platform login"; intro "For the SchoolFlow team only."; under the form "Looking for your school? Find your school".
+- **(v0.5.7, CHANGE D) Two-factor login, approved by Chidimma 2026-11-20:**
+  - First time: "Set up two-factor login"; "Scan this QR code with an authenticator app, such as Google Authenticator or Microsoft Authenticator, then enter the 6-digit code it shows."; "Can't scan? Enter this key instead:"; field "6-digit code"; button "Turn on two-factor login".
+  - "Save your recovery codes"; "Each code works once, if you lose your phone. Keep them somewhere safe and private. You won't see them again."; buttons "Copy codes", "Print", "I've saved them".
+  - Later logins: "Enter your code"; "Open your authenticator app and enter the 6-digit code for SchoolFlow."; field "6-digit code"; button "Continue"; link "Use a recovery code instead".
+  - "Use a recovery code"; field "Recovery code"; button "Continue"; link "Use your authenticator app instead"; after it: "You have {n} recovery codes left."
+  - Wrong code: "That code didn't work. Check the app and try again." Missing server key: "Two-factor login is not set up on this server."
+  - Profile (super admin only): "Two-factor login"; "On. {n} recovery codes left."; field "6-digit code"; button "Make new recovery codes".
 - Message over the picture when the school writes none: "Welcome to {School name}".
 - Error: "That login didn't work. Check your details and try again."
 - Forgot password note: "No email on your account? Ask your school admin to reset your password."

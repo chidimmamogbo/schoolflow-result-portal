@@ -276,6 +276,92 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/api/v1/auth/two-factor/recovery": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Use Recovery */
+    post: operations["use_recovery_api_v1_auth_two_factor_recovery_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/auth/two-factor/recovery-codes": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Codes Left */
+    get: operations["codes_left_api_v1_auth_two_factor_recovery_codes_get"];
+    put?: never;
+    /** Replace Codes */
+    post: operations["replace_codes_api_v1_auth_two_factor_recovery_codes_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/auth/two-factor/setup": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Start Setup */
+    post: operations["start_setup_api_v1_auth_two_factor_setup_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/auth/two-factor/setup/confirm": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Finish Setup */
+    post: operations["finish_setup_api_v1_auth_two_factor_setup_confirm_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/auth/two-factor/verify": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Verify */
+    post: operations["verify_api_v1_auth_two_factor_verify_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/api/v1/corrections": {
     parameters: {
       query?: never;
@@ -3774,6 +3860,18 @@ export interface components {
       /** Traits */
       traits: components["schemas"]["TraitOut"][];
     };
+    /** CodeRequest */
+    CodeRequest: {
+      /** Code */
+      code: string;
+    };
+    /** CodesLeft */
+    CodesLeft: {
+      /** Codes Left */
+      codes_left: number;
+      /** Must Change Password */
+      must_change_password: boolean;
+    };
     /** ColumnOut */
     ColumnOut: {
       /** Id */
@@ -4462,6 +4560,8 @@ export interface components {
       must_change_password: boolean;
       /** School Id */
       school_id?: string | null;
+      /** Two Factor */
+      two_factor?: ("setup" | "code") | null;
     };
     /** ManualPayment */
     ManualPayment: {
@@ -4714,6 +4814,16 @@ export interface components {
       /** Surname */
       surname: string;
     };
+    /**
+     * NewRecoveryCodes
+     * @description Shown once; only their hashes are kept.
+     */
+    NewRecoveryCodes: {
+      /** Must Change Password */
+      must_change_password: boolean;
+      /** Recovery Codes */
+      recovery_codes: string[];
+    };
     /** NewRequest */
     NewRequest: {
       /** Explanation */
@@ -4872,6 +4982,11 @@ export interface components {
     PassMark: {
       /** Pass Mark */
       pass_mark: number;
+    };
+    /** Passed */
+    Passed: {
+      /** Must Change Password */
+      must_change_password: boolean;
     };
     /** PaymentRow */
     PaymentRow: {
@@ -5823,6 +5938,16 @@ export interface components {
       starts_on: string;
       /** Terms */
       terms: components["schemas"]["TermRow"][];
+    };
+    /**
+     * SetUp
+     * @description Shown once per set-up: the QR code to scan and the same secret as text.
+     */
+    SetUp: {
+      /** Qr Svg */
+      qr_svg: string;
+      /** Secret */
+      secret: string;
     };
     /** SheetCounts */
     SheetCounts: {
@@ -7033,6 +7158,178 @@ export interface operations {
         };
         content: {
           "application/json": components["schemas"]["SchoolPublic"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  use_recovery_api_v1_auth_two_factor_recovery_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["CodeRequest"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["CodesLeft"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  codes_left_api_v1_auth_two_factor_recovery_codes_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["CodesLeft"];
+        };
+      };
+    };
+  };
+  replace_codes_api_v1_auth_two_factor_recovery_codes_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["CodeRequest"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["NewRecoveryCodes"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  start_setup_api_v1_auth_two_factor_setup_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["SetUp"];
+        };
+      };
+    };
+  };
+  finish_setup_api_v1_auth_two_factor_setup_confirm_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["CodeRequest"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["NewRecoveryCodes"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  verify_api_v1_auth_two_factor_verify_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["CodeRequest"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Passed"];
         };
       };
       /** @description Validation Error */

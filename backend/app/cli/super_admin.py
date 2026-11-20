@@ -96,10 +96,13 @@ def reset_super_admin(session: Session, *, username: str, password: str) -> None
     session.execute(
         text(
             "update users set password_hash = :h, must_change_password = false,"
-            " temp_password_expires_at = null where id = :id"
+            " temp_password_expires_at = null, totp_secret = null, totp_confirmed_at = null,"
+            " totp_last_step = null where id = :id"
         ),
         {"h": hash_password(password), "id": user_id},
     )
+    # Two-factor starts again too (D-043): the next login sets up the authenticator.
+    session.execute(text("delete from recovery_codes where user_id = :id"), {"id": user_id})
     # Every device signs in again with the new password.
     session.execute(text("delete from user_sessions where user_id = :id"), {"id": user_id})
     write_audit(

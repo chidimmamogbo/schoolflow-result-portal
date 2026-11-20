@@ -49,12 +49,39 @@ def ensure_super_admin(connect: Connect, password: str, say: Say) -> None:
         exists = session.scalar(
             text("select exists (select 1 from users where username = :u)"), {"u": SUPER_ADMIN}
         )
+        # The seed signs in as the super admin; it cannot know a real authenticator.
+        if session.scalar(
+            text("select totp_confirmed_at is not null from users where username = :u"),
+            {"u": SUPER_ADMIN},
+        ):
+            raise SeedError(
+                f"{SUPER_ADMIN} already has two-factor login. Seed a fresh database, or run"
+                " reset-super-admin first."
+            )
         if not exists:
             create_super_admin(
                 session, username=SUPER_ADMIN, full_name="Platform Admin", email=None,
                 password=password,
             )  # fmt: skip
             say(f"Super admin {SUPER_ADMIN} made.")
+
+
+def forget_seed_authenticator(connect: Connect) -> None:
+    """The seed set up two-factor only to sign in; your first real login sets up
+    your own authenticator (D-043)."""
+    with connect() as session:
+        user_id = session.scalar(
+            text("select id from users where username = :u"), {"u": SUPER_ADMIN}
+        )
+        session.execute(
+            text(
+                "update users set totp_secret = null, totp_confirmed_at = null,"
+                " totp_last_step = null where id = :id"
+            ),
+            {"id": user_id},
+        )
+        session.execute(text("delete from recovery_codes where user_id = :id"), {"id": user_id})
+        session.execute(text("delete from user_sessions where user_id = :id"), {"id": user_id})
 
 
 def main(
@@ -87,6 +114,7 @@ def main(
     try:
         ensure_super_admin(connect, password, out)
         seed(password, out)
+        forget_seed_authenticator(connect)
     except SeedError as stopped:
         out(f"The seed stopped: {stopped}")
         return 1

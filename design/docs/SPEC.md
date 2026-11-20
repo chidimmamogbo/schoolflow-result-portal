@@ -2,8 +2,8 @@
 
 | | |
 |---|---|
-| Version | 0.5.6 |
-| Date | 2026-10-07 (v0.5); 2026-10-12 (v0.5.1, v0.5.2); 2026-10-13 (v0.5.3, v0.5.4); 2026-10-14 (v0.5.5); 2026-11-17 (v0.5.6) |
+| Version | 0.5.7 |
+| Date | 2026-10-07 (v0.5); 2026-10-12 (v0.5.1, v0.5.2); 2026-10-13 (v0.5.3, v0.5.4); 2026-10-14 (v0.5.5); 2026-11-17 (v0.5.6); 2026-11-20 (v0.5.7) |
 | Status | Agreed for build |
 | Owner | Chidimma Merit Mogbo |
 | Product name | SchoolFlow Result Portal (planning name: ResultChain) |
@@ -15,6 +15,7 @@
 > - v0.2: account provisioning by school admins, login-only model, student and teacher registration with assignments, guardian ward linking, notice board, email notifications, SaaS dashboard shell, full responsiveness, dark/light mode.
 > - v0.3: per-school subscription billing with an editable per-student, per-term pricing table and online payment in test mode.
 > - v0.4: product renamed SchoolFlow Result Portal; username login for everyone; student login with school code; password reset rules (no self-service for students, super admin resets school admins); additional school admins; configurable assessment structures per level (any number of CAs); teacher sheet search and filters; form teacher tools (broadsheet, comments, ratings, attendance, preview); Students needing attention list; expanded super admin functions and platform settings; full Create school form with colour picker and set-up emails; more report template styles and block settings; graduated pricing removed, volume pricing with optional cliff protection.
+> - v0.5.7 (2026-11-20, D-183, CHANGE D): two-factor login for the super admin is built and required: an authenticator app code after the password, ten one-time recovery codes.
 > - v0.5.6 (2026-11-17, D-182, CHANGE C): each school has its own branded login page, `/login/{code}`, that logs in only its own people; the super admin logs in only at `/platform/login`; `/login` becomes Find your school; an old school code forwards for 30 days.
 > - v0.5.5 (2026-10-14, D-146): form teacher class sections follow the result sheet pattern after publication: they become Published with the class, and a school admin reopens them with a reason as a new revision when a correction is needed.
 > - v0.5.4 (2026-10-13, D-142, D-143, D-144): a school admin may approve a sheet nobody reviewed only when no reviewer's scope covers it; a reviewer may return a resubmitted sheet again; changing a saved score needs a reason once the sheet has been submitted at least once (or is a reopened revision); school admins and reviewers who also teach get teacher assignments and act as teachers on those sheets only.
@@ -159,7 +160,8 @@ F01 to F26 below.
   8. The Student tab shows no forgot password link. It shows: "Forgot your password? Ask your school admin for a new one."
   9. A successful password reset signs the user out of every other session and sends a "your password was changed" email when the account has an email.
   10. No register route.
-  11. **The super admin logs in only at `/platform/login`** (Email or username, Password, then two-factor login once built, D-043), which refuses every other account with the generic error; school pages refuse the super admin. Under the form: "Looking for your school? Find your school". The page asks search engines not to list it (v0.5.6, D-182).
+  11. **The super admin logs in only at `/platform/login`** (Email or username, Password, then the 6-digit code from an authenticator app, D-043, D-183), which refuses every other account with the generic error; school pages refuse the super admin. Under the form: "Looking for your school? Find your school". The page asks search engines not to list it (v0.5.6, D-182).
+  11a. **Two-factor login (required for the super admin, v0.5.7, D-183):** after a correct password the session only waits for a code for 5 minutes and every other page refuses it. The first login sets up an authenticator app (QR code, or the key as text), and the first right code shows ten one-time recovery codes once. Later logins take the app's current code (30 seconds either way is accepted; each code works once) or one recovery code. Wrong codes count as failed logins (rule 4). The secret is stored encrypted and the recovery codes as hashes only. The profile page shows how many recovery codes are left and makes new ones after a fresh code. `reset-super-admin` also resets two-factor, so the next login sets it up again. There is no "remember this device".
   12. **Login page look:** on tablets and laptops a split screen in one of two layouts the school chooses, **Half and half** (picture on one side, logo and form on the other) or **Picture behind** (the picture fills the screen, the form in a card); on phones no picture is shown or downloaded, only the logo and name above the form. The picture is a SchoolFlow **Pattern** or **People** illustration in the school's colour, or the school's **own photo** (PNG, JPEG or WebP up to 4 MB, cleaned and saved as a JPEG of at most 1200 pixels a side). The upload warns: "This picture is public on your login page. Use a picture you have permission to share, such as your school building. Don't use pictures where pupils' faces can be recognised." The school takes responsibility for it. Over the picture: the school name and an optional message of up to 80 characters on one line, by default "Welcome to {School name}" (v0.5.6, D-182).
   13. Forgot password, Reset password, Activate account and the first-login change of password show the same school's look, taken from the page or email link they came from (v0.5.6, D-182).
   14. School admins set the look under School settings > **Login page** (Layout, Picture, Upload a photo, Login page message, Preview, Open login page, Copy link); the super admin sets the layout, picture and message on Create school and the school's details. Only the school uploads its own photo. Emails and slips link to the school's own page; super admin emails link to `/platform/login` (v0.5.6, D-182).
@@ -175,6 +177,8 @@ F01 to F26 below.
   - AC02.9 Given a Bright Stars teacher with the right password, when they log in on `/login/GMC`, then the generic error is shown and the attempt counts as a failure (v0.5.6).
   - AC02.10 Given a parent linked to GMC and BSA, when they log in on either page, then they are signed in and start in that school; on a third school's page they get the generic error (v0.5.6).
   - AC02.11 Given the super admin, when they log in on a school page, then the generic error is shown; given any school account, when it logs in on `/platform/login`, then the generic error is shown (v0.5.6).
+  - AC02.12 Given the super admin with the right password, when they have not entered the code, then every page except the code step refuses them, and after 5 minutes the step ends (v0.5.7).
+  - AC02.13 Given a code already used, or a recovery code already used, when entered again, then it is refused with "That code didn't work. Check the app and try again." (v0.5.7).
 
 ### F03. Account provisioning, school admins and password resets
 - **Users:** super admin, school admins.

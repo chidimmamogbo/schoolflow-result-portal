@@ -14,7 +14,17 @@ import uuid
 from datetime import datetime
 from enum import StrEnum
 
-from sqlalchemy import CheckConstraint, DateTime, ForeignKey, Index, UniqueConstraint, text
+from sqlalchemy import (
+    BigInteger,
+    CheckConstraint,
+    DateTime,
+    ForeignKey,
+    Index,
+    LargeBinary,
+    UniqueConstraint,
+    func,
+    text,
+)
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.base import Base, IdMixin, TimestampMixin, one_of
@@ -74,6 +84,12 @@ class User(IdMixin, TimestampMixin, Base):
             "temp_password_expires_at IS NULL OR must_change_password",
             name="temporary_password_must_change",
         ),
+        # Two-factor login is for the super admin only (migration 30, D-043).
+        CheckConstraint("totp_secret IS NULL OR is_super_admin", name="totp_only_super_admin"),
+        CheckConstraint(
+            "totp_confirmed_at IS NULL OR totp_secret IS NOT NULL",
+            name="totp_confirmed_needs_secret",
+        ),
     )
 
     full_name: Mapped[str]
@@ -90,6 +106,26 @@ class User(IdMixin, TimestampMixin, Base):
     is_super_admin: Mapped[bool] = mapped_column(server_default=text("false"))
     # Set only for pupils: the school whose code they log in with (F02 rule 1).
     student_school_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("schools.id"))
+    # The super admin's authenticator secret, encrypted by the app (D-043, migration 30);
+    # no app role reads these columns, only owner-run functions do.
+    totp_secret: Mapped[bytes | None] = mapped_column(LargeBinary)
+    totp_confirmed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    # The last 30-second step used, so each code works once.
+    totp_last_step: Mapped[int | None] = mapped_column(BigInteger)
+
+
+class RecoveryCode(IdMixin, Base):
+    """One-time recovery codes for the super admin (D-043): HMAC hash only."""
+
+    __tablename__ = "recovery_codes"
+    __table_args__ = (CheckConstraint("octet_length(code_hash) = 32", name="hash_length"),)
+
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), index=True
+    )
+    code_hash: Mapped[bytes] = mapped_column(LargeBinary, unique=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    used_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
 
 class SchoolMembership(IdMixin, TimestampMixin, Base):

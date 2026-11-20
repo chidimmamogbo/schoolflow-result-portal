@@ -128,3 +128,42 @@ def test_a_seed_that_stops_says_why(db_session: Session, monkeypatch: pytest.Mon
     run.fail = "The database already has schools. Seed an empty database."
     assert run() == 1
     assert "already has schools" in run.output
+
+
+def test_a_super_admin_with_two_factor_is_refused(
+    db_session: Session, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """D-043: the seed cannot know a real authenticator, so it stops and says why."""
+    monkeypatch.setenv("SEED_PASSWORD", DEMO_PASSWORD)
+    user = make_login(db_session, username="platform.admin", is_super_admin=True)
+    db_session.execute(
+        text("update users set totp_secret = '\x01', totp_confirmed_at = now() where id = :u"),
+        {"u": user},
+    )
+    run = Run(db_session)
+    assert run() == 1
+    assert "already has two-factor login" in run.output
+    assert run.seeded == []
+
+
+def test_the_seed_forgets_its_own_authenticator(
+    db_session: Session, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """D-043: your first real login sets up your own authenticator."""
+    monkeypatch.setenv("SEED_PASSWORD", DEMO_PASSWORD)
+    run = Run(db_session)
+
+    def seed_with_two_factor(password: str, out: Callable[[str], None]) -> None:
+        db_session.execute(
+            text(
+                "update users set totp_secret = '\x01', totp_confirmed_at = now()"
+                " where username = 'platform.admin'"
+            )
+        )
+
+    run.seed = seed_with_two_factor  # type: ignore[method-assign]
+    assert run() == 0
+    row = db_session.execute(
+        text("select totp_secret, totp_confirmed_at from users where username = 'platform.admin'")
+    ).one()
+    assert (row.totp_secret, row.totp_confirmed_at) == (None, None)

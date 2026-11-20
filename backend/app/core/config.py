@@ -7,6 +7,8 @@ backend/.env.example. Settings for email, payments and Sentry join here when
 their modules are built.
 """
 
+import base64
+import binascii
 from functools import lru_cache
 from typing import Literal
 
@@ -15,6 +17,14 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 # SQLAlchemy reads the driver from the URL: "+psycopg" means psycopg 3 (D-017).
 POSTGRES_PSYCOPG_PREFIX = "postgresql+psycopg://"
+
+
+def key_bytes(encoded: str) -> bytes:
+    """URL-safe base64 to bytes; empty when it is not base64 at all."""
+    try:
+        return base64.urlsafe_b64decode(encoded.encode())
+    except ValueError, binascii.Error:
+        return b""
 
 
 def must_be_postgres_with_psycopg(value: SecretStr | None) -> SecretStr | None:
@@ -63,6 +73,10 @@ class Settings(BaseSettings):
     # Paystack (D-087): test keys only in the MVP. Without it payments answer 503 and
     # webhooks cannot be checked.
     paystack_secret_key: SecretStr | None = None
+    # Encrypts the super admin's authenticator secret (D-043): 32 random bytes as
+    # URL-safe base64. Without it two-factor login answers 503, so the super admin
+    # cannot log in: set it in every environment.
+    totp_encryption_key: SecretStr | None = None
     database_url_migrations: SecretStr | None = None
     test_database_url: SecretStr | None = None
 
@@ -82,6 +96,14 @@ class Settings(BaseSettings):
         if key and not key.startswith("sk_test_"):
             # The message names the expected format, never the value itself.
             raise ValueError("must be a Paystack test key (sk_test_...) in the MVP")
+        return value
+
+    @field_validator("totp_encryption_key")
+    @classmethod
+    def thirty_two_bytes(cls, value: SecretStr | None) -> SecretStr | None:
+        if value is not None and len(key_bytes(value.get_secret_value())) != 32:
+            # The message names the expected format, never the value itself.
+            raise ValueError("must be 32 random bytes as URL-safe base64")
         return value
 
     @property

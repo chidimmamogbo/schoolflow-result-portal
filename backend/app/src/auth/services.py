@@ -204,18 +204,29 @@ def clear_session_cookies(response: Response) -> None:
         response.delete_cookie(name, path="/", secure=True, httponly=http_only, samesite="lax")
 
 
+# A correct password that still waits for the super admin's code lasts 5 minutes (D-043).
+PENDING_SECONDS = 5 * 60
+
+
 def start_session(
-    session: Session, request: Request, response: Response, user_id: Any, super_admin: bool
+    session: Session,
+    request: Request,
+    response: Response,
+    user_id: Any,
+    super_admin: bool,
+    *,
+    pending: bool = False,
 ) -> None:
     """A new session row (hash only) and its cookies; the database works for the user."""
     use_context(session, user_id=user_id)
     token = new_token()
-    lifetime = SESSION_SECONDS[super_admin]
+    lifetime = PENDING_SECONDS if pending else SESSION_SECONDS[super_admin]
     session.execute(
         text(
             "insert into user_sessions (user_id, token_hash, device_label, ip_address,"
-            " expires_at) values (:user_id, :hash, :device, cast(:ip as inet),"
-            " now() + make_interval(secs => cast(:lifetime as integer)))"
+            " expires_at, second_factor_pending) values (:user_id, :hash, :device,"
+            " cast(:ip as inet), now() + make_interval(secs => cast(:lifetime as integer)),"
+            " :pending)"
         ),
         {
             "user_id": user_id,
@@ -223,6 +234,7 @@ def start_session(
             "device": device_label(request.headers.get("user-agent", "")),
             "ip": ip_or_none(request),
             "lifetime": lifetime,
+            "pending": pending,
         },
     )
     set_session_cookies(response, token, lifetime)
@@ -383,8 +395,13 @@ def platform_login(
     if not checked.is_super_admin:
         return wrong_door(session, checked)
     throttle.clear(session, checked.key)
-    start_session(session, request, response, checked.account_id, True)
-    return LoginResult(must_change_password=checked.must_change_password)
+    # The password alone is not enough: the session waits for the code (D-043).
+    start_session(session, request, response, checked.account_id, True, pending=True)
+    confirmed = session.scalar(text("select confirmed from auth_totp_state()"))
+    return LoginResult(
+        must_change_password=checked.must_change_password,
+        two_factor="code" if confirmed else "setup",
+    )
 
 
 def school_public(

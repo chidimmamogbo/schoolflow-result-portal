@@ -17,6 +17,26 @@ Entry template:
 
 ---
 
+## 2026-11-20 (Session 5, continued): CHANGE D, super admin two-factor login
+
+### What we did
+- Chidimma said `merge` (PR #71, Next.js 16.4.5) and `ok, 1A 2A 3A 4A 5A` to two-factor login, then approved the labels.
+- Found that pyotp had four releases in one week after three quiet years, so it is pinned to 2.10.0; cryptography 50.0.2 for AES-GCM.
+- Built migration 30, `/auth/two-factor/*`, the waiting step after the password, the screens, the profile section, the CLI reset and the seed.
+
+### Issues and fixes
+- Wrong codes first raised an error, which rolled back the failure count; they are now returned (as the password login does).
+- Found that migration 3 gave the app roles SELECT on the whole `users` table; migration 30 makes it a column list (the new secret columns stay closed). `password_hash` stays readable: noted for Phase 10.
+- A test broke the "expires after creation" rule; fixed the test.
+
+### Tests
+- Backend: 190 passed (two-factor 17, seed command, auth, platform, database safety, migrations, authz). Frontend: auth tests 20 passed; lint and types clean.
+
+### Next step
+- After `merge`: add `TOTP_ENCRYPTION_KEY` locally, migrate, set up the authenticator; then Phase 9.
+
+---
+
 ## 2026-11-18 to 2026-11-20 (Session 5, continued): CHANGE C merged, Next.js 16.4.5
 
 ### What we did

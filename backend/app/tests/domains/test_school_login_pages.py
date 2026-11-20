@@ -25,6 +25,7 @@ from app.tests.auth_support import (
     build_auth_app,
     client_for,
     make_login,
+    pass_two_factor,
     use_fast_hashing,
 )
 from app.tests.db_support import refused
@@ -128,6 +129,9 @@ def test_each_person_logs_in_on_their_own_page(
     client = client_for(app)
     status, answer = at_platform(client, "platform.admin")
     assert (status, answer["school_id"]) == (200, None)
+    # The password alone waits for the code (D-043); then the super admin is in.
+    assert answer["two_factor"] == "setup"
+    assert pass_two_factor(client, answer["two_factor"]) == 200
     assert client.get("/api/v1/auth/me").json()["is_super_admin"] is True
 
 

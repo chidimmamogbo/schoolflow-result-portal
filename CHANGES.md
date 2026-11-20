@@ -369,3 +369,9 @@ These seven changes were made during Phase 4 (2026-10-11 to 2026-10-12). Chidimm
 - Before: Next.js 16.4.2 had two moderate advisories, GHSA-mfr8-8qww-v76h and GHSA-vc7v-qv4w-wrv8 (both about `'use cache'` functions leaking data across root params; the app does not use `'use cache'` or `unstable_cache`).
 - What changes: `frontend/package.json` and `bun.lock`, `next` 16.4.5 exactly (patch release). `eslint-config-next` stays 16.4.2 (lint settings only, no advisory).
 - Proof: `bun audit` shows no Next.js advisory; types, lint, format, the 83 tests and the production build pass; CI.
+
+### CHANGE D: Two-factor login for the super admin (Chidimma `ok, 1A 2A 3A 4A 5A`, labels approved, 2026-11-20)
+- Before: `/platform/login` asked for a password only; D-043 planned two-factor "after the core".
+- Why: the super admin reaches every school's settings and billing; a stolen password alone should not be enough. The Phase 10 gate expects it.
+- What changes: SPEC v0.5.7 (F02 rule 11a, AC02.12, AC02.13); D-183; migration 30; `pyotp` 2.10.0 and `cryptography` 50.0.2 (pinned); `TOTP_ENCRYPTION_KEY`; `/auth/two-factor/*`; the platform login waits for the code; the set-up, code, recovery and profile screens; `reset-super-admin` and the demo seed; read rights on `users` become a column list.
+- Proof: `test_two_factor.py` (17), seed command tests, deliberate breaks, frontend `two-factor.test.tsx` (6).

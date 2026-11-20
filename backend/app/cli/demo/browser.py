@@ -11,6 +11,7 @@ from contextlib import AbstractContextManager
 from typing import Any
 from urllib.parse import urlsplit
 
+import pyotp
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
@@ -84,6 +85,8 @@ class Demo:
         self.ids: dict[str, str] = {}
         # The demo schools' codes, in the order they were made (their login pages).
         self.codes: list[str] = []
+        # The seed's own authenticator secret for the super admin, once set up.
+        self.totp_secret: str | None = None
         # The seed's own app never starts a real email or payment run: no demo email
         # may reach Resend, and payments are left to the webhook as usual.
         app.dependency_overrides[trigger.get_email_kick] = lambda: do_nothing
@@ -111,7 +114,23 @@ class Demo:
             raise SeedError(f"No login page let {identifier} in.")
         if response.status_code >= 400:
             raise SeedError(f"POST {url} answered {response.status_code}.")
+        step = response.json().get("two_factor")
+        if step:
+            self.pass_two_factor(person, step)
         return person
+
+    def pass_two_factor(self, person: Browser, step: str) -> None:
+        """The super admin's code step (D-043): the seed sets up an authenticator of its
+        own; the command forgets it at the end, so your first real login sets up yours."""
+        if step == "setup":
+            secret: str = person.post("/auth/two-factor/setup")["secret"]
+            self.totp_secret = secret
+            person.post("/auth/two-factor/setup/confirm", {"code": pyotp.TOTP(secret).now()})
+        else:
+            known = self.totp_secret
+            if known is None:
+                raise SeedError("The super admin already has two-factor login; reset it first.")
+            person.post("/auth/two-factor/verify", {"code": pyotp.TOTP(known).now()})
 
     def as_(self, name: str) -> Browser:
         """Someone already set up, signed in with the demo password."""
