@@ -125,6 +125,8 @@ def test_sessions_and_links_hold_hashes_not_tokens(db_session: Session) -> None:
             "last_seen_at",
             "expires_at",
             "revoked_at",
+            # A flag, not a token: the session still waits for the code (D-043).
+            "second_factor_pending",
         },
         "account_tokens": {
             "id",
